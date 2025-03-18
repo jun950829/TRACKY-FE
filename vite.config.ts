@@ -25,5 +25,12 @@ export default defineConfig({
   },
   ssr: {
     noExternal: ["@vercel/node"]
-  }
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".jsx", ".js"],
+    alias: {
+      path: "path-browserify",
+      url: "url",
+    },
+  },
 });
