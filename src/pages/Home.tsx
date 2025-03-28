@@ -15,7 +15,7 @@ function Home() {
 
 <button
         className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-        onClick={() => navigate("/login")}
+        onClick={() => navigate("signin")}
       >
         Login
       </button>

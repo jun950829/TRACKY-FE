@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import loginApiService from "../libs/apis/loginApi";
 
 const schema = yup.object().shape({
   id: yup.string().required("Id is required"),
-  password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  password: yup.string().min(4, "Password must be at least 6 characters").required("Password is required"),
 });
 
 type FormValues = {
@@ -21,8 +22,13 @@ export default function Login() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Validated Data:", data);
+  const onSubmit = async (data: FormValues) => {
+    const loginResult = await loginApiService.login({ 
+      memberId: data.id,
+      password: data.password
+    });
+
+    console.log(loginResult);
   };
 
   return (
