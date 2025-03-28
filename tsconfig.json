@@ -9,6 +9,10 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".", // 꼭 있어야 합니다!
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }
