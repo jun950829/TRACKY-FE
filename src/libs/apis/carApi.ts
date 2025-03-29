@@ -1,3 +1,4 @@
+import { CarCreateTypes } from "@/constants/types";
 import api from "./api";
 
 // ✅ API 요청 함수들
@@ -19,7 +20,11 @@ export const carApiService = {
   searchById: async (id: number) => {
     const response = await api.get(`/car/searchbyid/detail/${id}`);
     return response.data;
-  }
+  },
+  createCar: async (data: CarCreateTypes) => {
+    const response = await api.post("/car/register", data);
+    return response.data;
+  },
 };
 
 export default carApiService;

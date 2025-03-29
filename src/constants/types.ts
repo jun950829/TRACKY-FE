@@ -8,7 +8,18 @@ export type CarTypes = {
   purpose: string;
   status: string;
   sum: string;
-  createdAt: string;
+  createdAt?: string;
+}
+
+export type CarCreateTypes = {
+  mdn: string;
+  bizId?: string;
+  carType: string;
+  carPlate: string;
+  carYear: string;
+  purpose: string;
+  status: string;
+  sum: number | string;
 }
 
 export type Devices = {
