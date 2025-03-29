@@ -30,8 +30,8 @@ function CarTable({ carList }: CarTableProps) {
 
   async function searchCarDataById(id: number) {
     const res = await carApiService.searchById(id);
-    console.log('searchById :', res);
-    setSelectedCarData(res);
+    console.log('searchById :', res.data);
+    setSelectedCarData(res.data);
   }
 
   return (
