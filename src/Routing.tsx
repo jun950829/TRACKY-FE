@@ -6,7 +6,6 @@ import CarMain from "./pages/car/CarMain";
 import CarRegister from "./pages/car/CarRegister";
 import Main from "./pages/Main";
 
-
 function Routing() {
   return (
     <Routes>
