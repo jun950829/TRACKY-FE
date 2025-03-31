@@ -7,6 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type CarSearchLayer = {
   onSearch: (searchText: string) => void;
@@ -16,6 +17,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
   const [date, setDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<string | undefined>();
   const searchRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   console.log(date, status);
 
@@ -76,7 +78,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
       </div>
 
       {/* 신규 등록 버튼 */}
-      <Button className="bg-black text-white hover:bg-gray-800">
+      <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/car/register')}>
         <Plus className="w-4 h-4 mr-2" />
         신규 차량 등록
       </Button>

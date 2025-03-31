@@ -29,9 +29,9 @@ function CarTable({ carList }: CarTableProps) {
   };
 
   async function searchCarDataById(id: number) {
-    const res = await carApiService.searchById(id);
-    console.log('searchById :', res);
-    setSelectedCarData(res);
+    const res = await carApiService.searchByIdDetail(id);
+    console.log('searchByIdDetail :', res.data);
+    setSelectedCarData(res.data);
   }
 
   return (

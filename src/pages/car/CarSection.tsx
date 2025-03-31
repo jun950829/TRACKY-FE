@@ -8,14 +8,14 @@ function CarSection() {
 
   async function getCars() {
     const res = await carApiService.getCars();
-    console.log('getCars: ', res);
-    setCarList(res);
+    console.log('getCars: ', res.data);
+    setCarList(res.data);
   }
 
   async function searchCars(searchText: string) {
     const res = await carApiService.searchByMdn(searchText);
     console.log('searchCars :', res);
-    setCarList(res);
+    setCarList(res.data);
   } 
 
   useEffect(() => {
