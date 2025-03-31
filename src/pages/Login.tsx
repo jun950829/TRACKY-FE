@@ -6,7 +6,7 @@ import axios from "axios";
 import { useState } from "react";
 import { lloginApi } from "../libs/apis/loginApi";
 
-// ✅ 유효성 검사용 스키마
+// 유효성 검사용 스키마
 const schema = yup.object().shape({
   memberId: yup.string().required("Id is required"),
   pwd: yup
@@ -15,7 +15,7 @@ const schema = yup.object().shape({
     .required("Password is required"),
 });
 
-// ✅ 타입 선언
+// 타입 선언
 type FormValues = {
   memberId: string;
   pwd: string;
@@ -33,7 +33,7 @@ export default function Login() {
     resolver: yupResolver(schema),
   });
 
-  // ✅ 로그인 요청 함수
+  // 로그인 요청 함수
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await lloginApi.login(data);
