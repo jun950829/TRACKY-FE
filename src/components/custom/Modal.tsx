@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 
 export interface CommonModalProps {
   open: boolean
-  onClose: () => void
+  onClose: () => void;
   title?: string
   description?: string
   confirmText?: string

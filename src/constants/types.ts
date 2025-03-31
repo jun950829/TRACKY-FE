@@ -44,3 +44,4 @@ export type CarDetailTypes = {
   deviceInfo: Devices;
   createdAt: string;
 }
+
