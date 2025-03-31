@@ -1,8 +1,10 @@
+import Header from "./components/Header";
 import Routing from "./Routing";
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+    <div className="w-full min-h-screen bg-gray-100">
+      <Header />
       <Routing />
     </div>
   );

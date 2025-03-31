@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "../components/common/Button";
+import Button from "../components/custom/Btn";
 import bizApiService from "../libs/apis/bizApi";
 
 type BIZ = {
