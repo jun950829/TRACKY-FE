@@ -33,4 +33,13 @@ export default defineConfig({
       url: "url",
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080/api", // Spring 서버 주소
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });
