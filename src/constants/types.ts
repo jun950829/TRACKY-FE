@@ -7,19 +7,31 @@ export type CarTypes = {
   carYear: string;
   purpose: string;
   status: string;
-  sum: string;
+  sum: number;
   createdAt?: string;
 }
 
 export type CarCreateTypes = {
   mdn: string;
-  bizId?: string;
+  bizId?: number;
   carType: string;
   carPlate: string;
   carYear: string;
   purpose: string;
   status: string;
-  sum: number | string;
+  sum: number;
+}
+
+export type CarUpdateTypes = {
+  mdn: string;
+  bizId: number;
+  carType: string;
+  carPlate: string;
+  carYear: string;
+  purpose: string;
+  status: string;
+  sum: number;
+  deviceInfo: Devices;
 }
 
 export type Devices = {
@@ -40,7 +52,7 @@ export type CarDetailTypes = {
   carYear: string;
   purpose: string;
   status: string;
-  sum: string;
+  sum: number;
   deviceInfo: Devices;
   createdAt: string;
 }
