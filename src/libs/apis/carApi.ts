@@ -1,4 +1,4 @@
-import { CarCreateTypes } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes } from "@/constants/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
@@ -24,11 +24,20 @@ export const carApiService = {
     return response.data;
   },
   searchByIdDetail: async (id: number) => {
+    console.log('searchByIdDetail id :', id);
     const response = await api.get(`${carApiRoot}/search/${id}/detail`);
     return response.data;
   },
   createCar: async (data: CarCreateTypes) => {
     const response = await api.post(`${carApiRoot}/create`, data);
+    return response.data;
+  },
+  updateCar: async (id: number, data: CarUpdateTypes) => {
+    const response = await api.patch(`${carApiRoot}/update/${id}`, data);
+    return response.data;
+  },
+  deleteCar: async (id: number) => {
+    const response = await api.delete(`${carApiRoot}/delete/${id}`);
     return response.data;
   },
 };
