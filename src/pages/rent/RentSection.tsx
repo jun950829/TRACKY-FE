@@ -1,5 +1,7 @@
 import { rentApiService } from "@/libs/apis/rentsApi";
 import { useEffect, useState } from "react";
+import RentTable from "./RentTable";
+import RentSearchLayer from "./RentSearchLayer";
 
 function RentSection() {
     const [rentList, setRentList] = useState([]);
@@ -21,11 +23,10 @@ function RentSection() {
     }, []);
 
     return (
-        // <div className="w-full h-full flex flex-col items-center justify-center px-6">
-        //   <RentSearchLayer onSearch={searchRents} />
-        //   <RentTable rentList={rentList} />
-        // </div>
-        <div></div>
+        <div className="w-full h-full flex flex-col items-center justify-center px-6">
+          <RentSearchLayer onSearch={searchRents} />
+          <RentTable rentList={rentList} />
+        </div>
       );
     }
     

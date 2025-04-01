@@ -22,7 +22,7 @@ const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rent
           <h2 className="text-xl font-semibold mb-4">대여 상세 정보</h2>
           <div className="space-y-2 text-sm text-gray-700">
 
-            <div><strong>대여고유UUID:</strong> {rentData.rentUuid}</div>
+            <div><strong>대여고유UUID:</strong> {rentData.rent_uuid}</div>
             <div><strong>차량식별키:</strong> {rentData.mdn}</div>
             <div><strong>사용자 이름:</strong> {rentData.renterName}</div>
             <div><strong>사용자 전화번호:</strong> {rentData.renterPhone}</div>
@@ -32,7 +32,7 @@ const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rent
             <div><strong>대여 위치:</strong> {rentData.rentLoc}</div>
             <div><strong>대여 종료 시간:</strong> {rentData.rentEtime}</div>
             <div><strong>반납 위치:</strong> {rentData.returnLoc}</div>
-            <div><strong>등록일자:</strong> {new Date(rentData.createdAt).toLocaleDateString()}</div>
+            {/* <div><strong>등록일자:</strong> {new Date(rentData.createdAt).toLocaleDateString()}</div> */}
           </div>
         </div>
       </div>

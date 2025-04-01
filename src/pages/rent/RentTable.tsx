@@ -1,12 +1,10 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RentDetailTypes } from "@/constants/types";
 import rentApiService from "@/libs/apis/rentsApi";
-import { Table } from "lucide-react";
 import { useState } from "react";
-import { Button } from "react-day-picker";
-import { string } from "yup";
 import RentDetailModal from "./RentDetailModal";
+import { formatDateTime } from "@/libs/utils/utils";
 
 type RentTableProps = {
     rentList: RentDetailTypes[];
@@ -17,17 +15,17 @@ function RentTable({ rentList}: RentTableProps) {
 
 
     const handleCellClick = async (rentUuid: string) => {
-        const carData = await searchCarDataById(rentUuid);
-        console.log('carData :', carData);
+        // const rentData = await searchRentDataByUuid(rentUuid);
+        // console.log('rentData :', rentData);
       };
     
       const handleCloseModal = () => {
         setSelectedRentData(null);
       };
     
-      async function searchCarDataById(rentUuid: string) {
+      async function searchRentDataByUuid(rentUuid: string) {
         const res = await rentApiService.searchByUuid(rentUuid);
-        console.log('searchById :', res.data);
+        console.log('searchByUuid :', res.data);
         setSelectedRentData(res.data);
       }
     
@@ -37,7 +35,7 @@ function RentTable({ rentList}: RentTableProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>예약 번호</TableHead>
-                <TableHead>차량 번호(ㅡ</TableHead>
+                <TableHead>차량 번호</TableHead>
                 <TableHead>대여 기간</TableHead>
                 <TableHead>예약 상태</TableHead>
                 <TableHead className="text-right">관리</TableHead>
@@ -45,16 +43,17 @@ function RentTable({ rentList}: RentTableProps) {
             </TableHeader>
             <TableBody>
               {rentList.map((rent) => (
-                <TableRow key={rent.rentUuid}>
+                <TableRow key={rent.id}>
                   <TableCell
-                    onClick={() => handleCellClick(rent.rentUuid)}
+                    onClick={() => handleCellClick(rent.rent_uuid)}
                     className="cursor-pointer hover:text-blue-600 hover:underline"
-                  >{rent.mdn}</TableCell>
-                  <TableCell>{rent.rentType}</TableCell>
-                  <TableCell>{rent.rentPlate}</TableCell>
+                  >{rent.rent_uuid}</TableCell>
+                  <TableCell>{rent.mdn}</TableCell>
+                  <TableCell>{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</TableCell>
+                  <TableCell>{rent.rentStatus}</TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="link" className="text-blue-600 px-0">수정</Button>
-                    <Button variant="link" className="text-red-600 px-0">삭제</Button>
+                    {/* <Button variant="link" className="text-blue-600 px-0">수정</Button>
+                    <Button variant="link" className="text-red-600 px-0">삭제</Button> */}
                   </TableCell>
                 </TableRow>
               ))}

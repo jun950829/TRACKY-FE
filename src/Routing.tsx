@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import CarMain from "./pages/car/CarMain";
 import CarRegister from "./pages/car/CarRegister";
 import Main from "./pages/Main";
+import RentMain from "./pages/rent/rentMain";
+import RentRegister from "./pages/rent/RentRegister";
 
 function Routing() {
   return (
@@ -15,8 +17,12 @@ function Routing() {
       <Route path="/main" element={<Main />} />
 
       {/* 차량 조회/등록 관련 */}
-      <Route path="/car" element={<CarMain />} />
-      <Route path="/car/register" element={<CarRegister />} />
+      <Route path="/cars" element={<CarMain />} />
+      <Route path="/cars/register" element={<CarRegister />} />
+
+      {/* 렌트 조회/등록 관련 */}
+      <Route path="/rents" element={<RentMain />} />
+      <Route path="/rents/register" element={<RentRegister />} />
     </Routes>
   )
 }

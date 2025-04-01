@@ -7,19 +7,31 @@ export type CarTypes = {
   carYear: string;
   purpose: string;
   status: string;
-  sum: string;
+  sum: number;
   createdAt?: string;
 }
 
 export type CarCreateTypes = {
   mdn: string;
-  bizId?: string;
+  bizId?: number;
   carType: string;
   carPlate: string;
   carYear: string;
   purpose: string;
   status: string;
-  sum: number | string;
+  sum: number;
+}
+
+export type CarUpdateTypes = {
+  mdn: string;
+  bizId: number;
+  carType: string;
+  carPlate: string;
+  carYear: string;
+  purpose: string;
+  status: string;
+  sum: number;
+  deviceInfo: Devices;
 }
 
 export type Devices = {
@@ -40,7 +52,7 @@ export type CarDetailTypes = {
   carYear: string;
   purpose: string;
   status: string;
-  sum: string;
+  sum: number;
   deviceInfo: Devices;
   createdAt: string;
 }
@@ -57,7 +69,8 @@ export type RentCreateTypes = {
 }
 
 export type RentDetailTypes = {
-    rentUuid: string;        // 8자리 대여 UUID
+    id: number;
+    rent_uuid: string;        // 8자리 대여 UUID
     mdn: string;             // 차량 식별키
     renterName: string;      // 사용자 이름
     renterPhone: string;     // 사용자 전화번호
@@ -67,5 +80,4 @@ export type RentDetailTypes = {
     rentEtime: string;       // 대여 종료 시간
     returnLoc: string;      // 반납 위치
     rentStatus: string;      // 대여 상태
-    createdAt: string;       // 생성 시간
 }

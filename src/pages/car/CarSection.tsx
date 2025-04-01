@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import CarSearchLayer from "./CarSearchLayer";
 import CarTable from "./CarTable";
 import carApiService from "@/libs/apis/carApi";
+import { CarDetailTypes } from "@/constants/types";
 
 function CarSection() {
-  const [carList, setCarList] = useState([]);
+  const [carList, setCarList] = useState<CarDetailTypes[]>([]);
 
   async function getCars() {
     const res = await carApiService.getCars();
@@ -25,8 +26,8 @@ function CarSection() {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6">
-      <CarSearchLayer onSearch={searchCars} />
-      <CarTable carList={carList} />
+      <CarSearchLayer onSearch={searchCars}/>
+      <CarTable carList={carList} setCarList={setCarList}  />
     </div>
   );
 }
