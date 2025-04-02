@@ -9,11 +9,11 @@ import { ko } from "date-fns/locale";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-type CarSearchLayer = {
+type RentSearchLayer = {
   onSearch: (searchText: string) => void;
 }
 
-function CarSearchLayer({ onSearch }: CarSearchLayer) {
+function RentSearchLayer({ onSearch }: RentSearchLayer) {
   const [date, setDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<string | undefined>();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -32,21 +32,17 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
       <div className="flex flex-wrap items-center gap-2">
         {/* 검색어 */}
         <Input
-          placeholder="차량 식별 키(mdn) 검색"
+          placeholder="UUID 검색"
           className="w-64"
           ref={searchRef}
         />
 
-        {/* 차량 상태 */}
+        {/* 대여 상태 */}
         <Select onValueChange={setStatus}>
           <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="차량 상태" />
+            <SelectValue placeholder="대여 상태" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="운행중">운행중</SelectItem>
-            <SelectItem value="정비중">정비중</SelectItem>
-            <SelectItem value="폐차">폐차</SelectItem>
-          </SelectContent>
+
         </Select>
 
         {/* 날짜 선택 */}
@@ -78,12 +74,12 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
       </div>
 
       {/* 신규 등록 버튼 */}
-      <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/cars/register')}>
+      <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/rents/register')}>
         <Plus className="w-4 h-4 mr-2" />
-        신규 차량 등록
+        신규 예약 등록
       </Button>
     </div>
   );
 }
 
-export default CarSearchLayer;
+export default RentSearchLayer;

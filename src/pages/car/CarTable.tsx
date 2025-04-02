@@ -5,6 +5,9 @@ import { CarDetailTypes,  } from "@/constants/types";
 import { useState } from "react";
 import CarDetailModal from "./CarDetailModal";
 import carApiService from "@/libs/apis/carApi";
+import CarUpdateModal from "./CarUpdateModal";
+import { useNavigate } from "react-router-dom";
+import Modal from "@/components/custom/Modal";
 
 // const statusColor = {
 //   '운행중': 'bg-green-100 text-green-800',
@@ -13,25 +16,48 @@ import carApiService from "@/libs/apis/carApi";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
+  setCarList: (carList: CarDetailTypes[]) => void;
 }
 
 
-function CarTable({ carList }: CarTableProps) {
+function CarTable({ carList, setCarList }: CarTableProps) {
   const [selectedCarData, setSelectedCarData] = useState<CarDetailTypes | null>(null);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [isDetail, setIsDetail] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const navigate = useNavigate();
 
-  const handleCellClick = async (id: number) => {
-    const carData = await searchCarDataById(id);
+
+  const handleCellClick = async (mdn: string) => {
+    const carData = await searchCarDataByMdn(mdn);
     console.log('carData :', carData);
   };
 
   const handleCloseModal = () => {
-    setSelectedCarData(null);
+    setIsDetail(false);
   };
 
-  async function searchCarDataById(id: number) {
-    const res = await carApiService.searchByIdDetail(id);
-    console.log('searchByIdDetail :', res.data);
+  const handleCloseUpdateModal = () => {
+    setSelectedCarData(null);
+    setIsUpdate(false);
+    navigate("/cars");
+  };
+
+  async function searchCarDataByMdn(mdn: string) {
+    const res = await carApiService.searchOneByMdnDetail(mdn);
+    console.log('searchOneByMdn :', res.data);
     setSelectedCarData(res.data);
+  }
+
+  async function deleteCarData(mdn: string) {
+    const res = await carApiService.deleteCar(mdn);
+    console.log('deleteCarData :', res.data);
+    if(res.status === 200) {
+      carList = carList.filter((car) => car.mdn !== mdn);
+      setCarList(carList);
+    }
+
+    alert('삭제되었습니다.');
   }
 
   return (
@@ -46,17 +72,26 @@ function CarTable({ carList }: CarTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {carList.map((car) => (
-            <TableRow key={car.id}>
+          {carList.map((car, idx) => (
+            <TableRow key={idx}>
               <TableCell
-                onClick={() => handleCellClick(car.id)}
+                onClick={() => {
+                  setIsDetail(true);
+                  handleCellClick(car.mdn)
+                }}
                 className="cursor-pointer hover:text-blue-600 hover:underline"
               >{car.mdn}</TableCell>
               <TableCell>{car.carType}</TableCell>
               <TableCell>{car.carPlate}</TableCell>
               <TableCell className="text-right space-x-2">
-                <Button variant="link" className="text-blue-600 px-0">수정</Button>
-                <Button variant="link" className="text-red-600 px-0">삭제</Button>
+                <Button variant="link" className="text-blue-600 px-0" onClick={() => {
+                  setIsUpdate(true);
+                  setSelectedCarData(car);
+                }}>수정</Button>
+                <Button variant="link" className="text-red-600 px-0" onClick={() => {
+                  setIsDelete(true);
+                  setSelectedCarData(car);
+                }}>삭제</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -85,16 +120,30 @@ function CarTable({ carList }: CarTableProps) {
       </div>
 
       {/* 차량 상세 모달 */}
-      {selectedCarData && (
+      {selectedCarData && isDetail && (
         <CarDetailModal
           isOpen={true}
           onClose={handleCloseModal}
           carData={selectedCarData}
         />
       )}
+
+      {/* 차량 수정 모달 */}
+      {selectedCarData && isUpdate && (
+      <CarUpdateModal
+          isOpen={true}
+          closeModal={handleCloseUpdateModal}
+          initialData={selectedCarData} 
+      />) 
+      }
+
+      {selectedCarData && isDelete && (
+        <Modal open={isDelete} onClose={() => setIsDelete(false)} title="삭제" description="차량을 삭제하시겠습니까?" confirmText="삭제" onConfirm={() => {
+          deleteCarData(selectedCarData.mdn!);
+          setIsDelete(false);
+        }} />  
+      )}
     </div>
-
-
   );
 }
 
