@@ -47,7 +47,7 @@ export default function CarRegister() {
 
   const onConfirm = () => {
     setIsSuccess(false);
-    navigate("/car");
+    navigate("/cars");
   }
 
   /**
@@ -58,8 +58,8 @@ export default function CarRegister() {
     // 천승준 - 임시 싱크용 데이터 추가
     const requestData = {
       ...data,
-      sum: data.sum.toString(),
-      bizId: "1"
+      sum: data.sum,
+      bizId: 1,
     }
 
     const carData  = await carApiService.createCar(requestData);
@@ -69,7 +69,7 @@ export default function CarRegister() {
     } else {
       setIsError(true);
     }
-    console.log("🚗 차량 등록 성공 데이터: ", carData.data);
+    console.log("차량 등록 성공 데이터: ", carData.data);
   
   }
 

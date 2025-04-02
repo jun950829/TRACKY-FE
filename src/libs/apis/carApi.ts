@@ -1,4 +1,4 @@
-import { CarCreateTypes, CycleInfoRequest } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes, CycleInfoRequest } from "@/constants/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
@@ -19,12 +19,12 @@ export const carApiService = {
       return response.data;
     }
   },
-  searchById: async (id: number) => {
-    const response = await api.get(`${carApiRoot}/search/${id}`);
+  searchOneByMdn: async (mdn: string) => {
+    const response = await api.get(`${carApiRoot}/search/${mdn}`);
     return response.data;
   },
-  searchByIdDetail: async (id: number) => {
-    const response = await api.get(`${carApiRoot}/search/${id}/detail`);
+  searchOneByMdnDetail: async (mdn: string) => {
+    const response = await api.get(`${carApiRoot}/search/${mdn}/detail`);
     return response.data;
   },
   createCar: async (data: CarCreateTypes) => {
@@ -35,6 +35,14 @@ export const carApiService = {
     const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
     return response.data;
   }
+  updateCar: async (mdn: string, data: CarUpdateTypes) => {
+    const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
+    return response.data;
+  },
+  deleteCar: async (mdn: string) => {
+    const response = await api.delete(`${carApiRoot}/delete/${mdn}`);
+    return response.data;
+  },
 };
 
 export default carApiService;
