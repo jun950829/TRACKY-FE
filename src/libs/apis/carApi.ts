@@ -31,16 +31,20 @@ export const carApiService = {
     const response = await api.post(`${carApiRoot}/create`, data);
     return response.data;
   },
-  sendCycleInfo: async (data: CycleInfoRequest) => {
-    const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
-    return response.data;
-  },
+
   updateCar: async (mdn: string, data: CarUpdateTypes) => {
     const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
     return response.data;
   },
   deleteCar: async (mdn: string) => {
     const response = await api.delete(`${carApiRoot}/delete/${mdn}`);
+    return response.data;
+  },
+
+  // 에뮬레이터용
+  sendCycleInfo: async (data: CycleInfoRequest) => {
+    const response = await api.post(`/api/car/cycle`, data);
+    console.log("📦 전송할 주소:", `/api/car/cycle`);
     return response.data;
   },
 };

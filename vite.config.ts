@@ -34,12 +34,20 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
+    // proxy: {
+    //   "/api": {
+    //     target: "http://localhost:8080/api", // Spring 서버 주소
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, ""),
+    //   },
+    // },
+       proxy: {
       "/api": {
-        target: "http://localhost:8080/api", // Spring 서버 주소
+        target: "http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082", // Spring 서버 주소
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
+    
   },
 });
