@@ -63,11 +63,11 @@ function Emulator() {
             console.log("📦 전송할 패킷:", cycleRequest);
 
             // 실제 전송
-            // carApiService.sendCycleInfo(cycleRequest).then(() => {
-            //   console.log("✅ 위치 정보 전송 성공");
-            // }).catch((err) => {
-            //   console.error("🚨 위치 정보 전송 실패:", err)
-            // });
+            carApiService.sendCycleInfo(cycleRequest).then(() => {
+              console.log("✅ 위치 정보 전송 성공");
+            }).catch((err) => {
+              console.error("🚨 위치 정보 전송 실패:", err)
+            });
           }
         },
         (err) => {

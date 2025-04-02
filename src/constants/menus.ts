@@ -3,4 +3,5 @@ export const headerMenus = [
   { name: '차량 등록', path: '/cars' },
   { name: '예약 등록', path: '/rents' },
   { name: '관리 하기', path: '/admin' },
+  { name: '에뮬 테스트', path: '/emulator' }
 ]
