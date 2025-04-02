@@ -65,10 +65,10 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
   };
 
   const submitHandler = (data: FormValues) => {
-    sendUpdate(initialData.id, data);
+    sendUpdate(initialData.mdn, data);
   };
 
-  const sendUpdate = async (id: number, data: FormValues) => {
+  const sendUpdate = async (mdn: string, data: FormValues) => {
     const updateCarObj = {
       mdn: data.mdn,
       bizId: initialData.bizId,
@@ -81,7 +81,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
       deviceInfo: initialData.deviceInfo,
     };
 
-    const updatedCarRes = await carApiService.updateCar(id, updateCarObj);
+    const updatedCarRes = await carApiService.updateCar(mdn, updateCarObj);
     if(updatedCarRes.status === 200) {
       setIsSuccess(true);
     } else {

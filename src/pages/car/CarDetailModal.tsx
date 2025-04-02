@@ -21,7 +21,6 @@ const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carDat
         </button>
         <h2 className="text-xl font-semibold mb-4">차량 상세 정보</h2>
         <div className="space-y-2 text-sm text-gray-700">
-          <div><strong>차량 ID:</strong> {carData.id}</div>
           <div><strong>MDN:</strong> {carData.mdn}</div>
           <div><strong>업체 ID:</strong> {carData.bizId}</div>
           <div><strong>Device ID:</strong> {carData.deviceInfo.id}</div>
