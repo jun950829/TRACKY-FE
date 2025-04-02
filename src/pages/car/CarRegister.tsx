@@ -47,7 +47,7 @@ export default function CarRegister() {
 
   const onConfirm = () => {
     setIsSuccess(false);
-    navigate("/car");
+    navigate("/cars");
   }
 
   /**

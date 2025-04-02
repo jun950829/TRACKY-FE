@@ -14,8 +14,8 @@ function Routing() {
 
 
     {/* 차량 조회/등록 관련 */}
-    <Route path="/car" element={<CarMain />} />
-    <Route path="/car/register" element={<CarRegister />} />
+    <Route path="/cars" element={<CarMain />} />
+    <Route path="/cars/register" element={<CarRegister />} />
   </Routes>
   )
 }
