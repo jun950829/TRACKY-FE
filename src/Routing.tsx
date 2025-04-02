@@ -4,6 +4,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import CarMain from "./pages/car/CarMain";
 import CarRegister from "./pages/car/CarRegister";
+import Emulator from "./pages/emulator/Emulator";
 import Main from "./pages/Main";
 import RentMain from "./pages/rent/rentMain";
 import RentRegister from "./pages/rent/RentRegister";
@@ -14,6 +15,8 @@ function Routing() {
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/emulator" element={<Emulator />} />
+
       <Route path="/main" element={<Main />} />
 
       {/* 렌트 조회/등록 관련 */}
