@@ -1,32 +1,60 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { RentDetailTypes } from "@/constants/types";
 import rentApiService from "@/libs/apis/rentsApi";
 import { useState } from "react";
 import RentDetailModal from "./RentDetailModal";
 import { formatDateTime } from "@/libs/utils/utils";
+import { useNavigate } from "react-router-dom";
+import Modal from "@/components/custom/Modal";
 
 type RentTableProps = {
     rentList: RentDetailTypes[];
+    setRentList: (rentList: RentDetailTypes[]) => void;
 }
 
-function RentTable({ rentList}: RentTableProps) {
+function RentTable({ rentList, setRentList }: RentTableProps) {
     const [selectedRentData, setSelectedRentData] = useState<RentDetailTypes | null>(null);
-
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [isDetail, setIsDetail] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const navigate = useNavigate();
 
     const handleCellClick = async (rentUuid: string) => {
-        // const rentData = await searchRentDataByUuid(rentUuid);
-        // console.log('rentData :', rentData);
+        const rentData = await searchRentDataByUuid(rentUuid);
+        console.log('rentData :', rentData);
       };
     
       const handleCloseModal = () => {
-        setSelectedRentData(null);
+        setIsDetail(false);
       };
-    
+
+      // const handleCloseModal = () => {
+      //   setSelectedRentData(null);
+      // };
+
+      const handleCloseUpdateModal = () => {
+        setSelectedRentData(null);
+        setIsUpdate(false);
+        navigate("/rent");
+      };
+
+      // 실제 api req,res
       async function searchRentDataByUuid(rentUuid: string) {
-        const res = await rentApiService.searchByUuid(rentUuid);
+        const res = await rentApiService.searchOneByRentUuid(rentUuid);
         console.log('searchByUuid :', res.data);
         setSelectedRentData(res.data);
+      }
+
+      async function deleteRentData(rentUuid: string) {
+        const res = await rentApiService.deleteRent(rentUuid);
+        console.log('deleterentData : ', res.data);
+        if(res.status === 200) {
+          rentList = rentList.filter((rent) => rent.rent_uuid != rentUuid);
+          setRentList(rentList);
+        }
+        alert('삭제되었습니다.');
       }
     
       return (
@@ -43,17 +71,26 @@ function RentTable({ rentList}: RentTableProps) {
             </TableHeader>
             <TableBody>
               {rentList.map((rent) => (
-                <TableRow key={rent.id}>
+                <TableRow key={rent.rent_uuid}>
                   <TableCell
-                    onClick={() => handleCellClick(rent.rent_uuid)}
+                    onClick={() => {
+                      setIsDetail(true);
+                      handleCellClick(rent.rent_uuid)}
+                    }
                     className="cursor-pointer hover:text-blue-600 hover:underline"
                   >{rent.rent_uuid}</TableCell>
                   <TableCell>{rent.mdn}</TableCell>
                   <TableCell>{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</TableCell>
                   <TableCell>{rent.rentStatus}</TableCell>
                   <TableCell className="text-right space-x-2">
-                    {/* <Button variant="link" className="text-blue-600 px-0">수정</Button>
-                    <Button variant="link" className="text-red-600 px-0">삭제</Button> */}
+                  <Button variant="link" className="text-blue-600 px-0" onClick={() => {
+                  setIsUpdate(true);
+                  setSelectedRentData(rent);
+                }}>수정</Button>
+                <Button variant="link" className="text-red-600 px-0" onClick={() => {
+                  setIsDelete(true);
+                  setSelectedRentData(rent);
+                }}>삭제</Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -82,16 +119,22 @@ function RentTable({ rentList}: RentTableProps) {
           </div> */}
     
           {/* 대여 상세 모달 */}
-          {selectedRentData && (
+          {isDetail && selectedRentData && (
             <RentDetailModal
-              isOpen={true}
+              isOpen={isDetail}
               onClose={handleCloseModal}
               rentData={selectedRentData}
             />
           )}
-        </div>
-    
-      );
-    }
+
+      {selectedRentData && isDelete && (
+        <Modal open={isDelete} onClose={() => setIsDelete(false)} title="삭제" description="대여를 삭제하시겠습니까?" confirmText="삭제" onConfirm={() => {
+          deleteRentData(selectedRentData.rent_uuid!);
+          setIsDelete(false);
+        }} />  
+      )}
+    </div>
+  );
+}
     
     export default RentTable;

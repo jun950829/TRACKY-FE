@@ -66,16 +66,29 @@ export type RentCreateTypes = {
   purpose: string;       // 사용 목적
 }
 
+export type RentUpdateTypes = {
+  mdn: string;           // 차량 번호판
+  renterName: string;    // 사용자 이름
+  renterPhone: string;   // 사용자 전화번호
+  rentStime: string;     // 대여 시작 시간
+  rentEtime: string;     // 대여 종료 시간
+  rentLoc: string;       // 대여 위치
+  returnLoc: string;     // 반납 위치
+  purpose: string;       // 사용 목적
+}
+
+
 export type RentDetailTypes = {
-    id: number;
+    // id: number;
     rent_uuid: string;        // 8자리 대여 UUID
     mdn: string;             // 차량 식별키
     renterName: string;      // 사용자 이름
     renterPhone: string;     // 사용자 전화번호
     purpose: string;         // 차량 사용 목적
+    rentStatus: string;      // 대여 상태    
     rentStime: string;       // 대여 시작 시간
     rentLoc: string;         // 대여 위치
     rentEtime: string;       // 대여 종료 시간
     returnLoc: string;      // 반납 위치
-    rentStatus: string;      // 대여 상태
+    createdAt: string;      // 생성 시간
 }
