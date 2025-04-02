@@ -4,6 +4,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import CarMain from "./pages/car/CarMain";
 import CarRegister from "./pages/car/CarRegister";
+import Emulator from "./pages/emulator/Emulator";
 
 function Routing() {
   return (
@@ -11,6 +12,7 @@ function Routing() {
     <Route path="/" element={<Home />} />
     <Route path="/about" element={<About />} />
     <Route path="/login" element={<Login />} />
+    <Route path="/emulator" element={<Emulator />} />
 
 
     {/* 차량 조회/등록 관련 */}

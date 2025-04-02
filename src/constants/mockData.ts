@@ -24,3 +24,11 @@ export const mockCars = [
     createdAt: '2022-09-14T18:03:08'
     },
 ];
+
+export const deviceInfo = {
+  mdn: "01234567891",
+  tid: "A001",
+  mid: "6",
+  pv: "5",
+  did: "1",
+};
