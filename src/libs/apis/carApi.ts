@@ -42,8 +42,8 @@ export const carApiService = {
 
   // 에뮬레이터용
   sendCycleInfo: async (data: CycleInfoRequest) => {
-    const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
-    console.log("📦 전송할 주소:", `${process.env.VITE_HUB_API_HOST}/car/cycle`);
+    const response = await api.post(`http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082/api/car/cycle`, data);
+    console.log("📦 전송할 주소:", `http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082/api/car/cycle`);
     return response.data;
   },
 };
