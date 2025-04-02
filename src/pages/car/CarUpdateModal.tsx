@@ -102,7 +102,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog open={isOpen} onOpenChange={closeModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>차량 정보 수정</DialogTitle>
@@ -152,7 +152,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
             </div>
             <DialogFooter>
               <Button type="submit">수정</Button>
-              <Button type="button" variant="ghost" onClick={handleClose}>
+              <Button type="button" variant="ghost" onClick={closeModal}>
                 취소
               </Button>
             </DialogFooter>

@@ -1,4 +1,5 @@
 import { RentDetailTypes } from "@/constants/types";
+import { formatDateTime } from "@/libs/utils/utils";
 import React from "react";
 
 interface RentDetailModalProps {
@@ -9,6 +10,8 @@ interface RentDetailModalProps {
 
 const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rentData}) => {
     if (!isOpen) return null;
+
+    console.log(rentData);
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
@@ -28,9 +31,9 @@ const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rent
             <div><strong>사용자 전화번호:</strong> {rentData.renterPhone}</div>
             <div><strong>차량 사용 목적:</strong> {rentData.purpose}</div>
             <div><strong>대여 상태:</strong> {rentData.rentStatus}</div>
-            <div><strong>대여 시작 시간:</strong> {rentData.rentStime}</div>
+            <div><strong>대여 시작 시간:</strong> {formatDateTime(rentData.rentStime)}</div>
             <div><strong>대여 위치:</strong> {rentData.rentLoc}</div>
-            <div><strong>대여 종료 시간:</strong> {rentData.rentEtime}</div>
+            <div><strong>대여 종료 시간:</strong> {formatDateTime(rentData.rentEtime)}</div>
             <div><strong>반납 위치:</strong> {rentData.returnLoc}</div>
             {/* <div><strong>등록일자:</strong> {new Date(rentData.createdAt).toLocaleDateString()}</div> */}
           </div>
