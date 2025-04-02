@@ -34,7 +34,7 @@ export const carApiService = {
   sendCycleInfo: async (data: CycleInfoRequest) => {
     const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
     return response.data;
-  }
+  },
   updateCar: async (mdn: string, data: CarUpdateTypes) => {
     const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
     return response.data;
