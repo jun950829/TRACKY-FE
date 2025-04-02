@@ -1,5 +1,4 @@
 export type CarTypes = {
-  id: number;
   mdn: string;
   bizId: number;
   carType: string;
@@ -44,7 +43,6 @@ export type Devices = {
 
 
 export type CarDetailTypes = {
-  id: number;
   mdn: string;
   bizId: number;
   carType: string;

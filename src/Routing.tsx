@@ -16,13 +16,13 @@ function Routing() {
       <Route path="/login" element={<Login />} />
       <Route path="/main" element={<Main />} />
 
-      {/* 차량 조회/등록 관련 */}
-      <Route path="/cars" element={<CarMain />} />
-      <Route path="/cars/register" element={<CarRegister />} />
-
       {/* 렌트 조회/등록 관련 */}
       <Route path="/rents" element={<RentMain />} />
       <Route path="/rents/register" element={<RentRegister />} />
+
+      {/* 차량 조회/등록 관련 */}
+      <Route path="/cars" element={<CarMain />} />
+      <Route path="/cars/register" element={<CarRegister />} />
     </Routes>
   )
 }

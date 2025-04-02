@@ -28,8 +28,8 @@ function CarTable({ carList, setCarList }: CarTableProps) {
   const navigate = useNavigate();
 
 
-  const handleCellClick = async (id: number) => {
-    const carData = await searchCarDataById(id);
+  const handleCellClick = async (mdn: string) => {
+    const carData = await searchCarDataByMdn(mdn);
     console.log('carData :', carData);
   };
 
@@ -40,20 +40,20 @@ function CarTable({ carList, setCarList }: CarTableProps) {
   const handleCloseUpdateModal = () => {
     setSelectedCarData(null);
     setIsUpdate(false);
-    navigate("/car");
+    navigate("/cars");
   };
 
-  async function searchCarDataById(id: number) {
-    const res = await carApiService.searchByIdDetail(id);
-    console.log('searchByIdDetail :', res.data);
+  async function searchCarDataByMdn(mdn: string) {
+    const res = await carApiService.searchOneByMdnDetail(mdn);
+    console.log('searchOneByMdn :', res.data);
     setSelectedCarData(res.data);
   }
 
-  async function deleteCarData(id: number) {
-    const res = await carApiService.deleteCar(id);
+  async function deleteCarData(mdn: string) {
+    const res = await carApiService.deleteCar(mdn);
     console.log('deleteCarData :', res.data);
     if(res.status === 200) {
-      carList = carList.filter((car) => car.id !== id);
+      carList = carList.filter((car) => car.mdn !== mdn);
       setCarList(carList);
     }
 
@@ -72,12 +72,12 @@ function CarTable({ carList, setCarList }: CarTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {carList.map((car) => (
-            <TableRow key={car.id}>
+          {carList.map((car, idx) => (
+            <TableRow key={idx}>
               <TableCell
                 onClick={() => {
                   setIsDetail(true);
-                  handleCellClick(car.id)
+                  handleCellClick(car.mdn)
                 }}
                 className="cursor-pointer hover:text-blue-600 hover:underline"
               >{car.mdn}</TableCell>
@@ -139,7 +139,7 @@ function CarTable({ carList, setCarList }: CarTableProps) {
 
       {selectedCarData && isDelete && (
         <Modal open={isDelete} onClose={() => setIsDelete(false)} title="삭제" description="차량을 삭제하시겠습니까?" confirmText="삭제" onConfirm={() => {
-          deleteCarData(selectedCarData.id!);
+          deleteCarData(selectedCarData.mdn!);
           setIsDelete(false);
         }} />  
       )}
