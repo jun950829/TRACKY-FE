@@ -6,8 +6,8 @@ import CarMain from "./pages/car/CarMain";
 import CarRegister from "./pages/car/CarRegister";
 import Emulator from "./pages/emulator/Emulator";
 import Main from "./pages/Main";
-import RentMain from "./pages/rent/rentMain";
 import RentRegister from "./pages/rent/RentRegister";
+import RentMain from "./pages/rent/RentMain";
 
 function Routing() {
   return (
