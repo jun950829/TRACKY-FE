@@ -32,7 +32,7 @@ export const carApiService = {
     return response.data;
   },
   sendCycleInfo: async (data: CycleInfoRequest) => {
-    const response = await api.post(`${carApiRoot}/cycle`, data);
+    const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
     return response.data;
   }
 };

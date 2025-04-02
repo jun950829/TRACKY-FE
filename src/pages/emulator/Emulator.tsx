@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
-import axios from "axios";
 
 import { buildCycleGpsList, toCycleInfoRequest } from "@/libs/utils/gpsUtils"; // 유틸 경로 맞춰주세요
+import carApiService from "@/libs/apis/carApi";
 
 function Emulator() {
   const [position, setPosition] = useState<GeolocationPosition | null>(null);
@@ -30,7 +30,6 @@ function Emulator() {
     intervalId.current = setInterval(() => {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          // console.log("위치 기록:", pos);
           setPosition(pos);
           locationBuffer.current.push(pos);
 
@@ -64,14 +63,11 @@ function Emulator() {
             console.log("📦 전송할 패킷:", cycleRequest);
 
             // 실제 전송
-            axios
-              .post("/api/locations", cycleRequest)
-              .then(() => {
-                console.log("✅ 위치 정보 전송 성공");
-              })
-              .catch((err) => {
-                console.error("🚨 위치 정보 전송 실패:", err);
-              });
+            carApiService.sendCycleInfo(cycleRequest).then(() => {
+              console.log("✅ 위치 정보 전송 성공");
+            }).catch((err) => {
+              console.error("🚨 위치 정보 전송 실패:", err)
+            });
           }
         },
         (err) => {
