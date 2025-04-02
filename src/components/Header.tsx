@@ -13,7 +13,7 @@ function Header() {
       <div className="flex items-center justify-between px-6 py-3">
         {/* left Logo & menus */}
         <div className="flex items-center space-x-10">
-          <div className="text-2xl font-bold text-blue-800">Tracky</div>
+          <div className="text-2xl font-bold text-blue-800" onClick={() => navigate("/")}>Tracky</div>
           <nav className="flex space-x-6 text-sm font-medium">
             {headerMenus.map((item) => {
                 const isActive = currentPath === item.path;
