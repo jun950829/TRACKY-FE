@@ -1,9 +1,9 @@
-import { CarCreateTypes, CarUpdateTypes } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes, CycleInfoRequest } from "@/constants/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
 
-// ✅ API 요청 함수들
+// Car API 요청 함수들
 export const carApiService = {
   getCars: async () => {
     const response = await api.get(`${carApiRoot}/all`);
@@ -31,6 +31,10 @@ export const carApiService = {
     const response = await api.post(`${carApiRoot}/create`, data);
     return response.data;
   },
+  sendCycleInfo: async (data: CycleInfoRequest) => {
+    const response = await api.post(`${process.env.VITE_HUB_API_HOST}/car/cycle`, data);
+    return response.data;
+  }
   updateCar: async (mdn: string, data: CarUpdateTypes) => {
     const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
     return response.data;
