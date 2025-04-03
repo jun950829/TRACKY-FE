@@ -31,6 +31,7 @@ export const carApiService = {
     const response = await api.post(`${carApiRoot}/create`, data);
     return response.data;
   },
+
   updateCar: async (mdn: string, data: CarUpdateTypes) => {
     const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
     return response.data;

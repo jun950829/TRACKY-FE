@@ -54,26 +54,21 @@ function RentRegister() {
     //console.log(data);
 
     
-    const formattedData = {
-        ...data,
-        rentStime: data.rentStime.replace("T", " "), // 타임스탬프로 바꾸기!
-        rentEtime: data.rentEtime.replace("T", " ")
-      };
-  
-      console.log("서버로 보낼 데이터:", formattedData);
+    const requestData = {
+      ...data
+    }
+
     
-    // try {
-    //   const res = await rentApiService.createRent(data);
-    //   if (res.status === 200) {
-    //     setIsSuccess(true);
-    //   } else {
-    //     setIsError(true);
-    //   }
-    // } catch (err) {
-    //   console.error("대여 등록 실패:", err);
-    //   setIsError(true);
-    // }
-  };
+    const rentData  = await rentApiService.createRent(requestData);
+
+    if(rentData.status === 200) {
+      setIsSuccess(true);
+    } else {
+      setIsError(true);
+    }
+    console.log("차량 등록 성공 데이터: ", rentData.data);
+  
+  }
 
 
   return (
