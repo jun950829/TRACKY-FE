@@ -45,7 +45,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    // reset,
     setValue,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -58,11 +58,6 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
       status: initialData.status,
     },
   });
-
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
 
   const submitHandler = (data: FormValues) => {
     sendUpdate(initialData.mdn, data);

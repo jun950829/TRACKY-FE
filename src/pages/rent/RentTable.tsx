@@ -1,4 +1,4 @@
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+// import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { RentDetailTypes } from "@/constants/types";
@@ -8,6 +8,7 @@ import RentDetailModal from "./RentDetailModal";
 import { formatDateTime } from "@/libs/utils/utils";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/custom/Modal";
+import RentUpdateModal from "./RentUpdateModal";
 
 type RentTableProps = {
     rentList: RentDetailTypes[];
@@ -37,7 +38,7 @@ function RentTable({ rentList, setRentList }: RentTableProps) {
       const handleCloseUpdateModal = () => {
         setSelectedRentData(null);
         setIsUpdate(false);
-        navigate("/rent");
+        navigate("/rents");
       };
 
       // 실제 api req,res
@@ -126,6 +127,15 @@ function RentTable({ rentList, setRentList }: RentTableProps) {
               rentData={selectedRentData}
             />
           )}
+
+          {/* 대여 수정 모달 */}
+          {isUpdate && selectedRentData && (
+            <RentUpdateModal
+                isOpen={true}
+                closeModal={handleCloseUpdateModal}
+                initialData={selectedRentData} 
+            />) 
+            }
 
       {selectedRentData && isDelete && (
         <Modal open={isDelete} onClose={() => setIsDelete(false)} title="삭제" description="대여를 삭제하시겠습니까?" confirmText="삭제" onConfirm={() => {

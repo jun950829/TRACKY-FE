@@ -27,7 +27,7 @@ export const rentApiService = {
         console.log('searchByRentUuidDetail rentUuid :', rentUuid);
         const response = await api.get(`${rentApiRoot}/search/${rentUuid}/detail`);
         return response.data;
-      },
+    },
 
     createRent: async (data: RentCreateTypes) => {
         const response = await api.post(`${rentApiRoot}/register`, data);
@@ -44,4 +44,5 @@ export const rentApiService = {
         return response.data;
     }
 };
- export default rentApiService;
+
+export default rentApiService;
