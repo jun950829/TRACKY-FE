@@ -42,8 +42,8 @@ export const carApiService = {
 
   // 에뮬레이터용
   sendCycleInfo: async (data: CycleInfoRequest) => {
-    const response = await api.post(`/api/car/cycle`, data);
-    console.log("📦 전송할 주소:", `/api/car/cycle`);
+    const response = await api.post(`/car/cycle`, data);
+    console.log("📦 전송할 주소:", `/car/cycle`);
     return response.data;
   },
 };

@@ -1,15 +1,16 @@
 import axios from "axios";
 
-// ✅ 기본 API 인스턴스 설정
+// 기본 API 인스턴스 설정
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "https://jsonplaceholder.typicode.com", // 기본 API URL
+  // baseURL: "http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082",
   timeout: 5000, // 요청 제한 시간 (5초)
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// ✅ 요청 인터셉터 설정 (필요한 경우)
+// 요청 인터셉터 설정 (필요한 경우)
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken"); // 토큰 가져오기 (예제)
@@ -21,7 +22,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ 응답 인터셉터 설정 (에러 핸들링)
+// 응답 인터셉터 설정 (에러 핸들링)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -30,7 +31,7 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ API 요청 함수들
+// API 요청 함수들
 export const apiService = {
   getUsers: async () => {
     const response = await api.get("/users");
