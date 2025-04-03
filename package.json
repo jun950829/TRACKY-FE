@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "format": "prettier --write --cache .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "kill": "node kill-port.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

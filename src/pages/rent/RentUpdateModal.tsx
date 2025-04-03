@@ -90,6 +90,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   const onConfirm = () => {
     setIsSuccess(false);
     closeModal();
+    // 천승준 - 임시 새로 고침
+    window.location.reload();
   }
 
   const onClose = () => {

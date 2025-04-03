@@ -32,6 +32,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
+    port: 5173,
+    strictPort: true
+
     // proxy: {
     //   "/api": {
     //     target: "http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082", // Spring 서버 주소
