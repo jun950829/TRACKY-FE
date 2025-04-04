@@ -34,6 +34,7 @@ export default function Dashboard() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isLoading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const isInitializedRef = useRef(false);
   
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
@@ -128,7 +129,13 @@ export default function Dashboard() {
     }
   ], [vehicles, reservations]);
 
-  // 아이템 너비 저장
+  // 무한 스크롤을 위한 표시 아이템 - 3세트 복사
+  const displayItems = useMemo(() => {
+    // 무한 스크롤 효과를 위해 3개 세트의 반복 아이템 생성
+    return [...carouselItems, ...carouselItems, ...carouselItems];
+  }, [carouselItems]);
+
+  // 아이템 너비 및 캐러셀 관련 상태
   const itemWidth = 260; // px 기준
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -145,66 +152,54 @@ export default function Dashboard() {
     }
   }, []);
 
-  // 연속적인 스크롤 애니메이션
+  // 캐러셀 애니메이션
   useEffect(() => {
     if (!carouselRef.current || !containerWidth) return;
     
-    const carouselElement = carouselRef.current;
-    let animationId: number;
-    const scrollSpeed = 1.5; // 스크롤 속도 
-    const totalWidth = carouselItems.length * itemWidth;
+    const carousel = carouselRef.current;
+    const singleSetWidth = carouselItems.length * itemWidth;
     
-    // 초기 스크롤 위치를 설정하기 전에 짧은 지연
-    let initialPositionSet = false;
-    const setInitialPosition = () => {
-      if (carouselElement && !initialPositionSet) {
-        carouselElement.scrollLeft = 0;
-        initialPositionSet = true;
+    // 초기 위치 설정 (중간 세트의 시작점) - 최초 한 번만 실행
+    if (!isInitializedRef.current) {
+      carousel.scrollLeft = singleSetWidth;
+      isInitializedRef.current = true;
+    }
+    
+    let lastTimestamp = 0;
+    let animationFrameId: number;
+    const speed = 0.2; // px per millisecond - 속도 감소
+    
+    const animate = (timestamp: number) => {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const elapsed = timestamp - lastTimestamp;
+      lastTimestamp = timestamp;
+      
+      if (!isPaused) {
+        // 현재 위치에서 속도에 따라 이동
+        carousel.scrollLeft += speed * elapsed;
+        
+        // 세 번째 세트 이후로 넘어가면 첫 번째 세트로 순간 이동 (사용자가 알아채지 못하게)
+        if (carousel.scrollLeft >= singleSetWidth * 2) {
+          carousel.scrollLeft = singleSetWidth;
+        }
+        
+        // 첫 번째 세트 이전으로 스크롤되면 두 번째 세트로 이동 (역방향 스크롤 지원)
+        if (carousel.scrollLeft < singleSetWidth) {
+          carousel.scrollLeft = singleSetWidth;
+        }
       }
+      
+      animationFrameId = requestAnimationFrame(animate);
     };
     
-    // DOM이 완전히 렌더링된 후 위치 설정
-    setTimeout(setInitialPosition, 100);
-    
-    const animate = () => {
-      if (!carouselElement) return;
-      
-      // 첫 실행시 초기 위치 설정 확인
-      if (!initialPositionSet) {
-        setInitialPosition();
-      }
-      
-      // 일시 정지 상태면 애니메이션만 계속 (위치는 업데이트하지 않음)
-      if (isPaused) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      // 현재 스크롤 위치 계산 및 다음 위치 설정
-      const currentScrollLeft = carouselElement.scrollLeft;
-      const nextScrollPosition = currentScrollLeft + scrollSpeed;
-      
-      // 첫 번째 세트의 아이템이 절반 이상 지나갔을 때
-      // 첫번째 세트의 모든 항목이 보이지 않게 되면 (첫 번째 세트가 화면에서 완전히 사라지면)
-      if (nextScrollPosition >= totalWidth) {
-        // 첫 번째 세트의 끝에 도달했을 때 첫 번째 세트의 시작 부분으로 순간 이동 (스크롤 위치 재설정)
-        carouselElement.scrollLeft = 0;
-      } else {
-        // 일반적인 스크롤 진행
-        carouselElement.scrollLeft = nextScrollPosition;
-      }
-      
-      animationId = requestAnimationFrame(animate);
-    };
-    
-    animationId = requestAnimationFrame(animate);
+    animationFrameId = requestAnimationFrame(animate);
     
     return () => {
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animationFrameId);
     };
   }, [carouselItems.length, isPaused, containerWidth, itemWidth]);
 
-  // 마우스가 캐러셀 위에 있을 때 애니메이션 일시 중지
+  // 마우스 이벤트 핸들러 - 위치 초기화 없이 단순히 일시 정지만 처리
   const handleMouseEnter = () => {
     setIsPaused(true);
   };
@@ -248,7 +243,7 @@ export default function Dashboard() {
               />
             </div>
             
-            {/* Carousel Stats - 지도 밑으로 이동 */}
+            {/* Carousel Stats */}
             <div 
               ref={containerRef}
               className="relative overflow-hidden" 
@@ -257,22 +252,16 @@ export default function Dashboard() {
             >
               <div 
                 ref={carouselRef} 
-                className="flex overflow-x-auto pb-1 px-1 -mx-1 hide-scrollbar no-scroll-snap"
+                className="flex overflow-x-hidden pb-1 px-1 -mx-1"
                 style={{ 
                   scrollbarWidth: 'none', 
-                  msOverflowStyle: 'none',
-                  WebkitOverflowScrolling: 'touch',
-                  scrollBehavior: 'auto'
+                  msOverflowStyle: 'none'
                 }}
               >
-                {/* 무한 스크롤을 위해 동일한 아이템 두 세트만 렌더링:
-                    1. 첫 번째 세트: 기본 보기
-                    2. 두 번째 세트: 순환용
-                */}
-                {[...carouselItems, ...carouselItems, ...carouselItems].map((item, index) => (
+                {displayItems.map((item, index) => (
                   <div 
                     key={`${item.id}-${index}`} 
-                    className="min-w-[220px] sm:min-w-[260px] pr-3 select-none"
+                    className="min-w-[260px] pr-3 select-none"
                     style={{ flex: '0 0 auto' }}
                   >
                     <Card className={`border-2 ${item.color} h-full`}>
