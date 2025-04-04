@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import L, { map } from 'leaflet';
 
 // 기본 Leaflet 아이콘에 대한 문제 해결 (기본 아이콘 이미지 경로 문제)
 // 실제 배포 시에는 public 폴더에 이미지를 추가하고 경로를 설정해야 합니다
@@ -81,7 +81,6 @@ function GpsMap({ positions, currentPosition, isTracking }: GpsMapProps) {
         center={mapCenter}
         zoom={16}
         style={{ height: '100%', width: '100%' }}
-        whenCreated={(map) => { mapRef.current = map }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
