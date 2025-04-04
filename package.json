@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "format": "prettier --write --cache .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "kill": "node kill-port.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
@@ -24,6 +25,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.6.3",
+    "jwt-decode": "^4.0.0",
     "path-browserify": "^1.0.1",
     "react": "^19.0.0",
     "react-day-picker": "^8.10.1",

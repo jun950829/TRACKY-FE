@@ -2,7 +2,7 @@ import React from "react";
 
 type ButtonProps = {
   label: string;
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "danger" | "outline";
   size?: "sm" | "md" | "lg";
   onClick?: () => void;
 };

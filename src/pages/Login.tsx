@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { lloginApi } from "../libs/apis/loginApi";
+import { useAuthStore } from "../stores/useAuthStore";
+import {jwtDecode} from "jwt-decode";
 
 // 유효성 검사용 스키마
 const schema = yup.object().shape({
@@ -21,9 +23,18 @@ type FormValues = {
   pwd: string;
 };
 
+type DecodedToken = {
+  sub: string;
+  role: string;
+  bizName: string;
+};
+
+
 export default function Login() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+  const setToken = useAuthStore((state) => state.setToken);
+  const setMember = useAuthStore((state) => state.setMember);
 
   const {
     register,
@@ -37,7 +48,20 @@ export default function Login() {
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await lloginApi.login(data);
-      localStorage.setItem("accessToken", response.token);
+      const token = response.token;
+      const decoded = jwtDecode<DecodedToken>(token);
+
+      // 로그인 정보 저장
+      setToken(token);
+      setMember({
+        memberId: decoded.sub,
+        role: decoded.role,
+        bizName: decoded.bizName,
+      });
+
+      // 새로고침 유지용 localStorage 저장
+      localStorage.setItem("accessToken", token);
+      
       navigate("/main");
     } catch (error: any) {
       console.error("Login error: ", error);
@@ -47,7 +71,7 @@ export default function Login() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)} // 제출 시 onSubmit 호출
+      onSubmit={handleSubmit(onSubmit)}
       className="max-w-md mx-auto p-4 border rounded shadow"
     >
       <div>
@@ -62,7 +86,11 @@ export default function Login() {
         {errors.pwd && <p className="text-red-500">{errors.pwd.message}</p>}
       </div>
 
-      <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Sign Up</button>
+      {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+
+      <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+        Login
+      </button>
     </form>
   );
 }

@@ -88,6 +88,8 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
   const onConfirm = () => {
     setIsSuccess(false);
     closeModal();
+    // 천승준 - 임시 새로 고침
+    window.location.reload();
   }
 
   const onClose = () => {
