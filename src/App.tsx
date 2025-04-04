@@ -2,10 +2,13 @@ import Header from "./components/Header";
 import Routing from "./Routing";
 
 function App() {
+
   return (
-    <div className="w-full min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background flex flex-col antialiased">
       <Header />
-      <Routing />
+      <main className="flex-1 pb-12">
+        <Routing />
+      </main>
     </div>
   );
 }

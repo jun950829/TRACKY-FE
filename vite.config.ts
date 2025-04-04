@@ -26,8 +26,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      "/hub": {
+        target: "http://tracky-hub-514597513.ap-northeast-2.elb.amazonaws.com:80", // ELB 주소
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hub/, ""),
+      },
       "/api": {
-        target: "http://localhost:8080/api", // Spring 서버 주소
+        target: "http://localhost:8080/api",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
