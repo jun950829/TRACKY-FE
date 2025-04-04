@@ -73,7 +73,7 @@ export default function Login() {
       localStorage.setItem("memberInfo", JSON.stringify(member));
       localStorage.setItem("accessToken", token);
       
-      navigate("/main");
+      navigate("/dashboard");
     } catch (error: unknown) {
       console.error("Login error: ", error);
       setErrorMessage("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
@@ -145,7 +145,7 @@ export default function Login() {
             
             <div className="mt-4 text-center text-sm text-muted-foreground">
               <span>계정이 없으신가요? </span>
-              <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/about")}>
+              <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/register")}>
                 회원가입
               </Button>
             </div>
