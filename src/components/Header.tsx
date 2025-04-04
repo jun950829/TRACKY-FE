@@ -2,9 +2,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { headerMenus } from "../constants/menus";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useLogout } from "@/libs/utils/useLogout";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { CustomButton } from "@/components/custom/CustomButton";
 
 function Header() {
   const navigate = useNavigate();
@@ -88,25 +88,25 @@ function Header() {
           {token ? (
             <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
               <span className="text-sm text-white">{member?.bizName} 님</span>
-              <Button
+              <CustomButton
                 variant="default"
                 size="sm"
                 onClick={logout}
                 className="font-medium bg-foreground text-background hover:bg-foreground/90"
                 >
                 로그아웃
-              </Button> 
+              </CustomButton> 
             </div>
           ) : (
             <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
-              <Button
+              <CustomButton
                 variant="default"
                 size="sm"
                 onClick={() => navigate("/login")}
                 className="font-medium bg-foreground text-background hover:bg-foreground/90"
                 >
                 로그인
-              </Button> 
+              </CustomButton> 
             </div>
           )}
           </div>
@@ -151,7 +151,7 @@ function Header() {
             </nav>
             <div className="pt-2 border-t border-foreground/10">
               {token ? (
-                <Button
+                <CustomButton
                   variant="default"
                   size="sm"
                   className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
@@ -161,9 +161,9 @@ function Header() {
                   }}
                 >
                   로그아웃
-                </Button>
+                </CustomButton>
               ) : (
-                <Button
+                <CustomButton
                   variant="default"
                   size="sm"
                   className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
@@ -173,7 +173,7 @@ function Header() {
                   }}
                 >
                   로그인
-                </Button>
+                </CustomButton>
               )}
             </div>
           </div>

@@ -1,5 +1,4 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { CarDetailTypes,  } from "@/constants/types";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "@/components/custom/Modal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { CustomButton } from "@/components/custom/CustomButton";
 
 // const statusColor = {
 //   '운행중': 'bg-green-100 text-green-800',
@@ -106,30 +106,30 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
                 <TableCell>{car.carPlate}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
-                    <Button 
-                      variant="outline" 
+                    <CustomButton 
+                      variant="edit" 
                       size="sm" 
-                      className="text-blue-600 h-8"
+                      className="h-8"
+                      icon={<Edit className="h-4 w-4" />}
                       onClick={() => {
                         setIsUpdate(true);
                         setSelectedCarData(car);
                       }}
                     >
-                      <Edit className="h-4 w-4 mr-1" />
                       수정
-                    </Button>
-                    <Button 
-                      variant="outline" 
+                    </CustomButton>
+                    <CustomButton 
+                      variant="destructive" 
                       size="sm" 
-                      className="text-red-600 h-8"
+                      className="h-8"
+                      icon={<Trash className="h-4 w-4" />}
                       onClick={() => {
                         setIsDelete(true);
                         setSelectedCarData(car);
                       }}
                     >
-                      <Trash className="h-4 w-4 mr-1" />
                       삭제
-                    </Button>
+                    </CustomButton>
                   </div>
                 </TableCell>
               </TableRow>
@@ -157,7 +157,10 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
                   <p className="text-gray-500 text-sm">{car.carType}</p>
                 </div>
                 <div className="relative">
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0"
+                  <CustomButton 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 p-0"
                     onClick={() => {
                       // 간소화된 드롭다운 대신 상세 페이지 표시
                       setIsDetail(true);
@@ -165,7 +168,7 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
                     }}
                   >
                     <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  </CustomButton>
                 </div>
               </div>
               <div className="mt-2 text-sm">
@@ -175,30 +178,30 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
-                <Button 
-                  variant="outline" 
+                <CustomButton 
+                  variant="edit" 
                   size="sm" 
-                  className="flex-1 text-blue-600 h-8"
+                  className="flex-1 h-8"
+                  icon={<Edit className="h-4 w-4" />}
                   onClick={() => {
                     setIsUpdate(true);
                     setSelectedCarData(car);
                   }}
                 >
-                  <Edit className="h-4 w-4 mr-1" />
                   수정
-                </Button>
-                <Button 
-                  variant="outline" 
+                </CustomButton>
+                <CustomButton 
+                  variant="destructive" 
                   size="sm" 
-                  className="flex-1 text-red-600 h-8"
+                  className="flex-1 h-8"
+                  icon={<Trash className="h-4 w-4" />}
                   onClick={() => {
                     setIsDelete(true);
                     setSelectedCarData(car);
                   }}
                 >
-                  <Trash className="h-4 w-4 mr-1" />
                   삭제
-                </Button>
+                </CustomButton>
               </div>
             </CardContent>
           </Card>
@@ -214,7 +217,7 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
               <PaginationPrevious href="#" />
             </PaginationItem>
             <PaginationItem>
-              <Button variant="outline" size="sm">1</Button>
+              <CustomButton variant="outline" size="sm">1</CustomButton>
             </PaginationItem>
             <PaginationItem>
               <PaginationNext href="#" />

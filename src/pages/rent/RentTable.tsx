@@ -1,6 +1,5 @@
 // import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { RentDetailTypes } from "@/constants/types";
 import rentApiService from "@/libs/apis/rentsApi";
 import { useState } from "react";
@@ -12,6 +11,7 @@ import RentUpdateModal from "./RentUpdateModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { CustomButton } from "@/components/custom/CustomButton";
 
 type RentTableProps = {
     rentList: RentDetailTypes[];
@@ -113,30 +113,30 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button 
-                          variant="outline" 
+                        <CustomButton 
+                          variant="edit" 
                           size="sm" 
-                          className="text-blue-600 h-8"
+                          className="h-8"
+                          icon={<Edit className="h-4 w-4" />}
                           onClick={() => {
                             setIsUpdate(true);
                             setSelectedRentData(rent);
                           }}
                         >
-                          <Edit className="h-4 w-4 mr-1" />
                           수정
-                        </Button>
-                        <Button 
-                          variant="outline" 
+                        </CustomButton>
+                        <CustomButton 
+                          variant="destructive" 
                           size="sm" 
-                          className="text-red-600 h-8"
+                          className="h-8"
+                          icon={<Trash className="h-4 w-4" />}
                           onClick={() => {
                             setIsDelete(true);
                             setSelectedRentData(rent);
                           }}
                         >
-                          <Trash className="h-4 w-4 mr-1" />
                           삭제
-                        </Button>
+                        </CustomButton>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -173,9 +173,9 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                       <p className="text-gray-500 text-sm">차량: {rent.mdn}</p>
                     </div>
                     <div className="relative">
-                      <Button 
+                      <CustomButton 
                         variant="ghost" 
-                        size="sm" 
+                        size="icon" 
                         className="h-8 w-8 p-0"
                         onClick={() => {
                           setIsDetail(true);
@@ -183,7 +183,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                         }}
                       >
                         <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                      </CustomButton>
                     </div>
                   </div>
                   <div className="mt-2 text-sm">
@@ -193,30 +193,30 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button 
-                      variant="outline" 
+                    <CustomButton 
+                      variant="edit" 
                       size="sm" 
-                      className="flex-1 text-blue-600 h-8"
+                      className="flex-1 h-8"
+                      icon={<Edit className="h-4 w-4" />}
                       onClick={() => {
                         setIsUpdate(true);
                         setSelectedRentData(rent);
                       }}
                     >
-                      <Edit className="h-4 w-4 mr-1" />
                       수정
-                    </Button>
-                    <Button 
-                      variant="outline" 
+                    </CustomButton>
+                    <CustomButton 
+                      variant="destructive" 
                       size="sm" 
-                      className="flex-1 text-red-600 h-8"
+                      className="flex-1 h-8"
+                      icon={<Trash className="h-4 w-4" />}
                       onClick={() => {
                         setIsDelete(true);
                         setSelectedRentData(rent);
                       }}
                     >
-                      <Trash className="h-4 w-4 mr-1" />
                       삭제
-                    </Button>
+                    </CustomButton>
                   </div>
                 </CardContent>
               </Card>
@@ -232,7 +232,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                   <PaginationPrevious href="#" />
                 </PaginationItem>
                 <PaginationItem>
-                  <Button variant="outline" size="sm">1</Button>
+                  <CustomButton variant="outline" size="sm">1</CustomButton>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationNext href="#" />
