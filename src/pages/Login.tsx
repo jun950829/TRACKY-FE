@@ -33,10 +33,8 @@ type DecodedToken = {
 export default function Login() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
-
-    // ✅ Zustand 함수 가져오기
-    const setToken = useAuthStore((state) => state.setToken);
-    const setMember = useAuthStore((state) => state.setMember);
+  const setToken = useAuthStore((state) => state.setToken);
+  const setMember = useAuthStore((state) => state.setMember);
 
   const {
     register,
@@ -51,11 +49,9 @@ export default function Login() {
     try {
       const response = await lloginApi.login(data);
       const token = response.token;
-
-      // ✅ JWT 디코딩해서 사용자 정보 추출
       const decoded = jwtDecode<DecodedToken>(token);
 
-      // ✅ Zustand 상태 저장
+      // 로그인 정보 저장
       setToken(token);
       setMember({
         memberId: decoded.sub,
@@ -65,8 +61,7 @@ export default function Login() {
 
       // 새로고침 유지용 localStorage 저장
       localStorage.setItem("accessToken", token);
-
-      // 메인 페이지 이동
+      
       navigate("/main");
     } catch (error: any) {
       console.error("Login error: ", error);
