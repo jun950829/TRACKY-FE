@@ -37,7 +37,7 @@ function Header() {
         {/* Logo */}
         <div 
           className="flex items-center gap-2 cursor-pointer px-4" 
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")}
         >
           <svg 
             width="24" 

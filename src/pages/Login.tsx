@@ -73,7 +73,7 @@ export default function Login() {
       localStorage.setItem("memberInfo", JSON.stringify(member));
       localStorage.setItem("accessToken", token);
       
-      navigate("/main");
+      navigate("/dashboard");
     } catch (error: unknown) {
       console.error("Login error: ", error);
       setErrorMessage("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
