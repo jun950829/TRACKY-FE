@@ -8,6 +8,8 @@ import carApiService from "@/libs/apis/carApi";
 import CarUpdateModal from "./CarUpdateModal";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/custom/Modal";
+import { Card, CardContent } from "@/components/ui/card";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 // const statusColor = {
 //   '운행중': 'bg-green-100 text-green-800',
@@ -17,16 +19,15 @@ import Modal from "@/components/custom/Modal";
 type CarTableProps = {
   carList: CarDetailTypes[];
   setCarList: (carList: CarDetailTypes[]) => void;
+  isLoading?: boolean;
 }
 
-
-function CarTable({ carList, setCarList }: CarTableProps) {
+function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
   const [selectedCarData, setSelectedCarData] = useState<CarDetailTypes | null>(null);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isDetail, setIsDetail] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const navigate = useNavigate();
-
 
   const handleCellClick = async (mdn: string) => {
     const carData = await searchCarDataByMdn(mdn);
@@ -60,47 +61,153 @@ function CarTable({ carList, setCarList }: CarTableProps) {
     alert('삭제되었습니다.');
   }
 
-  return (
-    <div className="w-full h-full bg-white shadow-sm p-4">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>차량 번호</TableHead>
-            <TableHead>차량 모델</TableHead>
-            <TableHead>차량 번호판</TableHead>
-            <TableHead className="text-right">관리</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {carList.map((car, idx) => (
-            <TableRow key={idx}>
-              <TableCell
-                onClick={() => {
-                  setIsDetail(true);
-                  handleCellClick(car.mdn)
-                }}
-                className="cursor-pointer hover:text-blue-600 hover:underline"
-              >{car.mdn}</TableCell>
-              <TableCell>{car.carType}</TableCell>
-              <TableCell>{car.carPlate}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button variant="link" className="text-blue-600 px-0" onClick={() => {
-                  setIsUpdate(true);
-                  setSelectedCarData(car);
-                }}>수정</Button>
-                <Button variant="link" className="text-red-600 px-0" onClick={() => {
-                  setIsDelete(true);
-                  setSelectedCarData(car);
-                }}>삭제</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+  // 로딩 상태 표시
+  if (isLoading) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-500">데이터를 불러오는 중입니다...</p>
+      </div>
+    );
+  }
 
-      {/* Pagination */}
-      <div className="mt-4 flex justify-between text-sm text-gray-600">
-        <div>총 20건 중 1 - 10 표시</div>
+  // 데이터 없음 표시
+  if (carList.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-gray-500">차량 정보가 없습니다.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full">
+      {/* PC 화면용 테이블 */}
+      <div className="hidden md:block overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>차량 번호</TableHead>
+              <TableHead>차량 모델</TableHead>
+              <TableHead>차량 번호판</TableHead>
+              <TableHead className="text-right">관리</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {carList.map((car, idx) => (
+              <TableRow key={idx} className="hover:bg-gray-50">
+                <TableCell
+                  onClick={() => {
+                    setIsDetail(true);
+                    handleCellClick(car.mdn)
+                  }}
+                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium"
+                >{car.mdn}</TableCell>
+                <TableCell>{car.carType}</TableCell>
+                <TableCell>{car.carPlate}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex gap-2 justify-end">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-blue-600 h-8"
+                      onClick={() => {
+                        setIsUpdate(true);
+                        setSelectedCarData(car);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      수정
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-red-600 h-8"
+                      onClick={() => {
+                        setIsDelete(true);
+                        setSelectedCarData(car);
+                      }}
+                    >
+                      <Trash className="h-4 w-4 mr-1" />
+                      삭제
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* 모바일 화면용 카드 */}
+      <div className="md:hidden space-y-4">
+        {carList.map((car, idx) => (
+          <Card key={idx} className="overflow-hidden">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div className="space-y-1">
+                  <h3 
+                    className="font-semibold text-lg cursor-pointer hover:text-blue-600"
+                    onClick={() => {
+                      setIsDetail(true);
+                      handleCellClick(car.mdn);
+                    }}
+                  >
+                    {car.mdn}
+                  </h3>
+                  <p className="text-gray-500 text-sm">{car.carType}</p>
+                </div>
+                <div className="relative">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0"
+                    onClick={() => {
+                      // 간소화된 드롭다운 대신 상세 페이지 표시
+                      setIsDetail(true);
+                      handleCellClick(car.mdn);
+                    }}
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-2 text-sm">
+                <div className="flex justify-between py-1 border-b">
+                  <span className="text-gray-500">번호판</span>
+                  <span>{car.carPlate}</span>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 text-blue-600 h-8"
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setSelectedCarData(car);
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  수정
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 text-red-600 h-8"
+                  onClick={() => {
+                    setIsDelete(true);
+                    setSelectedCarData(car);
+                  }}
+                >
+                  <Trash className="h-4 w-4 mr-1" />
+                  삭제
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Pagination - 모바일/PC 공통 */}
+      <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
+        <div className="mb-4 sm:mb-0 w-[80px]">총 {carList.length}건</div>
         <Pagination>
           <PaginationContent>
             <PaginationItem>
@@ -108,9 +215,6 @@ function CarTable({ carList, setCarList }: CarTableProps) {
             </PaginationItem>
             <PaginationItem>
               <Button variant="outline" size="sm">1</Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button variant="ghost" size="sm">2</Button>
             </PaginationItem>
             <PaginationItem>
               <PaginationNext href="#" />

@@ -1,6 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { headerMenus } from "../constants/menus";
-import Btn from "./custom/Btn";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useLogout } from "@/libs/utils/useLogout";
 import { Button } from "@/components/ui/button";
@@ -124,7 +123,7 @@ function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {token ?
+      {token && mobileMenuOpen ? (
         <div className={`md:hidden border-t border-foreground/10 ${
           scrolled 
             ? "bg-background/70 backdrop-blur-md" 
@@ -151,21 +150,35 @@ function Header() {
               })}
             </nav>
             <div className="pt-2 border-t border-foreground/10">
-              <Button
-                variant="default"
-                size="sm"
-                className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
-                onClick={() => {
-                  navigate("/login");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                로그인
-              </Button>
+              {token ? (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  로그아웃
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  onClick={() => {
+                    navigate("/login");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  로그인
+                </Button>
+              )}
             </div>
           </div>
         </div>
-      : null}
+      ) : null}
     </header>
   );
 }
