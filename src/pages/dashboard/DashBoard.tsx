@@ -1,10 +1,10 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
 import ReservationCard from "@/pages/dashboard/ReservationCard";
 import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
 import { Card, CardContent } from "@/components/ui/card";
-import { Car, Calendar, Activity } from "lucide-react";
+import { Car, Calendar, Activity, Clock } from "lucide-react";
 
 // Define vehicle data interface
 interface Vehicle {
@@ -31,9 +31,9 @@ interface Reservation {
 }
 
 export default function Dashboard() {
-  const [carouselIndex, setCarouselIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isLoading] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
@@ -106,6 +106,13 @@ export default function Dashboard() {
       color: 'bg-purple-50 border-purple-200'
     },
     {
+      id: 'total-usage-time',
+      icon: <Clock className="h-4 w-4 text-amber-500" />,
+      title: '누적 이용시간',
+      value: `${Math.floor(vehicles.length * Math.random() * 24 * 15).toLocaleString()}시간`,
+      color: 'bg-amber-50 border-amber-200'
+    },
+    {
       id: 'total-rents',
       icon: <Calendar className="h-4 w-4 text-indigo-500" />,
       title: '총 렌트 수',
@@ -121,69 +128,89 @@ export default function Dashboard() {
     }
   ], [vehicles, reservations]);
 
-  // Carousel controls
-  const scrollCarousel = (direction: 'left' | 'right' | number) => {
-    if (!carouselRef.current) return;
-    
-    if (typeof direction === 'number') {
-      // 인덱스로 직접 이동
-      setCarouselIndex(direction);
-      carouselRef.current.scrollTo({
-        left: direction * 260,
-        behavior: 'smooth'
-      });
-      return;
+  // 아이템 너비 저장
+  const itemWidth = 260; // px 기준
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  
+  useEffect(() => {
+    if (containerRef.current) {
+      const updateWidth = () => {
+        setContainerWidth(containerRef.current?.offsetWidth || 0);
+      };
+      
+      updateWidth();
+      window.addEventListener('resize', updateWidth);
+      return () => window.removeEventListener('resize', updateWidth);
     }
+  }, []);
+
+  // 연속적인 스크롤 애니메이션
+  useEffect(() => {
+    if (!carouselRef.current || !containerWidth) return;
     
-    if (direction === 'left') {
-      setCarouselIndex(prev => Math.max(0, prev - 1));
-    } else {
-      setCarouselIndex(prev => Math.min(carouselItems.length - 1, prev + 1));
-    }
+    const carouselElement = carouselRef.current;
+    let animationId: number;
+    const scrollSpeed = 1.5; // 스크롤 속도 
+    const totalWidth = carouselItems.length * itemWidth;
     
-    carouselRef.current.scrollTo({
-      left: direction === 'left' 
-        ? Math.max(0, carouselRef.current.scrollLeft - 260) 
-        : Math.min(
-            carouselRef.current.scrollWidth - carouselRef.current.clientWidth,
-            carouselRef.current.scrollLeft + 260
-          ),
-      behavior: 'smooth'
-    });
+    // 초기 스크롤 위치를 설정하기 전에 짧은 지연
+    let initialPositionSet = false;
+    const setInitialPosition = () => {
+      if (carouselElement && !initialPositionSet) {
+        carouselElement.scrollLeft = 0;
+        initialPositionSet = true;
+      }
+    };
+    
+    // DOM이 완전히 렌더링된 후 위치 설정
+    setTimeout(setInitialPosition, 100);
+    
+    const animate = () => {
+      if (!carouselElement) return;
+      
+      // 첫 실행시 초기 위치 설정 확인
+      if (!initialPositionSet) {
+        setInitialPosition();
+      }
+      
+      // 일시 정지 상태면 애니메이션만 계속 (위치는 업데이트하지 않음)
+      if (isPaused) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      
+      // 현재 스크롤 위치 계산 및 다음 위치 설정
+      const currentScrollLeft = carouselElement.scrollLeft;
+      const nextScrollPosition = currentScrollLeft + scrollSpeed;
+      
+      // 첫 번째 세트의 아이템이 절반 이상 지나갔을 때
+      // 첫번째 세트의 모든 항목이 보이지 않게 되면 (첫 번째 세트가 화면에서 완전히 사라지면)
+      if (nextScrollPosition >= totalWidth) {
+        // 첫 번째 세트의 끝에 도달했을 때 첫 번째 세트의 시작 부분으로 순간 이동 (스크롤 위치 재설정)
+        carouselElement.scrollLeft = 0;
+      } else {
+        // 일반적인 스크롤 진행
+        carouselElement.scrollLeft = nextScrollPosition;
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, [carouselItems.length, isPaused, containerWidth, itemWidth]);
+
+  // 마우스가 캐러셀 위에 있을 때 애니메이션 일시 중지
+  const handleMouseEnter = () => {
+    setIsPaused(true);
   };
 
-  // 마우스 드래그로 슬라이딩 처리
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
-    
-    e.stopPropagation(); // 이벤트 전파 중단
-    setIsDragging(true);
-    setStartX(e.pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
-  };
-
-  const handleMouseUp = (e: React.MouseEvent) => {
-    e.stopPropagation(); // 이벤트 전파 중단
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !carouselRef.current) return;
-    
-    e.stopPropagation(); // 이벤트 전파 중단
-    e.preventDefault();
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // 스크롤 속도 조절
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-    
-    // 현재 인덱스 업데이트
-    const itemWidth = 260; // 슬라이드 아이템 너비
-    const newIndex = Math.round(carouselRef.current.scrollLeft / itemWidth);
-    setCarouselIndex(Math.max(0, Math.min(carouselItems.length - 1, newIndex)));
+  const handleMouseLeave = () => {
+    setIsPaused(false);
   };
 
   return (
@@ -211,72 +238,58 @@ export default function Dashboard() {
         
         {/* Main Content - Map and Right Column */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          {/* 지도 컴포넌트 */}
+          {/* 지도 컴포넌트 영역 */}
           <div className="lg:col-span-3 flex flex-col">
-            <div className="mb-6">
+            {/* 지도 컴포넌트 */}
+            <div className="mb-6 relative">
               <VehicleMap 
                 vehicles={vehicles} 
                 isLoading={isLoading} 
               />
             </div>
             
-            {/* 지도 아래 UI 영역 - 이벤트 전파 방지 */}
+            {/* Carousel Stats - 지도 밑으로 이동 */}
             <div 
-              className="relative z-10" 
-              onClick={(e) => e.stopPropagation()} 
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              style={{ pointerEvents: 'auto' }}
+              ref={containerRef}
+              className="relative overflow-hidden" 
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
-              {/* Carousel Stats - 지도 밑으로 이동 */}
-              <div className="relative">
-                <div 
-                  ref={carouselRef} 
-                  className="flex overflow-x-auto pb-1 px-1 -mx-1 snap-x cursor-grab active:cursor-grabbing hide-scrollbar"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                  onMouseDown={handleMouseDown}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseUp}
-                  onMouseMove={handleMouseMove}
-                >
-                  {carouselItems.map((item) => (
-                    <div 
-                      key={item.id} 
-                      className="min-w-[220px] sm:min-w-[260px] snap-center pr-3 select-none"
-                      onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 중단
-                    >
-                      <Card className={`border-2 ${item.color} h-full`}>
-                        <CardContent className="p-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                              {item.icon}
-                            </div>
-                            <div>
-                              <div className="text-xs text-zinc-500">{item.title}</div>
-                              <div className="text-lg font-semibold">{isLoading ? '-' : item.value}</div>
-                            </div>
+              <div 
+                ref={carouselRef} 
+                className="flex overflow-x-auto pb-1 px-1 -mx-1 hide-scrollbar no-scroll-snap"
+                style={{ 
+                  scrollbarWidth: 'none', 
+                  msOverflowStyle: 'none',
+                  WebkitOverflowScrolling: 'touch',
+                  scrollBehavior: 'auto'
+                }}
+              >
+                {/* 무한 스크롤을 위해 동일한 아이템 두 세트만 렌더링:
+                    1. 첫 번째 세트: 기본 보기
+                    2. 두 번째 세트: 순환용
+                */}
+                {[...carouselItems, ...carouselItems, ...carouselItems].map((item, index) => (
+                  <div 
+                    key={`${item.id}-${index}`} 
+                    className="min-w-[220px] sm:min-w-[260px] pr-3 select-none"
+                    style={{ flex: '0 0 auto' }}
+                  >
+                    <Card className={`border-2 ${item.color} h-full`}>
+                      <CardContent className="p-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            {item.icon}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* 슬라이드 인디케이터 */}
-                <div className="flex justify-center mt-2 gap-1.5">
-                  {carouselItems.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={(e) => {
-                        e.stopPropagation(); // 버튼 클릭 이벤트 전파 중단
-                        scrollCarousel(idx);
-                      }}
-                      className={`w-1.5 h-1.5 rounded-full ${
-                        idx === carouselIndex ? 'bg-primary' : 'bg-zinc-300'
-                      }`}
-                    />
-                  ))}
-                </div>
+                          <div>
+                            <div className="text-xs text-zinc-500">{item.title}</div>
+                            <div className="text-lg font-semibold">{isLoading ? '-' : item.value}</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

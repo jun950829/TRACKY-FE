@@ -1,13 +1,9 @@
 import React, { useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Car, Navigation } from "lucide-react";
 import L from "leaflet";
 
-// Make sure to import leaflet CSS in your main CSS file or include:
-// import 'leaflet/dist/leaflet.css';
-
-// Define vehicle interface
 interface Vehicle {
   mdn: string;
   carNumber: string;
@@ -24,13 +20,6 @@ interface Vehicle {
 interface VehicleMapProps {
   vehicles: Vehicle[];
   isLoading: boolean;
-}
-
-// Auto centering map component
-function MapCenterUpdater({ position }: { position: [number, number] }) {
-  const map = useMap();
-  map.setView(position, map.getZoom());
-  return null;
 }
 
 export default function VehicleMap({ vehicles, isLoading }: VehicleMapProps) {
@@ -134,14 +123,17 @@ export default function VehicleMap({ vehicles, isLoading }: VehicleMapProps) {
         ) : (
           <div className="h-[400px] sm:h-[450px]">
             <div 
-              className="h-full w-full"
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
+              className="h-full w-full relative isolate"
+              style={{ isolation: 'isolate' }}
             >
               <MapContainer
                 center={center}
                 zoom={11}
-                style={{ height: "100%", width: "100%" }}
+                style={{ 
+                  height: "100%", 
+                  width: "100%",
+                  zIndex: 1
+                }}
                 ref={(map) => {
                   if (map) {
                     mapRef.current = map;
@@ -191,7 +183,6 @@ export default function VehicleMap({ vehicles, isLoading }: VehicleMapProps) {
                     </Marker>
                   ))}
                 
-                <MapCenterUpdater position={center} />
               </MapContainer>
             </div>
           </div>

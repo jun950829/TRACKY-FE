@@ -6,6 +6,21 @@
   display: none;
 }
 
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* 부드러운 스크롤 애니메이션을 위한 스타일 */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+.no-scroll-snap {
+  scroll-snap-type: none;
+  -webkit-scroll-snap-type: none;
+}
+
 @layer base {
   :root {
     /* Modern clean color palette with whites and blacks */

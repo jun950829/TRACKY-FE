@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, LocateFixed, Car, Flag, RotateCcw } from "lucide-react";
 
@@ -43,13 +43,14 @@ export default function RecentActivity({ vehicles, isLoading }: RecentActivityPr
     });
     
     // Generate activity logs based on vehicle status
-    sortedVehicles.slice(0, 10).forEach((vehicle) => {
-      const minutesAgo = Math.floor(Math.random() * 60);
+    sortedVehicles.slice(0, 10).forEach((vehicle, index) => {
+      // 랜덤 시간 대신 일관된 시간 사용 (인덱스에 기반)
+      const minutesAgo = (index + 1) * 5; // 5분, 10분, 15분... 간격으로 설정
       const timestamp = new Date(now.getTime() - minutesAgo * 60000);
       
       if (vehicle.status === "운행중") {
-        // For active vehicles, add a start event or location update
-        if (Math.random() > 0.5) {
+        // Math.random() 호출 제거하고 index를 이용해 결정
+        if (index % 2 === 0) {
           logs.push({
             id: logs.length + 1,
             type: "start",
@@ -93,7 +94,8 @@ export default function RecentActivity({ vehicles, isLoading }: RecentActivityPr
     return logs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   };
   
-  const logs = generateActivityLogs();
+  // useMemo로 로그 생성 결과 캐싱
+  const logs = useMemo(() => generateActivityLogs(), [vehicles]);
   
   // Format timestamp to readable format
   const formatTime = (date: Date) => {
