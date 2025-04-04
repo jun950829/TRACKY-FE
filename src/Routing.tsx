@@ -16,6 +16,7 @@ const publicRoutes = [
   { path: "/", element: <Home /> },
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
+  { path: "/emulator", element: <Emulator /> },
 ];
 
 // 로그인 후에만 접근 가능한 라우트들
@@ -25,7 +26,6 @@ const protectedRoutes = [
   { path: "/cars/register", element: <CarRegister /> },
   { path: "/rents", element: <RentMain /> },
   { path: "/rents/register", element: <RentRegister /> },
-  { path: "/emulator", element: <Emulator /> },
 ];
 
 function Routing() {
