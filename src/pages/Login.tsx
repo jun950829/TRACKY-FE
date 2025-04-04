@@ -39,6 +39,8 @@ export default function Login() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const setToken = useAuthStore((state) => state.setToken);
+  const setMember = useAuthStore((state) => state.setMember);
 
   const {
     register,
@@ -57,16 +59,18 @@ export default function Login() {
       const response = await lloginApi.login(data);
       const token = response.token;
       const decoded = jwtDecode<DecodedToken>(token);
-
-      // 로그인 정보 저장
-      setToken(token);
-      setMember({
+      const member = {
         memberId: decoded.sub,
         role: decoded.role,
         bizName: decoded.bizName,
-      });
+      };
+
+      // 로그인 정보 저장
+      setToken(token);
+      setMember(member);
 
       // 새로고침 유지용 localStorage 저장
+      localStorage.setItem("memberInfo", JSON.stringify(member));
       localStorage.setItem("accessToken", token);
       
       navigate("/main");
@@ -106,9 +110,10 @@ export default function Login() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="pwd">비밀번호</Label>
-                <Button type="button" variant="link" size="sm" className="h-auto p-0">
+                {/* 지금 기능 없음 */}
+                {/* <Button type="button" variant="link" size="sm" className="h-auto p-0">
                   비밀번호 찾기
-                </Button>
+                </Button> */}
               </div>
               <Input
                 id="pwd"

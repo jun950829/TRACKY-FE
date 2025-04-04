@@ -60,6 +60,7 @@ function Header() {
         </div>
 
         {/* Desktop Nav */}
+        {token ?
         <nav className="hidden md:flex items-center space-x-1">
           {headerMenus.map((item) => {
             const isActive = currentPath === item.path;
@@ -81,17 +82,35 @@ function Header() {
             );
           })}
         </nav>
-
-        {/* Login Button */}
-        <div className="hidden md:flex items-center gap-4">
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="font-medium bg-foreground text-background hover:bg-foreground/90"
-          >
-            로그인
-          </Button>
+        : null}
+        {/* right Login Info */}
+        <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+          {token ? (
+            <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
+              <span className="text-sm text-white">{member?.bizName} 님</span>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={logout}
+                className="font-medium bg-foreground text-background hover:bg-foreground/90"
+                >
+                로그아웃
+              </Button> 
+            </div>
+          ) : (
+            <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => navigate("/login")}
+                className="font-medium bg-foreground text-background hover:bg-foreground/90"
+                >
+                로그인
+              </Button> 
+            </div>
+          )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -105,7 +124,7 @@ function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
+      {token ?
         <div className={`md:hidden border-t border-foreground/10 ${
           scrolled 
             ? "bg-background/70 backdrop-blur-md" 
@@ -146,7 +165,7 @@ function Header() {
             </div>
           </div>
         </div>
-      )}
+      : null}
     </header>
   );
 }
