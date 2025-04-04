@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { CustomButton } from "@/components/custom/CustomButton"
 
 export interface CommonModalProps {
   open: boolean
@@ -39,14 +39,14 @@ export const CommonModal: React.FC<CommonModalProps> = ({
         </DialogHeader>
         <DialogFooter className="flex justify-end gap-2">
           {showCancel && (
-            <Button variant="outline" onClick={onClose}>
+            <CustomButton variant="outline" onClick={onClose}>
               {cancelText}
-            </Button>
+            </CustomButton>
           )}
-          <Button onClick={() => {
+          <CustomButton onClick={() => {
             onConfirm?.()
             onClose()
-          }}>{confirmText}</Button>
+          }}>{confirmText}</CustomButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

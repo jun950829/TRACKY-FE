@@ -1,11 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { headerMenus } from "../constants/menus";
-import Btn from "./custom/Btn";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useLogout } from "@/libs/utils/useLogout";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { CustomButton } from "@/components/custom/CustomButton";
 
 function Header() {
   const navigate = useNavigate();
@@ -89,25 +88,25 @@ function Header() {
           {token ? (
             <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
               <span className="text-sm text-white">{member?.bizName} 님</span>
-              <Button
+              <CustomButton
                 variant="default"
                 size="sm"
                 onClick={logout}
                 className="font-medium bg-foreground text-background hover:bg-foreground/90"
                 >
                 로그아웃
-              </Button> 
+              </CustomButton> 
             </div>
           ) : (
             <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
-              <Button
+              <CustomButton
                 variant="default"
                 size="sm"
                 onClick={() => navigate("/login")}
                 className="font-medium bg-foreground text-background hover:bg-foreground/90"
                 >
                 로그인
-              </Button> 
+              </CustomButton> 
             </div>
           )}
           </div>
@@ -124,7 +123,7 @@ function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {token ?
+      {token && mobileMenuOpen ? (
         <div className={`md:hidden border-t border-foreground/10 ${
           scrolled 
             ? "bg-background/70 backdrop-blur-md" 
@@ -151,21 +150,35 @@ function Header() {
               })}
             </nav>
             <div className="pt-2 border-t border-foreground/10">
-              <Button
-                variant="default"
-                size="sm"
-                className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
-                onClick={() => {
-                  navigate("/login");
-                  setMobileMenuOpen(false);
-                }}
-              >
-                로그인
-              </Button>
+              {token ? (
+                <CustomButton
+                  variant="default"
+                  size="sm"
+                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  로그아웃
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  variant="default"
+                  size="sm"
+                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  onClick={() => {
+                    navigate("/login");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  로그인
+                </CustomButton>
+              )}
             </div>
           </div>
         </div>
-      : null}
+      ) : null}
     </header>
   );
 }
