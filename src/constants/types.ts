@@ -55,7 +55,6 @@ export type CarDetailTypes = {
 }
 
 export type CycleGpsRequest = {
-  sec: number;  // 주기
   gcd: string;  // GPS 상태
   lat: number;  // 위도
   lon: number;  // 경도

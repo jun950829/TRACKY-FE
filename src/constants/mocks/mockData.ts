@@ -26,9 +26,26 @@ export const mockCars = [
 ];
 
 export const deviceInfo = {
-  mdn: "01234567891",
+  mdn: "9999999999",
   tid: "A001",
   mid: "6",
   pv: "5",
   did: "1",
 };
+
+// 시동 요청 타입
+export interface EngineRequestType {
+  mdn: string;
+  tid: string;
+  mid: string;
+  pv: string;
+  did: string;
+  onTime: string;
+  offTime: string | null;
+  gcd: string;
+  lat: number;
+  lon: number;
+  ang: string;
+  spd: string;
+  sum: number;
+}

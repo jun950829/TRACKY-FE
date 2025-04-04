@@ -2,8 +2,7 @@ import axios from "axios";
 
 // 기본 API 인스턴스 설정
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://jsonplaceholder.typicode.com", // 기본 API URL
-  // baseURL: "http://tracky-hub-2020422079.ap-northeast-2.elb.amazonaws.com:8082",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 5000, // 요청 제한 시간 (5초)
   headers: {
     "Content-Type": "application/json",
