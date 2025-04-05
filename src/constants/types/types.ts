@@ -15,7 +15,7 @@ export type CarCreateTypes = {
   bizId?: number;
   carType: string;
   carPlate: string;
-  carYear: string;
+  carYear: string | number;
   purpose: string;
   status: string;
   sum: number;
