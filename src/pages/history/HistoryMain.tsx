@@ -21,8 +21,7 @@ const HistoryMain = () => {
 
   // 초기 데이터 로드
   useEffect(() => {
-    // if (import.meta.env.DEV && !isDataInitialized) {
-      if (true && !isDataInitialized) {
+    if (!isDataInitialized) {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
       setTripResults(mockTripRecords);
@@ -38,13 +37,7 @@ const HistoryMain = () => {
 
   // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
-    if (isSearchSheetOpen) {
-      // 이미 열려있으면 닫기
-      setIsSearchSheetOpen(false);
-    } else {
-      // 닫혀있으면 열기
-      setIsSearchSheetOpen(true);
-    }
+    setIsSearchSheetOpen(!isSearchSheetOpen);
   };
 
   // 항목 선택 핸들러
@@ -54,9 +47,9 @@ const HistoryMain = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-4 max-w-full h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-center md:text-left">차량 운행 기록</h1>
+    <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 max-w-full h-[100vh] flex flex-col">
+      <div className="flex justify-between items-center mb-2 sm:mb-4">
+        <h1 className="text-xl md:text-2xl font-bold text-center md:text-left">차량 운행 기록</h1>
         
         {/* 모바일에서 검색 버튼 */}
         <div className="md:hidden">
@@ -79,8 +72,8 @@ const HistoryMain = () => {
           className="h-[80vh] p-0"
           style={{ 
             zIndex: 100, 
-            marginBottom: 'env(safe-area-inset-bottom, 16px)',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)'
+            marginBottom: 'env(safe-area-inset-bottom, 0px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)'
           }}
         >
           <SheetHeader 
@@ -96,16 +89,24 @@ const HistoryMain = () => {
         </SheetContent>
       </Sheet>
       
-      <div className="flex flex-col md:flex-row h-[calc(100vh-120px)]">
+      <div className="flex flex-col md:flex-row flex-grow h-[calc(100vh-80px)] overflow-hidden">
         {/* 데스크탑 검색/목록 영역 (모바일에서는 숨김) */}
-        <div className="hidden md:block w-[350px] lg:w-[400px] md:mr-4 bg-white rounded-lg shadow-md overflow-hidden">
-          <HistorySearch />
-          <HistoryList />
+        <div className="hidden md:block w-[350px] lg:w-[400px] md:mr-4 bg-white rounded-lg shadow-md overflow-hidden h-full">
+          <div className="flex flex-col h-full">
+            <div className="flex-shrink-0">
+              <HistorySearch />
+            </div>
+            <div className="flex-grow overflow-y-auto">
+              <HistoryList />
+            </div>
+          </div>
         </div>
         
         {/* 상세 정보 영역 - 모바일과 데스크탑 모두 표시 */}
-        <div className="flex-1 mt-4 md:mt-0 bg-white rounded-lg shadow-md overflow-hidden" style={{ zIndex: 1 }}>
-          <HistoryDetail />
+        <div className="flex-1 mt-2 md:mt-0 bg-white rounded-lg shadow-md overflow-hidden h-full" style={{ zIndex: 1 }}>
+          <div className="h-full overflow-y-auto">
+            <HistoryDetail />
+          </div>
         </div>
       </div>
     </div>

@@ -82,7 +82,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   }
 
   return (
-    <div className="overflow-y-auto max-h-[calc(100vh-220px)]">
+    <div className="h-full overflow-y-auto">
       {searchType === 'rent' ? (
         // 예약 검색 결과 목록
         <div className="divide-y">
@@ -92,16 +92,16 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                 className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedRent?.rentUuid === rent.rentUuid ? 'bg-gray-100' : ''}`}
                 onClick={() => handleRentClick(rent.rentUuid)}
               >
-                <div>
-                  <div className="font-medium">{rent.rentUuid}</div>
-                  <div className="text-xs text-gray-500">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">{rent.rentUuid}</div>
+                  <div className="text-xs text-gray-500 truncate">
                     {rent.renterName} | {rent.mdn}
                   </div>
                   <div className="text-xs text-gray-500">
                     {formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}
                   </div>
                 </div>
-                <div>
+                <div className="flex-shrink-0 ml-2">
                   {selectedRent?.rentUuid === rent.rentUuid ? 
                     <ChevronDown className="h-5 w-5 text-gray-500" /> : 
                     <ChevronRight className="h-5 w-5 text-gray-500" />
@@ -111,7 +111,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               
               {/* 하위 운행 목록 */}
               {selectedRent?.rentUuid === rent.rentUuid && (
-                <div className="bg-gray-50 pl-4">
+                <div className="bg-gray-50 pl-4 max-h-[500px] overflow-y-auto">
                   {rent.trips.map(trip => (
                     <div 
                       key={trip.id}
@@ -119,14 +119,14 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                         ${selectedTrip?.id === trip.id ? 'border-black bg-gray-100' : 'border-gray-300'}`}
                       onClick={() => handleTripClick(trip.id)}
                     >
-                      <div className="font-medium">{trip.id}</div>
+                      <div className="font-medium truncate">{trip.id}</div>
                       <div className="text-gray-500">
                         {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
                       </div>
-                      <div className="text-gray-500 mt-1">
+                      <div className="text-gray-500 mt-1 truncate">
                         {trip.startLocation} → {trip.endLocation}
                       </div>
-                      <div className="mt-1">
+                      <div className="mt-1 text-xs">
                         <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km | 
                         <span className="text-gray-700 ml-1">평균:</span> {trip.avgSpeed}km/h
                       </div>
@@ -146,18 +146,18 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               className={`p-3 cursor-pointer hover:bg-gray-50 text-sm ${selectedTrip?.id === trip.id ? 'bg-gray-100' : ''}`}
               onClick={() => handleTripClick(trip.id)}
             >
-              <div className="font-medium">{trip.id}</div>
-              <div className="text-xs text-gray-500">
+              <div className="font-medium truncate">{trip.id}</div>
+              <div className="text-xs text-gray-500 truncate">
                 예약: {trip.rentUuid} | 차량: {trip.mdn}
               </div>
               <div className="text-xs text-gray-500">
                 {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
               </div>
               <div className="flex justify-between items-center mt-1 text-xs">
-                <div>
+                <div className="truncate max-w-[70%]">
                   {trip.startLocation} → {trip.endLocation}
                 </div>
-                <div>
+                <div className="flex-shrink-0">
                   <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km
                 </div>
               </div>
