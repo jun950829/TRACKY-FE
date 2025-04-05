@@ -59,7 +59,7 @@ function Header() {
         </div>
 
         {/* Desktop Nav */}
-        {token ?
+        {true ?
         <nav className="hidden md:flex items-center space-x-1">
           {headerMenus.map((item) => {
             const isActive = currentPath === item.path;
@@ -118,7 +118,7 @@ function Header() {
       </div>
 
       {/* Mobile Menu */}
-      {token && mobileMenuOpen ? (
+      {true && mobileMenuOpen ? (
         <div className={`md:hidden border-t border-foreground/10 ${
           scrolled 
             ? "bg-background/70 backdrop-blur-md" 
