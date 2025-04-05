@@ -7,6 +7,7 @@ import { RentDetailTypes } from "@/constants/types/types";
 function RentSection() {
     const [rentList, setRentList] = useState<RentDetailTypes[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchObj, setSearchObj] = useState<{searchText: string, status?: string, date?: string}>({searchText: ''});
 
     async function getRents() {
         setIsLoading(true);
@@ -21,16 +22,31 @@ function RentSection() {
         }
     }
 
-    async function searchRents(searchText: string) {
+    async function searchRents(isReload: boolean, searchText: string = "", status?: string, date?: string ) {
         setIsLoading(true);
-        try {
-            const res = await rentApiService.searchByRentUuid(searchText);
-            console.log('searchRents: ', res);
-            setRentList(res.data);
-        } catch (error) {
-            console.error('렌트 검색 실패:', error);
-        } finally {
-            setIsLoading(false);
+
+        // 새로 고침 일땐 마지막에 검색한 옵션 유지
+        if(!isReload) {
+            setSearchObj({searchText: searchText, status: status, date: date});
+            
+            try {
+                const res = await rentApiService.searchRents(searchText, status, date);
+                setRentList(res.data);
+            } catch (error) {
+                console.error('렌트 검색 실패:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            // isReload가 true인 경우 이전 검색 옵션 사용
+            try {
+                const res = await rentApiService.searchRents(searchObj.searchText, searchObj.status, searchObj.date);
+                setRentList(res.data);
+            } catch (error) {
+                console.error('렌트 검색 실패:', error);
+            } finally {
+                setIsLoading(false);
+            }
         }
     }
 
