@@ -19,8 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GpsMap from "@/components/custom/GpsMap";
 import EmulatorSettings from "@/components/custom/EmulatorSettings";
 
-import "./Emulator.css";
-
 const POLLING_INTERVAL = 1000; // 1 second
 
 // Car SVG icon

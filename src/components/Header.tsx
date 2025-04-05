@@ -82,34 +82,29 @@ function Header() {
           })}
         </nav>
         : null}
+        
         {/* right Login Info */}
         <div className="hidden md:flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
           {token ? (
-            <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
-              <span className="text-sm text-white">{member?.bizName} 님</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{member?.bizName} 님</span>
               <CustomButton
                 variant="default"
                 size="sm"
                 onClick={logout}
-                className="font-medium bg-foreground text-background hover:bg-foreground/90"
-                >
+              >
                 로그아웃
               </CustomButton> 
             </div>
           ) : (
-            <div className="font-medium bg-foreground text-background hover:bg-foreground/90">
-              <CustomButton
-                variant="default"
-                size="sm"
-                onClick={() => navigate("/login")}
-                className="font-medium bg-foreground text-background hover:bg-foreground/90"
-                >
-                로그인
-              </CustomButton> 
-            </div>
+            <CustomButton
+              variant="default"
+              size="sm"
+              onClick={() => navigate("/login")}
+            >
+              로그인
+            </CustomButton> 
           )}
-          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -154,7 +149,7 @@ function Header() {
                 <CustomButton
                   variant="default"
                   size="sm"
-                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full"
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
@@ -166,7 +161,7 @@ function Header() {
                 <CustomButton
                   variant="default"
                   size="sm"
-                  className="w-full font-medium bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full"
                   onClick={() => {
                     navigate("/login");
                     setMobileMenuOpen(false);
