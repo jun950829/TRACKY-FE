@@ -26,4 +26,4 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   );
 };
 
-export default StatusBadge; 
+export default StatusBadge;
