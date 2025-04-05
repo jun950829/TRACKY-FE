@@ -10,7 +10,7 @@ import Modal from "@/components/custom/Modal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react";
 import { CustomButton } from "@/components/custom/CustomButton";
-import { StatusColorMap } from "@/constants/status";
+import StatusBadge from "@/components/custom/StatusBadge";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
@@ -57,11 +57,6 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
     alert('삭제되었습니다.');
   }
 
-  // 상태에 따른 색상 클래스 반환
-  const getStatusClass = (status: string) => {
-    return StatusColorMap[status as keyof typeof StatusColorMap] || StatusColorMap.default;
-  };
-
   // 로딩 상태 표시
   if (isLoading) {
     return (
@@ -84,35 +79,31 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
     <div className="w-full">
       {/* PC 화면용 테이블 */}
       <div className="hidden md:block overflow-auto">
-        <Table>
+        <Table className="w-full table-fixed">
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">차량 상태</TableHead>
-              <TableHead className="w-16">사용 목적</TableHead>
-              <TableHead className="w-16">차량 번호</TableHead>
-              <TableHead className="w-20">차량 모델</TableHead>
-              <TableHead className="w-24">차량 번호판</TableHead>
-              <TableHead className="text-right w-60">관리</TableHead>
+            <TableRow className="[&>th]:px-1 [&>th]:py-2">
+              <TableHead className="w-16">차량 상태</TableHead>
+              <TableHead className="w-20">차량 번호</TableHead>
+              <TableHead className="w-24">차량 모델</TableHead>
+              <TableHead className="w-20">차량 번호판</TableHead>
+              <TableHead className="text-right w-16">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {carList.map((car, idx) => (
-              <TableRow key={idx} className="hover:bg-gray-50">
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(car.status)}`}>
-                    {car.status}
-                  </span>
+              <TableRow key={idx} className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
+                <TableCell className="whitespace-nowrap">
+                  <StatusBadge status={car.status} type="car" />
                 </TableCell>
-                <TableCell>{car.purpose}</TableCell>
                 <TableCell
                   onClick={() => {
                     setIsDetail(true);
                     handleCellClick(car.mdn)
                   }}
-                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium"
+                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
                 >{car.mdn}</TableCell>
-                <TableCell>{car.carType}</TableCell>
-                <TableCell>{car.carPlate}</TableCell>
+                <TableCell className="whitespace-nowrap">{car.carType}</TableCell>
+                <TableCell className="whitespace-nowrap">{car.carPlate}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
                     <CustomButton 
@@ -149,15 +140,13 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
-        {carList.map((car, idx) => (
-          <Card key={idx} className="overflow-hidden">
+        {carList.map((car) => (
+          <Card key={car.mdn} className="overflow-hidden">
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(car.status)}`}>
-                      {car.status}
-                    </span>
+                    <StatusBadge status={car.status} type="car" />
                     <h3 
                       className="font-semibold text-lg cursor-pointer hover:text-blue-600"
                       onClick={() => {
