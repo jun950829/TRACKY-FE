@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import mockGpsData from "@/libs/utils/mockGpsData";
+import mockGpsData from "@/constants/mocks/mockGpsData";
 import gpsBuffer from "@/libs/utils/gpsBuffer";
 import { hubApiService } from "@/libs/apis/hubApi";
 import {

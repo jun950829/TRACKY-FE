@@ -4,12 +4,12 @@ import { RentDetailTypes } from "@/constants/types/types";
 import rentApiService from "@/libs/apis/rentsApi";
 import { useState } from "react";
 import RentDetailModal from "./RentDetailModal";
-import { formatDateTime } from "@/libs/utils/utils";
+import { formatRentPeriod } from "@/libs/utils/utils";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/custom/Modal";
 import RentUpdateModal from "./RentUpdateModal";
 import { Card, CardContent } from "@/components/ui/card";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { CustomButton } from "@/components/custom/CustomButton";
 import StatusBadge from "@/components/custom/StatusBadge";
@@ -102,7 +102,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                       className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
                     >{rent.rent_uuid}</TableCell>
                     <TableCell className="whitespace-nowrap">{rent.mdn}</TableCell>
-                    <TableCell className="whitespace-nowrap">{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</TableCell>
+                    <TableCell className="whitespace-nowrap">{formatRentPeriod(rent.rentStime, rent.rentEtime)}</TableCell>
                     <TableCell className="whitespace-nowrap">
                       <StatusBadge status={rent.rentStatus} type="rent" />
                     </TableCell>
@@ -161,24 +161,11 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                       </div>
                       <p className="text-gray-500 text-sm">차량: {rent.mdn}</p>
                     </div>
-                    <div className="relative">
-                      <CustomButton 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          setIsDetail(true);
-                          handleCellClick(rent.rent_uuid);
-                        }}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </CustomButton>
-                    </div>
                   </div>
                   <div className="mt-2 text-sm">
                     <div className="flex justify-between py-1 border-b">
                       <span className="text-gray-500">대여 기간</span>
-                      <span className="text-xs">{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</span>
+                      <span className="text-xs">{formatRentPeriod(rent.rentStime, rent.rentEtime)}</span>
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">

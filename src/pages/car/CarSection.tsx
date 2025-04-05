@@ -22,23 +22,31 @@ function CarSection() {
     }
   }
 
-  async function searchCars(isReload: boolean, searchText: string = "", status?: string, purpose?: string) {
+  async function searchCars(isReload: boolean, searchText: string = "", status: string, purpose: string) {
     setIsLoading(true);
 
     // 새로 고침 일땐 마지막에 검색한 옵션 유지
     if(!isReload) {
       setSearchObj({searchText: searchText, status: status, purpose: purpose});
-    }
-
-    try {
-      console.log('검색 파라미터:', searchObj);
-      const res = await carApiService.searchByFilters(searchObj.searchText, searchObj.status, searchObj.purpose);
-      console.log('searchCars 결과:', res);
-      setCarList(res.data);
-    } catch (error) {
-      console.error('차량 검색 실패:', error);
-    } finally {
-      setIsLoading(false);
+      
+      try {
+        const res = await carApiService.searchByFilters(searchText, status, purpose);
+        setCarList(res.data);
+      } catch (error) {
+        console.error('차량 검색 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      // isReload가 true인 경우 이전 검색 옵션 사용
+      try {
+        const res = await carApiService.searchByFilters(searchObj.searchText, searchObj.status, searchObj.purpose);
+        setCarList(res.data);
+      } catch (error) {
+        console.error('차량 검색 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   } 
 

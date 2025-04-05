@@ -9,10 +9,12 @@ export const carApiService = {
     const response = await api.get(`${carApiRoot}/all`);
     return response.data;
   },
+  
   checkMdnExists: async (mdn: string) => {
     const response = await api.get(`${carApiRoot}/check-mdn/${mdn}`);
     return response.data;
   },
+
   searchByFilters: async (searchText: string, status?: string, purpose?: string) => {
     // 검색 파라미터 구성
     const params = new URLSearchParams();
@@ -34,25 +36,24 @@ export const carApiService = {
     
     // 파라미터가 없으면 전체 검색
     if (searchParams === '') {
-      const url = `${carApiRoot}/all`;
-      console.log('API 요청 URL (전체):', url);
-      const response = await api.get(url);
+      const response = await api.get(`${carApiRoot}/all`);
       return response.data;
     } else {
-      const url = `${carApiRoot}/search?${searchParams}`;
-      console.log('API 요청 URL (검색):', url);
-      const response = await api.get(url);
+      const response = await api.get(`${carApiRoot}/search?${searchParams}`);
       return response.data;
     }
   },
+
   searchOneByMdn: async (mdn: string) => {
     const response = await api.get(`${carApiRoot}/search/${mdn}`);
     return response.data;
   },
+
   searchOneByMdnDetail: async (mdn: string) => {
     const response = await api.get(`${carApiRoot}/search/${mdn}/detail`);
     return response.data;
   },
+
   createCar: async (data: CarCreateTypes) => {
     const response = await api.post(`${carApiRoot}/create`, data);
     return response.data;
@@ -62,6 +63,7 @@ export const carApiService = {
     const response = await api.patch(`${carApiRoot}/update/${mdn}`, data);
     return response.data;
   },
+
   deleteCar: async (mdn: string) => {
     const response = await api.delete(`${carApiRoot}/delete/${mdn}`);
     return response.data;
