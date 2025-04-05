@@ -3,7 +3,6 @@ import { useHistoryStore } from '@/stores/useHistoryStore';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft } from 'lucide-react';
 import HistoryMap from './HistoryMap';
 
 // 날짜 포맷 헬퍼 함수
@@ -16,11 +15,7 @@ const formatDateTime = (dateStr: string) => {
   }
 };
 
-interface HistoryDetailProps {
-  onBackClick?: () => void;
-}
-
-const HistoryDetail: React.FC<HistoryDetailProps> = ({ onBackClick }) => {
+const HistoryDetail: React.FC = () => {
   const { selectedRent, selectedTrip } = useHistoryStore();
 
   // 선택된 데이터가 없는 경우
@@ -46,45 +41,48 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ onBackClick }) => {
   };
 
   return (
-    <div className="space-y-4 bg-white rounded-lg shadow-md p-4">
-      {/* 모바일 뷰에서 뒤로가기 버튼 */}
-      <div className="md:hidden mb-2">
-        <button 
-          className="flex items-center text-sm text-gray-600"
-          onClick={onBackClick}
-        >
-          <ChevronLeft className="h-4 w-4 mr-1" /> 
-          목록으로 돌아가기
-        </button>
-      </div>
+    <div className="space-y-4 bg-white rounded-lg shadow-md p-3 sm:p-4">
+      {/* 모바일 우선: 지도 컴포넌트 */}
+      <Card className="shadow-sm">
+        <CardHeader className="p-3 sm:p-4 pb-0">
+          <CardTitle className="text-base sm:text-lg">주행 경로</CardTitle>
+        </CardHeader>
+        <CardContent className="p-3 sm:p-4">
+          <HistoryMap 
+            points={selectedTrip.points} 
+            height="250px"
+            tripId={selectedTrip.id}
+          />
+        </CardContent>
+      </Card>
       
       {/* 요약 정보 카드 (상단) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
         <Card className="bg-gray-50 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <div className="text-sm font-medium text-gray-500">총 주행 거리</div>
-            <div className="text-2xl font-bold mt-1">{selectedTrip.distance.toFixed(1)} km</div>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="text-xs sm:text-sm font-medium text-gray-500">총 주행 거리</div>
+            <div className="text-lg sm:text-2xl font-bold mt-1">{selectedTrip.distance.toFixed(1)} km</div>
           </CardContent>
         </Card>
         
         <Card className="bg-gray-50 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <div className="text-sm font-medium text-gray-500">최고 속도</div>
-            <div className="text-2xl font-bold mt-1">{selectedTrip.maxSpeed} km/h</div>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="text-xs sm:text-sm font-medium text-gray-500">최고 속도</div>
+            <div className="text-lg sm:text-2xl font-bold mt-1">{selectedTrip.maxSpeed} km/h</div>
           </CardContent>
         </Card>
         
         <Card className="bg-gray-50 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <div className="text-sm font-medium text-gray-500">평균 속도</div>
-            <div className="text-2xl font-bold mt-1">{selectedTrip.avgSpeed} km/h</div>
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="text-xs sm:text-sm font-medium text-gray-500">평균 속도</div>
+            <div className="text-lg sm:text-2xl font-bold mt-1">{selectedTrip.avgSpeed} km/h</div>
           </CardContent>
         </Card>
         
         <Card className="bg-gray-50 shadow-sm">
-          <CardContent className="p-4 text-center">
-            <div className="text-sm font-medium text-gray-500">운행 시간</div>
-            <div className="text-2xl font-bold mt-1">
+          <CardContent className="p-3 sm:p-4 text-center">
+            <div className="text-xs sm:text-sm font-medium text-gray-500">운행 시간</div>
+            <div className="text-lg sm:text-2xl font-bold mt-1">
               {(() => {
                 const start = new Date(selectedTrip.startTime);
                 const end = new Date(selectedTrip.endTime);
@@ -98,55 +96,41 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ onBackClick }) => {
         </Card>
       </div>
       
-      {/* 지도 컴포넌트 */}
-      <Card className="shadow-sm">
-        <CardHeader className="p-4 pb-0">
-          <CardTitle className="text-lg">주행 경로</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
-          <HistoryMap 
-            points={selectedTrip.points} 
-            height="400px"
-            tripId={selectedTrip.id}
-          />
-        </CardContent>
-      </Card>
-      
       {/* 상세 정보 카드 (하단) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="shadow-sm">
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3 sm:p-4 pb-1 sm:pb-2">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">운행 정보</CardTitle>
-              <div className="text-xs font-medium text-gray-500">{selectedTrip.id}</div>
+              <CardTitle className="text-base sm:text-lg">운행 정보</CardTitle>
+              <div className="text-xs font-medium text-gray-500 truncate">{selectedTrip.id}</div>
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="grid grid-cols-2 gap-3 text-sm">
+          <CardContent className="p-3 sm:p-4 pt-0">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
               <div>
                 <div className="text-xs font-medium text-gray-500">출발 시간</div>
-                <div className="mt-1">{formatDateTime(selectedTrip.startTime)}</div>
+                <div className="mt-1 truncate">{formatDateTime(selectedTrip.startTime)}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">도착 시간</div>
-                <div className="mt-1">{formatDateTime(selectedTrip.endTime)}</div>
+                <div className="mt-1 truncate">{formatDateTime(selectedTrip.endTime)}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">출발 위치</div>
-                <div className="mt-1">{selectedTrip.startLocation}</div>
+                <div className="mt-1 truncate">{selectedTrip.startLocation}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">도착 위치</div>
-                <div className="mt-1">{selectedTrip.endLocation}</div>
+                <div className="mt-1 truncate">{selectedTrip.endLocation}</div>
               </div>
             </div>
           </CardContent>
         </Card>
         
         <Card className="shadow-sm">
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3 sm:p-4 pb-1 sm:pb-2">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">예약 정보</CardTitle>
+              <CardTitle className="text-base sm:text-lg">예약 정보</CardTitle>
               <Badge className={`text-xs px-2 py-1 ${getStatusBadgeColor(selectedRent.rentStatus)}`}>
                 {selectedRent.rentStatus === 'SCHEDULED' && '예약됨'}
                 {selectedRent.rentStatus === 'INPROGRESS' && '진행중'}
@@ -155,33 +139,33 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ onBackClick }) => {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="grid grid-cols-2 gap-3 text-sm">
+          <CardContent className="p-3 sm:p-4 pt-0">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
               <div>
                 <div className="text-xs font-medium text-gray-500">예약 ID</div>
-                <div className="mt-1">{selectedRent.rentUuid}</div>
+                <div className="mt-1 truncate">{selectedRent.rentUuid}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">차량 ID</div>
-                <div className="mt-1">{selectedRent.mdn}</div>
+                <div className="mt-1 truncate">{selectedRent.mdn}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">예약자</div>
-                <div className="mt-1">{selectedRent.renterName}</div>
+                <div className="mt-1 truncate">{selectedRent.renterName}</div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-500">연락처</div>
-                <div className="mt-1">{selectedRent.renterPhone}</div>
+                <div className="mt-1 truncate">{selectedRent.renterPhone}</div>
               </div>
-              <div>
+              <div className="col-span-2">
                 <div className="text-xs font-medium text-gray-500">대여 기간</div>
-                <div className="mt-1">
+                <div className="mt-1 truncate">
                   {formatDateTime(selectedRent.rentStime).slice(0, 13)} ~ {formatDateTime(selectedRent.rentEtime).slice(0, 13)}
                 </div>
               </div>
-              <div>
+              <div className="col-span-2">
                 <div className="text-xs font-medium text-gray-500">사용 목적</div>
-                <div className="mt-1">{selectedRent.purpose}</div>
+                <div className="mt-1 truncate">{selectedRent.purpose}</div>
               </div>
             </div>
           </CardContent>
