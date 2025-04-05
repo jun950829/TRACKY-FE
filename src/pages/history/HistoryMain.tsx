@@ -15,30 +15,40 @@ const HistoryMain = () => {
     setSelectedRent
   } = useHistoryStore();
 
+  // 검색 시트의 열림/닫힘 상태만 관리합니다
   const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  const [isDataInitialized, setIsDataInitialized] = useState(false);
 
   // 초기 데이터 로드
   useEffect(() => {
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && !isDataInitialized) {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
       setTripResults(mockTripRecords);
       
-      // 첫 번째 렌트와 트립 선택 (UI 미리보기)
+      // 첫 번째 렌트와 트립 선택 (UI 미리보기) - 최초 1회만 실행
       if (mockRentRecords.length > 0) {
         setSelectedRent(mockRentRecords[0]);
       }
+      
+      setIsDataInitialized(true);
     }
-  }, [setRentResults, setTripResults, setSelectedRent]);
+  }, [setRentResults, setTripResults, setSelectedRent, isDataInitialized]);
 
-  // 모바일에서 검색 시트 토글 핸들러
+  // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
-    setIsSearchSheetOpen(!isSearchSheetOpen);
+    if (isSearchSheetOpen) {
+      // 이미 열려있으면 닫기
+      setIsSearchSheetOpen(false);
+    } else {
+      // 닫혀있으면 열기
+      setIsSearchSheetOpen(true);
+    }
   };
 
   // 항목 선택 핸들러
   const handleItemSelected = () => {
-    // 모바일에서 항목 선택시 시트 닫기
+    // 모바일에서 항목 선택시 검색 시트만 닫기
     setIsSearchSheetOpen(false);
   };
 
@@ -61,7 +71,7 @@ const HistoryMain = () => {
         </div>
       </div>
       
-      {/* 모바일 검색/목록 시트 */}
+      {/* 모바일 검색 시트 */}
       <Sheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen}>
         <SheetContent 
           side="bottom" 
@@ -72,7 +82,10 @@ const HistoryMain = () => {
             paddingBottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)'
           }}
         >
-          <SheetHeader className="px-4 py-3 border-b">
+          <SheetHeader 
+            className="px-4 py-3 border-b cursor-pointer" 
+            onClick={toggleSearchSheet}
+          >
             <SheetTitle className="text-left text-lg">검색 및 목록</SheetTitle>
           </SheetHeader>
           <div className="overflow-y-auto h-full">
@@ -89,8 +102,8 @@ const HistoryMain = () => {
           <HistoryList />
         </div>
         
-        {/* 상세 정보 영역 - z-index를 낮게 설정하여 시트 아래에 위치하도록 함 */}
-        <div className="flex-1 mt-0 relative" style={{ zIndex: 1 }}>
+        {/* 상세 정보 영역 - 모바일과 데스크탑 모두 표시 */}
+        <div className="flex-1 mt-4 md:mt-0 bg-white rounded-lg shadow-md overflow-hidden" style={{ zIndex: 1 }}>
           <HistoryDetail />
         </div>
       </div>
