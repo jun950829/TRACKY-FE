@@ -60,7 +60,7 @@ export const rentApiService = {
     },
 
     createRent: async (data: RentCreateTypes) => {
-        const response = await api.post(`${rentApiRoot}/register`, data);
+        const response = await api.post(`${rentApiRoot}/create`, data);
         return response.data;
     },
 
