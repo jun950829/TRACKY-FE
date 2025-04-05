@@ -13,8 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { CarDetailTypes } from '@/constants/types';
-import { CarStatus } from '@/constants/status';
+import { CarDetailTypes } from '@/constants/types/types';
+import { CarStatus } from '@/constants/datas/status';
 import carApiService from '@/libs/apis/carApi';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';
@@ -35,9 +35,10 @@ type CarUpdateModalProps = {
   isOpen: boolean;
   closeModal: () => void;
   initialData: CarDetailTypes;
+  reload: (isReload: boolean) => void;
 };
 
-function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps) {
+function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateModalProps) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -45,7 +46,6 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
     register,
     handleSubmit,
     formState: { errors },
-    // reset,
     setValue,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -60,12 +60,15 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
   });
 
   const submitHandler = (data: FormValues) => {
-    sendUpdate(initialData.mdn, data);
+    sendUpdate(initialData.mdn, {
+      ...data,
+      mdn: initialData.mdn
+    });
   };
 
   const sendUpdate = async (mdn: string, data: FormValues) => {
     const updateCarObj = {
-      mdn: data.mdn,
+      mdn: initialData.mdn,
       bizId: initialData.bizId,
       carType: data.carType,
       carPlate: data.carPlate,
@@ -89,7 +92,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
     setIsSuccess(false);
     closeModal();
     // 천승준 - 임시 새로 고침
-    window.location.reload();
+    reload(true);
   }
 
   const onClose = () => {
@@ -106,8 +109,8 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">식별 키 (MDN)</label>
-              <Input {...register('mdn')} />
+              <label className="block text-sm font-medium">식별 키 (MDN) <span className="text-xs text-gray-500">(수정 불가)</span></label>
+              <Input {...register('mdn')} disabled className="bg-gray-100 text-gray-600" />
               {errors.mdn && <p className="text-sm text-red-500">{errors.mdn.message}</p>}
             </div>
             <div>

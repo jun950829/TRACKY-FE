@@ -9,6 +9,19 @@ import {
   initLocation
 } from "@/libs/utils/emulatorUtils";
 
+// Import constants
+import {
+  POLLING_INTERVAL,
+  DEFAULT_PACKET_INTERVAL,
+  MOCK_LOCATION_TEXT,
+  REAL_LOCATION_TEXT,
+  MOCK_GPS_SETTINGS,
+  GEOLOCATION_OPTIONS,
+  RECENT_POSITIONS_COUNT,
+  MAX_HISTORY_POSITIONS,
+  EMULATOR_VERSION
+} from "@/constants/datas/emulatorSettings";
+
 // Shadcn components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,10 +31,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Custom components
 import GpsMap from "@/components/custom/GpsMap";
 import EmulatorSettings from "@/components/custom/EmulatorSettings";
-
-import "./Emulator.css";
-
-const POLLING_INTERVAL = 1000; // 1 second
 
 // Car SVG icon
 const CarIcon = () => (
@@ -82,7 +91,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   });
 
   const [selectedTab, setSelectedTab] = useState("map");
-  const [packetInterval, setPacketInterval] = useState<number>(10); // 기본 10초
+  const [packetInterval, setPacketInterval] = useState<number>(DEFAULT_PACKET_INTERVAL);
   
   const watchIdRef = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -100,7 +109,10 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   useEffect(() => {
     if (useMockData && mockDataRef.current.length === 0) {
       // Generate the mock route data with a speed factor (higher = faster)
-      mockDataRef.current = mockGpsData.createMockRouteData(2, 15); // 15 interpolation points
+      mockDataRef.current = mockGpsData.createMockRouteData(
+        MOCK_GPS_SETTINGS.speedFactor,
+        MOCK_GPS_SETTINGS.interpolationPoints
+      );
     }
   }, [useMockData]);
 
@@ -135,7 +147,10 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       () => {
         if (mockDataRef.current.length === 0) {
           // 모의 데이터 생성 (실제 mockGpsData 모듈 사용)
-          mockDataRef.current = mockGpsData.createMockRouteData(2, 15);
+          mockDataRef.current = mockGpsData.createMockRouteData(
+            MOCK_GPS_SETTINGS.speedFactor,
+            MOCK_GPS_SETTINGS.interpolationPoints
+          );
         }
         return mockDataRef.current;
       },
@@ -194,6 +209,37 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     }
   };
 
+  // Function to limit the history to a maximum number of positions
+  const limitHistoryPositions = (positions: GeolocationPosition[]) => {
+    if (positions.length > MAX_HISTORY_POSITIONS) {
+      return positions.slice(positions.length - MAX_HISTORY_POSITIONS);
+    }
+    return positions;
+  };
+
+  // Function to calculate average speed from recent positions
+  const calculateAverageSpeed = () => {
+    if (trackingState.positionHistory.length < 2) return 0;
+    
+    // Only use the most recent positions for calculation
+    const positions = trackingState.positionHistory.slice(-RECENT_POSITIONS_COUNT);
+    
+    // Calculate time difference in hours
+    const timeStart = positions[0].timestamp;
+    const timeEnd = positions[positions.length - 1].timestamp;
+    const timeDiffHours = (timeEnd - timeStart) / (1000 * 60 * 60);
+    
+    if (timeDiffHours === 0) return 0;
+    
+    // Calculate distance in kilometers
+    let distance = 0;
+    for (let i = 1; i < positions.length; i++) {
+      distance += calculateDistance(positions[i - 1], positions[i]);
+    }
+    
+    // Return speed in km/h
+    return distance / timeDiffHours;
+  };
 
   // 실제 위치 추적 시작
   const startRealTracking = () => {
@@ -209,11 +255,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                 handlePositionError(error);
                 console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 위치 정보 요청 실패. 다음 요청 계속 진행...`);
               },
-              {
-                enableHighAccuracy: true,
-                timeout: 5000, // 타임아웃 시간을 줄여 응답성 향상
-                maximumAge: 0, // 항상 새로운 위치 정보 요청
-              }
+              GEOLOCATION_OPTIONS
             );
           } catch (error) {
             console.error(`❌ [${new Date().toLocaleTimeString()}] getCurrentPosition 호출 실패:`, error);
@@ -341,22 +383,11 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       
       // 이력에 현재 위치 추가
       const updatedHistory = [...prev.positionHistory, position];
+      // 히스토리 크기 제한
+      const limitedHistory = limitHistoryPositions(updatedHistory);
       
-      // 최근 위치 기반으로 평균 속도 계산 (최근 10개 포인트)
-      const recentPositions = updatedHistory.slice(-10);
-      let avgSpeed = 0;
-      
-      if (recentPositions.length > 1) {
-        const speedSum = recentPositions
-          .filter(pos => pos.coords.speed !== null && pos.coords.speed !== undefined)
-          .reduce((sum, pos) => sum + (pos.coords.speed || 0), 0);
-        
-        const speedCount = recentPositions
-          .filter(pos => pos.coords.speed !== null && pos.coords.speed !== undefined)
-          .length;
-          
-        avgSpeed = speedCount > 0 ? speedSum / speedCount : 0;
-      }
+      // 평균 속도 계산
+      const avgSpeed = calculateAverageSpeed();
       
       // 새 위치 정보 로깅 - 초당 수집 확인용
       console.log(`🛣️ 위치 데이터 수집: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 버퍼=${gpsBuffer.getBufferSize()}`);
@@ -365,7 +396,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         ...prev,
         currentPosition: position,
         previousPosition: prev.currentPosition,
-        positionHistory: updatedHistory,
+        positionHistory: limitedHistory,
         error: null,
         stats: {
           packetsCount: gpsBuffer.getTotalPacketsCount(),
@@ -469,6 +500,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         ...prev,
         engineOn: true
       }));
+      
+      // 시동이 켜지면 자동으로 주기정보 전송 시작
+      startTracking();
     } catch (error) {
       console.error("시동 ON 요청 실패:", error);
       showToast("시동 ON 요청에 실패했습니다.");
@@ -521,18 +555,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       console.log(`✅ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 성공:`, response);
       showToast("시동 OFF 요청이 성공적으로 전송되었습니다.");
       
-      // 엔진 상태, 총 거리 초기화하되 패킷 카운트는 유지
-      setTrackingState((prev) => ({
-        ...prev,
-        engineOn: false,
-        totalDistance: 0,
-        // 최종 통계 업데이트 보장
-        stats: {
-          ...prev.stats,
-          packetsCount: gpsBuffer.getTotalPacketsCount(),
-          bufferSize: gpsBuffer.getBufferSize(),
-        }
-      }));
+      // 초기 상태로 리셋
+      resetEmulatorState();
+      
     } catch (error) {
       console.error(`❌ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
       showToast("시동 OFF 요청에 실패했습니다.");
@@ -547,6 +572,48 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         }
       }));
     }
+  };
+
+  // 에뮬레이터 상태 초기화 함수
+  const resetEmulatorState = () => {
+    // 추적 중지
+    stopTracking();
+    
+    // 모든 상태 초기화
+    totalDistanceRef.current = 0;
+    packetsCountRef.current = 0;
+    gpsBuffer.reset();
+    
+    setTrackingState({
+      isTracking: false,
+      currentPosition: null,
+      previousPosition: null,
+      positionHistory: [],
+      error: null,
+      engineOn: false,
+      totalDistance: 0,
+      stats: {
+        packetsCount: 0,
+        totalDistance: 0,
+        avgSpeed: 0,
+        bufferSize: 0,
+      }
+    });
+
+    // 모의 데이터 초기화
+    if (useMockData) {
+      mockDataRef.current = mockGpsData.createMockRouteData(
+        MOCK_GPS_SETTINGS.speedFactor,
+        MOCK_GPS_SETTINGS.interpolationPoints
+      );
+      mockStartTimeRef.current = 0;
+    }
+    
+    // 위치 초기화
+    initializeLocation();
+    
+    // 토스트 메시지 표시
+    showToast("에뮬레이터가 초기화 되었습니다.");
   };
 
   // 상단에 추가할 함수
@@ -571,9 +638,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                 <CarIcon /> 차량 GPS 에뮬레이터
               </CardTitle>
               <CardDescription className="text-sm">
-                {useMockData 
-                  ? "미왕빌딩에서 일산 행신동까지 경로 시뮬레이션" 
-                  : "실시간 차량 위치 정보 수집 및 전송 시스템"}
+                {useMockData ? MOCK_LOCATION_TEXT : REAL_LOCATION_TEXT}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -605,40 +670,23 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                 size="sm" 
                 className="flex items-center gap-1.5 h-9 px-3 border-border shadow-sm"
                 onClick={() => {
-                  // 모든 상태 초기화
-                  stopTracking();
-                  totalDistanceRef.current = 0;
-                  packetsCountRef.current = 0;
-                  gpsBuffer.reset();
-                  
-                  setTrackingState({
-                    isTracking: false,
-                    currentPosition: null,
-                    previousPosition: null,
-                    positionHistory: [],
-                    error: null,
-                    engineOn: false,
-                    totalDistance: 0,
-                    stats: {
-                      packetsCount: 0,
-                      totalDistance: 0,
-                      avgSpeed: 0,
-                      bufferSize: 0,
+                  // 시동이 켜져 있으면 먼저 끄고 초기화
+                  if (trackingState.engineOn) {
+                    if (trackingState.currentPosition) {
+                      // handleEngineOff를 호출하여 데이터 전송 후 초기화
+                      handleEngineOff().catch(error => {
+                        console.error("시동 OFF 중 오류 발생:", error);
+                        // 오류가 발생해도 초기화는 진행
+                        resetEmulatorState();
+                      });
+                    } else {
+                      resetEmulatorState();
                     }
-                  });
-
-                  // 모의 데이터 초기화
-                  if (useMockData) {
-                    mockDataRef.current = mockGpsData.createMockRouteData(2, 15);
-                    mockStartTimeRef.current = 0;
+                  } else {
+                    // 시동이 꺼져 있으면 바로 초기화
+                    resetEmulatorState();
                   }
-                  
-                  // 위치 초기화
-                  initializeLocation();
-                  
-                  showToast("에뮬레이터가 초기화 되었습니다.");
                 }}
-                disabled={trackingState.engineOn}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 4V10H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -680,6 +728,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                     className="flex-1"
                     onClick={handleEngineOn} 
                     variant="default"
+                    disabled={trackingState.engineOn}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                       <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -690,6 +739,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                     className="flex-1"
                     onClick={handleEngineOff} 
                     variant="destructive"
+                    disabled={!trackingState.engineOn}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                       <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -703,7 +753,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                   <Button 
                     className="w-full text-sm md:text-base py-5 sm:py-6"
                     onClick={startTracking} 
-                    disabled={trackingState.isTracking}
+                    disabled={trackingState.isTracking || !trackingState.engineOn}
                     variant="outline"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 flex-shrink-0">
@@ -731,7 +781,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                   onClick={toggleDataSource} 
                   variant="outline" 
                   className="w-full"
-                  disabled={trackingState.isTracking}
+                  disabled={trackingState.isTracking || trackingState.engineOn}
                 >
                   <svg width="16" height="16" className="mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -898,7 +948,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono">주기: {packetInterval}초</Badge>
             <Badge variant="outline" className="font-mono">위치 이력: {trackingState.positionHistory.length}개</Badge>
-            <Badge variant="outline" className="font-mono">v1.2.0</Badge>
+            <Badge variant="outline" className="font-mono">{EMULATOR_VERSION}</Badge>
           </div>
         </CardFooter>
       </Card>

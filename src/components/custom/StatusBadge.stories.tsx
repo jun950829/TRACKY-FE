@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import StatusBadge from './StatusBadge';
-import { CarStatus, RentStatus } from '@/constants/status';
+import { CarStatus, RentStatus } from '@/constants/datas/status';
 
 /**
  * `StatusBadge` 컴포넌트는 애플리케이션 전반에 걸쳐 일관된 스타일의 상태 표시를 제공합니다.

@@ -1,4 +1,4 @@
-import { CarDetailTypes } from '@/constants/types';
+import { CarDetailTypes } from '@/constants/types/types';
 import React from 'react';
 
 interface CarDetailModalProps {

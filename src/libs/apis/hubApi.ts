@@ -1,5 +1,5 @@
 import { EngineRequestType } from "@/constants/mocks/mockData";
-import { CycleInfoRequest } from "@/constants/types";
+import { CycleInfoRequest } from "@/constants/types/types";
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 
 // metadata 속성을 포함하는 확장 타입 정의

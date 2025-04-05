@@ -1,4 +1,4 @@
-import { CarCreateTypes, CarUpdateTypes } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
@@ -7,6 +7,10 @@ const carApiRoot = "/cars";
 export const carApiService = {
   getCars: async () => {
     const response = await api.get(`${carApiRoot}/all`);
+    return response.data;
+  },
+  checkMdnExists: async (mdn: string) => {
+    const response = await api.get(`${carApiRoot}/check-mdn/${mdn}`);
     return response.data;
   },
   searchByFilters: async (searchText: string, status?: string, purpose?: string) => {
