@@ -44,7 +44,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
 
       // 실제 api req,res
       async function searchRentDataByUuid(rentUuid: string) {
-        const res = await rentApiService.searchOneByRentUuid(rentUuid);
+        const res = await rentApiService.searchByRentUuidDetail(rentUuid);
         console.log('searchByUuid :', res.data);
         setSelectedRentData(res.data);
       }
