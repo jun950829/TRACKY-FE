@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { RentDetailTypes } from '@/constants/types';
+import { RentDetailTypes } from '@/constants/types/types';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';

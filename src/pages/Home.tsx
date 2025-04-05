@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { CustomButton } from "@/components/custom/CustomButton";
+import PageHeader from "@/components/custom/PageHeader";
 
 function Home() {
   const navigate = useNavigate();
@@ -11,22 +12,31 @@ function Home() {
       {/* Dashboard Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">차량 관제 대시보드</h1>
+          <PageHeader 
+            title="차량 관제 대시보드" 
+            size="3xl"
+          />
           <p className="text-muted-foreground mt-1">
             실시간 차량 정보 및 상태를 관리합니다
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate("/emulator")}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-              <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10M7 13.5C7 14.3284 6.32843 15 5.5 15C4.67157 15 4 14.3284 4 13.5C4 12.6716 4.67157 12 5.5 12C6.32843 12 7 12.6716 7 13.5ZM20 13.5C20 14.3284 19.3284 15 18.5 15C17.6716 15 17 14.3284 17 13.5C17 12.6716 17.6716 12 18.5 12C19.3284 12 20 12.6716 20 13.5Z" 
+          <CustomButton 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate("/emulator")}
+            icon={
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10M7 13.5C7 14.3284 6.32843 15 5.5 15C4.67157 15 4 14.3284 4 13.5C4 12.6716 4.67157 12 5.5 12C6.32843 12 7 12.6716 7 13.5ZM20 13.5C20 14.3284 19.3284 15 18.5 15C17.6716 15 17 14.3284 17 13.5C17 12.6716 17.6716 12 18.5 12C19.3284 12 20 12.6716 20 13.5Z" 
                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+              </svg>
+            }
+          >
             에뮬레이터
-          </Button>
-          <Button onClick={() => navigate("/about")}>
+          </CustomButton>
+          <CustomButton onClick={() => navigate("/about")}>
             사이트 소개
-          </Button>
+          </CustomButton>
         </div>
       </div>
 
@@ -133,9 +143,9 @@ function Home() {
                   최근 주행 기록이 있는 차량 목록
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={() => navigate("/cars")}>
+              <CustomButton variant="outline" size="sm" onClick={() => navigate("/cars")}>
                 모두 보기
-              </Button>
+              </CustomButton>
             </div>
           </CardHeader>
           <CardContent>

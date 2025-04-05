@@ -1,4 +1,4 @@
-import { CycleGpsRequest, CycleInfoRequest } from "@/constants/types";
+import { CycleGpsRequest, CycleInfoRequest } from "@/constants/types/types";
 
 // 지구 반지름 (단위: km)
 const EARTH_RADIUS_KM = 6371;

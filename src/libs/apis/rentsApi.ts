@@ -1,4 +1,4 @@
-import { RentCreateTypes, RentUpdateTypes } from "@/constants/types";
+import { RentCreateTypes, RentUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const rentApiRoot = "/rents";

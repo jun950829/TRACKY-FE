@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { CarDetailTypes,  } from "@/constants/types";
+import { CarDetailTypes,  } from "@/constants/types/types";
 import { useState } from "react";
 import CarDetailModal from "./CarDetailModal";
 import carApiService from "@/libs/apis/carApi";
@@ -16,9 +16,10 @@ type CarTableProps = {
   carList: CarDetailTypes[];
   setCarList: (carList: CarDetailTypes[]) => void;
   isLoading?: boolean;
+  reload: (isReload: boolean) => void;
 }
 
-function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
+function CarTable({ carList, setCarList, isLoading = false, reload }: CarTableProps) {
   const [selectedCarData, setSelectedCarData] = useState<CarDetailTypes | null>(null);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isDetail, setIsDetail] = useState(false);
@@ -233,6 +234,7 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
           isOpen={true}
           closeModal={handleCloseUpdateModal}
           initialData={selectedCarData} 
+          reload={reload}
       />) 
       }
 
