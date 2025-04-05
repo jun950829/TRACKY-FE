@@ -21,11 +21,12 @@ function CarSection() {
     }
   }
 
-  async function searchCars(searchText: string) {
+  async function searchCars(searchText: string, status?: string, purpose?: string) {
     setIsLoading(true);
     try {
-      const res = await carApiService.searchByMdn(searchText);
-      console.log('searchCars :', res);
+      console.log('검색 파라미터:', { searchText, status, purpose });
+      const res = await carApiService.searchByFilters(searchText, status, purpose);
+      console.log('searchCars 결과:', res);
       setCarList(res.data);
     } catch (error) {
       console.error('차량 검색 실패:', error);

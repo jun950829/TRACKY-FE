@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { CustomButton } from "@/components/custom/CustomButton";
+import StatusBadge from "@/components/custom/StatusBadge";
 
 type RentTableProps = {
     rentList: RentDetailTypes[];
@@ -80,36 +81,30 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
         <div className="w-full">
           {/* PC 화면용 테이블 */}
           <div className="hidden md:block overflow-auto">
-            <Table>
+            <Table className="w-full table-fixed">
               <TableHeader>
-                <TableRow>
-                  <TableHead>예약 번호</TableHead>
-                  <TableHead>차량 번호</TableHead>
-                  <TableHead>대여 기간</TableHead>
-                  <TableHead>예약 상태</TableHead>
-                  <TableHead className="text-right">관리</TableHead>
+                <TableRow className="[&>th]:px-1 [&>th]:py-2">
+                  <TableHead className="w-20">예약 번호</TableHead>
+                  <TableHead className="w-20">차량 번호</TableHead>
+                  <TableHead className="w-28">대여 기간</TableHead>
+                  <TableHead className="w-16">예약 상태</TableHead>
+                  <TableHead className="text-right w-20">관리</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {rentList.map((rent) => (
-                  <TableRow key={rent.rent_uuid} className="hover:bg-gray-50">
+                  <TableRow key={rent.rent_uuid} className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
                     <TableCell
                       onClick={() => {
                         setIsDetail(true);
                         handleCellClick(rent.rent_uuid)}
                       }
-                      className="cursor-pointer hover:text-blue-600 hover:underline font-medium"
+                      className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
                     >{rent.rent_uuid}</TableCell>
-                    <TableCell>{rent.mdn}</TableCell>
-                    <TableCell>{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        rent.rentStatus === '예약' ? 'bg-blue-100 text-blue-700' : 
-                        rent.rentStatus === '완료' ? 'bg-green-100 text-green-700' : 
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {rent.rentStatus}
-                      </span>
+                    <TableCell className="whitespace-nowrap">{rent.mdn}</TableCell>
+                    <TableCell className="whitespace-nowrap">{formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <StatusBadge status={rent.rentStatus} type="rent" />
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
@@ -162,13 +157,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                         >
                           {rent.rent_uuid.substring(0, 8)}...
                         </h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          rent.rentStatus === '예약' ? 'bg-blue-100 text-blue-700' : 
-                          rent.rentStatus === '완료' ? 'bg-green-100 text-green-700' : 
-                          'bg-gray-100 text-gray-700'
-                        }`}>
-                          {rent.rentStatus}
-                        </span>
+                        <StatusBadge status={rent.rentStatus} type="rent" />
                       </div>
                       <p className="text-gray-500 text-sm">차량: {rent.mdn}</p>
                     </div>

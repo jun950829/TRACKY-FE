@@ -1,4 +1,4 @@
-import { CarCreateTypes, CarUpdateTypes, CycleInfoRequest } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes } from "@/constants/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
@@ -9,13 +9,35 @@ export const carApiService = {
     const response = await api.get(`${carApiRoot}/all`);
     return response.data;
   },
-  searchByMdn: async (searchText: string) => {
-    // 검색어가 없을 땐 전체 검색
-    if(searchText !== '') {
-      const response = await api.get(`/cars/search?mdn=${searchText}`);
+  searchByFilters: async (searchText: string, status?: string, purpose?: string) => {
+    // 검색 파라미터 구성
+    const params = new URLSearchParams();
+    
+    // searchText가 빈 문자열이 아닐 때만 mdn 파라미터로 추가
+    if (searchText && searchText.trim() !== '') {
+      params.append('mdn', searchText.trim());
+    }
+    
+    if (status) {
+      params.append('status', status);
+    }
+    if (purpose) {
+      params.append('purpose', purpose);
+    }
+
+    const searchParams = params.toString();
+    console.log('검색 파라미터 문자열:', searchParams);
+    
+    // 파라미터가 없으면 전체 검색
+    if (searchParams === '') {
+      const url = `${carApiRoot}/all`;
+      console.log('API 요청 URL (전체):', url);
+      const response = await api.get(url);
       return response.data;
     } else {
-      const response = await api.get(`${carApiRoot}/all`);
+      const url = `${carApiRoot}/search?${searchParams}`;
+      console.log('API 요청 URL (검색):', url);
+      const response = await api.get(url);
       return response.data;
     }
   },
