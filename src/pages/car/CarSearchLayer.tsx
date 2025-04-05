@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { CarStatus, CarPurpose } from "@/constants/datas/status";
 
 type CarSearchLayer = {
-  onSearch: (searchText: string, status?: string, purpose?: string) => void;
+  onSearch: (isReload: boolean, searchText?: string, status?: string, purpose?: string) => void;
 }
 
 function CarSearchLayer({ onSearch }: CarSearchLayer) {
@@ -30,7 +30,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
       purpose: purposeFilter
     });
     
-    onSearch(searchText, statusFilter, purposeFilter);
+    onSearch(false, searchText, statusFilter, purposeFilter);
   }
 
   // Enter 키 이벤트 핸들러

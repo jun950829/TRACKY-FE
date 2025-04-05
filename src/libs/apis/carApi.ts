@@ -9,6 +9,10 @@ export const carApiService = {
     const response = await api.get(`${carApiRoot}/all`);
     return response.data;
   },
+  checkMdnExists: async (mdn: string) => {
+    const response = await api.get(`${carApiRoot}/check-mdn/${mdn}`);
+    return response.data;
+  },
   searchByFilters: async (searchText: string, status?: string, purpose?: string) => {
     // 검색 파라미터 구성
     const params = new URLSearchParams();
