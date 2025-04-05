@@ -22,7 +22,7 @@ function CarSection() {
     }
   }
 
-  async function searchCars(isReload: boolean, searchText: string = "", status: string, purpose: string) {
+  async function searchCars(isReload: boolean, searchText: string = "", status?: string, purpose?: string) {
     setIsLoading(true);
 
     // 새로 고침 일땐 마지막에 검색한 옵션 유지
