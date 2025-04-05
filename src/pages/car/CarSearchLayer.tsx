@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search as SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CarStatus, CarPurpose } from "@/constants/status";
+import { CarStatus, CarPurpose } from "@/constants/datas/status";
 
 type CarSearchLayer = {
   onSearch: (searchText: string, status?: string, purpose?: string) => void;

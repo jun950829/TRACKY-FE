@@ -13,8 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { CarDetailTypes } from '@/constants/types';
-import { CarStatus } from '@/constants/status';
+import { CarDetailTypes } from '@/constants/types/types';
+import { CarStatus } from '@/constants/datas/status';
 import carApiService from '@/libs/apis/carApi';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';

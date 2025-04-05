@@ -1,6 +1,6 @@
 // import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RentDetailTypes } from "@/constants/types";
+import { RentDetailTypes } from "@/constants/types/types";
 import rentApiService from "@/libs/apis/rentsApi";
 import { useState } from "react";
 import RentDetailModal from "./RentDetailModal";

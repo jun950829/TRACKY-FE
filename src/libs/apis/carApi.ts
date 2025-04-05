@@ -1,4 +1,4 @@
-import { CarCreateTypes, CarUpdateTypes } from "@/constants/types";
+import { CarCreateTypes, CarUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const carApiRoot = "/cars";

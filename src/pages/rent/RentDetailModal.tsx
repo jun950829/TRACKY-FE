@@ -1,4 +1,4 @@
-import { RentDetailTypes } from "@/constants/types";
+import { RentDetailTypes } from "@/constants/types/types";
 import { formatDateTime } from "@/libs/utils/utils";
 import React from "react";
 

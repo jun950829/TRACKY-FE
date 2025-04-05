@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RentStatus } from "@/constants/status";
+import { RentStatus } from "@/constants/datas/status";
 
 type RentSearchLayerProps = {
   onSearch: (searchText: string) => void;

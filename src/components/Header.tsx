@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { headerMenus } from "../constants/menus";
+import { headerMenus } from "../constants/datas/menus";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useLogout } from "@/libs/utils/useLogout";
 import { Menu, X } from "lucide-react";
