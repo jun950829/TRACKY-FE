@@ -21,7 +21,8 @@ const HistoryMain = () => {
 
   // 초기 데이터 로드
   useEffect(() => {
-    if (import.meta.env.DEV && !isDataInitialized) {
+    // if (import.meta.env.DEV && !isDataInitialized) {
+      if (true && !isDataInitialized) {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
       setTripResults(mockTripRecords);
