@@ -56,7 +56,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
     <div className="bg-white border-b">
       {/* PC 뷰 */}
       <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 min-h-[40px]">
           <Input
             placeholder="렌트 정보 검색"
             className="w-64"
@@ -173,7 +173,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
           </Popover>
         </div>
         
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 min-h-[40px]">
           <Button 
             className="bg-black text-white hover:bg-gray-800 flex-1" 
             onClick={() => search()}
