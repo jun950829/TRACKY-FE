@@ -24,7 +24,7 @@ const schema = yup.object().shape({
   mdn: yup.string().required('식별 키를 입력하세요'),
   carType: yup.string().required('모델명을 입력하세요'),
   carPlate: yup.string().required('번호판을 입력하세요'),
-  carYear: yup.string().required('연식을 입력하세요'),
+  carYear: yup.number().min(4).max(4).required('연식을 4자리 숫자로 입력하세요'),
   purpose: yup.string().required('목적을 입력하세요'),
   status: yup.string().required('상태를 선택하세요'),
 });
@@ -53,7 +53,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
       mdn: initialData.mdn,
       carType: initialData.carType,
       carPlate: initialData.carPlate,
-      carYear: initialData.carYear,
+      carYear: Number(initialData.carYear),
       purpose: initialData.purpose,
       status: initialData.status,
     },
