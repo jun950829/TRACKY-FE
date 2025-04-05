@@ -10,14 +10,7 @@ import Modal from "@/components/custom/Modal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react";
 import { CustomButton } from "@/components/custom/CustomButton";
-
-const statusColor = {
-  '운행중': 'bg-green-100 text-green-800',
-  '정비중': 'bg-yellow-100 text-yellow-800',
-  '대기중': 'bg-blue-100 text-blue-800',
-  // 기본값
-  'default': 'bg-gray-100 text-gray-800'
-};
+import { StatusColorMap } from "@/constants/status";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
@@ -66,7 +59,7 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
 
   // 상태에 따른 색상 클래스 반환
   const getStatusClass = (status: string) => {
-    return statusColor[status as keyof typeof statusColor] || statusColor.default;
+    return StatusColorMap[status as keyof typeof StatusColorMap] || StatusColorMap.default;
   };
 
   // 로딩 상태 표시
