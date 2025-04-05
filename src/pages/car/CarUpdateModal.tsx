@@ -69,7 +69,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData }: CarUpdateModalProps
       bizId: initialData.bizId,
       carType: data.carType,
       carPlate: data.carPlate,
-      carYear: data.carYear,
+      carYear: data.carYear.toString(),
       purpose: data.purpose,
       status: data.status,
       sum: initialData.sum,

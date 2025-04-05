@@ -20,7 +20,7 @@ const schema = yup.object({
   // bizId: yup.string().required("업체를 선택해주세요."),
   carType: yup.string().required("차종을 입력해주세요."),
   carPlate: yup.string().required("차량 번호판을 입력해주세요."),
-  carYear: yup.string().required("연식을 입력해주세요."),
+  carYear: yup.number().min(4).max(4).required("연식을 입력해주세요."),
   purpose: yup.string().required("차량 용도를 입력해주세요."),
   status: yup.string().required("차량 상태를 입력해주세요."),
   sum: yup.number().required("주행거리를 입력해주세요.").typeError("숫자만 입력 가능합니다.")
@@ -55,6 +55,7 @@ export default function CarRegister() {
    * @param data 
    */
   const onSubmit = async (data: CarCreateTypes) => {
+    data.carYear = data.carYear.toString();
     // 천승준 - 임시 싱크용 데이터 추가
     const requestData = {
       ...data,
