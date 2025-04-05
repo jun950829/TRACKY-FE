@@ -1,29 +1,36 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Plus, Search as SearchIcon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { useRef, useState } from "react";
+import { Plus, Search as SearchIcon } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CarStatus, CarPurpose } from "@/constants/status";
 
 type CarSearchLayer = {
-  onSearch: (searchText: string) => void;
+  onSearch: (searchText: string, status?: string, purpose?: string) => void;
 }
 
 function CarSearchLayer({ onSearch }: CarSearchLayer) {
-  const [date, setDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<string | undefined>();
-  const searchRef = useRef<HTMLInputElement>(null);
+  const [purpose, setPurpose] = useState<string | undefined>();
+  const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
 
-  console.log(date, status);
-
   function search() {
-    console.log('search');
-    onSearch(searchRef.current?.value || '');
+    // searchRef.current가 아닌 state 값 사용
+    const searchText = searchValue;
+    
+    // "all" 옵션이 선택되면 해당 필터는 undefined로 처리
+    const statusFilter = status === 'all' ? undefined : status;
+    const purposeFilter = purpose === 'all' ? undefined : purpose;
+    
+    console.log('검색 요청:', {
+      searchText: searchText,
+      status: statusFilter,
+      purpose: purposeFilter
+    });
+    
+    onSearch(searchText, statusFilter, purposeFilter);
   }
 
   // Enter 키 이벤트 핸들러
@@ -31,6 +38,11 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
     if (event.key === 'Enter') {
       search();
     }
+  };
+
+  // 입력값 변경 핸들러
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   };
 
   return (
@@ -41,41 +53,36 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
           <Input
             placeholder="차량 식별 키(mdn) 검색"
             className="w-64"
-            ref={searchRef}
+            value={searchValue}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
           />
 
-          <Select onValueChange={setStatus}>
+          <Select onValueChange={setStatus} defaultValue="all">
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="차량 상태" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="운행중">운행중</SelectItem>
-              <SelectItem value="정비중">정비중</SelectItem>
-              <SelectItem value="폐차">폐차</SelectItem>
+              {CarStatus.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-[150px] justify-start text-left font-normal"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "yyyy-MM-dd") : "날짜 선택"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                locale={ko}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Select onValueChange={setPurpose} defaultValue="all">
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="사용 목적" />
+            </SelectTrigger>
+            <SelectContent>
+              {CarPurpose.map((purpose) => (
+                <SelectItem key={purpose.value} value={purpose.value}>
+                  {purpose.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <Button className="bg-black text-white hover:bg-gray-800" onClick={() => search()}>
             <SearchIcon className="h-4 w-4 mr-2" />
@@ -95,7 +102,8 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
           <Input
             placeholder="차량 식별 키(mdn) 검색"
             className="rounded-r-none"
-            ref={searchRef}
+            value={searchValue}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
           />
           <Button 
@@ -112,32 +120,26 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
               <SelectValue placeholder="차량 상태" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="운행중">운행중</SelectItem>
-              <SelectItem value="정비중">정비중</SelectItem>
-              <SelectItem value="폐차">폐차</SelectItem>
+              {CarStatus.map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex-1 justify-start text-left font-normal"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "yyyy-MM-dd") : "날짜"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                locale={ko}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Select onValueChange={setPurpose}>
+            <SelectTrigger className="flex-1">
+              <SelectValue placeholder="사용 목적" />
+            </SelectTrigger>
+            <SelectContent>
+              {CarPurpose.map((purpose) => (
+                <SelectItem key={purpose.value} value={purpose.value}>
+                  {purpose.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         
         <Button 

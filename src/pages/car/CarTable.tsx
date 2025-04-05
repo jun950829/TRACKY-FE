@@ -8,13 +8,9 @@ import CarUpdateModal from "./CarUpdateModal";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/custom/Modal";
 import { Card, CardContent } from "@/components/ui/card";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { CustomButton } from "@/components/custom/CustomButton";
-
-// const statusColor = {
-//   '운행중': 'bg-green-100 text-green-800',
-//   '정비중': 'bg-yellow-100 text-yellow-800',
-// };
+import StatusBadge from "@/components/custom/StatusBadge";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
@@ -83,27 +79,31 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
     <div className="w-full">
       {/* PC 화면용 테이블 */}
       <div className="hidden md:block overflow-auto">
-        <Table>
+        <Table className="w-full table-fixed">
           <TableHeader>
-            <TableRow>
-              <TableHead>차량 번호</TableHead>
-              <TableHead>차량 모델</TableHead>
-              <TableHead>차량 번호판</TableHead>
-              <TableHead className="text-right">관리</TableHead>
+            <TableRow className="[&>th]:px-1 [&>th]:py-2">
+              <TableHead className="w-16">차량 상태</TableHead>
+              <TableHead className="w-20">차량 번호</TableHead>
+              <TableHead className="w-24">차량 모델</TableHead>
+              <TableHead className="w-20">차량 번호판</TableHead>
+              <TableHead className="text-right w-16">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {carList.map((car, idx) => (
-              <TableRow key={idx} className="hover:bg-gray-50">
+              <TableRow key={idx} className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
+                <TableCell className="whitespace-nowrap">
+                  <StatusBadge status={car.status} type="car" />
+                </TableCell>
                 <TableCell
                   onClick={() => {
                     setIsDetail(true);
                     handleCellClick(car.mdn)
                   }}
-                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium"
+                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
                 >{car.mdn}</TableCell>
-                <TableCell>{car.carType}</TableCell>
-                <TableCell>{car.carPlate}</TableCell>
+                <TableCell className="whitespace-nowrap">{car.carType}</TableCell>
+                <TableCell className="whitespace-nowrap">{car.carPlate}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
                     <CustomButton 
@@ -140,35 +140,27 @@ function CarTable({ carList, setCarList, isLoading = false }: CarTableProps) {
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
-        {carList.map((car, idx) => (
-          <Card key={idx} className="overflow-hidden">
+        {carList.map((car) => (
+          <Card key={car.mdn} className="overflow-hidden">
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div className="space-y-1">
-                  <h3 
-                    className="font-semibold text-lg cursor-pointer hover:text-blue-600"
-                    onClick={() => {
-                      setIsDetail(true);
-                      handleCellClick(car.mdn);
-                    }}
-                  >
-                    {car.mdn}
-                  </h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <StatusBadge status={car.status} type="car" />
+                    <h3 
+                      className="font-semibold text-lg cursor-pointer hover:text-blue-600"
+                      onClick={() => {
+                        setIsDetail(true);
+                        handleCellClick(car.mdn);
+                      }}
+                    >
+                      {car.mdn}
+                    </h3>
+                  </div>
                   <p className="text-gray-500 text-sm">{car.carType}</p>
                 </div>
-                <div className="relative">
-                  <CustomButton 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 p-0"
-                    onClick={() => {
-                      // 간소화된 드롭다운 대신 상세 페이지 표시
-                      setIsDetail(true);
-                      handleCellClick(car.mdn);
-                    }}
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </CustomButton>
+                <div className="bg-gray-50 px-3 py-1 rounded-md">
+                  <p className="text-sm text-gray-700">{car.purpose}</p>
                 </div>
               </div>
               <div className="mt-2 text-sm">

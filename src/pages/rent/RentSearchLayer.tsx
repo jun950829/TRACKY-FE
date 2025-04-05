@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RentStatus } from "@/constants/status";
 
 type RentSearchLayerProps = {
   onSearch: (searchText: string) => void;
@@ -48,10 +49,11 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
               <SelectValue placeholder="렌트 상태" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="예약">예약</SelectItem>
-              <SelectItem value="진행중">진행중</SelectItem>
-              <SelectItem value="완료">완료</SelectItem>
-              <SelectItem value="취소">취소</SelectItem>
+              {RentStatus.filter(status => status.value !== 'all').map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -111,10 +113,11 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
               <SelectValue placeholder="렌트 상태" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="예약">예약</SelectItem>
-              <SelectItem value="진행중">진행중</SelectItem>
-              <SelectItem value="완료">완료</SelectItem>
-              <SelectItem value="취소">취소</SelectItem>
+              {RentStatus.filter(status => status.value !== 'all').map((status) => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
