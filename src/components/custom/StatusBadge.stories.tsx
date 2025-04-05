@@ -1,5 +1,3 @@
-git // src/components/custom/StatusBadge.stories.tsx
-
 import type { Meta, StoryObj } from '@storybook/react';
 import StatusBadge from './StatusBadge';
 import { CarStatus, RentStatus } from '@/constants/status';
