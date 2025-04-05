@@ -137,12 +137,12 @@ export default function CarRegister() {
     }
 
     // 천승준 - 임시 싱크용 데이터 추가
-    data.carYear = data.carYear.toString();
     const requestData = {
       ...data,
       sum: data.sum,
       bizId: 1,
     }
+    data.carYear = data.carYear.toString();
 
     const carData  = await carApiService.createCar(requestData);
 
