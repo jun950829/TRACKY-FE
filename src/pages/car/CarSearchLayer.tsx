@@ -58,7 +58,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
             onKeyDown={handleKeyDown}
           />
 
-          <Select onValueChange={setStatus} defaultValue="all">
+          <Select onValueChange={setStatus}>
             <SelectTrigger className="w-[120px]">
               <SelectValue placeholder="차량 상태" />
             </SelectTrigger>
@@ -71,7 +71,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={setPurpose} defaultValue="all">
+          <Select onValueChange={setPurpose}>
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="사용 목적" />
             </SelectTrigger>

@@ -49,7 +49,7 @@ export const CarStatusColorMap: Record<string, string> = {
  */
 export const RentStatus: StatusOption[] = [
   { value: "all", label: "전체" },
-  { value: "예약", label: "예약" },
+  { value: "예약완료", label: "예약완료" },
   { value: "대여중", label: "대여중" },
   { value: "반납완료", label: "반납완료" },
   { value: "취소", label: "취소" }
@@ -59,7 +59,7 @@ export const RentStatus: StatusOption[] = [
  * 렌트 상태별 색상 스타일 매핑
  */
 export const RentStatusColorMap: Record<string, string> = {
-  '예약': 'bg-blue-100 text-blue-700',
+  '예약완료': 'bg-blue-100 text-blue-700',
   '대여중': 'bg-yellow-100 text-yellow-700',
   '반납완료': 'bg-green-100 text-green-700',
   '취소': 'bg-red-100 text-red-700',
