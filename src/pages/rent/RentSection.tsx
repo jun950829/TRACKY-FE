@@ -2,7 +2,7 @@ import { rentApiService } from "@/libs/apis/rentsApi";
 import { useEffect, useState } from "react";
 import RentTable from "./RentTable";
 import RentSearchLayer from "./RentSearchLayer";
-import { RentDetailTypes } from "@/constants/types";
+import { RentDetailTypes } from "@/constants/types/types";
 
 function RentSection() {
     const [rentList, setRentList] = useState<RentDetailTypes[]>([]);

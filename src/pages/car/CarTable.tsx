@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { CarDetailTypes,  } from "@/constants/types";
+import { CarDetailTypes,  } from "@/constants/types/types";
 import { useState } from "react";
 import CarDetailModal from "./CarDetailModal";
 import carApiService from "@/libs/apis/carApi";

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RentCreateTypes } from "@/constants/types";
+import { RentCreateTypes } from "@/constants/types/types";
 import rentApiService from "@/libs/apis/rentsApi";
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useState } from "react"

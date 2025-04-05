@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CarSearchLayer from "./CarSearchLayer";
 import CarTable from "./CarTable";
 import carApiService from "@/libs/apis/carApi";
-import { CarDetailTypes } from "@/constants/types";
+import { CarDetailTypes } from "@/constants/types/types";
 
 function CarSection() {
   const [carList, setCarList] = useState<CarDetailTypes[]>([]);

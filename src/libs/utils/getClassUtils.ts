@@ -1,4 +1,4 @@
-import { CarStatusColorMap, RentStatusColorMap } from "@/constants/status";
+import { CarStatusColorMap, RentStatusColorMap } from "@/constants/datas/status";
 
 /**
  * UI 관련 유틸리티 함수 모음
