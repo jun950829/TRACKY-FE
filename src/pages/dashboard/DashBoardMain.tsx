@@ -1,13 +1,14 @@
 import React, { useRef, useState, useMemo, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
 import ReservationCard from "@/pages/dashboard/ReservationCard";
-import VehicleMap from "./VehicleMap";
+//import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, Calendar, Activity, Clock } from "lucide-react";
 import { CarStatusTypes, ReservationStatus } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
+import KoreaMap from "./KoreaMap";
 
 // Define vehicle data interface
 interface Vehicle {
@@ -200,13 +201,7 @@ export default function Dashboard() {
             <div className="lg:col-span-3 flex flex-col">
               {/* 지도 컴포넌트 */}
               <div className="mb-6 relative">
-                <VehicleMap 
-                  vehicles={vehicles.map(v => ({
-                    ...v,
-                    status: v.status as "운행중" | "정비중" | "대기중"
-                  }))} 
-                  isLoading={isLoading} 
-                />
+                <KoreaMap />
               </div>
               
               {/* Carousel Stats */}
