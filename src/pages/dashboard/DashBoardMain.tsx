@@ -8,6 +8,7 @@ import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
 import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
 import DashBoardCarousel from "./components/DashBoardCarousel";
+import { useSseEvents } from "@/hooks/useSseEvents";
 
 // Define vehicle data interface
 interface Vehicle {
@@ -29,6 +30,8 @@ export default function Dashboard() {
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
+
+  useSseEvents();
   
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
@@ -142,7 +145,6 @@ export default function Dashboard() {
             {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
             <div className="lg:col-span-2">
               <div className="space-y-5 flex flex-col">
-                예약 현황
                 <div className="h-[400px] overflow-hidden">
                   <ReservationCard reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
                 </div>

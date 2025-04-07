@@ -1,3 +1,10 @@
+export type SseEventPayloadType = {
+  event: string;
+  method: string;
+  message : string;
+  createdAt: string;
+}
+
 export type Statistics = {
   totalDriveDistance: number;
   totalRentCount: number;

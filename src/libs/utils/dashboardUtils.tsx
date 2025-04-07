@@ -1,6 +1,6 @@
 import { CarStatus } from "@/constants/datas/status";
 import { Statistics } from "@/constants/types/types";
-import { Activity, Calendar, Car, Settings, Clock, Ban } from "lucide-react";
+import { Activity, Calendar, Car, Settings, Clock, Ban, Bell } from "lucide-react";
 import React from "react";
 
 export const getStatusLabel = (status: string): string => {
@@ -74,4 +74,32 @@ export const makeStatisticsItems = (statistics: Statistics) => {
   ];
 
   return statisticsItems;
+}
+
+export const RecentActivityIcon = (event: string, method: string) => {
+  const color = RecentActivityColor(method);
+
+  switch(event) {
+    case 'car_event':
+      return <Car className={`text-${color}-800 w-5 h-5`} />;
+    case 'rent_event':
+      return <Calendar className={`text-${color}-800 w-5 h-5`} />;
+    case 'alarm_event':
+      return <Bell className={`text-${color}-800 w-5 h-5`} />;
+    default:
+      return <Activity className={`text-${color}-800 w-5 h-5`} />;
+  }
+}
+
+export const RecentActivityColor = (method: string) => {
+  switch(method) {
+    case 'create':
+      return 'green';
+    case 'update':
+      return 'blue';
+    case 'delete':
+      return 'red';
+    default:
+      return 'zinc';
+  }
 }
