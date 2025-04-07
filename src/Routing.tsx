@@ -17,8 +17,7 @@ import InfoMain from "./pages/info/InfoMain";
 import AdminMain from "./pages/admin/AdminMain";
 import AdminRoute from "./components/AdminRoute";
 
-
-// 천승준 - 임시로 로그인 없이 다 볼 수 있게 해둠
+// 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
   { path: "/", element: <Home /> },
   { path: "/about", element: <About /> },
@@ -26,38 +25,22 @@ const publicRoutes = [
   { path: "/register", element: <Register /> },
   { path: "/emulator", element: <Emulator /> },
   { path: "/info", element: <InfoMain /> },
-  { path: "/history", element: <HistoryMain /> },
+];
+
+// 로그인 후에만 접근 가능한 라우트들
+const protectedRoutes = [
+  { path: "/dashboard", element: <DashboardMain /> },
   { path: "/cars", element: <CarMain /> },
   { path: "/cars/register", element: <CarRegister /> },
   { path: "/rents", element: <RentMain /> },
   { path: "/rents/register", element: <RentRegister /> },
-  { path: "/admin", element: <AdminMain /> },
-  { path: "/dashboard", element: <DashboardMain /> },
+  { path: "/history", element: <HistoryMain /> },
 ];
-// // 로그인 없이 접근 가능한 라우트들
-// const publicRoutes = [
-//   { path: "/", element: <Home /> },
-//   { path: "/about", element: <About /> },
-//   { path: "/login", element: <Login /> },
-//   { path: "/register", element: <Register /> },
-//   { path: "/emulator", element: <Emulator /> },
-//   { path: "/info", element: <InfoMain /> },
-// ];
 
-// // 로그인 후에만 접근 가능한 라우트들
-// const protectedRoutes = [
-//   { path: "/dashboard", element: <DashboardMain /> },
-//   { path: "/cars", element: <CarMain /> },
-//   { path: "/cars/register", element: <CarRegister /> },
-//   { path: "/rents", element: <RentMain /> },
-//   { path: "/rents/register", element: <RentRegister /> },
-//   { path: "/history", element: <HistoryMain /> },
-// ];
-
-// // 관리자 로그인 후에만 접근 가능한 라우트들
-// const adminRoutes = [
-//   { path: "/admin", element: <AdminMain /> },
-// ];
+// 관리자 로그인 후에만 접근 가능한 라우트들
+const adminRoutes = [
+  { path: "/admin", element: <AdminMain /> },
+];
 
 function Routing() {
   const isHydrated = useAuthStore((state) => state.isHydrated);
@@ -73,15 +56,15 @@ function Routing() {
         <Route key={path} path={path} element={element} />
       ))}
 
-      {/* 보호된 라우트
+      {/* 보호된 라우트 */}
       {protectedRoutes.map(({ path, element }) => (
         <Route key={path} path={path} element={<PrivateRoute>{element}</PrivateRoute>} />
-      ))}  */}
+      ))} 
 
       {/* 관리자 라우트 */}
-      {/* {adminRoutes.map(({ path, element }) => (
+      {adminRoutes.map(({ path, element }) => (
         <Route key={path} path={path} element={<AdminRoute>{element}</AdminRoute>} />
-      ))} */}
+      ))}
     </Routes>
   );
 }
