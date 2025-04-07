@@ -1,4 +1,42 @@
 import axios from "axios";
+import { useAuthStore } from "@/stores/useAuthStore";
+
+// JWT 토큰 만료 확인 함수
+export const isTokenExpired = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(window.atob(base64));
+
+    console.log('payload :', payload.exp * 1000 < Date.now());
+    console.log('payload.exp :', payload.exp * 1000);
+    console.log('Date.now() :', Date.now());
+    
+    // exp는 초 단위로 저장됨, 현재 시간은 밀리초 단위
+    return payload.exp * 1000 < Date.now();
+  } catch (e) {
+    console.error("토큰 확인 오류:", e);
+    return true; // 토큰 디코딩에 문제가 있으면 만료된 것으로 간주
+  }
+};
+
+// 세션 만료 시 처리할 함수
+export const handleSessionExpired = () => {
+  // 현재 창의 경로를 저장
+  const currentPath = window.location.pathname;
+  
+  // 알림 표시
+  alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+  
+  // 전역 상태에서 인증 정보 제거 
+  const clearAuth = useAuthStore.getState().clearAuth;
+  clearAuth();
+  
+  // 로그인 페이지로 리다이렉트
+  if (currentPath !== '/login') {
+    window.location.href = '/login';
+  }
+};
 
 // 기본 API 인스턴스 설정
 const api = axios.create({
@@ -9,25 +47,23 @@ const api = axios.create({
   },
 });
 
-// 요청 인터셉터 설정 (필요한 경우)
+// 요청 인터셉터 설정
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken"); // 토큰 가져오기 (예제)
+    const token = localStorage.getItem("accessToken"); // 토큰 가져오기
+    
     if (token) {
+      // 토큰 만료 확인
+      if (isTokenExpired(token)) {
+        handleSessionExpired();
+        return Promise.reject(new axios.Cancel("Token expired"));
+      }
+      
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
-);
-
-// 응답 인터셉터 설정 (에러 핸들링)
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error:", error.response || error.message);
-    return Promise.reject(error);
-  }
 );
 
 // API 요청 함수들
