@@ -1,98 +1,104 @@
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search as SearchIcon } from 'lucide-react';
-import { useInfoStore } from '@/stores/useInfoStore';
-import rentApiService from '@/libs/apis/rentsApi';
-import carApiService from '@/libs/apis/carApi';
-import { mockRentDetails, mockCarDetail, mockTrips } from '@/constants/mocks/infoMockData';
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search as SearchIcon } from "lucide-react";
+import { useInfoStore } from "@/stores/useInfoStore";
+import infoApiService from "@/libs/apis/infoApi";
+import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode.ts";
 
 function InfoSearchSection() {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const { setInfo } = useInfoStore();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
   };
-
   const handleSearch = async () => {
     if (!searchText.trim()) {
-      setInfo({ error: '예약 ID를 입력해주세요.', rent: null, car: null, trips: [] });
+      setInfo({ error: "예약 ID를 입력해주세요.", rent: null, car: null, trips: [] });
       return;
     }
 
     setInfo({ isLoading: true, error: null });
 
-    // 개발 환경에서는 mock 데이터 사용
-    if (import.meta.env.DEV) {
-      // 검색 시뮬레이션을 위한 타임아웃 설정
-      setTimeout(() => {
-        // 입력된 검색어와 일치하는 예약 찾기
-        const foundRent = mockRentDetails.find(rent => 
-          rent.rent_uuid.toLowerCase().includes(searchText.toLowerCase())
-        );
+    try {
+      // 1. 예약 정보 + 차량 정보 조회
+      const rentResponse = await infoApiService.getReservationWithCar(searchText);
+      const reservation = rentResponse?.data?.reservation;
+      const car = rentResponse?.data?.car;
 
-        if (foundRent) {
-          setInfo({
-            rent: foundRent,
-            car: mockCarDetail,
-            trips: mockTrips,
-            isLoading: false,
-            error: null
-          });
-        } else {
-          setInfo({
-            error: '해당 예약 정보를 찾을 수 없습니다.',
-            rent: null,
-            car: null,
-            trips: [],
-            isLoading: false
-          });
-        }
-      }, 800); // 검색 지연 시뮬레이션
-    } else {
-      // 실제 API 호출 로직
-      try {
-        // 예약 정보 조회
-        const rentData = await rentApiService.searchByRentUuidDetail(searchText);
-        
-        if (!rentData || !rentData.rent) {
-          setInfo({ 
-            error: '해당 예약 정보를 찾을 수 없습니다.', 
-            rent: null, 
-            car: null, 
-            trips: [],
-            isLoading: false 
-          });
-          return;
-        }
-
-        // 차량 정보 조회
-        const carData = await carApiService.searchOneByMdnDetail(rentData.rent.mdn);
-        
-        // 상태 업데이트
+      if (!reservation || !car) {
         setInfo({
-          rent: rentData.rent,
-          car: carData.car,
-          trips: rentData.trips || [],
-          isLoading: false,
-          error: null
-        });
-      } catch (error) {
-        console.error('검색 오류:', error);
-        setInfo({ 
-          error: '정보를 불러오는 중 오류가 발생했습니다.', 
-          rent: null, 
-          car: null, 
+          error: "해당 예약 정보를 찾을 수 없습니다.",
+          rent: null,
+          car: null,
           trips: [],
-          isLoading: false 
+          isLoading: false,
         });
+        return;
       }
+
+      const parsedRent = {
+        rent_uuid: reservation.rentUuid,
+        renterName: reservation.renterName,
+        renterPhone: reservation.renterPhone,
+        purpose: reservation.purpose ?? "-",
+        rentStime: reservation.rentStime,
+        rentEtime: reservation.rentEtime,
+        rentLoc: reservation.rentLoc ?? "-",
+        returnLoc: reservation.returnLoc ?? "-",
+        rentStatus: "SCHEDULED", // 필요하면 추후 실제 상태값 적용
+      };
+
+      // 2. 운행 정보 조회
+      const drivingsResponse = await infoApiService.getDrivings(searchText);
+
+      const parsedTrips = await Promise.all(
+        (drivingsResponse?.data || []).map(async (driving: any) => {
+          const startLat = driving.driveStartLat / 1_000_000;
+          const startLon = driving.driveStartLon / 1_000_000;
+          const endLat = driving.driveEndLat / 1_000_000;
+          const endLon = driving.driveEndLon / 1_000_000;
+
+          // 시작 위치 주소 변환
+          const startAddress = await reverseGeocodeOSM(startLat, startLon);
+
+          // 종료 위치가 유효하면 주소 변환, 아니면 "운행중"
+          const hasValidEndCoords = driving.driveEndLat !== 0 && driving.driveEndLon !== 0;
+          const endAddress = hasValidEndCoords ? await reverseGeocodeOSM(endLat, endLon) : "운행중";
+
+          return {
+            oTime: driving.driveOnTime,
+            offTime: driving.driveOffTim,
+            distance: driving.driveDistance,
+            startAddress,
+            endAddress,
+          };
+        })
+      );
+
+      // 3. 상태 업데이트
+      setInfo({
+        rent: parsedRent,
+        car,
+        trips: parsedTrips,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error("검색 오류:", error);
+      setInfo({
+        error: "정보를 불러오는 중 오류가 발생했습니다.",
+        rent: null,
+        car: null,
+        trips: [],
+        isLoading: false,
+      });
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSearch();
     }
   };
@@ -106,14 +112,9 @@ function InfoSearchSection() {
           <h2 className="text-lg sm:text-xl font-semibold mb-2">예약 ID로 조회하기</h2>
           <p className="text-sm text-gray-600">
             예약 시 제공받은 예약 ID를 입력하여 예약 정보를 확인할 수 있습니다.
-            {import.meta.env.DEV && (
-              <span className="block mt-1 text-blue-600 text-xs">
-                (개발 모드: 사용 가능한 예약 ID: RT123456, RT789012, RT345678, RT901234)
-              </span>
-            )}
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row md:w-2/5 gap-2">
           <Input
             placeholder="예약 ID를 입력하세요"
@@ -122,7 +123,7 @@ function InfoSearchSection() {
             onKeyDown={handleKeyDown}
             className="flex-1 text-sm"
           />
-          <Button 
+          <Button
             onClick={handleSearch}
             disabled={isLoading}
             className="bg-black hover:bg-gray-800 text-white h-10 mt-2 sm:mt-0"
@@ -136,12 +137,12 @@ function InfoSearchSection() {
           </Button>
         </div>
       </div>
-      
-      {error && (
-        <p className="text-sm text-red-500 mt-2">{error}</p>
-      )}
+
+      {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
     </div>
   );
 }
 
-export default InfoSearchSection; 
+console.log("✅ InfoSearchSection 렌더링됨");
+
+export default InfoSearchSection;
