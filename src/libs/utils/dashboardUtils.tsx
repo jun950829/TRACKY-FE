@@ -68,7 +68,7 @@ export const makeStatisticsItems = (statistics: Statistics) => {
       id: 'total-cars',
       icon: <Car className="h-4 w-4 text-cyan-500" />,
       title: '총 차량 수',
-      value: `${statistics.totalCarCount}} 대`,
+      value: `${statistics.totalCarCount} 대`,
       color: 'bg-cyan-50 border-cyan-200'
     }
   ];
