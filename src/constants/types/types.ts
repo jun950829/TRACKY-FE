@@ -1,3 +1,19 @@
+export type Statistics = {
+  totalDriveDistance: number;
+  totalRentCount: number;
+  totalCarCount: number;
+  totalRentDurationInMinutes: number;
+  totalDriveDurationInMinutes: number;
+}
+
+export type StatisticsItem = {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+  color: string;
+}
+
 export type CarTypes = {
   mdn: string;
   bizId: number;

@@ -1,13 +1,13 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
-import ReservationCard from "@/pages/dashboard/ReservationCard";
+import ReservationCard from "@/pages/dashboard/components/ReservationCard";
 import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
-import { Card, CardContent } from "@/components/ui/card";
-import { Car, Calendar, Activity, Clock } from "lucide-react";
-import { CarStatusTypes, ReservationStatus } from "@/constants/types/types";
+import { CarStatusTypes, ReservationStatus, Statistics, StatisticsItem } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
+import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
+import DashBoardCarousel from "./components/DashBoardCarousel";
 
 // Define vehicle data interface
 interface Vehicle {
@@ -24,13 +24,12 @@ interface Vehicle {
 }
 
 export default function Dashboard() {
-  const carouselRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPaused, setIsPaused] = useState(false);
-  const isInitializedRef = useRef(false);
   const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
-
+  const [statistics, setStatistics] = useState<Statistics>();
+  const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
+  
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
     return Array.from({ length: 10 }, (_, i) => ({
@@ -47,139 +46,63 @@ export default function Dashboard() {
     }));
   }, []);
 
-  // 최초 데이터 조회
+  // 데이터 로드
   useEffect(() => {
-    getCarStatus();
-    getReservationStatusData();
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([
+          getCarStatus(),
+          getReservationStatusData(),
+          getStatistics()
+        ]);
+      } catch (error) {
+        console.error('데이터 조회 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
+    fetchData();
   }, []);
 
+  // 통계 데이터가 변경되면 statisticsItems 업데이트
+  useEffect(() => {
+    if (statistics) {
+      setStatisticsItems(makeStatisticsItems(statistics));
+    }
+  }, [statistics]);
+
   const getCarStatus = async () => {
-    setIsLoading(true);
     try {
       const response = await dashboardApi.getCarStatus();
       setCarStatus(response.data);
     } catch (error) {
       console.error('차량 상태 조회 실패:', error);
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
   
   const getReservationStatusData = async (datefilter : number = 0) => {
-    const response = await dashboardApi.getReservationStatus(datefilter);
-    console.log("response: ", response);
-    setReservationStatus(response.data);
-  };
-  
-  const carouselItems = useMemo(() => [
-    {
-      id: 'total-km',
-      icon: <Activity className="h-4 w-4 text-purple-500" />,
-      title: '총 운행거리',
-      value: `${vehicles.reduce((sum, v) => sum + (v.km || 0), 0).toLocaleString()} km`,
-      color: 'bg-purple-50 border-purple-200'
-    },
-    {
-      id: 'total-usage-time',
-      icon: <Clock className="h-4 w-4 text-amber-500" />,
-      title: '누적 이용시간',
-      value: `${Math.floor(vehicles.length * Math.random() * 24 * 15).toLocaleString()}시간`,
-      color: 'bg-amber-50 border-amber-200'
-    },
-    {
-      id: 'total-rents',
-      icon: <Calendar className="h-4 w-4 text-indigo-500" />,
-      title: '총 렌트 수',
-      value: [1,2,3,4,4,5,5,6,6].length.toString(),
-      color: 'bg-indigo-50 border-indigo-200'
-    },
-    {
-      id: 'total-cars',
-      icon: <Car className="h-4 w-4 text-cyan-500" />,
-      title: '총 차량 수',
-      value: vehicles.length.toString(),
-      color: 'bg-cyan-50 border-cyan-200'
+    try {
+      const response = await dashboardApi.getReservationStatus(datefilter);
+      console.log("getReservationStatus: ", response);
+      setReservationStatus(response.data);
+    } catch (error) {
+      console.error('예약 현황 조회 실패:', error);
+      throw error;
     }
-  ], [vehicles]);
-
-  // 무한 스크롤을 위한 표시 아이템 - 3세트 복사
-  const displayItems = useMemo(() => {
-    // 무한 스크롤 효과를 위해 3개 세트의 반복 아이템 생성
-    return [...carouselItems, ...carouselItems, ...carouselItems];
-  }, [carouselItems]);
-
-  // 아이템 너비 및 캐러셀 관련 상태
-  const itemWidth = 260; // px 기준
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  
-  useEffect(() => {
-    if (containerRef.current) {
-      const updateWidth = () => {
-        setContainerWidth(containerRef.current?.offsetWidth || 0);
-      };
-      
-      updateWidth();
-      window.addEventListener('resize', updateWidth);
-      return () => window.removeEventListener('resize', updateWidth);
-    }
-  }, []);
-
-  // 캐러셀 애니메이션
-  useEffect(() => {
-    if (!carouselRef.current || !containerWidth) return;
-    
-    const carousel = carouselRef.current;
-    const singleSetWidth = carouselItems.length * itemWidth;
-    
-    // 초기 위치 설정 (중간 세트의 시작점) - 최초 한 번만 실행
-    if (!isInitializedRef.current) {
-      carousel.scrollLeft = singleSetWidth;
-      isInitializedRef.current = true;
-    }
-    
-    let lastTimestamp = 0;
-    let animationFrameId: number;
-    const speed = 0.2; // px per millisecond - 속도 감소
-    
-    const animate = (timestamp: number) => {
-      if (!lastTimestamp) lastTimestamp = timestamp;
-      const elapsed = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
-      
-      if (!isPaused) {
-        // 현재 위치에서 속도에 따라 이동
-        carousel.scrollLeft += speed * elapsed;
-        
-        // 세 번째 세트 이후로 넘어가면 첫 번째 세트로 순간 이동 (사용자가 알아채지 못하게)
-        if (carousel.scrollLeft >= singleSetWidth * 2) {
-          carousel.scrollLeft = singleSetWidth;
-        }
-        
-        // 첫 번째 세트 이전으로 스크롤되면 두 번째 세트로 이동 (역방향 스크롤 지원)
-        if (carousel.scrollLeft < singleSetWidth) {
-          carousel.scrollLeft = singleSetWidth;
-        }
-      }
-      
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    
-    animationFrameId = requestAnimationFrame(animate);
-    
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [carouselItems.length, isPaused, containerWidth, itemWidth]);
-
-  // 마우스 이벤트 핸들러 - 위치 초기화 없이 단순히 일시 정지만 처리
-  const handleMouseEnter = () => {
-    setIsPaused(true);
   };
 
-  const handleMouseLeave = () => {
-    setIsPaused(false);
+  const getStatistics = async () => {
+    try {
+      const response = await dashboardApi.getStatistics();
+      console.log("getStatistics: ", response);
+      setStatistics(response.data);
+    } catch (error) {
+      console.error('통계 조회 실패:', error);
+      throw error;
+    }
   };
 
   return (
@@ -210,43 +133,10 @@ export default function Dashboard() {
               </div>
               
               {/* Carousel Stats */}
-              <div 
-                ref={containerRef}
-                className="relative overflow-hidden" 
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div 
-                  ref={carouselRef} 
-                  className="flex overflow-x-hidden pb-1 px-1 -mx-1"
-                  style={{ 
-                    scrollbarWidth: 'none', 
-                    msOverflowStyle: 'none'
-                  }}
-                >
-                  {displayItems.map((item, index) => (
-                    <div 
-                      key={`${item.id}-${index}`} 
-                      className="min-w-[260px] pr-3 select-none"
-                      style={{ flex: '0 0 auto' }}
-                    >
-                      <Card className={`border-2 ${item.color} h-full`}>
-                        <CardContent className="p-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                              {item.icon}
-                            </div>
-                            <div>
-                              <div className="text-xs text-zinc-500">{item.title}</div>
-                              <div className="text-lg font-semibold">{isLoading ? '-' : item.value}</div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <DashBoardCarousel 
+                statisticsItems={statisticsItems}
+                isLoading={isLoading}
+              />
             </div>
             
             {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
