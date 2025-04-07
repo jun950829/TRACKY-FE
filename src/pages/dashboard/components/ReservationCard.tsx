@@ -1,77 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { ReservationStatus } from "@/constants/types/types";
+import { ReservationCardProps, DateFilter } from "@/constants/types/reservation";
 import { getReservationStatus } from "@/libs/utils/dashboardUtils";
-
-
-enum DateFilter {
-  YESTERDAY = -1,
-  TODAY = 0,
-  TOMORROW = 1
-}
-
-type ReservationCardProps = {
-  reservations: ReservationStatus[];
-  isLoading: boolean;
-  getReservationStatusData: (datefilter: number) => void;
-}
+import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 
 function ReservationCard({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DateFilter.TODAY);
 
   useEffect(() => {
     getReservationStatusData(dateFilter);
-    console.log("getReservationStatusData: ", dateFilter);
   }, [dateFilter]);
-
-  // Get date for the filter
-  const getFilterDate = (offset: number) => {
-    const date = new Date();
-    date.setDate(date.getDate() + offset);
-    return date;
-  };
-  
-  
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      weekday: "short",
-    });
-  };
-
-  const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  // Check if date matches the filter
-  const isDateInFilter = (date: Date, filter: DateFilter) => {
-
-    const filterDate = getFilterDate(filter);
-    return date.getDate() === filterDate.getDate() &&
-          date.getMonth() === filterDate.getMonth() &&
-          date.getFullYear() === filterDate.getFullYear();
-  };
 
   const filteredReservations = reservations.filter((res) => 
     isDateInFilter(new Date(res.rentStime), dateFilter) ||
     isDateInFilter(new Date(res.rentEtime), dateFilter)
   );
-  
-  // 데모 목적으로 차종, MDN 정보 추가
-  const getCarModelAndMdn = (index: number) => {
-    const carModels = ["아반떼", "소나타", "그랜저", "K5", "K8", "모닝", "레이"];
-    return {
-      carModel: carModels[index % carModels.length],
-      mdn: `MDN-${100000 + index}`
-    };
-  };
   
   return (
     <Card className="h-full overflow-hidden shadow-sm">
@@ -139,7 +83,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
             
             {filteredReservations.map((reservation, index) => {
               const { color, icon } = getReservationStatus(reservation.rentStatus);
-              const { carModel, mdn } = getCarModelAndMdn(index);
+              const { mdn } = getCarModelAndMdn(index);
               
               return (
                 <div 
@@ -188,6 +132,6 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
       </CardContent>
     </Card>
   );
-} 
+}
 
 export default ReservationCard;
