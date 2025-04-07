@@ -18,7 +18,7 @@ const meta: Meta<typeof StatusBadge> = {
   argTypes: {
     status: { 
       control: 'text',
-      description: '표시할 상태 텍스트',
+      description: '표시할 상태값(value)',
       table: {
         type: { summary: 'string' },
       }
@@ -47,7 +47,8 @@ const meta: Meta<typeof StatusBadge> = {
       description: {
         component: 
           '`StatusBadge` 컴포넌트는 상태 정보를 시각적으로 표현하는 배지입니다. ' +
-          '`getStatusBadgeClass` 유틸리티 함수를 사용하여 상태에 따른 적절한 스타일을 적용합니다.'
+          '`getStatusBadgeClass` 유틸리티 함수를 사용하여 상태에 따른 적절한 스타일을 적용합니다.' +
+          '상태 코드(value)를 입력하면 자동으로 해당하는 한글 레이블(label)이 표시됩니다.'
       }
     }
   }
@@ -59,13 +60,13 @@ type Story = StoryObj<typeof StatusBadge>;
 // 기본 상태 배지
 export const 기본: Story = {
   args: {
-    status: '운행중',
+    status: 'running',
     type: 'car',
   },
   parameters: {
     docs: {
       description: {
-        story: '가장 기본적인 상태 배지 사용 예시입니다.'
+        story: '가장 기본적인 상태 배지 사용 예시입니다. status 속성에는 value 값을 입력하면 자동으로 한글 레이블이 표시됩니다.'
       }
     }
   }
@@ -80,7 +81,7 @@ export const 차량상태배지: Story = {
         .map((status) => (
           <StatusBadge 
             key={status.value} 
-            status={status.label} 
+            status={status.value} 
             type="car" 
           />
         ))}
@@ -104,7 +105,7 @@ export const 렌트상태배지: Story = {
         .map((status) => (
           <StatusBadge 
             key={status.value} 
-            status={status.label} 
+            status={status.value} 
             type="rent" 
           />
         ))}
@@ -122,7 +123,7 @@ export const 렌트상태배지: Story = {
 // 추가 클래스를 적용한 상태 배지
 export const 커스텀스타일: Story = {
   args: {
-    status: '운행중',
+    status: 'running',
     type: 'car',
     className: 'text-base py-1.5 px-3',
   },
@@ -141,19 +142,19 @@ export const 다양한크기: Story = {
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <span className="w-24 text-sm text-gray-500">작은 크기:</span>
-        <StatusBadge status="운행중" type="car" className="text-xs" />
+        <StatusBadge status="running" type="car" className="text-xs" />
       </div>
       <div className="flex items-center gap-4">
         <span className="w-24 text-sm text-gray-500">기본 크기:</span>
-        <StatusBadge status="운행중" type="car" />
+        <StatusBadge status="running" type="car" />
       </div>
       <div className="flex items-center gap-4">
         <span className="w-24 text-sm text-gray-500">중간 크기:</span>
-        <StatusBadge status="운행중" type="car" className="text-sm py-1.5 px-3" />
+        <StatusBadge status="running" type="car" className="text-sm py-1.5 px-3" />
       </div>
       <div className="flex items-center gap-4">
         <span className="w-24 text-sm text-gray-500">큰 크기:</span>
-        <StatusBadge status="운행중" type="car" className="text-base py-2 px-4" />
+        <StatusBadge status="running" type="car" className="text-base py-2 px-4" />
       </div>
     </div>
   ),
@@ -183,28 +184,28 @@ export const 테이블활용예시: Story = {
             <td className="px-4 py-3 text-sm text-gray-900">CAR-001</td>
             <td className="px-4 py-3 text-sm text-gray-900">현대 아반떼</td>
             <td className="px-4 py-3 text-sm text-gray-900">
-              <StatusBadge status="운행중" type="car" />
+              <StatusBadge status="running" type="car" />
             </td>
           </tr>
           <tr>
             <td className="px-4 py-3 text-sm text-gray-900">CAR-002</td>
             <td className="px-4 py-3 text-sm text-gray-900">기아 K5</td>
             <td className="px-4 py-3 text-sm text-gray-900">
-              <StatusBadge status="정비중" type="car" />
+              <StatusBadge status="fixing" type="car" />
             </td>
           </tr>
           <tr>
             <td className="px-4 py-3 text-sm text-gray-900">RENT-001</td>
             <td className="px-4 py-3 text-sm text-gray-900">김철수</td>
             <td className="px-4 py-3 text-sm text-gray-900">
-              <StatusBadge status="예약" type="rent" />
+              <StatusBadge status="reserved" type="rent" />
             </td>
           </tr>
           <tr>
             <td className="px-4 py-3 text-sm text-gray-900">RENT-002</td>
             <td className="px-4 py-3 text-sm text-gray-900">이영희</td>
             <td className="px-4 py-3 text-sm text-gray-900">
-              <StatusBadge status="반납완료" type="rent" />
+              <StatusBadge status="returned" type="rent" />
             </td>
           </tr>
         </tbody>

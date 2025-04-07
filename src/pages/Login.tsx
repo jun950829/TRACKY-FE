@@ -3,9 +3,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { lloginApi } from "../libs/apis/loginApi";
+import { loginApiService } from "../libs/apis/loginApi";
 import { useAuthStore } from "../stores/useAuthStore";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 // Shadcn components
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,35 @@ type DecodedToken = {
   bizName: string;
 };
 
+// 공지사항 데이터 타입
+type Notice = {
+  id: number;
+  title: string;
+  date: string;
+  content: string;
+};
+
+// 임시 공지사항 데이터
+const notices: Notice[] = [
+  {
+    id: 1,
+    title: "시스템 점검 예정",
+    date: "2024-03-20",
+    content: "3월 20일 오전 2시부터 4시까지 시스템 점검이 예정되어 있습니다.",
+  },
+  {
+    id: 2,
+    title: "새로운 기능 추가",
+    date: "2024-03-15",
+    content: "차량 위치 추적 기능이 추가되었습니다. 더욱 정확한 위치 정보를 확인하실 수 있습니다.",
+  },
+  {
+    id: 3,
+    title: "이용 안내",
+    date: "2024-03-10",
+    content: "모바일 앱에서도 Tracky 서비스를 이용하실 수 있습니다.",
+  },
+];
 
 export default function Login() {
   const navigate = useNavigate();
@@ -56,7 +85,7 @@ export default function Login() {
     setErrorMessage("");
     
     try {
-      const response = await lloginApi.login(data);
+      const response = await loginApiService.login(data);
       const token = response.token;
       const decoded = jwtDecode<DecodedToken>(token);
       const member = {
@@ -72,8 +101,9 @@ export default function Login() {
       // 새로고침 유지용 localStorage 저장
       localStorage.setItem("memberInfo", JSON.stringify(member));
       localStorage.setItem("accessToken", token);
-      
+
       navigate("/dashboard");
+      
     } catch (error: unknown) {
       console.error("Login error: ", error);
       setErrorMessage("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
@@ -83,75 +113,99 @@ export default function Login() {
   };
 
   return (
-    <div className="container flex h-[calc(100vh-4rem)] items-center justify-center">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">로그인</CardTitle>
-          <CardDescription>
-            차량 관제 시스템에 로그인합니다
-          </CardDescription>
-        </CardHeader>
-        
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="memberId">아이디</Label>
-              <Input
-                id="memberId"
-                placeholder="아이디를 입력하세요"
-                {...register("memberId")}
-                autoComplete="username"
-              />
-              {errors.memberId && (
-                <p className="text-sm text-destructive">{errors.memberId.message}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="pwd">비밀번호</Label>
-                {/* 지금 기능 없음 */}
-                {/* <Button type="button" variant="link" size="sm" className="h-auto p-0">
-                  비밀번호 찾기
-                </Button> */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+      <div className="container mx-auto px-4 h-screen flex items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mx-auto">
+          {/* 로그인 폼 */}
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <Card className="border-0 shadow-none">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-2xl font-bold">로그인</CardTitle>
+                <CardDescription>
+                  차량 관제 시스템에 로그인합니다
+                </CardDescription>
+              </CardHeader>
+              
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="memberId">아이디</Label>
+                    <Input
+                      id="memberId"
+                      placeholder="아이디를 입력하세요"
+                      {...register("memberId")}
+                      autoComplete="username"
+                      className="w-full"
+                    />
+                    {errors.memberId && (
+                      <p className="text-sm text-destructive">{errors.memberId.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pwd">비밀번호</Label>
+                    </div>
+                    <Input
+                      id="pwd"
+                      type="password"
+                      placeholder="비밀번호를 입력하세요"
+                      {...register("pwd")}
+                      autoComplete="current-password"
+                      className="w-full"
+                    />
+                    {errors.pwd && (
+                      <p className="text-sm text-destructive">{errors.pwd.message}</p>
+                    )}
+                  </div>
+                  
+                  {errorMessage && (
+                    <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                      {errorMessage}
+                    </div>
+                  )}
+                </CardContent>
+                
+                <CardFooter className="flex flex-col">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "로그인 중..." : "로그인"}
+                  </Button>
+                  
+                  <div className="mt-4 text-center text-sm text-muted-foreground">
+                    <span>계정이 없으신가요? </span>
+                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/about")}>
+                      회원가입
+                    </Button>
+                  </div>
+                </CardFooter>
+              </form>
+            </Card>
+          </div>
+
+          {/* 공지사항 */}
+          <div className="bg-white rounded-lg shadow-lg p-8 hidden md:block">
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-gray-800">공지사항</h2>
+              <div className="space-y-4">
+                {notices.map((notice) => (
+                  <div key={notice.id} className="border-b pb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-lg">{notice.title}</h3>
+                      <span className="text-sm text-gray-500">{notice.date}</span>
+                    </div>
+                    <p className="text-gray-600">{notice.content}</p>
+                  </div>
+                ))}
               </div>
-              <Input
-                id="pwd"
-                type="password"
-                placeholder="비밀번호를 입력하세요"
-                {...register("pwd")}
-                autoComplete="current-password"
-              />
-              {errors.pwd && (
-                <p className="text-sm text-destructive">{errors.pwd.message}</p>
-              )}
             </div>
-            
-            {errorMessage && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {errorMessage}
-              </div>
-            )}
-          </CardContent>
-          
-          <CardFooter className="flex flex-col">
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? "로그인 중..." : "로그인"}
-            </Button>
-            
-            <div className="mt-4 text-center text-sm text-muted-foreground">
-              <span>계정이 없으신가요? </span>
-              <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/register")}>
-                회원가입
-              </Button>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
+

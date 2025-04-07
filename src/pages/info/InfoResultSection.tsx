@@ -150,7 +150,9 @@ function InfoResultSection() {
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-medium text-gray-500">상태</h3>
-                  <p className="mt-1 text-sm">{car.status}</p>
+                  <p className="mt-1 text-sm">
+                    <StatusBadge status={car.status} type="car" />
+                  </p>
                 </div>
               </div>
             </CardContent>
