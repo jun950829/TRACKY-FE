@@ -35,7 +35,7 @@ interface Reservation {
 
 export default function Dashboard() {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const isInitializedRef = useRef(false);
   const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
@@ -80,12 +80,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getCarStatus = async () => {
+      setIsLoading(true);
       try {
         const response = await dashboardApi.getCarStatus();
         console.log(response.data);
         setCarStatus(response.data);
       } catch (error) {
         console.error('차량 상태 조회 실패:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     getCarStatus();
@@ -204,87 +207,94 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="p-3 sm:p-4 space-y-4">
-        {/* Vehicle Status Cards */}
-        <VehicleStatusCards carStatus={carStatus} />
-        
-        {/* Main Content - Map and Right Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          {/* 지도 컴포넌트 영역 */}
-          <div className="lg:col-span-3 flex flex-col">
-            {/* 지도 컴포넌트 */}
-            <div className="mb-6 relative">
-              <VehicleMap 
-                vehicles={vehicles.map(v => ({
-                  ...v,
-                  status: v.status as "운행중" | "정비중" | "대기중"
-                }))} 
-                isLoading={isLoading} 
-              />
-            </div>
-            
-            {/* Carousel Stats */}
-            <div 
-              ref={containerRef}
-              className="relative overflow-hidden" 
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <div 
-                ref={carouselRef} 
-                className="flex overflow-x-hidden pb-1 px-1 -mx-1"
-                style={{ 
-                  scrollbarWidth: 'none', 
-                  msOverflowStyle: 'none'
-                }}
-              >
-                {displayItems.map((item, index) => (
-                  <div 
-                    key={`${item.id}-${index}`} 
-                    className="min-w-[260px] pr-3 select-none"
-                    style={{ flex: '0 0 auto' }}
-                  >
-                    <Card className={`border-2 ${item.color} h-full`}>
-                      <CardContent className="p-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
-                            {item.icon}
-                          </div>
-                          <div>
-                            <div className="text-xs text-zinc-500">{item.title}</div>
-                            <div className="text-lg font-semibold">{isLoading ? '-' : item.value}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-[80vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-lg font-medium text-gray-600">대시보드 로딩 중...</p>
+        </div>
+      ) : (
+        <div className="p-3 sm:p-4 space-y-4">
+          {/* Vehicle Status Cards */}
+          <VehicleStatusCards carStatus={carStatus} />
           
-          {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
-          <div className="lg:col-span-2">
-            <div className="space-y-5 flex flex-col">
-              {/* 예약 현황 */}
-              <div className="h-[400px] overflow-hidden">
-                <ReservationCard reservations={reservations} isLoading={isLoading} />
-              </div>
-              
-              {/* 최근 활동 */}
-              <div className="h-[220px] overflow-hidden">
-                <RecentActivity 
+          {/* Main Content - Map and Right Column */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            {/* 지도 컴포넌트 영역 */}
+            <div className="lg:col-span-3 flex flex-col">
+              {/* 지도 컴포넌트 */}
+              <div className="mb-6 relative">
+                <VehicleMap 
                   vehicles={vehicles.map(v => ({
                     ...v,
                     status: v.status as "운행중" | "정비중" | "대기중"
-                  }))}
+                  }))} 
                   isLoading={isLoading} 
                 />
+              </div>
+              
+              {/* Carousel Stats */}
+              <div 
+                ref={containerRef}
+                className="relative overflow-hidden" 
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div 
+                  ref={carouselRef} 
+                  className="flex overflow-x-hidden pb-1 px-1 -mx-1"
+                  style={{ 
+                    scrollbarWidth: 'none', 
+                    msOverflowStyle: 'none'
+                  }}
+                >
+                  {displayItems.map((item, index) => (
+                    <div 
+                      key={`${item.id}-${index}`} 
+                      className="min-w-[260px] pr-3 select-none"
+                      style={{ flex: '0 0 auto' }}
+                    >
+                      <Card className={`border-2 ${item.color} h-full`}>
+                        <CardContent className="p-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                              {item.icon}
+                            </div>
+                            <div>
+                              <div className="text-xs text-zinc-500">{item.title}</div>
+                              <div className="text-lg font-semibold">{isLoading ? '-' : item.value}</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
+            <div className="lg:col-span-2">
+              <div className="space-y-5 flex flex-col">
+                {/* 예약 현황 */}
+                <div className="h-[400px] overflow-hidden">
+                  <ReservationCard reservations={reservations} isLoading={isLoading} />
+                </div>
+                
+                {/* 최근 활동 */}
+                <div className="h-[220px] overflow-hidden">
+                  <RecentActivity 
+                    vehicles={vehicles.map(v => ({
+                      ...v,
+                      status: v.status as "운행중" | "정비중" | "대기중"
+                    }))}
+                    isLoading={isLoading} 
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </DashboardLayout>
   );
 } 
