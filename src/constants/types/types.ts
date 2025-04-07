@@ -33,14 +33,6 @@ export type CarUpdateTypes = {
   deviceInfo: Devices;
 }
 
-export type Devices = {
-  id: number;
-  tid: string;
-  mid: string;
-  did: string;
-  pv: string;
-}
-
 export type CarDetailTypes = {
   mdn: string;
   bizId: number;
@@ -53,6 +45,18 @@ export type CarDetailTypes = {
   deviceInfo: Devices;
   createdAt: string;
 }
+
+export type CarStatusTypes = Record<string, number>;
+
+export type Devices = {
+  id: number;
+  tid: string;
+  mid: string;
+  did: string;
+  pv: string;
+}
+
+
 
 export type CycleGpsRequest = {
   gcd: string;  // GPS 상태

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStatusBadgeClass } from '@/libs/utils/getClassUtils';
+import { getStatusBadgeClass, getStatusLabel } from '@/libs/utils/getClassUtils';
 
 type StatusBadgeProps = {
   status: string;
@@ -10,7 +10,7 @@ type StatusBadgeProps = {
 /**
  * 상태 표시를 위한 배지 컴포넌트
  * 
- * @param status - 표시할 상태 문자열
+ * @param status - 표시할 상태 값(value)
  * @param type - 상태 유형 ('car' | 'rent')
  * @param className - 추가 클래스명 (선택사항)
  */
@@ -19,9 +19,11 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   type, 
   className 
 }) => {
+  const displayText = getStatusLabel(status, type);
+  
   return (
     <span className={getStatusBadgeClass(status, type, className)}>
-      {status}
+      {displayText}
     </span>
   );
 };
