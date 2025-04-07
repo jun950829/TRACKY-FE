@@ -3,7 +3,7 @@ const geocodeCache = new Map<string, string>();
 export async function reverseGeocodeOSM(lat: number, lon: number): Promise<string> {
   const key = `${lat.toFixed(6)},${lon.toFixed(6)}`;
 
-  // ✅ 캐시로 중복 방지
+  // 캐시로 중복 방지
   if (geocodeCache.has(key)) {
     return geocodeCache.get(key)!;
   }
