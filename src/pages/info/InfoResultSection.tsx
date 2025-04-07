@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { TripInfo } from '@/stores/useInfoStore';
+import StatusBadge from "@/components/custom/StatusBadge";
 
 function InfoResultSection() {
   const { rent, car, trips, isLoading } = useInfoStore();
@@ -143,7 +144,9 @@ function InfoResultSection() {
                 </div>
                 <div>
                   <h3 className="text-xs sm:text-sm font-medium text-gray-500">상태</h3>
-                  <p className="mt-1 text-sm">{car.status}</p>
+                  <p className="mt-1 text-sm">
+                    <StatusBadge status={car.status} type="car" />
+                  </p>
                 </div>
               </div>
             </CardContent>

@@ -1,4 +1,4 @@
-import { CarStatusColorMap, RentStatusColorMap } from "@/constants/datas/status";
+import { CarStatus, CarStatusColorMap, RentStatus, RentStatusColorMap } from "@/constants/datas/status";
 
 /**
  * UI 관련 유틸리티 함수 모음
@@ -13,6 +13,17 @@ import { CarStatusColorMap, RentStatusColorMap } from "@/constants/datas/status"
  */
 export const getStatusColorClass = (status: string, type: 'car' | 'rent'): string => {
   const colorMap = type === 'car' ? CarStatusColorMap : RentStatusColorMap;
+  
+  // StatusOption 목록 중에서 현재 status에 해당하는 value를 찾음
+  const statusOptions = type === 'car' ? CarStatus : RentStatus;
+  const matchedStatus = statusOptions.find(opt => opt.value === status || opt.label === status);
+  
+  // 매칭된 상태의 value를 사용하여 색상 클래스를 적용
+  if (matchedStatus) {
+    return colorMap[matchedStatus.value] || colorMap.default;
+  }
+  
+  // 그대로 상태 문자열을 키로 시도
   return colorMap[status] || colorMap.default;
 };
 
@@ -37,4 +48,16 @@ export const getStatusBadgeClass = (
   additionalClasses?: string
 ): string => {
   return `${getStatusBadgeBaseClass()} ${getStatusColorClass(status, type)} ${additionalClasses || ''}`;
+};
+
+/**
+ * 상태 value에 해당하는 label 값을 반환합니다.
+ * @param value 상태 value 문자열
+ * @param type 유형 ('car' | 'rent')
+ * @returns 해당 value에 맞는 label 문자열
+ */
+export const getStatusLabel = (value: string, type: 'car' | 'rent'): string => {
+  const statusOptions = type === 'car' ? CarStatus : RentStatus;
+  const option = statusOptions.find(opt => opt.value === value);
+  return option ? option.label : value;
 }; 
