@@ -5,12 +5,15 @@ import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, Calendar, Activity, Clock } from "lucide-react";
+import { CarStatusTypes } from "@/constants/types/types";
+import { dashboardApi } from "@/libs/apis/dashboardApi";
+import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
 
 // Define vehicle data interface
 interface Vehicle {
   mdn: string;
   carNumber: string;
-  status: "운행중" | "정비중" | "대기중";
+  status: string;
   location?: {
     lat: number;
     lng: number;
@@ -35,13 +38,14 @@ export default function Dashboard() {
   const [isLoading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const isInitializedRef = useRef(false);
+  const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
   
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
     return Array.from({ length: 10 }, (_, i) => ({
       mdn: `MDN${100000 + i}`,
       carNumber: `서울 ${String.fromCharCode(65 + i)} ${1000 + i}`,
-      status: ["운행중", "대기중", "정비중"][Math.floor(Math.random() * 3)] as "운행중" | "정비중" | "대기중",
+      status: ["운행중", "대기중", "정비중"][Math.floor(Math.random() * 3)],
       location: {
         lat: 37.5 + (Math.random() * 0.1),
         lng: 127 + (Math.random() * 0.1)
@@ -74,29 +78,19 @@ export default function Dashboard() {
     });
   }, [vehicles]);
 
-  const statsItems = useMemo(() => [
-    {
-      id: 'operation',
-      icon: <Car className="h-4 w-4 text-green-500" />,
-      title: '운행 중',
-      value: vehicles.filter(v => v.status === "운행중").length.toString(),
-      color: 'bg-green-50 border-green-200'
-    },
-    {
-      id: 'standby',
-      icon: <Car className="h-4 w-4 text-blue-500" />,
-      title: '대기 중',
-      value: vehicles.filter(v => v.status === "대기중").length.toString(),
-      color: 'bg-blue-50 border-blue-200'
-    },
-    {
-      id: 'maintenance',
-      icon: <Car className="h-4 w-4 text-red-500" />,
-      title: '정비 중',
-      value: vehicles.filter(v => v.status === "정비중").length.toString(),
-      color: 'bg-red-50 border-red-200'
-    }
-  ], [vehicles]);
+  useEffect(() => {
+    const getCarStatus = async () => {
+      try {
+        const response = await dashboardApi.getCarStatus();
+        console.log(response.data);
+        setCarStatus(response.data);
+      } catch (error) {
+        console.error('차량 상태 조회 실패:', error);
+      }
+    };
+    getCarStatus();
+  }, []);
+
 
   const carouselItems = useMemo(() => [
     {
@@ -212,24 +206,7 @@ export default function Dashboard() {
     <DashboardLayout>
       <div className="p-3 sm:p-4 space-y-4">
         {/* Vehicle Status Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {statsItems.map((stat) => (
-            <Card 
-              key={stat.id} 
-              className={`overflow-hidden border-2 ${stat.color} hover:shadow-md transition-shadow`}
-            >
-              <CardContent className="p-3 flex justify-between items-center">
-                <div>
-                  <div className="text-sm font-semibold mb-1">{stat.title}</div>
-                  <div className="text-2xl font-bold">{isLoading ? '-' : stat.value}</div>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                  {stat.icon}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <VehicleStatusCards carStatus={carStatus} />
         
         {/* Main Content - Map and Right Column */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
@@ -238,7 +215,10 @@ export default function Dashboard() {
             {/* 지도 컴포넌트 */}
             <div className="mb-6 relative">
               <VehicleMap 
-                vehicles={vehicles} 
+                vehicles={vehicles.map(v => ({
+                  ...v,
+                  status: v.status as "운행중" | "정비중" | "대기중"
+                }))} 
                 isLoading={isLoading} 
               />
             </div>
@@ -294,7 +274,10 @@ export default function Dashboard() {
               {/* 최근 활동 */}
               <div className="h-[220px] overflow-hidden">
                 <RecentActivity 
-                  vehicles={vehicles} 
+                  vehicles={vehicles.map(v => ({
+                    ...v,
+                    status: v.status as "운행중" | "정비중" | "대기중"
+                  }))}
                   isLoading={isLoading} 
                 />
               </div>
