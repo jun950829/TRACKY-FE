@@ -47,7 +47,7 @@ const api = axios.create({
   },
 });
 
-// 요청 인터셉터 설정 (필요한 경우)
+// 요청 인터셉터 설정
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken"); // 토큰 가져오기
