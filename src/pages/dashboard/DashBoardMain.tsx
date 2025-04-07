@@ -5,9 +5,10 @@ import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, Calendar, Activity, Clock } from "lucide-react";
-import { CarStatusTypes, ReservationStatus } from "@/constants/types/types";
+import { CarStatusTypes, ReservationStatus, Statistics, StatisticsItem } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
+import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
 
 // Define vehicle data interface
 interface Vehicle {
@@ -30,7 +31,9 @@ export default function Dashboard() {
   const isInitializedRef = useRef(false);
   const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
-
+  const [statistics, setStatistics] = useState<Statistics[]>([]);
+  const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
+  
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
     return Array.from({ length: 10 }, (_, i) => ({
@@ -51,7 +54,7 @@ export default function Dashboard() {
   useEffect(() => {
     getCarStatus();
     getReservationStatusData();
-    
+    getStatistics();
   }, []);
 
   const getCarStatus = async () => {
@@ -67,47 +70,35 @@ export default function Dashboard() {
   };
   
   const getReservationStatusData = async (datefilter : number = 0) => {
-    const response = await dashboardApi.getReservationStatus(datefilter);
-    console.log("response: ", response);
-    setReservationStatus(response.data);
-  };
-  
-  const carouselItems = useMemo(() => [
-    {
-      id: 'total-km',
-      icon: <Activity className="h-4 w-4 text-purple-500" />,
-      title: '총 운행거리',
-      value: `${vehicles.reduce((sum, v) => sum + (v.km || 0), 0).toLocaleString()} km`,
-      color: 'bg-purple-50 border-purple-200'
-    },
-    {
-      id: 'total-usage-time',
-      icon: <Clock className="h-4 w-4 text-amber-500" />,
-      title: '누적 이용시간',
-      value: `${Math.floor(vehicles.length * Math.random() * 24 * 15).toLocaleString()}시간`,
-      color: 'bg-amber-50 border-amber-200'
-    },
-    {
-      id: 'total-rents',
-      icon: <Calendar className="h-4 w-4 text-indigo-500" />,
-      title: '총 렌트 수',
-      value: [1,2,3,4,4,5,5,6,6].length.toString(),
-      color: 'bg-indigo-50 border-indigo-200'
-    },
-    {
-      id: 'total-cars',
-      icon: <Car className="h-4 w-4 text-cyan-500" />,
-      title: '총 차량 수',
-      value: vehicles.length.toString(),
-      color: 'bg-cyan-50 border-cyan-200'
+    try {
+      const response = await dashboardApi.getReservationStatus(datefilter);
+      console.log("getReservationStatus: ", response);
+      setReservationStatus(response.data);
+    } catch (error) {
+      console.error('예약 현황 조회 실패:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ], [vehicles]);
+  };
+
+  const getStatistics = async () => {
+    try {
+      const response = await dashboardApi.getStatistics();
+      console.log("getStatistics: ", response);
+      setStatistics(response.data);
+      setStatisticsItems(makeStatisticsItems(response.data));
+    } catch (error) {
+      console.error('통계 조회 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // 무한 스크롤을 위한 표시 아이템 - 3세트 복사
   const displayItems = useMemo(() => {
     // 무한 스크롤 효과를 위해 3개 세트의 반복 아이템 생성
-    return [...carouselItems, ...carouselItems, ...carouselItems];
-  }, [carouselItems]);
+    return [...statisticsItems, ...statisticsItems, ...statisticsItems];
+  }, [statisticsItems]);
 
   // 아이템 너비 및 캐러셀 관련 상태
   const itemWidth = 260; // px 기준
@@ -131,7 +122,7 @@ export default function Dashboard() {
     if (!carouselRef.current || !containerWidth) return;
     
     const carousel = carouselRef.current;
-    const singleSetWidth = carouselItems.length * itemWidth;
+    const singleSetWidth = statisticsItems.length * itemWidth;
     
     // 초기 위치 설정 (중간 세트의 시작점) - 최초 한 번만 실행
     if (!isInitializedRef.current) {
@@ -171,7 +162,7 @@ export default function Dashboard() {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [carouselItems.length, isPaused, containerWidth, itemWidth]);
+  }, [statisticsItems.length, isPaused, containerWidth, itemWidth]);
 
   // 마우스 이벤트 핸들러 - 위치 초기화 없이 단순히 일시 정지만 처리
   const handleMouseEnter = () => {
