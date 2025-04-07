@@ -56,8 +56,6 @@ export type Devices = {
   pv: string;
 }
 
-
-
 export type CycleGpsRequest = {
   gcd: string;  // GPS 상태
   lat: number;  // 위도
@@ -76,6 +74,18 @@ export type CycleInfoRequest = {
   cCnt: number;   // 주기 정보 개수
   oTime: string;  // 발생시간
   cList: CycleGpsRequest[]; // 주기정보 리스트
+}
+
+
+export type ReservationStatus = {
+  rentUuid: string;
+  renterName: string;
+  mdn: string;
+  carPlate: string;
+  carType: string;
+  rentStatus: string;
+  rentStime: string;
+  rentEtime: string;
 }
 
 export type RentCreateTypes = {
