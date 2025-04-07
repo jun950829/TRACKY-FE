@@ -13,17 +13,6 @@ import { CarStatus, CarStatusColorMap, RentStatus, RentStatusColorMap } from "@/
  */
 export const getStatusColorClass = (status: string, type: 'car' | 'rent'): string => {
   const colorMap = type === 'car' ? CarStatusColorMap : RentStatusColorMap;
-  
-  // StatusOption 목록 중에서 현재 status에 해당하는 value를 찾음
-  const statusOptions = type === 'car' ? CarStatus : RentStatus;
-  const matchedStatus = statusOptions.find(opt => opt.value === status || opt.label === status);
-  
-  // 매칭된 상태의 value를 사용하여 색상 클래스를 적용
-  if (matchedStatus) {
-    return colorMap[matchedStatus.value] || colorMap.default;
-  }
-  
-  // 그대로 상태 문자열을 키로 시도
   return colorMap[status] || colorMap.default;
 };
 
