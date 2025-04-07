@@ -36,31 +36,35 @@ export default function DashBoardCarousel({ statisticsItems, isLoading }: DashBo
   }, [statisticsItems]);
 
   // 캐러셀 애니메이션 초기화 및 시작
-  const initializeCarousel = useCallback(() => {
+  const startCarousel = useCallback(() => {
     if (!carouselRef.current || !containerWidth || statisticsItems.length === 0) return;
 
     const carousel = carouselRef.current;
     const singleSetWidth = statisticsItems.length * itemWidth;
-    const speed = 0.5; // px per millisecond
+    const speed = 1.2; // px per millisecond
 
-    // 초기 위치 설정
-    currentPositionRef.current = singleSetWidth;
-    carousel.scrollLeft = currentPositionRef.current;
+    // 초기 위치 설정 (한 번만 실행)
+    if (currentPositionRef.current === 0) {
+      currentPositionRef.current = singleSetWidth;
+      carousel.scrollLeft = currentPositionRef.current;
+    }
 
     const animate = () => {
-      if (!carouselRef.current || isPaused) {
+      if (!carouselRef.current) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      // 현재 위치 업데이트
-      currentPositionRef.current += speed;
-      carousel.scrollLeft = currentPositionRef.current;
-
-      // 세 번째 세트 이후로 넘어가면 첫 번째 세트로 순간 이동
-      if (currentPositionRef.current >= singleSetWidth * 2) {
-        currentPositionRef.current = singleSetWidth;
+      // 일시정지 상태가 아닐 때만 위치 업데이트
+      if (!isPaused) {
+        currentPositionRef.current += speed;
         carousel.scrollLeft = currentPositionRef.current;
+
+        // 세 번째 세트 이후로 넘어가면 첫 번째 세트로 순간 이동
+        if (currentPositionRef.current >= singleSetWidth * 2) {
+          currentPositionRef.current = singleSetWidth;
+          carousel.scrollLeft = currentPositionRef.current;
+        }
       }
 
       animationFrameRef.current = requestAnimationFrame(animate);
@@ -75,12 +79,12 @@ export default function DashBoardCarousel({ statisticsItems, isLoading }: DashBo
     animationFrameRef.current = requestAnimationFrame(animate);
   }, [containerWidth, statisticsItems.length, isPaused]);
 
-  // 통계 데이터가 변경되면 캐러셀 초기화
+  // 통계 데이터가 변경되면 캐러셀 시작
   useEffect(() => {
     if (!isLoading && statisticsItems.length > 0) {
-      initializeCarousel();
+      startCarousel();
     }
-  }, [statisticsItems, isLoading, initializeCarousel]);
+  }, [statisticsItems, isLoading, startCarousel]);
 
   // 컴포넌트 언마운트 시 애니메이션 정리
   useEffect(() => {
@@ -91,12 +95,21 @@ export default function DashBoardCarousel({ statisticsItems, isLoading }: DashBo
     };
   }, []);
 
+  // 마우스 이벤트 핸들러
+  const handleMouseEnter = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPaused(false);
+  }, []);
+
   return (
     <div 
       ref={containerRef}
       className="relative overflow-hidden" 
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div 
         ref={carouselRef} 
