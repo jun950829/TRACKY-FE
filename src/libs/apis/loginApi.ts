@@ -1,7 +1,5 @@
 import axios from "axios";
 import api from "./api";
-import { config } from "process";
-import { error } from "console";
 
 const loginApi = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL + "/login",
@@ -11,30 +9,20 @@ const loginApi = axios.create({
     }
 });
 
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("accessToken");
-        if(token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
-
-api.interceptors.response.use(
+// 응답 인터셉터 설정
+loginApi.interceptors.response.use(
     (response) => response,
-    (error) => {
+    (error) => {        
         console.error("API Error:", error.response || error.message);
         return Promise.reject(error);
     }
 );
 
-export const lloginApi = {
+export const loginApiService = {
     login: async (data: {memberId: string, pwd: string}) => {
         const response = await api.post("/login", data);
         return response.data;
     }
 };
 
-export default loginApi;
+export default loginApiService;

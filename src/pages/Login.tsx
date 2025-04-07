@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { lloginApi } from "../libs/apis/loginApi";
+import { loginApiService } from "../libs/apis/loginApi";
 import { useAuthStore } from "../stores/useAuthStore";
 import {jwtDecode} from "jwt-decode";
 
@@ -56,7 +56,7 @@ export default function Login() {
     setErrorMessage("");
     
     try {
-      const response = await lloginApi.login(data);
+      const response = await loginApiService.login(data);
       const token = response.token;
       const decoded = jwtDecode<DecodedToken>(token);
       const member = {
