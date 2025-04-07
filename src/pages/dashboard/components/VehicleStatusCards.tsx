@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CarStatusColorMap } from "@/constants/datas/status";
-import { getStatusIcon, getStatusLabel } from "@/libs/utils/dashboardUtils";
+import { getCarStatusIcon, getStatusLabel } from "@/libs/utils/dashboardUtils";
 import { CarStatusTypes } from "@/constants/types/types";
 
 interface VehicleStatusCardsProps {
@@ -17,7 +17,7 @@ const VehicleStatusCards: React.FC<VehicleStatusCardsProps> = ({ carStatus }) =>
 
         // 색상 클래스
         const colorClass = CarStatusColorMap[status];
-        const StatusIcon = getStatusIcon(status);
+        const StatusIcon = getCarStatusIcon(status);
         
         return (
           <Card 

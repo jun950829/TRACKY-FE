@@ -5,7 +5,7 @@ import VehicleMap from "./VehicleMap";
 import RecentActivity from "./RecentActivity";
 import { Card, CardContent } from "@/components/ui/card";
 import { Car, Calendar, Activity, Clock } from "lucide-react";
-import { CarStatusTypes } from "@/constants/types/types";
+import { CarStatusTypes, ReservationStatus } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
 
@@ -23,23 +23,14 @@ interface Vehicle {
   km?: number;
 }
 
-// Define reservation data interface
-interface Reservation {
-  id: string;
-  carNumber: string;
-  driver: string;
-  startDate: Date;
-  endDate: Date;
-  status: "예약완료" | "이용중" | "반납완료" | "취소";
-}
-
 export default function Dashboard() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const isInitializedRef = useRef(false);
   const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
-  
+  const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
+
   // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
   const vehicles = useMemo<Vehicle[]>(() => {
     return Array.from({ length: 10 }, (_, i) => ({
@@ -55,46 +46,32 @@ export default function Dashboard() {
       km: Math.floor(Math.random() * 150)
     }));
   }, []);
-  
-  // 샘플 예약 데이터도 useMemo로 변경
-  const reservations = useMemo<Reservation[]>(() => {
-    const now = new Date();
-    return Array.from({ length: 15 }, (_, i) => {
-      const startDate = new Date(now);
-      const dateOffset = Math.floor(Math.random() * 3) - 1; // -1, 0, 1 for yesterday, today, tomorrow
-      startDate.setDate(now.getDate() + dateOffset);
-      
-      const endDate = new Date(startDate);
-      endDate.setHours(endDate.getHours() + Math.floor(Math.random() * 24) + 1);
-      
-      return {
-        id: `RES${10000 + i}`,
-        carNumber: vehicles[i % vehicles.length].carNumber,
-        driver: `고객 ${i + 1}`,
-        startDate,
-        endDate,
-        status: ["예약완료", "이용중", "반납완료", "취소"][Math.floor(Math.random() * 4)] as "예약완료" | "이용중" | "반납완료" | "취소"
-      };
-    });
-  }, [vehicles]);
 
+  // 최초 데이터 조회
   useEffect(() => {
-    const getCarStatus = async () => {
-      setIsLoading(true);
-      try {
-        const response = await dashboardApi.getCarStatus();
-        console.log(response.data);
-        setCarStatus(response.data);
-      } catch (error) {
-        console.error('차량 상태 조회 실패:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     getCarStatus();
+    getReservationStatusData();
+    
   }, []);
 
-
+  const getCarStatus = async () => {
+    setIsLoading(true);
+    try {
+      const response = await dashboardApi.getCarStatus();
+      setCarStatus(response.data);
+    } catch (error) {
+      console.error('차량 상태 조회 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const getReservationStatusData = async (datefilter : number = 0) => {
+    const response = await dashboardApi.getReservationStatus(datefilter);
+    console.log("response: ", response);
+    setReservationStatus(response.data);
+  };
+  
   const carouselItems = useMemo(() => [
     {
       id: 'total-km',
@@ -114,7 +91,7 @@ export default function Dashboard() {
       id: 'total-rents',
       icon: <Calendar className="h-4 w-4 text-indigo-500" />,
       title: '총 렌트 수',
-      value: reservations.length.toString(),
+      value: [1,2,3,4,4,5,5,6,6].length.toString(),
       color: 'bg-indigo-50 border-indigo-200'
     },
     {
@@ -124,7 +101,7 @@ export default function Dashboard() {
       value: vehicles.length.toString(),
       color: 'bg-cyan-50 border-cyan-200'
     }
-  ], [vehicles, reservations]);
+  ], [vehicles]);
 
   // 무한 스크롤을 위한 표시 아이템 - 3세트 복사
   const displayItems = useMemo(() => {
@@ -275,9 +252,9 @@ export default function Dashboard() {
             {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
             <div className="lg:col-span-2">
               <div className="space-y-5 flex flex-col">
-                {/* 예약 현황 */}
+                예약 현황
                 <div className="h-[400px] overflow-hidden">
-                  <ReservationCard reservations={reservations} isLoading={isLoading} />
+                  <ReservationCard reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
                 </div>
                 
                 {/* 최근 활동 */}

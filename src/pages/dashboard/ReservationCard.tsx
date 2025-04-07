@@ -1,22 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { ReservationStatus } from "@/constants/types/types";
+import { getReservationStatus } from "@/libs/utils/dashboardUtils";
 
-interface Reservation {
-  id: string;
-  carNumber: string;
-  driver: string;
-  startDate: Date;
-  endDate: Date;
-  status: "예약완료" | "이용중" | "반납완료" | "취소";
-  carModel?: string;
-  mdn?: string;
-}
-
-interface ReservationCardProps {
-  reservations: Reservation[];
-  isLoading: boolean;
-}
 
 enum DateFilter {
   YESTERDAY = -1,
@@ -24,9 +11,20 @@ enum DateFilter {
   TOMORROW = 1
 }
 
-export default function ReservationCard({ reservations, isLoading }: ReservationCardProps) {
+type ReservationCardProps = {
+  reservations: ReservationStatus[];
+  isLoading: boolean;
+  getReservationStatusData: (datefilter: number) => void;
+}
+
+function ReservationCard({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DateFilter.TODAY);
-  
+
+  useEffect(() => {
+    getReservationStatusData(dateFilter);
+    console.log("getReservationStatusData: ", dateFilter);
+  }, [dateFilter]);
+
   // Get date for the filter
   const getFilterDate = (offset: number) => {
     const date = new Date();
@@ -34,54 +32,37 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
     return date;
   };
   
-  // Format date as YYYY-MM-DD
+  
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'short'
+    return date.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
     });
   };
-  
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
   // Check if date matches the filter
   const isDateInFilter = (date: Date, filter: DateFilter) => {
+
     const filterDate = getFilterDate(filter);
     return date.getDate() === filterDate.getDate() &&
-           date.getMonth() === filterDate.getMonth() &&
-           date.getFullYear() === filterDate.getFullYear();
+          date.getMonth() === filterDate.getMonth() &&
+          date.getFullYear() === filterDate.getFullYear();
   };
-  
-  // Filter reservations by date
-  const filteredReservations = reservations.filter(res => 
-    isDateInFilter(res.startDate, dateFilter) || 
-    isDateInFilter(res.endDate, dateFilter)
+
+  const filteredReservations = reservations.filter((res) => 
+    isDateInFilter(new Date(res.rentStime), dateFilter) ||
+    isDateInFilter(new Date(res.rentEtime), dateFilter)
   );
-  
-  // Get status color and badge
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case "예약완료":
-        return { color: "bg-blue-100 text-blue-600", icon: "🕒" };
-      case "이용중":
-        return { color: "bg-green-100 text-green-600", icon: "🚗" };
-      case "반납완료":
-        return { color: "bg-purple-100 text-purple-600", icon: "✓" };
-      case "취소":
-        return { color: "bg-red-100 text-red-600", icon: "✗" };
-      default:
-        return { color: "bg-zinc-100 text-zinc-600", icon: "?" };
-    }
-  };
-  
-  // Format time as HH:MM
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  };
   
   // 데모 목적으로 차종, MDN 정보 추가
   const getCarModelAndMdn = (index: number) => {
@@ -103,7 +84,7 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
           
           <div className="flex items-center space-x-1 text-xs">
             <button
-              onClick={() => setDateFilter(prev => 
+              onClick={() => setDateFilter((prev) => 
                 prev === DateFilter.YESTERDAY ? DateFilter.TOMORROW : prev - 1
               )}
               className="p-1 rounded hover:bg-zinc-100"
@@ -119,7 +100,7 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
             </div>
             
             <button
-              onClick={() => setDateFilter(prev => 
+              onClick={() => setDateFilter((prev) => 
                 prev === DateFilter.TOMORROW ? DateFilter.YESTERDAY : prev + 1
               )}
               className="p-1 rounded hover:bg-zinc-100"
@@ -157,27 +138,27 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
             </div>
             
             {filteredReservations.map((reservation, index) => {
-              const { color, icon } = getStatusInfo(reservation.status);
+              const { color, icon } = getReservationStatus(reservation.rentStatus);
               const { carModel, mdn } = getCarModelAndMdn(index);
               
               return (
                 <div 
-                  key={reservation.id} 
+                  key={reservation.rentUuid} 
                   className="p-2 bg-white border border-zinc-200 rounded-lg shadow-sm mb-2"
                 >
                   {/* 상단: 차량번호, 대여상태 */}
                   <div className="flex justify-between items-start">
-                    <div className="font-medium text-md">{reservation.carNumber}</div>
+                    <div className="font-medium text-md">{reservation.carPlate}</div>
                     <div className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${color}`}>
-                      <span>{icon}</span>
-                      <span>{reservation.status}</span>
+                      {icon}
+                      <span>{reservation.rentStatus}</span>
                     </div>
                   </div>
                   
                   {/* 중간: 대여자명, 차종, MDN */}
                   <div className="flex justify-between text-xs mt-1">
                     <div className="text-zinc-700">
-                      {reservation.driver} / {carModel}
+                      {reservation.renterName} / {reservation.carType}
                     </div>
                     <div className="text-zinc-500">
                       {mdn}
@@ -188,15 +169,15 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
                   <div className="mt-2 pt-2 border-t border-zinc-100 text-xs flex justify-between">
                     <div>
                       <div className="text-zinc-500">시작</div>
-                      <div>{formatTime(reservation.startDate)}</div>
+                      <div>{formatTime(new Date(reservation.rentStime))}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-zinc-500">예약번호</div>
-                      <div>{reservation.id}</div>
+                      <div>{reservation.rentUuid}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-zinc-500">종료</div>
-                      <div>{formatTime(reservation.endDate)}</div>
+                      <div>{formatTime(new Date(reservation.rentEtime))}</div>
                     </div>
                   </div>
                 </div>
@@ -208,3 +189,5 @@ export default function ReservationCard({ reservations, isLoading }: Reservation
     </Card>
   );
 } 
+
+export default ReservationCard;
