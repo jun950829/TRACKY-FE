@@ -67,7 +67,7 @@ export default function RecentActivity({ isLoading }: RecentActivityProps) {
         ) : displayLogs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-6 text-center">
             <Activity className="h-8 w-8 text-zinc-300 mb-2" />
-            <p className="text-zinc-500 text-sm">활동 기록이 없습니다</p>
+            <p className="text-zinc-500 text-sm">최근 활동이 없습니다</p>
           </div>
         ) : (
           <div className="divide-y divide-zinc-100">

@@ -3,20 +3,27 @@ import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
 import HistoryList from './HistoryList';
 import HistoryDetail from './HistoryDetail';
+import HistoryDrawer from './HistoryDrawer';
 import { mockRentRecords, mockTripRecords } from '@/constants/mocks/historyMockData';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
+interface DrawerState {
+  [key: string]: boolean;
+}
 
 const HistoryMain = () => {
   const { 
     setRentResults, 
     setTripResults, 
-    setSelectedRent
+    isLoading
   } = useHistoryStore();
 
-  // 검색 시트의 열림/닫힘 상태만 관리합니다
-  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
+  // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
+  const [drawerStates, setDrawerStates] = useState<DrawerState>({
+    search: false,
+    // 다른 drawer가 있다면 여기에 추가
+  });
   const [isDataInitialized, setIsDataInitialized] = useState(false);
 
   // 초기 데이터 로드
@@ -25,25 +32,25 @@ const HistoryMain = () => {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
       setTripResults(mockTripRecords);
-      
-      // 첫 번째 렌트와 트립 선택 (UI 미리보기) - 최초 1회만 실행
-      if (mockRentRecords.length > 0) {
-        setSelectedRent(mockRentRecords[0]);
-      }
-      
       setIsDataInitialized(true);
     }
-  }, [setRentResults, setTripResults, setSelectedRent, isDataInitialized]);
+  }, [setRentResults, setTripResults, isDataInitialized]);
+
+  // 검색 완료 시 검색 drawer 닫기
+  useEffect(() => {
+    if (!isLoading && drawerStates.search) {
+      setDrawerStates(prev => ({ ...prev, search: false }));
+    }
+  }, [isLoading, drawerStates.search]);
+
+  // drawer 상태 변경 핸들러
+  const handleDrawerOpenChange = (id: string, isOpen: boolean) => {
+    setDrawerStates(prev => ({ ...prev, [id]: isOpen }));
+  };
 
   // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
-    setIsSearchSheetOpen(!isSearchSheetOpen);
-  };
-
-  // 항목 선택 핸들러
-  const handleItemSelected = () => {
-    // 모바일에서 항목 선택시 검색 시트만 닫기
-    setIsSearchSheetOpen(false);
+    setDrawerStates(prev => ({ ...prev, search: !prev.search }));
   };
 
   return (
@@ -66,28 +73,13 @@ const HistoryMain = () => {
       </div>
       
       {/* 모바일 검색 시트 */}
-      <Sheet open={isSearchSheetOpen} onOpenChange={setIsSearchSheetOpen}>
-        <SheetContent 
-          side="bottom" 
-          className="h-[80vh] p-0"
-          style={{ 
-            zIndex: 100, 
-            marginBottom: 'env(safe-area-inset-bottom, 0px)',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)'
-          }}
-        >
-          <SheetHeader 
-            className="px-4 py-3 border-b cursor-pointer" 
-            onClick={toggleSearchSheet}
-          >
-            <SheetTitle className="text-left text-lg">검색 및 목록</SheetTitle>
-          </SheetHeader>
-          <div className="overflow-y-auto h-full">
-            <HistorySearch />
-            <HistoryList onItemClick={handleItemSelected} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <HistoryDrawer
+        id="search"
+        isOpen={drawerStates.search}
+        onOpenChange={handleDrawerOpenChange}
+        onItemSelected={() => setDrawerStates(prev => ({ ...prev, search: false }))}
+        title="검색 및 목록"
+      />
       
       <div className="flex flex-col md:flex-row flex-grow h-[calc(100vh-80px)] overflow-hidden">
         {/* 데스크탑 검색/목록 영역 (모바일에서는 숨김) */}
