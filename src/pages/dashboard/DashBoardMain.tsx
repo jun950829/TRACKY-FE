@@ -5,24 +5,10 @@ import RecentActivity from "./RecentActivity";
 import { CarStatusTypes, ReservationStatus, Statistics, StatisticsItem } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
-import KoreaMap from "./KoreaMap";
 import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
 import DashBoardCarousel from "./components/DashBoardCarousel";
 import { useSseEvents } from "@/hooks/useSseEvents";
-
-// Define vehicle data interface
-interface Vehicle {
-  mdn: string;
-  carNumber: string;
-  status: string;
-  location?: {
-    lat: number;
-    lng: number;
-  };
-  lastUpdated?: Date;
-  driver?: string;
-  km?: number;
-}
+import MapLayer from "./MapLayer";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,22 +18,6 @@ export default function Dashboard() {
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
 
   useSseEvents();
-  
-  // 샘플 데이터를 useMemo로 변경하여 한 번만 생성되도록 함
-  const vehicles = useMemo<Vehicle[]>(() => {
-    return Array.from({ length: 10 }, (_, i) => ({
-      mdn: `MDN${100000 + i}`,
-      carNumber: `서울 ${String.fromCharCode(65 + i)} ${1000 + i}`,
-      status: ["운행중", "대기중", "정비중"][Math.floor(Math.random() * 3)],
-      location: {
-        lat: 37.5 + (Math.random() * 0.1),
-        lng: 127 + (Math.random() * 0.1)
-      },
-      lastUpdated: new Date(Date.now() - Math.random() * 3600000),
-      driver: `드라이버 ${i + 1}`,
-      km: Math.floor(Math.random() * 150)
-    }));
-  }, []);
 
   // 데이터 로드
   useEffect(() => {
@@ -126,7 +96,8 @@ export default function Dashboard() {
             <div className="lg:col-span-3 flex flex-col">
               {/* 지도 컴포넌트 */}
               <div className="mb-6 relative">
-                <KoreaMap />
+                {/* <KoreaMap /> */}
+                <MapLayer isLoading={isLoading} />
               </div>
               
               {/* Carousel Stats */}
