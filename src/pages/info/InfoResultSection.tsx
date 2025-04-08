@@ -2,6 +2,7 @@ import React from "react";
 import { useInfoStore } from "@/stores/useInfoStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import StatusBadge from "@/components/custom/StatusBadge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,

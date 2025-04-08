@@ -7,6 +7,7 @@ export interface TripInfo {
   offTime: string | null;
   distance: number;
   startAddress: string;
+  endAddress: string;
 }
 // 정보 조회 결과 타입 정의
 export interface InfoSearchResult {
