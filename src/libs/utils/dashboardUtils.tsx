@@ -1,5 +1,6 @@
 import { CarStatus } from "@/constants/datas/status";
-import { Car, Settings, Clock, Ban } from "lucide-react";
+import { Statistics } from "@/constants/types/types";
+import { Activity, Calendar, Car, Settings, Clock, Ban, Bell } from "lucide-react";
 import React from "react";
 
 export const getStatusLabel = (status: string): string => {
@@ -37,5 +38,68 @@ export const getReservationStatus = (status: string): { color: string, icon:  Re
       return { color: 'bg-red-100 text-red-600', icon: <Ban className="text-red-800 w-5 h-5" />};
     default:
       return { color: 'bg-zinc-100 text-zinc-600', icon: <Car className="text-gray-800 w-5 h-5" />};
+  }
+}
+
+export const makeStatisticsItems = (statistics: Statistics) => {
+  const statisticsItems = [
+    {
+      id: 'total-km',
+      icon: <Activity className="h-4 w-4 text-purple-500" />,
+      title: '총 운행거리',
+      value: `${statistics.totalDriveDistance} km`,
+      color: 'bg-purple-50 border-purple-200'
+    },
+    {
+      id: 'total-usage-time',
+      icon: <Clock className="h-4 w-4 text-amber-500" />,
+      title: '누적 이용시간',
+      value: `${statistics.totalDriveDurationInMinutes}시간`,
+      color: 'bg-amber-50 border-amber-200'
+    },
+    {
+      id: 'total-rents',
+      icon: <Calendar className="h-4 w-4 text-indigo-500" />,
+      title: '총 렌트 수',
+      value: `${statistics.totalRentCount} 건`,
+      color: 'bg-indigo-50 border-indigo-200'
+    },
+    {
+      id: 'total-cars',
+      icon: <Car className="h-4 w-4 text-cyan-500" />,
+      title: '총 차량 수',
+      value: `${statistics.totalCarCount} 대`,
+      color: 'bg-cyan-50 border-cyan-200'
+    }
+  ];
+
+  return statisticsItems;
+}
+
+export const RecentActivityIcon = (event: string, method: string) => {
+  const color = RecentActivityColor(method);
+
+  switch(event) {
+    case 'car_event':
+      return <Car className={`text-${color}-800 w-5 h-5`} />;
+    case 'rent_event':
+      return <Calendar className={`text-${color}-800 w-5 h-5`} />;
+    case 'alarm_event':
+      return <Bell className={`text-${color}-800 w-5 h-5`} />;
+    default:
+      return <Activity className={`text-${color}-800 w-5 h-5`} />;
+  }
+}
+
+export const RecentActivityColor = (method: string) => {
+  switch(method) {
+    case 'create':
+      return 'green';
+    case 'update':
+      return 'blue';
+    case 'delete':
+      return 'red';
+    default:
+      return 'zinc';
   }
 }

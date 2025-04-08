@@ -1,16 +1,24 @@
-import React from 'react';
-import { useInfoStore } from '@/stores/useInfoStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { TripInfo } from '@/stores/useInfoStore';
-import StatusBadge from "@/components/custom/StatusBadge";
+import React from "react";
+import { useInfoStore } from "@/stores/useInfoStore";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { TripInfo } from "@/stores/useInfoStore";
 
 function InfoResultSection() {
   const { rent, car, trips, isLoading } = useInfoStore();
+
+  const totalDistance = trips.reduce((sum, trip) => sum + (trip.distance ?? 0), 0);
 
   // 로딩 중이면 로딩 표시
   if (isLoading) {
@@ -26,24 +34,26 @@ function InfoResultSection() {
   if (!rent) {
     return (
       <div className="text-center text-gray-500 py-6 sm:py-10">
-        <p className="text-sm sm:text-base">예약 정보가 없습니다. 예약 ID를 입력하여 조회해주세요.</p>
+        <p className="text-sm sm:text-base">
+          예약 정보가 없습니다. 예약 ID를 입력하여 조회해주세요.
+        </p>
       </div>
     );
   }
 
   // 상태에 따른 배지 색상 설정
   const getStatusBadgeColor = (status: string) => {
-    switch(status) {
-      case 'SCHEDULED':
-        return 'bg-blue-100 text-blue-800';
-      case 'INPROGRESS':
-        return 'bg-green-100 text-green-800';
-      case 'COMPLETED':
-        return 'bg-gray-100 text-gray-800';
-      case 'CANCELED':
-        return 'bg-red-100 text-red-800';
+    switch (status) {
+      case "SCHEDULED":
+        return "bg-blue-100 text-blue-800";
+      case "INPROGRESS":
+        return "bg-green-100 text-green-800";
+      case "COMPLETED":
+        return "bg-gray-100 text-gray-800";
+      case "CANCELED":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -51,7 +61,7 @@ function InfoResultSection() {
   const formatDateTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return format(date, 'yyyy년 MM월 dd일 HH:mm', { locale: ko });
+      return format(date, "yyyy년 MM월 dd일 HH:mm", { locale: ko });
     } catch {
       return dateString;
     }
@@ -69,10 +79,10 @@ function InfoResultSection() {
             <div className="flex justify-between items-center">
               <CardTitle className="text-lg">예약 정보</CardTitle>
               <Badge className={`text-xs px-2 py-1 ${getStatusBadgeColor(rent.rentStatus)}`}>
-                {rent.rentStatus === 'SCHEDULED' && '예약됨'}
-                {rent.rentStatus === 'INPROGRESS' && '진행중'}
-                {rent.rentStatus === 'COMPLETED' && '완료됨'}
-                {rent.rentStatus === 'CANCELED' && '취소됨'}
+                {rent.rentStatus === "SCHEDULED" && "예약됨"}
+                {rent.rentStatus === "INPROGRESS" && "진행중"}
+                {rent.rentStatus === "COMPLETED" && "완료됨"}
+                {rent.rentStatus === "CANCELED" && "취소됨"}
               </Badge>
             </div>
           </CardHeader>
@@ -123,10 +133,6 @@ function InfoResultSection() {
             <CardContent className="p-4 pt-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <h3 className="text-xs sm:text-sm font-medium text-gray-500">차량 ID</h3>
-                  <p className="mt-1 text-sm">{car.mdn}</p>
-                </div>
-                <div>
                   <h3 className="text-xs sm:text-sm font-medium text-gray-500">차량 번호</h3>
                   <p className="mt-1 text-sm">{car.carPlate}</p>
                 </div>
@@ -161,12 +167,16 @@ function InfoResultSection() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
               <CardTitle className="text-lg mb-2 sm:mb-0">운행 정보</CardTitle>
               <TabsList className="h-9">
-                <TabsTrigger value="list" className="text-xs px-3 py-1">목록</TabsTrigger>
-                <TabsTrigger value="stats" className="text-xs px-3 py-1">통계</TabsTrigger>
+                <TabsTrigger value="list" className="text-xs px-3 py-1">
+                  목록
+                </TabsTrigger>
+                <TabsTrigger value="stats" className="text-xs px-3 py-1">
+                  통계
+                </TabsTrigger>
               </TabsList>
             </div>
           </CardHeader>
-          
+
           <TabsContent value="list">
             <Card>
               <CardContent className="p-2 sm:p-4">
@@ -174,19 +184,27 @@ function InfoResultSection() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-xs">시간</TableHead>
-                        <TableHead className="text-xs">속도 (km/h)</TableHead>
+                        <TableHead className="text-xs">시동 켠 시간</TableHead>
+                        <TableHead className="text-xs">시동 끈 시간</TableHead>
                         <TableHead className="text-xs">주행 거리 (km)</TableHead>
-                        <TableHead className="text-xs">위치 (위도, 경도)</TableHead>
+                        <TableHead className="text-xs">시작 위치</TableHead>
+                        <TableHead className="text-xs">종료 위치</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {trips.map((trip: TripInfo, index: number) => (
                         <TableRow key={index}>
-                          <TableCell className="text-xs p-2">{formatDateTime(trip.oTime)}</TableCell>
-                          <TableCell className="text-xs p-2">{trip.spd}</TableCell>
-                          <TableCell className="text-xs p-2">{(trip.sum / 1000).toFixed(2)}</TableCell>
-                          <TableCell className="text-xs p-2">{trip.lat}, {trip.lon}</TableCell>
+                          <TableCell className="text-xs p-2">
+                            {formatDateTime(trip.oTime)}
+                          </TableCell>
+                          <TableCell className="text-xs p-2">
+                            {trip.offTime ? formatDateTime(trip.offTime) : "-"}
+                          </TableCell>
+                          <TableCell className="text-xs p-2">
+                            {typeof trip.distance === "number" ? trip.distance.toFixed(1) : "0.0"}
+                          </TableCell>
+                          <TableCell className="text-xs p-2">{trip.startAddress}</TableCell>
+                          <TableCell className="text-xs p-2">{trip.endAddress}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -195,26 +213,18 @@ function InfoResultSection() {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="stats">
             <Card>
               <CardContent className="p-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="bg-gray-50 rounded-lg p-3 text-center">
                     <h3 className="text-xs font-medium text-gray-500">총 운행 기록</h3>
                     <p className="text-xl font-bold mt-1">{trips.length}회</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3 text-center">
-                    <h3 className="text-xs font-medium text-gray-500">최고 속도</h3>
-                    <p className="text-xl font-bold mt-1">
-                      {trips.length > 0 ? Math.max(...trips.map((t: TripInfo) => t.spd)) : 0} km/h
-                    </p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
                     <h3 className="text-xs font-medium text-gray-500">총 주행 거리</h3>
-                    <p className="text-xl font-bold mt-1">
-                      {trips.length > 0 ? (trips[trips.length - 1].sum / 1000).toFixed(2) : 0} km
-                    </p>
+                    <p className="text-xl font-bold mt-1">{totalDistance.toFixed(1)} km</p>
                   </div>
                 </div>
               </CardContent>
@@ -226,4 +236,4 @@ function InfoResultSection() {
   );
 }
 
-export default InfoResultSection; 
+export default InfoResultSection;

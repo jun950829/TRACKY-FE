@@ -27,6 +27,10 @@ export const dashboardApi = {
         response = await api.get(`${dashboardApiRoot}/rents/status`);
     }
     return response.data;
+  },
 
+  getStatistics: async () => {
+    const response = await api.get(`${dashboardApiRoot}/statistics`);
+    return response.data;
   }
 };
