@@ -22,47 +22,47 @@ export default function KoreaMap() {
       .then((data) => setGeoData(data));
   }, []);
 
-  // useEffect(() => {
-  //   dashboardApi.getGeo()
-  //   .then((res) => {
-  //     const regionMap: RegionData = {};
-  //     const data = res.data || {};
+  useEffect(() => {
+    dashboardApi.getGeo()
+    .then((res) => {
+      const regionMap: RegionData = {};
+      const data = res.data || {};
 
-  //     Object.entries(data).forEach(([province, count]) => {
-  //       regionMap[province] = count as number;
-  //     });
+      Object.entries(data).forEach(([province, count]) => {
+        regionMap[province] = count as number;
+      });
 
-  //     setRegionData(regionMap);
-  //   })
-  //   .catch((err) => {
-  //     console.log("지도 데이터 로드 실패: ", err);
-  //   });
-  // }, []);
+      setRegionData(regionMap);
+    })
+    .catch((err) => {
+      console.log("지도 데이터 로드 실패: ", err);
+    });
+  }, []);
 
   // 차량 데이터 불러오기 (예시)
-  useEffect(() => {
-    // 실제로는 API 호출로 대체
-    const mockData: RegionData = {
-      "서울특별시": 7,
-      "부산광역시": 5,
-      "대구광역시": 3,
-      "인천광역시": 4,
-      "광주광역시": 2,
-      "대전광역시": 3,
-      "울산광역시": 2,
-      "세종특별자치시": 1,
-      "경기도": 8,
-      "강원도": 2,
-      "충청북도": 2,
-      "충청남도": 3,
-      "전라북도": 2,
-      "전라남도": 3,
-      "경상북도": 4,
-      "경상남도": 4,
-      "제주특별자치도": 2
-    };
-    setRegionData(mockData);
-  }, []);
+  // useEffect(() => {
+  //   // 실제로는 API 호출로 대체
+  //   const mockData: RegionData = {
+  //     "서울특별시": 7,
+  //     "부산광역시": 5,
+  //     "대구광역시": 3,
+  //     "인천광역시": 4,
+  //     "광주광역시": 2,
+  //     "대전광역시": 3,
+  //     "울산광역시": 2,
+  //     "세종특별자치시": 1,
+  //     "경기도": 8,
+  //     "강원도": 2,
+  //     "충청북도": 2,
+  //     "충청남도": 3,
+  //     "전라북도": 2,
+  //     "전라남도": 3,
+  //     "경상북도": 4,
+  //     "경상남도": 4,
+  //     "제주특별자치도": 2
+  //   };
+  //   setRegionData(mockData);
+  // }, []);
 
   // 도 경계 스타일
   const getRegionStyle = (feature: any) => {
