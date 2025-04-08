@@ -7,6 +7,7 @@ export function useLogout() {
     return () => {
         useAuthStore.getState().clearAuth(); // 로그인 정보 초기화
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("memberInfo");
         navigate("/login");
     };
 }
