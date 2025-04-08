@@ -36,6 +36,13 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/events": {
+        target: "http://localhost:8080/events",
+        changeOrigin: true,
+        secure: false,
+        ws: false,
+        rewrite: (path) => path.replace(/^\/events/, "/events"),
+      },
     },
     port: 5173,
     strictPort: true

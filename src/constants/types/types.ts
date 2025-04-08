@@ -1,3 +1,26 @@
+export type SseEventPayloadType = {
+  event: string;
+  method: string;
+  message : string;
+  createdAt: string;
+}
+
+export type Statistics = {
+  totalDriveDistance: number;
+  totalRentCount: number;
+  totalCarCount: number;
+  totalRentDurationInMinutes: number;
+  totalDriveDurationInMinutes: number;
+}
+
+export type StatisticsItem = {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+  color: string;
+}
+
 export type CarTypes = {
   mdn: string;
   bizId: number;
@@ -33,14 +56,6 @@ export type CarUpdateTypes = {
   deviceInfo: Devices;
 }
 
-export type Devices = {
-  id: number;
-  tid: string;
-  mid: string;
-  did: string;
-  pv: string;
-}
-
 export type CarDetailTypes = {
   mdn: string;
   bizId: number;
@@ -52,6 +67,16 @@ export type CarDetailTypes = {
   sum: number;
   deviceInfo: Devices;
   createdAt: string;
+}
+
+export type CarStatusTypes = Record<string, number>;
+
+export type Devices = {
+  id: number;
+  tid: string;
+  mid: string;
+  did: string;
+  pv: string;
 }
 
 export type CycleGpsRequest = {
@@ -72,6 +97,18 @@ export type CycleInfoRequest = {
   cCnt: number;   // 주기 정보 개수
   oTime: string;  // 발생시간
   cList: CycleGpsRequest[]; // 주기정보 리스트
+}
+
+
+export type ReservationStatus = {
+  rentUuid: string;
+  renterName: string;
+  mdn: string;
+  carPlate: string;
+  carType: string;
+  rentStatus: string;
+  rentStime: string;
+  rentEtime: string;
 }
 
 export type RentCreateTypes = {
