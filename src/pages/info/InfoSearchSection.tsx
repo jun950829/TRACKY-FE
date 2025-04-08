@@ -54,9 +54,16 @@ function InfoSearchSection() {
 
       // 2. 운행 정보 조회
       const drivingsResponse = await infoApiService.getDrivings(searchText);
-
       const parsedTrips = await Promise.all(
-        (drivingsResponse?.data || []).map(async (driving: any) => {
+        (drivingsResponse?.data || []).map(async (driving: {
+          driveStartLat: number;
+          driveStartLon: number;
+          driveEndLat: number;
+          driveEndLon: number;
+          driveOnTime: string;
+          driveOffTim: string;
+          driveDistance: number;
+        }) => {
           const startLat = driving.driveStartLat / 1_000_000;
           const startLon = driving.driveStartLon / 1_000_000;
           const endLat = driving.driveEndLat / 1_000_000;
