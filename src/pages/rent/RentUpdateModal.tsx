@@ -12,10 +12,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RentDetailTypes } from '@/constants/types/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';
+import { RentStatus } from '@/constants/datas/status';
 
 
 const schema = yup.object().shape({
@@ -41,11 +43,13 @@ type RentUpdateModalProps = {
 function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalProps) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [mdnList, setMdnList] = useState<{val: string}[]>([]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -60,6 +64,18 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
       returnLoc: initialData.returnLoc,
     },
   });
+
+  useEffect(() => {
+    const fetchMdns = async () => {
+      try {
+        const result = await rentApiService.getMdns();
+        setMdnList(result.data);
+      } catch (e) {
+        console.error("mdn 목록을 불러오는 중 오류 발생", e);
+      }
+    };
+    fetchMdns();
+  }, []);
 
   const submitHandler = (data: FormValues) => {
     sendUpdate(initialData.rent_uuid, data);
@@ -108,8 +124,17 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">식별 키 (MDN)</label>
-              <Input {...register('mdn')} />
+            <label className="block text-sm font-medium">식별 키 (MDN)</label>
+              <Select defaultValue={initialData.mdn} onValueChange={(val) => setValue('mdn', val)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="차량 ID를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mdnList.map((mdn: {val: string}, idx: number) => (
+                    <SelectItem key={idx} value={mdn.val}>{mdn.val}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.mdn && <p className="text-sm text-red-500">{errors.mdn.message}</p>}
             </div>
             <div>
@@ -130,6 +155,23 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             <div>
               <label className="block text-sm font-medium">대여 상태</label>
               <Input {...register('rentStatus')} />
+              {errors.rentStatus && <p className="text-sm text-red-500">{errors.rentStatus.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium">대여 상태</label>
+              <Select
+                defaultValue={initialData.rentStatus}
+                onValueChange={(val) => setValue('rentStatus', val)}
+              >
+                <SelectTrigger>
+                  <SelectValue  />
+                </SelectTrigger>
+                <SelectContent>
+                  {RentStatus.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.rentStatus && <p className="text-sm text-red-500">{errors.rentStatus.message}</p>}
             </div>
             <div>
