@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search as SearchIcon } from "lucide-react";
 import { useInfoStore } from "@/stores/useInfoStore";
 import infoApiService from "@/libs/apis/infoApi";
-import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode.ts";
+import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 
 function InfoSearchSection() {
   const [searchText, setSearchText] = useState("");
