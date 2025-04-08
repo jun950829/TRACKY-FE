@@ -4,6 +4,11 @@ const dashboardApiRoot = "/dashboard";
 
 export const dashboardApi = {
 
+  getGeo: async () => { 
+    const response = await api.get(`${dashboardApiRoot}/geo`);
+    return response.data;
+  },
+
   getCarStatus: async () => {
     const response = await api.get(`${dashboardApiRoot}/cars/status`);
     return response.data;
