@@ -43,7 +43,7 @@ type RentUpdateModalProps = {
 function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalProps) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [mdnList, setMdnList] = useState<{val: string}[]>([]);
+  const [mdnList, setMdnList] = useState<string[]>([]);
 
   const {
     register,
@@ -124,14 +124,14 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
-            <label className="block text-sm font-medium">식별 키 (MDN)</label>
+              <label className="block text-sm font-medium">식별 키 (MDN)</label>
               <Select defaultValue={initialData.mdn} onValueChange={(val) => setValue('mdn', val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="차량 ID를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mdnList.map((mdn: {val: string}, idx: number) => (
-                    <SelectItem key={idx} value={mdn.val}>{mdn.val}</SelectItem>
+                  {mdnList.map((mdn: string, idx: number) => (
+                    <SelectItem key={idx} value={mdn}>{mdn}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -154,17 +154,12 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">대여 상태</label>
-              <Input {...register('rentStatus')} />
-              {errors.rentStatus && <p className="text-sm text-red-500">{errors.rentStatus.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">대여 상태</label>
               <Select
                 defaultValue={initialData.rentStatus}
                 onValueChange={(val) => setValue('rentStatus', val)}
               >
                 <SelectTrigger>
-                  <SelectValue  />
+                  <SelectValue placeholder="대여 상태를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
                   {RentStatus.map((status) => (
@@ -176,7 +171,11 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">대여 시작 시간</label>
-              <Input {...register('rentStime')} />
+              <Input 
+                type="datetime-local" 
+                {...register('rentStime')} 
+                defaultValue={initialData.rentStime}
+              />
               {errors.rentStime && <p className="text-sm text-red-500">{errors.rentStime.message}</p>}
             </div>
             <div>
@@ -186,7 +185,11 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">대여 종료 시간</label>
-              <Input {...register('rentEtime')} />
+              <Input 
+                type="datetime-local" 
+                {...register('rentEtime')} 
+                defaultValue={initialData.rentEtime}
+              />
               {errors.rentEtime && <p className="text-sm text-red-500">{errors.rentEtime.message}</p>}
             </div>
             <div>
