@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search as SearchIcon } from "lucide-react";
 import { useInfoStore } from "@/stores/useInfoStore";
 import infoApiService from "@/libs/apis/infoApi";
-import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode.ts";
+import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 
 function InfoSearchSection() {
   const [searchText, setSearchText] = useState("");
@@ -40,6 +40,7 @@ function InfoSearchSection() {
 
       const parsedRent = {
         rent_uuid: reservation.rentUuid,
+        mdn: car.mdn,
         renterName: reservation.renterName,
         renterPhone: reservation.renterPhone,
         purpose: reservation.purpose ?? "-",
@@ -48,6 +49,7 @@ function InfoSearchSection() {
         rentLoc: reservation.rentLoc ?? "-",
         returnLoc: reservation.returnLoc ?? "-",
         rentStatus: "SCHEDULED", // 필요하면 추후 실제 상태값 적용
+        createdAt: reservation.createdAt,
       };
 
       // 2. 운행 정보 조회
