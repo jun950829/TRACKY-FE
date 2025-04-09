@@ -24,20 +24,20 @@ if (typeof window !== 'undefined') {
 
 // MapView 요소 props 타입
 interface MapViewProps {
-  center: [number, number];
-  zoom: number;
   bounds: L.LatLngBounds;
 }
 
 // 지도 뷰 설정 컴포넌트
-const MapView: React.FC<MapViewProps> = ({ center, zoom, bounds }) => {
+const MapView: React.FC<MapViewProps> = ({ bounds }) => {
   const map = useMap();
   
   useEffect(() => {
-    map.setView(center, zoom);
     // 경로가 모두 보이도록 bounds에 맞춤
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }, [center, zoom, map, bounds]);
+    map.fitBounds(bounds, { 
+      padding: [50, 50],
+      maxZoom: 16 // 최대 줌 레벨 제한
+    });
+  }, [map, bounds]);
   
   return null;
 };
@@ -51,6 +51,7 @@ interface HistoryMapProps {
 
 const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', driveId = '' }) => {
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isPathRendering, setIsPathRendering] = useState(true);
   
   useEffect(() => {
     // 브라우저 환경에서만 지도 렌더링
@@ -124,13 +125,26 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
   return (
     <>
       {mapLoaded ? (
-        <div style={{ height, width: '100%' }}>
-          {/* key를 tripId로 설정하여 트립이 변경될 때 지도 컴포넌트를 완전히 재생성하도록 함 */}
+        <div style={{ height, width: '100%', position: 'relative' }}>
+          {isPathRendering && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+              <div className="flex flex-col items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                <p className="mt-4 text-white">경로 로딩 중...</p>
+              </div>
+            </div>
+          )}
           <MapContainer
             key={driveId}
             center={center}
             zoom={12}
             style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
+            whenReady={() => {
+              // 지도가 준비되면 경로 렌더링 시작
+              setTimeout(() => {
+                setIsPathRendering(false);
+              }, 100);
+            }}
           >
             {/* 지도 타일 레이어 */}
             <TileLayer
@@ -163,7 +177,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
             ))}
             
             {/* 지도 뷰 설정 */}
-            <MapView center={center} zoom={12} bounds={mapBounds} />
+            <MapView bounds={mapBounds} />
           </MapContainer>
         </div>
       ) : (

@@ -17,6 +17,7 @@ const formatDateTime = (dateStr: string) => {
 
 const HistoryDetail: React.FC = () => {
   const { selectedDetail } = useHistoryStore();
+
   console.log("detail: ", selectedDetail);
   // 선택된 데이터가 없는 경우
   if (!selectedDetail) {
@@ -52,7 +53,6 @@ const HistoryDetail: React.FC = () => {
             <HistoryMap 
               gpsDataList={selectedDetail.gpsDataList || []} 
               height="200px"
-              // tripId={selectedDetail.id}
             />
           </CardContent>
         </Card>
