@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 
 // Leaflet 마커 아이콘 오류 수정
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// 컴포넌트 임포트
+import MapView from './components/MapView';
+
+// 유틸리티 함수 임포트
+import { 
+  GpsData, 
+  calculateBounds, 
+  createMapBounds, 
+  createPathSegments 
+} from '@/libs/utils/historyUtils';
 
 // Leaflet 기본 아이콘 설정
 const DefaultIcon = L.icon({
@@ -22,31 +33,11 @@ if (typeof window !== 'undefined') {
   L.Marker.prototype.options.icon = DefaultIcon;
 }
 
-// MapView 요소 props 타입
-interface MapViewProps {
-  bounds: L.LatLngBounds;
-}
-
-// 지도 뷰 설정 컴포넌트
-const MapView: React.FC<MapViewProps> = ({ bounds }) => {
-  const map = useMap();
-  
-  useEffect(() => {
-    // 경로가 모두 보이도록 bounds에 맞춤
-    map.fitBounds(bounds, { 
-      padding: [50, 50],
-      maxZoom: 16 // 최대 줌 레벨 제한
-    });
-  }, [map, bounds]);
-  
-  return null;
-};
-
 // 지도 컴포넌트 props 타입
 interface HistoryMapProps {
-  gpsDataList: { lat: number; lon: number; spd: number; o_time: string }[];
+  gpsDataList: GpsData[];
   height?: string;
-  driveId?: string; // 트립 ID 추가
+  driveId?: string;
 }
 
 const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', driveId = '' }) => {
@@ -78,49 +69,12 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
     (firstPoint.lon + lastPoint.lon) / 2 / 1_000_000
   ];
 
-  // 경로의 전체 범위 계산
-  const bounds = gpsDataList.reduce((acc, point) => {
-    const lat = point.lat / 1_000_000;
-    const lon = point.lon / 1_000_000;
-    return {
-      minLat: Math.min(acc.minLat, lat),
-      maxLat: Math.max(acc.maxLat, lat),
-      minLon: Math.min(acc.minLon, lon),
-      maxLon: Math.max(acc.maxLon, lon),
-    };
-  }, {
-    minLat: Number.MAX_VALUE,
-    maxLat: Number.MIN_VALUE,
-    minLon: Number.MAX_VALUE,
-    maxLon: Number.MIN_VALUE,
-  });
-
-  // 경로의 전체 범위를 포함하는 bounds 생성
-  const mapBounds = L.latLngBounds(
-    [bounds.minLat, bounds.minLon],
-    [bounds.maxLat, bounds.maxLon]
-  );
+  // 경로의 전체 범위 계산 및 bounds 생성
+  const bounds = calculateBounds(gpsDataList);
+  const mapBounds = createMapBounds(bounds);
   
-  // 속도에 따른 경로 색상 계산
-  const getPathColor = (speed: number) => {
-    if (speed < 30) return '#3388ff'; // 천천히 - 파란색
-    if (speed < 60) return '#33cc33'; // 보통 - 녹색
-    if (speed < 90) return '#ffcc00'; // 빠름 - 노란색
-    return '#ff3300';                 // 매우 빠름 - 빨간색
-  };
-  
-  // 속도 별 경로 세그먼트 생성
-  const pathSegments = [];
-  for (let i = 0; i < gpsDataList.length - 1; i++) {
-    const avgSpeed = (gpsDataList[i].spd + gpsDataList[i+1].spd) / 2;
-    pathSegments.push({
-      positions: [
-        [gpsDataList[i].lat / 1_000_000, gpsDataList[i].lon / 1_000_000] as [number, number],
-        [gpsDataList[i + 1].lat / 1_000_000, gpsDataList[i + 1].lon / 1_000_000] as [number, number]
-      ],
-      color: getPathColor(avgSpeed)
-    });
-  }
+  // 경로 세그먼트 생성
+  const pathSegments = createPathSegments(gpsDataList);
   
   return (
     <>

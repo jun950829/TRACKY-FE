@@ -57,27 +57,13 @@ const HistoryDetail: React.FC = () => {
         </Card>
         
         {/* 요약 정보 카드 (상단) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
               <div className="text-xs sm:text-sm font-medium text-gray-500">총 주행 거리</div>
               <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.sum} km</div>
             </CardContent>
           </Card>
-          
-          {/* <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">최고 속도</div>
-              <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.maxSpeed} km/h</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">평균 속도</div>
-              <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.avgSpeed} km/h</div>
-            </CardContent>
-          </Card> */}
           
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
