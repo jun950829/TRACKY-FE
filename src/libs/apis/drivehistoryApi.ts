@@ -3,8 +3,13 @@ import api from "./api";
 const drivehistoryApiRoot = "/drives";
 
 export const drivehistoryService = {
-  driveHistorybyRentUuid: async () => {
-    const response = await api.get(`${drivehistoryApiRoot}/history`);
+  driveHistorybyRentUuid: async (rentUuid?: string) => {
+    let response;
+    if (rentUuid) {
+      response = await api.get(`${drivehistoryApiRoot}/history/rents?rentUuid=${rentUuid}`);
+    } else {
+      response = await api.get(`${drivehistoryApiRoot}/history`);
+    }
     return response.data;
   },
   getDriveDetail: async (driveId: number) => {

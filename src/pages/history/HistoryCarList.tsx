@@ -1,4 +1,16 @@
+import { format } from 'date-fns';
+import { drivehistoryService } from "@/libs/apis/drivehistoryApi";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+
+// 날짜 포맷 헬퍼 함수
+const formatDateTime = (dateStr: string) => {
+  try {
+    const date = new Date(dateStr);
+    return format(date, 'yyyy-MM-dd HH:mm');
+  } catch {
+    return dateStr;
+  }
+};
 
 interface HistoryListProps {
   onItemClick?: () => void;
@@ -7,6 +19,7 @@ interface HistoryListProps {
 const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   const { 
     driveResults, 
+    rentResults,
     searchType, 
     selectedDrive, 
     setSelectedRent, 
@@ -16,17 +29,18 @@ const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   // 주행 항목 클릭 핸들러
   const handleDriveClick = async (driveId: string) => {
     // 차량 검색 모드일 때
-    const drive = driveResults.find(t => t.id === driveId);
+    const drive = driveResults.find(drive => drive.driveId === driveId);
     if (drive) {
-      // 이 운행이 속한 렌트 찾기
-      const rent = rentResults.find(r => r.rentUuid === drive.rentUuid);
+      // 우선 렌트 검색 결과에서 관련된 렌트가 있는지 확인해보고
+      const rent = rentResults.find(rent => rent.rentUuid === drive.rentUuid);
+
+      // 관련된 렌트가 있으면 선택
       if (rent) {
         setSelectedRent(rent);
-        setSelectedTrip(drive);
-        
-        if (onItemClick) {
-          onItemClick();
-        }
+      } else {
+        // 관련된 렌트가 없으면 예약 정보를 가져옴
+        const response = await drivehistoryService.driveHistorybyRentUuid(drive.rentUuid);
+        setSelectedRent(response.data);
       }
     }
   };
@@ -42,28 +56,28 @@ const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
 
   return (
     <div className="h-full overflow-y-auto">
-        {/* // 차량별 운행 검색 결과 목록 */}
+        {/* 차량별 운행 검색 결과 목록 */}
         <div className="divide-y">
-          {driveResults.map(trip => (
-            <div key={trip.id} className="text-sm">
+          {driveResults.map(drive => (
+            <div key={drive.driveId} className="text-sm">
               <div 
-                className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedTrip?.id === trip.id ? 'bg-gray-100' : ''}`}
-                onClick={() => handleDriveClick(trip.id)}
+                className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedTrip?.id === drive.id ? 'bg-gray-100' : ''}`}
+                onClick={() => handleDriveClick(drive.driveId)}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">차량: {trip.mdn}</div>
+                  <div className="font-medium truncate">차량: {drive.mdn}</div>
                   <div className="text-xs text-gray-500 truncate">
-                    예약: {trip.rentUuid}
+                    예약: {drive.rentUuid}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
+                    {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
                   </div>
                   <div className="text-xs text-gray-500 mt-1 truncate">
-                    {trip.startLocation} → {trip.endLocation}
+                    {drive.onLat}, {drive.onLon} → {drive.offLat}, {drive.offLon}
                   </div>
                   <div className="mt-1 text-xs">
-                    <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km | 
-                    <span className="text-gray-700 ml-1">평균:</span> {trip.avgSpeed}km/h
+                    <span className="text-gray-700">거리:</span> {drive.sum.toFixed(1)}km | 
+                    <span className="text-gray-700 ml-1">평균:</span> {drive.avgSpeed}km/h
                   </div>
                 </div>
               </div>
