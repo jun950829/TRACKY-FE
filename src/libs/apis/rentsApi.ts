@@ -9,6 +9,11 @@ export const rentApiService = {
         return response.data;
     },
 
+    getMdns: async () => {
+        const response = await api.get(`${rentApiRoot}/cars/all`);
+        return response.data;
+    },
+
     searchByRentUuid: async (searchText: string) => {
         if(searchText != '') {
             const response = await api.get(`/rents/search?rentUuid=${searchText}`);
