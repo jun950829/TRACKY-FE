@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RentRecord, DriveRecord } from "@/constants/mocks/historyMockData";
+import { RentRecord, DriveRecord, DriveDetailRecord } from "@/constants/mocks/historyMockData";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
@@ -12,6 +12,7 @@ interface HistoryState {
   // 선택된 항목
   selectedRent: RentRecord | null;
   selectedDrive: DriveRecord | null;
+  selectedDetail: DriveDetailRecord | null;
   
   // 검색 결과
   rentResults: RentRecord[];
@@ -24,9 +25,10 @@ interface HistoryState {
   setSearchText: (text: string) => void;
   setSearchType: (type: 'rent' | 'car') => void;
   setRentResults: (rents: RentRecord[]) => void;
-  setDriveResults: (trips: DriveRecord[]) => void;
+  setDriveResults: (drives: DriveRecord[]) => void;
   setSelectedRent: (rent: RentRecord | null) => void;
-  setSelectedDrive: (trip: DriveRecord | null) => void;
+  setSelectedDrive: (drive: DriveRecord | null) => void;
+  setSelectedDetail: (detail: DriveDetailRecord | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   setDrawerOpen: (isOpen: boolean) => void;
@@ -41,6 +43,7 @@ const initialState = {
   error: null,
   selectedRent: null,
   selectedDrive: null,
+  selectedDetail: null,
   rentResults: [],
   driveResults: [],
   isDrawerOpen: true
@@ -63,6 +66,8 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   }),
   
   setSelectedDrive: (drive) => set({ selectedDrive: drive }),
+
+  setSelectedDetail: (detail) => set({ selectedDetail: detail }),
   
   setLoading: (isLoading) => set({ isLoading }),
   

@@ -7,9 +7,9 @@ const formatDate = (date: Date) => {
 
 // 운행 기록 타입 정의
 export interface DriveRecord {
-  driveId: string;
-  mdn?: string;
-  rentUuid?: string;
+  driveId: number;
+  mdn: string;
+  rentUuid: string;
   driveOnTime: string;
   driveOffTime: string;
   onLat: number;
@@ -17,11 +17,15 @@ export interface DriveRecord {
   offLat: number;
   offLon: number;
   sum: number;
+  renter: string;
+  renterPhone: string;
+  purpose: string;
+  rentStatus: string;
   maxSpeed?: number;
   avgSpeed?: number;
-  gpsCoordinates?: {
+  gpsDataList?: {
     lat: number;
-    lng: number;
+    lon: number;
     spd: number;
     o_time: string;
   }[];

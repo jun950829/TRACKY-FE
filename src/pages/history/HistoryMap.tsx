@@ -41,12 +41,12 @@ const MapView: React.FC<MapViewProps> = ({ center, zoom }) => {
 
 // 지도 컴포넌트 props 타입
 interface HistoryMapProps {
-  points: { lat: number; lng: number; speed: number; timestamp: string }[];
+  gpsDataList: { lat: number; lon: number; spd: number; o_time: string }[];
   height?: string;
-  tripId?: string; // 트립 ID 추가
+  driveId?: string; // 트립 ID 추가
 }
 
-const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripId = '' }) => {
+const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', driveId = '' }) => {
   const [mapLoaded, setMapLoaded] = useState(false);
   
   useEffect(() => {
@@ -55,7 +55,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripI
   }, []);
   
   // 경로가 없는 경우 처리
-  if (!points || points.length === 0) {
+  if (!gpsDataList || gpsDataList.length === 0) {
     return (
       <div 
         className="flex items-center justify-center bg-gray-100 rounded" 
@@ -67,11 +67,11 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripI
   }
   
   // 지도 중심점 계산 (첫 번째와 마지막 포인트의 중간점)
-  const firstPoint = points[0];
-  const lastPoint = points[points.length - 1];
+  const firstPoint = gpsDataList[0];
+  const lastPoint = gpsDataList[gpsDataList.length - 1];
   const center: [number, number] = [
     (firstPoint.lat + lastPoint.lat) / 2,
-    (firstPoint.lng + lastPoint.lng) / 2
+    (firstPoint.lon + lastPoint.lon) / 2
   ];
   
   // 속도에 따른 경로 색상 계산
@@ -84,12 +84,12 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripI
   
   // 속도 별 경로 세그먼트 생성
   const pathSegments = [];
-  for (let i = 0; i < points.length - 1; i++) {
-    const avgSpeed = (points[i].speed + points[i+1].speed) / 2;
+  for (let i = 0; i < gpsDataList.length - 1; i++) {
+    const avgSpeed = (gpsDataList[i].spd + gpsDataList[i+1].spd) / 2;
     pathSegments.push({
       positions: [
-        [points[i].lat, points[i].lng] as [number, number],
-        [points[i+1].lat, points[i+1].lng] as [number, number]
+        [gpsDataList[i].lat / 1_000_000, gpsDataList[i].lon / 1_000_000] as [number, number],
+        [gpsDataList[i + 1].lat / 1_000_000, gpsDataList[i + 1].lon / 1_000_000] as [number, number]
       ],
       color: getPathColor(avgSpeed)
     });
@@ -101,7 +101,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripI
         <div style={{ height, width: '100%' }}>
           {/* key를 tripId로 설정하여 트립이 변경될 때 지도 컴포넌트를 완전히 재생성하도록 함 */}
           <MapContainer
-            key={tripId}
+            key={driveId}
             center={center}
             zoom={12}
             style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
@@ -113,16 +113,16 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ points, height = '400px', tripI
             />
             
             {/* 시작 마커 */}
-            <Marker position={[firstPoint.lat, firstPoint.lng]}>
+            <Marker position={[firstPoint.lat, firstPoint.lon]}>
               <Popup>
-                출발: {new Date(firstPoint.timestamp).toLocaleString()}
+                출발: {new Date(firstPoint.o_time).toLocaleString()}
               </Popup>
             </Marker>
             
             {/* 도착 마커 */}
-            <Marker position={[lastPoint.lat, lastPoint.lng]}>
+            <Marker position={[lastPoint.lat, lastPoint.lon]}>
               <Popup>
-                도착: {new Date(lastPoint.timestamp).toLocaleString()}
+                도착: {new Date(lastPoint.o_time).toLocaleString()}
               </Popup>
             </Marker>
             

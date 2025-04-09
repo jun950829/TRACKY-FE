@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon } from 'lucide-react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
-import { searchRentRecords, searchTripRecords } from '@/constants/mocks/historyMockData';
+import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 
 const HistorySearch = () => {
   const { 
@@ -12,36 +12,26 @@ const HistorySearch = () => {
     searchType, 
     setSearchType, 
     setRentResults, 
-    setTripResults, 
+    setDriveResults, 
     setLoading, 
     setError,
     isLoading 
   } = useHistoryStore();
 
   // 검색 핸들러
-  const handleSearch = () => {
-    return; 
+  const handleSearch = async() => {
     setLoading(true);
     setError(null);
-
     try {
-      if (import.meta.env.DEV) {
-        // mock 데이터 검색 시뮬레이션
-        setTimeout(() => {
-          if (searchType === 'rent') {
-            const results = searchRentRecords(searchText);
-            setRentResults(results);
-          } else {
-            const results = searchTripRecords(searchText);
-            setTripResults(results);
-          }
-          setLoading(false);
-        }, 500);
-      } else {
-        // 실제 API 호출 로직이 여기에 들어갈 것입니다
-        // ...
-        setLoading(false);
+      if( searchType === 'rent' ) {
+        const response = await drivehistoryService.driveHistorybyRentUuid();
+        setRentResults( response.data );
+      setLoading(false);
+    } else if( searchType === 'car' ) {
+      const response = await drivehistoryService.getDriveDetailbyCar(searchText);
+        setDriveResults( response.data );
       }
+      setLoading(false);
     } catch (error) {
       console.error('검색 오류:', error);
       setError('검색 중 오류가 발생했습니다');
@@ -51,11 +41,12 @@ const HistorySearch = () => {
 
   // 입력 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("e.target.value", e.target.value);
     setSearchText(e.target.value);
   };
 
   // 검색 타입 변경 핸들러
-  const handleTypeChange = (type: 'rent' | 'trip') => {
+  const handleTypeChange = (type: 'rent' | 'car') => {
     setSearchType(type);
   };
 
@@ -79,10 +70,10 @@ const HistorySearch = () => {
             예약 별
           </Button>
           <Button
-            variant={searchType === 'trip' ? 'default' : 'outline'}
+            variant={searchType === 'car' ? 'default' : 'outline'}
             size="sm"
-            className={`flex-1 ${searchType === 'trip' ? 'bg-black text-white' : ''}`}
-            onClick={() => handleTypeChange('trip')}
+            className={`flex-1 ${searchType === 'car' ? 'bg-black text-white' : ''}`}
+            onClick={() => handleTypeChange('car')}
           >
             차량 별
           </Button>

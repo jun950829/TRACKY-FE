@@ -16,33 +16,37 @@ interface HistoryListProps {
   onItemClick?: () => void;
 }
 
-const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
+const HistoryCarList: React.FC<HistoryListProps> = () => {
   const { 
     driveResults, 
-    rentResults,
     searchType, 
     selectedDrive, 
-    setSelectedRent, 
-    setSelectedDrive
+    setSelectedDrive,
+    setSelectedDetail
   } = useHistoryStore();
 
   // 주행 항목 클릭 핸들러
-  const handleDriveClick = async (driveId: string) => {
+  const handleDriveClick = async (driveId: number) => {
     // 차량 검색 모드일 때
-    const drive = driveResults.find(drive => drive.driveId === driveId);
-    if (drive) {
-      // 우선 렌트 검색 결과에서 관련된 렌트가 있는지 확인해보고
-      const rent = rentResults.find(rent => rent.rentUuid === drive.rentUuid);
+    const response = await drivehistoryService.getDriveDetail(driveId);
 
-      // 관련된 렌트가 있으면 선택
-      if (rent) {
-        setSelectedRent(rent);
-      } else {
-        // 관련된 렌트가 없으면 예약 정보를 가져옴
-        const response = await drivehistoryService.driveHistorybyRentUuid(drive.rentUuid);
-        setSelectedRent(response.data);
-      }
-    }
+    console.log("detail: ", response.data);
+    setSelectedDetail(response.data);
+
+    // const drive = driveResults.find(drive => drive.driveId === driveId);
+    // if (drive) {
+    //   // 우선 렌트 검색 결과에서 관련된 렌트가 있는지 확인해보고
+    //   const rent = rentResults.find(rent => rent.rentUuid === drive.rentUuid);
+
+    //   // 관련된 렌트가 있으면 선택
+    //   if (rent) {
+    //     setSelectedRent(rent);
+    //   } else {
+    //     // 관련된 렌트가 없으면 예약 정보를 가져옴
+    //     const response = await drivehistoryService.driveHistorybyRentUuid(drive.rentUuid);
+    //     setSelectedRent(response.data);
+    //   }
+    // }
   };
 
   // 결과가 없을 때 표시할 메시지
@@ -61,7 +65,7 @@ const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
           {driveResults.map(drive => (
             <div key={drive.driveId} className="text-sm">
               <div 
-                className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedTrip?.id === drive.id ? 'bg-gray-100' : ''}`}
+                className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedDrive?.driveId === drive.driveId ? 'bg-gray-100' : ''}`}
                 onClick={() => handleDriveClick(drive.driveId)}
               >
                 <div className="flex-1 min-w-0">

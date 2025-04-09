@@ -8,6 +8,7 @@ import { mockRentRecords, mockTripRecords } from '@/constants/mocks/historyMockD
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
+import HistoryCarList from './HistoryCarList';
 
 interface DrawerState {
   [key: string]: boolean;
@@ -17,7 +18,7 @@ const HistoryMain = () => {
   const { 
     searchType,
     setRentResults, 
-    setTripResults, 
+    setDriveResults, 
     isLoading
   } = useHistoryStore();
 
@@ -38,7 +39,7 @@ const HistoryMain = () => {
       // setTripResults(mockTripRecords);
       setIsDataInitialized(true);
     }
-  }, [setTripResults, isDataInitialized]);
+  }, [setDriveResults, isDataInitialized]);
 
   async function getDriveHistoryList() {
     let driveList;
@@ -117,7 +118,13 @@ const HistoryMain = () => {
               <HistorySearch />
             </div>
             <div className="flex-grow overflow-y-auto">
-              <HistoryList />
+              {
+                searchType === 'rent' ? (
+                  <HistoryList />
+                ) : (
+                  <HistoryCarList />
+                )
+              }
             </div>
           </div>
         </div>
