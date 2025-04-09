@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -18,7 +17,7 @@ interface HistoryListProps {
   onItemClick?: () => void;
 }
 
-const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
+const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   const { 
     rentResults, 
     tripResults, 
@@ -63,18 +62,18 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   const handleTripClick = async (tripId: string) => {
     // 예약 검색 모드일 때
     if (searchType === 'rent' && selectedRent) {
-      const trip = selectedRent.trips.find(t => t.id === tripId);
-      if (trip) {
+      // const trip = selectedRent.trips.find(t => t.id === tripId);
+      // if (trip) {
 
-        setSelectedTrip(trip);
+      //   setSelectedTrip(trip);
         
-        if (onItemClick) {
-          onItemClick();
-        }
-      }
+      //   if (onItemClick) {
+      //     onItemClick();
+      //   }
+      // }
     } 
     // 운행 검색 모드일 때
-    else if (searchType === 'trip') {
+    else if (searchType === 'car') {
       const trip = tripResults.find(t => t.id === tripId);
       if (trip) {
         // 이 운행이 속한 렌트 찾기
@@ -93,7 +92,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
 
   // 결과가 없을 때 표시할 메시지
   if ((searchType === 'rent' && rentResults.length === 0) || 
-      (searchType === 'trip' && tripResults.length === 0)) {
+      (searchType === 'car' && tripResults.length === 0)) {
     return (
       <div className="p-4 text-center text-gray-500">
         검색 결과가 없습니다
@@ -142,23 +141,23 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               {/* 하위 운행 목록 */}
               {openRents.has(rent.rentUuid) && (
                 <div className="bg-gray-50 pl-4 max-h-[300px] overflow-y-auto">
-                  {rent.trips.map(trip => (
+                  {rent.drivelist.map((drive, idx : number) => (
                     <div 
-                      key={trip.id}
+                      key={idx}
                       className={`p-2 pl-3 border-l-2 cursor-pointer hover:bg-gray-100 mb-1 ml-2 text-xs
-                        ${selectedTrip?.id === trip.id ? 'border-black bg-gray-100' : 'border-gray-300'}`}
-                      onClick={() => handleTripClick(trip.id)}
+                        ${selectedTrip?.driveId === drive.driveId ? 'border-black bg-gray-100' : 'border-gray-300'}`}
+                      onClick={() => handleTripClick(drive.driveId)}
                     >
-                      <div className="font-medium truncate">{trip.id}</div>
+                      <div className="font-medium truncate">{drive.driveId}</div>
                       <div className="text-gray-500">
-                        {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
+                        {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
                       </div>
                       <div className="text-gray-500 mt-1 truncate">
-                        {trip.startLocation} → {trip.endLocation}
+                        {drive.onLat}, {drive.onLon} → {drive.offLat}, {drive.offLon}
                       </div>
                       <div className="mt-1 text-xs">
-                        <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km | 
-                        <span className="text-gray-700 ml-1">평균:</span> {trip.avgSpeed}km/h
+                        <span className="text-gray-700">거리:</span> {drive.sum.toFixed(1)}km | 
+                        <span className="text-gray-700 ml-1">평균:</span> {drive.avgSpeed}km/h
                       </div>
                     </div>
                   ))}
@@ -201,4 +200,4 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   );
 };
 
-export default HistoryList; 
+export default HistoryRentList; 

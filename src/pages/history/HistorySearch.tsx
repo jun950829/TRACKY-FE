@@ -20,6 +20,7 @@ const HistorySearch = () => {
 
   // 검색 핸들러
   const handleSearch = () => {
+    return; 
     setLoading(true);
     setError(null);
 

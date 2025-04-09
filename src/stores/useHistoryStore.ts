@@ -1,32 +1,32 @@
 import { create } from "zustand";
-import { RentRecord, TripRecord } from "@/constants/mocks/historyMockData";
+import { RentRecord, DriveRecord } from "@/constants/mocks/historyMockData";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
   // 검색 관련
   searchText: string;
-  searchType: 'rent' | 'trip';
+  searchType: 'rent' | 'car';
   isLoading: boolean;
   error: string | null;
   
   // 선택된 항목
   selectedRent: RentRecord | null;
-  selectedTrip: TripRecord | null;
+  selectedDrive: DriveRecord | null;
   
   // 검색 결과
   rentResults: RentRecord[];
-  tripResults: TripRecord[];
+  driveResults: DriveRecord[];
   
   // 드로어 상태
   isDrawerOpen: boolean;
   
   // 액션
   setSearchText: (text: string) => void;
-  setSearchType: (type: 'rent' | 'trip') => void;
+  setSearchType: (type: 'rent' | 'car') => void;
   setRentResults: (rents: RentRecord[]) => void;
-  setTripResults: (trips: TripRecord[]) => void;
+  setDriveResults: (trips: DriveRecord[]) => void;
   setSelectedRent: (rent: RentRecord | null) => void;
-  setSelectedTrip: (trip: TripRecord | null) => void;
+  setSelectedDrive: (trip: DriveRecord | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   setDrawerOpen: (isOpen: boolean) => void;
@@ -40,9 +40,9 @@ const initialState = {
   isLoading: false,
   error: null,
   selectedRent: null,
-  selectedTrip: null,
+  selectedDrive: null,
   rentResults: [],
-  tripResults: [],
+  driveResults: [],
   isDrawerOpen: true
 };
 
@@ -56,15 +56,13 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   
   setRentResults: (rents) => set({ rentResults: rents }),
   
-  setTripResults: (trips) => set({ tripResults: trips }),
+  setDriveResults: (drives) => set({ driveResults: drives }),
   
   setSelectedRent: (rent) => set({ 
-    selectedRent: rent,
-    // 렌트를 선택하면 첫 번째 트립도 자동 선택
-    // selectedTrip: rent && rent.trips.length > 0 ? rent.trips[0] : null 
+    selectedRent: rent
   }),
   
-  setSelectedTrip: (trip) => set({ selectedTrip: trip }),
+  setSelectedDrive: (drive) => set({ selectedDrive: drive }),
   
   setLoading: (isLoading) => set({ isLoading }),
   

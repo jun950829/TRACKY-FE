@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import HistorySearch from './HistorySearch';
-import HistoryList from './HistoryList';
+import HistoryList from './HistoryRentList';
 
 interface HistoryDrawerProps {
   id: string;
