@@ -75,7 +75,7 @@ const HistorySearch = () => {
             className={`flex-1 ${searchType === 'rent' ? 'bg-black text-white' : ''}`}
             onClick={() => handleTypeChange('rent')}
           >
-            예약 ID
+            예약 별
           </Button>
           <Button
             variant={searchType === 'trip' ? 'default' : 'outline'}
@@ -83,13 +83,13 @@ const HistorySearch = () => {
             className={`flex-1 ${searchType === 'trip' ? 'bg-black text-white' : ''}`}
             onClick={() => handleTypeChange('trip')}
           >
-            운행 ID
+            차량 별
           </Button>
         </div>
         
         <div className="flex gap-2">
           <Input
-            placeholder={`${searchType === 'rent' ? '예약 ID' : '운행 ID'}로 검색`}
+            placeholder={`${searchType === 'rent' ? '예약 ID' : '차량 ID'}로 검색`}
             value={searchText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -112,11 +112,11 @@ const HistorySearch = () => {
       <div className="text-xs text-gray-500">
         {searchType === 'rent' 
           ? '예약 ID, 차량 ID, 또는 예약자 이름으로 검색' 
-          : '운행 ID, 예약 ID, 또는 차량 ID로 검색'
+          : '차량 ID로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
         }
         {import.meta.env.DEV && (
           <p className="mt-1 text-blue-500">
-            개발 모드: RENT-001, RENT-002 등으로 검색 가능
+            개발 모드: {searchType === 'rent' ? 'RENT-001, RENT-002 등으로 검색 가능' : '차량 ID로 검색 가능'}
           </p>
         )}
       </div>

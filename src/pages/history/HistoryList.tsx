@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -29,14 +29,26 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     setSelectedTrip 
   } = useHistoryStore();
 
+  // 각 rent의 drawer 상태를 개별적으로 관리
+  const [openRents, setOpenRents] = useState<Set<string>>(new Set());
+
   // 렌트 항목 클릭 핸들러
   const handleRentClick = (rentUuid: string, isArrowClick: boolean = false) => {
-    // 화살표 클릭 시에는 선택된 렌트와 동일한 경우에만 닫기
-    if (isArrowClick && selectedRent?.rentUuid === rentUuid) {
-      setSelectedRent(null);
+    // 화살표 클릭 시에는 해당 렌트의 drawer 상태만 토글
+    if (isArrowClick) {
+      setOpenRents(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(rentUuid)) {
+          newSet.delete(rentUuid);
+        } else {
+          newSet.add(rentUuid);
+        }
+        return newSet;
+      });
       return;
     }
 
+    // 일반 클릭 시에는 선택된 렌트만 업데이트
     const rent = rentResults.find(r => r.rentUuid === rentUuid);
     if (rent) {
       setSelectedRent(rent);
@@ -99,12 +111,15 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               <div 
                 className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedRent?.rentUuid === rent.rentUuid ? 'bg-gray-100' : ''}`}
                 onClick={(e) => {
-                  // 화살표 영역 클릭인 경우
-                  if ((e.target as HTMLElement).closest('.arrow-container')) {
+                  // 화살표 영역 클릭이거나 drawer가 열려있는 경우
+                  if ((e.target as HTMLElement).closest('.arrow-container') || openRents.has(rent.rentUuid)) {
                     handleRentClick(rent.rentUuid, true);
                   } else {
-                    handleRentClick(rent.rentUuid);
+                    // drawer가 닫혀있는 경우에는 drawer를 열고
+                    handleRentClick(rent.rentUuid, true);
                   }
+                  // 선택은 항상 업데이트
+                  handleRentClick(rent.rentUuid);
                 }}
               >
                 <div className="flex-1 min-w-0">
@@ -117,7 +132,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                   </div>
                 </div>
                 <div className="flex-shrink-0 ml-2 arrow-container">
-                  {selectedRent?.rentUuid === rent.rentUuid ? 
+                  {openRents.has(rent.rentUuid) ? 
                     <ChevronDown className="h-5 w-5 text-gray-500" /> : 
                     <ChevronRight className="h-5 w-5 text-gray-500" />
                   }
@@ -125,8 +140,8 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               </div>
               
               {/* 하위 운행 목록 */}
-              {selectedRent?.rentUuid === rent.rentUuid && (
-                <div className="bg-gray-50 pl-4 max-h-[500px] overflow-y-auto">
+              {openRents.has(rent.rentUuid) && (
+                <div className="bg-gray-50 pl-4 max-h-[300px] overflow-y-auto">
                   {rent.trips.map(trip => (
                     <div 
                       key={trip.id}
@@ -153,27 +168,29 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
           ))}
         </div>
       ) : (
-        // 운행 검색 결과 목록
+        // 차량별 운행 검색 결과 목록
         <div className="divide-y">
           {tripResults.map(trip => (
-            <div 
-              key={trip.id}
-              className={`p-3 cursor-pointer hover:bg-gray-50 text-sm ${selectedTrip?.id === trip.id ? 'bg-gray-100' : ''}`}
-              onClick={() => handleTripClick(trip.id)}
-            >
-              <div className="font-medium truncate">{trip.id}</div>
-              <div className="text-xs text-gray-500 truncate">
-                예약: {trip.rentUuid} | 차량: {trip.mdn}
-              </div>
-              <div className="text-xs text-gray-500">
-                {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
-              </div>
-              <div className="flex justify-between items-center mt-1 text-xs">
-                <div className="truncate max-w-[70%]">
-                  {trip.startLocation} → {trip.endLocation}
-                </div>
-                <div className="flex-shrink-0">
-                  <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km
+            <div key={trip.id} className="text-sm">
+              <div 
+                className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedTrip?.id === trip.id ? 'bg-gray-100' : ''}`}
+                onClick={() => handleTripClick(trip.id)}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">차량: {trip.mdn}</div>
+                  <div className="text-xs text-gray-500 truncate">
+                    예약: {trip.rentUuid}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {formatDateTime(trip.startTime)} ~ {formatDateTime(trip.endTime)}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1 truncate">
+                    {trip.startLocation} → {trip.endLocation}
+                  </div>
+                  <div className="mt-1 text-xs">
+                    <span className="text-gray-700">거리:</span> {trip.distance.toFixed(1)}km | 
+                    <span className="text-gray-700 ml-1">평균:</span> {trip.avgSpeed}km/h
+                  </div>
                 </div>
               </div>
             </div>
