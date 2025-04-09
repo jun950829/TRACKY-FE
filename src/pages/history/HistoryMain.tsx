@@ -31,9 +31,6 @@ const HistoryMain = () => {
     if (!isDataInitialized) {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
-<<<<<<< Updated upstream
-      setTripResults(mockTripRecords);
-=======
       // setTripResults(mockTripRecords);
       
       // 첫 번째 렌트와 트립 선택 (UI 미리보기) - 최초 1회만 실행
@@ -41,7 +38,6 @@ const HistoryMain = () => {
         setSelectedRent(mockRentRecords[0]);
       }
       
->>>>>>> Stashed changes
       setIsDataInitialized(true);
     }
   }, [setRentResults, setTripResults, isDataInitialized]);
