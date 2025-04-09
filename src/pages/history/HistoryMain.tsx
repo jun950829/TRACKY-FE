@@ -22,24 +22,11 @@ const HistoryMain = () => {
     isLoading
   } = useHistoryStore();
 
-  console.log("searchType", searchType);
-
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
   const [drawerStates, setDrawerStates] = useState<DrawerState>({
     search: false,
     // 다른 drawer가 있다면 여기에 추가
   });
-  const [isDataInitialized, setIsDataInitialized] = useState(false);
-
-  // 초기 데이터 로드
-  useEffect(() => {
-    if (!isDataInitialized) {
-      // mock 데이터 로드
-      // setRentResults(mockRentRecords);
-      // setTripResults(mockTripRecords);
-      setIsDataInitialized(true);
-    }
-  }, [setDriveResults, isDataInitialized]);
 
   async function getDriveHistoryList() {
     let driveList;
@@ -54,16 +41,14 @@ const HistoryMain = () => {
       // 여기는 default 정보가 없음
     }
 
-    console.log("driveList", driveList);
-
     setRentResults(driveList.data);
-
   }
 
   // 초기 데이터 로드
   useEffect(() => {
     getDriveHistoryList();
   }, []);
+
 
   // 검색 완료 시 검색 drawer 닫기
   useEffect(() => {

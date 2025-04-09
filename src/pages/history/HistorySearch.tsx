@@ -24,7 +24,7 @@ const HistorySearch = () => {
     setError(null);
     try {
       if( searchType === 'rent' ) {
-        const response = await drivehistoryService.driveHistorybyRentUuid();
+        const response = await drivehistoryService.driveHistorybyRentUuid(searchText);
         setRentResults( response.data );
       setLoading(false);
     } else if( searchType === 'car' ) {
@@ -41,12 +41,12 @@ const HistorySearch = () => {
 
   // 입력 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("e.target.value", e.target.value);
     setSearchText(e.target.value);
   };
 
   // 검색 타입 변경 핸들러
   const handleTypeChange = (type: 'rent' | 'car') => {
+    setSearchText('');
     setSearchType(type);
   };
 
@@ -103,14 +103,9 @@ const HistorySearch = () => {
       
       <div className="text-xs text-gray-500">
         {searchType === 'rent' 
-          ? '예약 ID, 차량 ID, 또는 예약자 이름으로 검색' 
+          ? '예약 ID으로 검색' 
           : '차량 ID로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
         }
-        {import.meta.env.DEV && (
-          <p className="mt-1 text-blue-500">
-            개발 모드: {searchType === 'rent' ? 'RENT-001, RENT-002 등으로 검색 가능' : '차량 ID로 검색 가능'}
-          </p>
-        )}
       </div>
     </div>
   );

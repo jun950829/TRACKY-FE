@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -23,8 +24,8 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     searchType, 
     selectedRent, 
     selectedDrive, 
-    setSelectedRent, 
-    setSelectedDrive
+    setSelectedRent,
+    setSelectedDetail, 
   } = useHistoryStore();
 
   // 각 rent의 drawer 상태를 개별적으로 관리
@@ -58,18 +59,14 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   };
 
   // 트립 항목 클릭 핸들러
-  const handleTripClick = async (driveId: string) => {
+  const handleDriveClick = async (driveId: number) => {
     // 예약 검색 모드일 때
     if (searchType === 'rent' && selectedRent) {
-      // const trip = selectedRent.trips.find(t => t.id === driveId);
-      // if (trip) {
+          // 차량 검색 모드일 때
+    const response = await drivehistoryService.getDriveDetail(driveId);
 
-      //   setSelectedTrip(trip);
-        
-      //   if (onItemClick) {
-      //     onItemClick();
-      //   }
-      // }
+    setSelectedDetail(response.data);
+
     } 
   };
 
@@ -104,7 +101,7 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                 }}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{rent.rentUuid}</div>
+                  <div className="font-medium truncate"> 예약 ID : {rent.rentUuid}</div>
                   <div className="text-xs text-gray-500 truncate">
                     {rent.renterName} | {rent.mdn}
                   </div>
@@ -127,10 +124,10 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                     <div 
                       key={idx}
                       className={`p-2 pl-3 border-l-2 cursor-pointer hover:bg-gray-100 mb-1 ml-2 text-xs
-                        ${selectedTrip?.driveId === drive.driveId ? 'border-black bg-gray-100' : 'border-gray-300'}`}
-                      onClick={() => handleTripClick(drive.driveId)}
+                        ${selectedDrive?.driveId === drive.driveId ? 'border-black bg-gray-100' : 'border-gray-300'}`}
+                      onClick={() => handleDriveClick(drive.driveId)}
                     >
-                      <div className="font-medium truncate">{drive.driveId}</div>
+                      <div className="font-medium truncate">운행 ID : {drive.driveId}</div>
                       <div className="text-gray-500">
                         {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
                       </div>
@@ -139,7 +136,7 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                       </div>
                       <div className="mt-1 text-xs">
                         <span className="text-gray-700">거리:</span> {drive.sum.toFixed(1)}km | 
-                        <span className="text-gray-700 ml-1">평균:</span> {drive.avgSpeed}km/h
+                        {/* <span className="text-gray-700 ml-1">평균:</span> {drive.avgSpeed}km/h */}
                       </div>
                     </div>
                   ))}
