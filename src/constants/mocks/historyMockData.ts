@@ -1,71 +1,10 @@
 import { generateRouteBetweenLocations, generateLocalRoute } from './customRoutes';
+import { RentRecord, DriveRecord } from '../historyTypes';
 
 // 날짜 포맷 헬퍼 함수
 const formatDate = (date: Date) => {
   return date.toISOString();
 };
-
-export interface DriveDetailRecord {
-  driveId: number;
-  mdn: string;
-  rentUuid: string;
-  driveOnTime: string;
-  driveOffTime: string;
-  onLat: number;
-  onLon: number;
-  offLat: number;
-  offLon: number;
-  sum: number;
-  maxSpeed: number;
-  avgSpeed: number;
-  gpsDataList: {
-    lat: number;
-    lon: number;
-    spd: number;
-    o_time: string; 
-  }[];
-  renterName: string;
-  renterPhone: string;
-  purpose: string;
-  rentStatus: string;
-}
-
-// 운행 기록 타입 정의
-export interface DriveRecord {
-  driveId: number;
-  mdn: string;
-  rentUuid: string;
-  driveOnTime: string;
-  driveOffTime: string;
-  onLat: number;
-  onLon: number;
-  offLat: number;
-  offLon: number;
-  sum: number;
-  maxSpeed?: number;
-  avgSpeed?: number;
-  gpsDataList?: {
-    lat: number;
-    lon: number;
-    spd: number;
-    o_time: string;
-  }[];
-}
-
-// 예약 정보 타입 정의
-export interface RentRecord {
-  rentUuid: string;
-  mdn: string;
-  renterName: string;
-  renterPhone?: string;
-  purpose?: string;
-  rentStatus?: string;
-  rentStime: string;
-  rentEtime: string;
-  rentLoc?: string;
-  returnLoc?: string;
-  drivelist: DriveRecord[];
-}
 
 // 렌터카 mock 데이터 생성
 const createMockTrip = (id: string, rentUuid: string, mdn: string, startDate: Date, durationHours: number, startLocation: string, endLocation: string): DriveRecord => {

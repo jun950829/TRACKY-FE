@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RentRecord, DriveRecord, DriveDetailRecord } from "@/constants/mocks/historyMockData";
+import { RentRecord, DriveRecord, DriveDetailRecord } from "@/constants/historyTypes";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
@@ -61,9 +61,7 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   
   setDriveResults: (drives) => set({ driveResults: drives }),
   
-  setSelectedRent: (rent) => set({ 
-    selectedRent: rent
-  }),
+  setSelectedRent: (rent) => set({ selectedRent: rent }),
   
   setSelectedDrive: (drive) => set({ selectedDrive: drive }),
 
