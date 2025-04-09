@@ -41,8 +41,11 @@ type RentUpdateModalProps = {
 };
 
 function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalProps) {
+  // 상태 관련
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isTimeError, setIsTimeError] = useState(false);
+
   const [mdnList, setMdnList] = useState<string[]>([]);
 
   const {
@@ -78,6 +81,12 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   }, []);
 
   const submitHandler = (data: FormValues) => {
+
+    if(new Date(data.rentStime) >= new Date(data.rentEtime)) {
+      setIsTimeError(true);
+      return;
+    }
+
     sendUpdate(initialData.rent_uuid, data);
   };
 
@@ -112,6 +121,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
 
   const onClose = () => {
     setIsError(false);
+    setIsTimeError(false);
   }
 
 
@@ -162,7 +172,9 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
                   <SelectValue placeholder="대여 상태를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {RentStatus.map((status) => (
+                  {RentStatus
+                    .filter(status => status.value !== 'all')
+                    .map((status) => (
                     <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -210,7 +222,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
 
       <Modal open={isSuccess} onClose={onConfirm} title="안내" description="차량 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
       <Modal open={isError} onClose={onClose} title="에러" description="차량 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
-    </> 
+      <Modal open={isTimeError} onClose={onClose} title="에러" description="대여 시작 시간이 대여 종료 시간보다 클 수 없습니다." confirmText="확인" onConfirm={onClose} showCancel={false}/>
+    </>
   );
 }
 
