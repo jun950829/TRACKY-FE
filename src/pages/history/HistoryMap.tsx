@@ -70,8 +70,8 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
   const firstPoint = gpsDataList[0];
   const lastPoint = gpsDataList[gpsDataList.length - 1];
   const center: [number, number] = [
-    (firstPoint.lat + lastPoint.lat) / 2,
-    (firstPoint.lon + lastPoint.lon) / 2
+    (firstPoint.lat + lastPoint.lat) / 2 / 1_000_000,
+    (firstPoint.lon + lastPoint.lon) / 2 / 1_000_000
   ];
   
   // 속도에 따른 경로 색상 계산
@@ -113,14 +113,14 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
             />
             
             {/* 시작 마커 */}
-            <Marker position={[firstPoint.lat, firstPoint.lon]}>
+            <Marker position={[firstPoint.lat / 1_000_000, firstPoint.lon / 1_000_000]}>
               <Popup>
                 출발: {new Date(firstPoint.o_time).toLocaleString()}
               </Popup>
             </Marker>
             
             {/* 도착 마커 */}
-            <Marker position={[lastPoint.lat, lastPoint.lon]}>
+            <Marker position={[lastPoint.lat / 1_000_000, lastPoint.lon / 1_000_000]}>
               <Popup>
                 도착: {new Date(lastPoint.o_time).toLocaleString()}
               </Popup>

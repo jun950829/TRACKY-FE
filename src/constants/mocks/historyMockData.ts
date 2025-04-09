@@ -5,6 +5,31 @@ const formatDate = (date: Date) => {
   return date.toISOString();
 };
 
+export interface DriveDetailRecord {
+  driveId: number;
+  mdn: string;
+  rentUuid: string;
+  driveOnTime: string;
+  driveOffTime: string;
+  onLat: number;
+  onLon: number;
+  offLat: number;
+  offLon: number;
+  sum: number;
+  maxSpeed: number;
+  avgSpeed: number;
+  gpsDataList: {
+    lat: number;
+    lon: number;
+    spd: number;
+    o_time: string; 
+  }[];
+  renterName: string;
+  renterPhone: string;
+  purpose: string;
+  rentStatus: string;
+}
+
 // 운행 기록 타입 정의
 export interface DriveRecord {
   driveId: number;
@@ -17,10 +42,6 @@ export interface DriveRecord {
   offLat: number;
   offLon: number;
   sum: number;
-  renter: string;
-  renterPhone: string;
-  purpose: string;
-  rentStatus: string;
   maxSpeed?: number;
   avgSpeed?: number;
   gpsDataList?: {

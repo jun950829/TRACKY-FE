@@ -9,7 +9,7 @@ import HistoryMap from './HistoryMap';
 const formatDateTime = (dateStr: string) => {
   try {
     const date = new Date(dateStr);
-    return format(date, 'yyyy년 MM월 dd일 HH:mm');
+    return format(date, 'yyyy년 MM월 dd일 HH:mm:ss');
   } catch {
     return dateStr;
   }
@@ -66,7 +66,7 @@ const HistoryDetail: React.FC = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-50 shadow-sm">
+          {/* <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
               <div className="text-xs sm:text-sm font-medium text-gray-500">최고 속도</div>
               <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.maxSpeed} km/h</div>
@@ -78,7 +78,7 @@ const HistoryDetail: React.FC = () => {
               <div className="text-xs sm:text-sm font-medium text-gray-500">평균 속도</div>
               <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.avgSpeed} km/h</div>
             </CardContent>
-          </Card>
+          </Card> */}
           
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
@@ -90,7 +90,8 @@ const HistoryDetail: React.FC = () => {
                   const diffMs = end.getTime() - start.getTime();
                   const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
                   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                  return `${diffHrs}시간 ${diffMins}분`;
+                  const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+                  return `${diffHrs}시간 ${diffMins}분 ${diffSecs}초`;
                 })()}
               </div>
             </CardContent>
@@ -152,7 +153,7 @@ const HistoryDetail: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">예약자</div>
-                  <div className="mt-1 truncate">{selectedDetail.renter}</div>
+                  <div className="mt-1 truncate">{selectedDetail.renterName}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">연락처</div>
@@ -161,7 +162,7 @@ const HistoryDetail: React.FC = () => {
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">대여 기간</div>
                   <div className="mt-1 truncate">
-                    {/* {formatDateTime(selectedDetail.rentStime).slice(0, 13)} ~ {formatDateTime(selectedRent.rentEtime).slice(0, 13)} */}
+                    {formatDateTime(selectedDetail.driveOnTime).slice(0, 13)} ~ {formatDateTime(selectedDetail.driveOffTime).slice(0, 13)}
                   </div>
                 </div>
                 <div className="col-span-2">
