@@ -3,12 +3,16 @@ import api from "./api";
 const drivehistoryApiRoot = "/drives";
 
 export const drivehistoryService = {
-  driveHistory: async () => {
+  driveHistorybyRentUuid: async () => {
     const response = await api.get(`${drivehistoryApiRoot}/history`);
     return response.data;
   },
-  driveHistoryDetail: async (rentUuid: string) => {
-    const response = await api.get(`${drivehistoryApiRoot}/history/${rentUuid}`);
+  getDriveDetail: async (driveId: number) => {
+    const response = await api.get(`${drivehistoryApiRoot}/history/${driveId}`);
+    return response.data;
+  },
+  getDriveDetailbyCar: async (mdn: string) => {
+    const response = await api.get(`${drivehistoryApiRoot}/history/cars/${mdn}`);
     return response.data;
   },
 };

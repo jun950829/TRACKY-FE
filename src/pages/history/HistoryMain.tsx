@@ -31,13 +31,7 @@ const HistoryMain = () => {
     if (!isDataInitialized) {
       // mock 데이터 로드
       setRentResults(mockRentRecords);
-      // setTripResults(mockTripRecords);
-      
-      // 첫 번째 렌트와 트립 선택 (UI 미리보기) - 최초 1회만 실행
-      if (mockRentRecords.length > 0) {
-        setSelectedRent(mockRentRecords[0]);
-      }
-      
+      setTripResults(mockTripRecords);
       setIsDataInitialized(true);
     }
   }, [setRentResults, setTripResults, isDataInitialized]);
@@ -58,20 +52,6 @@ const HistoryMain = () => {
   const toggleSearchSheet = () => {
     setDrawerStates(prev => ({ ...prev, search: !prev.search }));
   };
-
-  // const getDriveHistory = async () => {
-  //   const res = await drivehistoryService.driveHistoryDetail("863f1b2b");
-
-  //   setTripResults(res.data);
-
-
-  //   console.log('setTripResults: ', res.data);
-  // };
-
-  // // 초기 데이터 로드
-  // useEffect(() => {
-  //   getDriveHistory();
-  // }, []);
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 max-w-full h-[100vh] flex flex-col">
