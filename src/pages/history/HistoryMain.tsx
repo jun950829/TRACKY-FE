@@ -18,8 +18,6 @@ const HistoryMain = () => {
   const { 
     searchType,
     setRentResults, 
-    setDriveResults, 
-    isLoading
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
@@ -49,14 +47,6 @@ const HistoryMain = () => {
     getDriveHistoryList();
   }, []);
 
-
-  // 검색 완료 시 검색 drawer 닫기
-  useEffect(() => {
-    if (!isLoading && drawerStates.search) {
-      setDrawerStates(prev => ({ ...prev, search: false }));
-    }
-  }, [isLoading, drawerStates.search]);
-
   // drawer 상태 변경 핸들러
   const handleDrawerOpenChange = (id: string, isOpen: boolean) => {
     setDrawerStates(prev => ({ ...prev, [id]: isOpen }));
@@ -64,7 +54,7 @@ const HistoryMain = () => {
 
   // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
-    setDrawerStates(prev => ({ ...prev, search: !prev.search }));
+    setDrawerStates(prev => ({ ...prev, search: true }));
   };
 
   return (

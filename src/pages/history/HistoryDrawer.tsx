@@ -3,7 +3,9 @@ import { ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import HistorySearch from './HistorySearch';
-import HistoryList from './HistoryRentList';
+import HistoryRentList from './HistoryRentList';
+import HistoryCarList from './HistoryCarList';
+import { useHistoryStore } from '@/stores/useHistoryStore';
 
 interface HistoryDrawerProps {
   id: string;
@@ -21,6 +23,10 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
   title,
 }) => {
   const [isListVisible, setIsListVisible] = useState(false);
+
+  const { 
+    searchType,
+  } = useHistoryStore();
 
   // drawer가 열릴 때 리스트를 보이게 함
   useEffect(() => {
@@ -74,7 +80,11 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
             >
               <div className="overflow-y-auto">
                 <HistorySearch />
-                <HistoryList onItemClick={onItemSelected} />
+                {searchType === 'rent' ? (
+                  <HistoryRentList onItemClick={onItemSelected} />
+                ) : (
+                  <HistoryCarList onItemClick={onItemSelected} />
+                )}
               </div>
             </motion.div>
           )}
