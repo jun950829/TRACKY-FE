@@ -9,17 +9,17 @@ import HistoryMap from './HistoryMap';
 const formatDateTime = (dateStr: string) => {
   try {
     const date = new Date(dateStr);
-    return format(date, 'yyyy년 MM월 dd일 HH:mm');
+    return format(date, 'yyyy년 MM월 dd일 HH:mm:ss');
   } catch {
     return dateStr;
   }
 };
 
 const HistoryDetail: React.FC = () => {
-  const { selectedRent, selectedTrip } = useHistoryStore();
+  const { selectedDetail } = useHistoryStore();
 
   // 선택된 데이터가 없는 경우
-  if (!selectedTrip || !selectedRent) {
+  if (!selectedDetail) {
     return (
       <div className="h-full flex items-center justify-center bg-white p-6">
         <p className="text-gray-500">
@@ -50,33 +50,18 @@ const HistoryDetail: React.FC = () => {
           </CardHeader>
           <CardContent className="p-2 sm:p-4">
             <HistoryMap 
-              points={selectedTrip.points} 
+              gpsDataList={selectedDetail.gpsDataList || []} 
               height="200px"
-              tripId={selectedTrip.id}
             />
           </CardContent>
         </Card>
         
         {/* 요약 정보 카드 (상단) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
               <div className="text-xs sm:text-sm font-medium text-gray-500">총 주행 거리</div>
-              <div className="text-base sm:text-xl font-bold mt-1">{selectedTrip.distance.toFixed(1)} km</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">최고 속도</div>
-              <div className="text-base sm:text-xl font-bold mt-1">{selectedTrip.maxSpeed} km/h</div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">평균 속도</div>
-              <div className="text-base sm:text-xl font-bold mt-1">{selectedTrip.avgSpeed} km/h</div>
+              <div className="text-base sm:text-xl font-bold mt-1">{selectedDetail.sum} km</div>
             </CardContent>
           </Card>
           
@@ -85,12 +70,13 @@ const HistoryDetail: React.FC = () => {
               <div className="text-xs sm:text-sm font-medium text-gray-500">운행 시간</div>
               <div className="text-base sm:text-xl font-bold mt-1">
                 {(() => {
-                  const start = new Date(selectedTrip.startTime);
-                  const end = new Date(selectedTrip.endTime);
+                  const start = new Date(selectedDetail.driveOnTime);
+                  const end = new Date(selectedDetail.driveOffTime);
                   const diffMs = end.getTime() - start.getTime();
                   const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
                   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                  return `${diffHrs}시간 ${diffMins}분`;
+                  const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+                  return `${diffHrs}시간 ${diffMins}분 ${diffSecs}초`;
                 })()}
               </div>
             </CardContent>
@@ -103,26 +89,26 @@ const HistoryDetail: React.FC = () => {
             <CardHeader className="p-2 sm:p-3 pb-1">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-base sm:text-lg">운행 정보</CardTitle>
-                <div className="text-xs font-medium text-gray-500 truncate">{selectedTrip.id}</div>
+                <div className="text-xs font-medium text-gray-500 truncate">{selectedDetail.driveId}</div>
               </div>
             </CardHeader>
             <CardContent className="p-2 sm:p-3 pt-0">
               <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
                   <div className="text-xs font-medium text-gray-500">출발 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedTrip.startTime)}</div>
+                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOnTime)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">도착 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedTrip.endTime)}</div>
+                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOffTime)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">출발 위치</div>
-                  <div className="mt-1 truncate">{selectedTrip.startLocation}</div>
+                  <div className="mt-1 truncate">{selectedDetail.onLat}, {selectedDetail.onLon}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">도착 위치</div>
-                  <div className="mt-1 truncate">{selectedTrip.endLocation}</div>
+                  <div className="mt-1 truncate">{selectedDetail.offLat}, {selectedDetail.offLon}</div>
                 </div>
               </div>
             </CardContent>
@@ -132,11 +118,11 @@ const HistoryDetail: React.FC = () => {
             <CardHeader className="p-2 sm:p-3 pb-1">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-base sm:text-lg">예약 정보</CardTitle>
-                <Badge className={`text-xs px-2 py-0.5 ${getStatusBadgeColor(selectedRent.rentStatus)}`}>
-                  {selectedRent.rentStatus === 'SCHEDULED' && '예약됨'}
-                  {selectedRent.rentStatus === 'INPROGRESS' && '진행중'}
-                  {selectedRent.rentStatus === 'COMPLETED' && '완료됨'}
-                  {selectedRent.rentStatus === 'CANCELED' && '취소됨'}
+                <Badge className={`text-xs px-2 py-0.5 ${getStatusBadgeColor(selectedDetail.rentStatus)}`}>
+                  {selectedDetail.rentStatus === 'SCHEDULED' && '예약됨'}
+                  {selectedDetail.rentStatus === 'INPROGRESS' && '진행중'}
+                  {selectedDetail.rentStatus === 'COMPLETED' && '완료됨'}
+                  {selectedDetail.rentStatus === 'CANCELED' && '취소됨'}
                 </Badge>
               </div>
             </CardHeader>
@@ -144,29 +130,29 @@ const HistoryDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
                   <div className="text-xs font-medium text-gray-500">예약 ID</div>
-                  <div className="mt-1 truncate">{selectedRent.rentUuid}</div>
+                  <div className="mt-1 truncate">{selectedDetail.rentUuid}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">차량 ID</div>
-                  <div className="mt-1 truncate">{selectedRent.mdn}</div>
+                  <div className="mt-1 truncate">{selectedDetail.mdn}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">예약자</div>
-                  <div className="mt-1 truncate">{selectedRent.renterName}</div>
+                  <div className="mt-1 truncate">{selectedDetail.renterName}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">연락처</div>
-                  <div className="mt-1 truncate">{selectedRent.renterPhone}</div>
+                  <div className="mt-1 truncate">{selectedDetail.renterPhone}</div>
                 </div>
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">대여 기간</div>
                   <div className="mt-1 truncate">
-                    {formatDateTime(selectedRent.rentStime).slice(0, 13)} ~ {formatDateTime(selectedRent.rentEtime).slice(0, 13)}
+                    {formatDateTime(selectedDetail.driveOnTime).slice(0, 13)} ~ {formatDateTime(selectedDetail.driveOffTime).slice(0, 13)}
                   </div>
                 </div>
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">사용 목적</div>
-                  <div className="mt-1 truncate">{selectedRent.purpose}</div>
+                  <div className="mt-1 truncate">{selectedDetail.purpose}</div>
                 </div>
               </div>
             </CardContent>

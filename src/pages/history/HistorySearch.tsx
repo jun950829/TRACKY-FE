@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon } from 'lucide-react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
-import { searchRentRecords, searchTripRecords } from '@/constants/mocks/historyMockData';
+import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 
 const HistorySearch = () => {
   const { 
@@ -12,35 +12,26 @@ const HistorySearch = () => {
     searchType, 
     setSearchType, 
     setRentResults, 
-    setTripResults, 
+    setDriveResults, 
     setLoading, 
     setError,
     isLoading 
   } = useHistoryStore();
 
   // 검색 핸들러
-  const handleSearch = () => {
+  const handleSearch = async() => {
     setLoading(true);
     setError(null);
-
     try {
-      if (import.meta.env.DEV) {
-        // mock 데이터 검색 시뮬레이션
-        setTimeout(() => {
-          if (searchType === 'rent') {
-            const results = searchRentRecords(searchText);
-            setRentResults(results);
-          } else {
-            const results = searchTripRecords(searchText);
-            setTripResults(results);
-          }
-          setLoading(false);
-        }, 500);
-      } else {
-        // 실제 API 호출 로직이 여기에 들어갈 것입니다
-        // ...
-        setLoading(false);
+      if( searchType === 'rent' ) {
+        const response = await drivehistoryService.driveHistorybyRentUuid(searchText);
+        setRentResults( response.data );
+      setLoading(false);
+    } else if( searchType === 'car' ) {
+      const response = await drivehistoryService.getDriveDetailbyCar(searchText);
+        setDriveResults( response.data );
       }
+      setLoading(false);
     } catch (error) {
       console.error('검색 오류:', error);
       setError('검색 중 오류가 발생했습니다');
@@ -54,7 +45,8 @@ const HistorySearch = () => {
   };
 
   // 검색 타입 변경 핸들러
-  const handleTypeChange = (type: 'rent' | 'trip') => {
+  const handleTypeChange = (type: 'rent' | 'car') => {
+    setSearchText('');
     setSearchType(type);
   };
 
@@ -78,10 +70,10 @@ const HistorySearch = () => {
             예약 별
           </Button>
           <Button
-            variant={searchType === 'trip' ? 'default' : 'outline'}
+            variant={searchType === 'car' ? 'default' : 'outline'}
             size="sm"
-            className={`flex-1 ${searchType === 'trip' ? 'bg-black text-white' : ''}`}
-            onClick={() => handleTypeChange('trip')}
+            className={`flex-1 ${searchType === 'car' ? 'bg-black text-white' : ''}`}
+            onClick={() => handleTypeChange('car')}
           >
             차량 별
           </Button>
@@ -111,14 +103,9 @@ const HistorySearch = () => {
       
       <div className="text-xs text-gray-500">
         {searchType === 'rent' 
-          ? '예약 ID, 차량 ID, 또는 예약자 이름으로 검색' 
+          ? '예약 ID으로 검색' 
           : '차량 ID로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
         }
-        {import.meta.env.DEV && (
-          <p className="mt-1 text-blue-500">
-            개발 모드: {searchType === 'rent' ? 'RENT-001, RENT-002 등으로 검색 가능' : '차량 ID로 검색 가능'}
-          </p>
-        )}
       </div>
     </div>
   );

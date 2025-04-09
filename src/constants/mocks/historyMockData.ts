@@ -5,23 +5,50 @@ const formatDate = (date: Date) => {
   return date.toISOString();
 };
 
-// 운행 기록 타입 정의
-export interface TripRecord {
-  id: string;
+export interface DriveDetailRecord {
+  driveId: number;
   mdn: string;
   rentUuid: string;
-  startTime: string;
-  endTime: string;
-  startLocation: string;
-  endLocation: string;
-  distance: number;
+  driveOnTime: string;
+  driveOffTime: string;
+  onLat: number;
+  onLon: number;
+  offLat: number;
+  offLon: number;
+  sum: number;
   maxSpeed: number;
   avgSpeed: number;
-  points: {
+  gpsDataList: {
     lat: number;
-    lng: number;
-    speed: number;
-    timestamp: string;
+    lon: number;
+    spd: number;
+    o_time: string; 
+  }[];
+  renterName: string;
+  renterPhone: string;
+  purpose: string;
+  rentStatus: string;
+}
+
+// 운행 기록 타입 정의
+export interface DriveRecord {
+  driveId: number;
+  mdn: string;
+  rentUuid: string;
+  driveOnTime: string;
+  driveOffTime: string;
+  onLat: number;
+  onLon: number;
+  offLat: number;
+  offLon: number;
+  sum: number;
+  maxSpeed?: number;
+  avgSpeed?: number;
+  gpsDataList?: {
+    lat: number;
+    lon: number;
+    spd: number;
+    o_time: string;
   }[];
 }
 
@@ -30,20 +57,18 @@ export interface RentRecord {
   rentUuid: string;
   mdn: string;
   renterName: string;
-  renterPhone: string;
-  purpose: string;
-  rentStatus: string;
+  renterPhone?: string;
+  purpose?: string;
+  rentStatus?: string;
   rentStime: string;
   rentEtime: string;
-  rentLoc: string;
-  returnLoc: string;
-  trips: TripRecord[];
-  totalDistance: number;
-  createdAt: string;
+  rentLoc?: string;
+  returnLoc?: string;
+  drivelist: DriveRecord[];
 }
 
 // 렌터카 mock 데이터 생성
-const createMockTrip = (id: string, rentUuid: string, mdn: string, startDate: Date, durationHours: number, startLocation: string, endLocation: string): TripRecord => {
+const createMockTrip = (id: string, rentUuid: string, mdn: string, startDate: Date, durationHours: number, startLocation: string, endLocation: string): DriveRecord => {
   // 시작 및 종료 시간 계산
   const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
   
@@ -149,7 +174,7 @@ const createMockRentRecord = (rentUuid: string, mdn: string, tripsCount: number)
   const randomReturnLoc = locations[Math.floor(Math.random() * locations.length)];
   
   // 트립 생성
-  const trips: TripRecord[] = [];
+  const trips: DriveRecord[] = [];
   let totalDistance = 0;
   let lastLocation = randomRentLoc;
   
@@ -221,7 +246,7 @@ export const mockRentRecords: RentRecord[] = [
 ];
 
 // 모든 트립 데이터를 단일 배열로 변환 (트립 ID로 검색 용이하게)
-export const mockTripRecords: TripRecord[] = mockRentRecords.flatMap(rent => rent.trips);
+export const mockTripRecords: DriveRecord[] = mockRentRecords.flatMap(rent => rent.trips);
 
 // 렌트 ID로 렌트 데이터 조회
 export const findRentByUuid = (rentUuid: string): RentRecord | undefined => {
@@ -229,7 +254,7 @@ export const findRentByUuid = (rentUuid: string): RentRecord | undefined => {
 };
 
 // 트립 ID로 트립 데이터 조회
-export const findTripById = (tripId: string): TripRecord | undefined => {
+export const findTripById = (tripId: string): DriveRecord | undefined => {
   return mockTripRecords.find(trip => trip.id === tripId);
 };
 
@@ -246,7 +271,7 @@ export const searchRentRecords = (searchText: string): RentRecord[] => {
 };
 
 // 검색어로 트립 데이터 검색
-export const searchTripRecords = (searchText: string): TripRecord[] => {
+export const searchTripRecords = (searchText: string): DriveRecord[] => {
   if (!searchText || searchText.trim() === '') return mockTripRecords;
   
   const lowerCaseSearch = searchText.toLowerCase();
