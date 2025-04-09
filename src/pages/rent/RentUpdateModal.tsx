@@ -222,7 +222,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
 
       <Modal open={isSuccess} onClose={onConfirm} title="안내" description="차량 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
       <Modal open={isError} onClose={onClose} title="에러" description="차량 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
-      <Modal open={isTimeError} onClose={onClose} title="에러" description="대여 시작 시간이 대여 종료 시간보다 클 수 없습니다." confirmText="확인" onConfirm={onClose} showCancel={false}/>
+      <Modal open={isTimeError} onClose={onClose} title="에러" description="반납 시간은 대여 시간 이후여야 합니다!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
     </>
   );
 }

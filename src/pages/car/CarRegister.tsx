@@ -237,9 +237,12 @@ export default function CarRegister() {
                 <SelectValue placeholder="선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                {CarStatus.map((status) => (
-                  <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
-                ))}
+                {CarStatus
+                .filter(status => status.value !== 'all')
+                .filter(status => status.value !== 'closed')
+                  .map((status) => (
+                    <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
