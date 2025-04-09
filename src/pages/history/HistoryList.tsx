@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -47,11 +48,12 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   };
 
   // 트립 항목 클릭 핸들러
-  const handleTripClick = (tripId: string) => {
+  const handleTripClick = async (tripId: string) => {
     // 예약 검색 모드일 때
     if (searchType === 'rent' && selectedRent) {
       const trip = selectedRent.trips.find(t => t.id === tripId);
       if (trip) {
+
         setSelectedTrip(trip);
         
         if (onItemClick) {

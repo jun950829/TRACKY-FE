@@ -52,7 +52,7 @@ const HistoryDetail: React.FC = () => {
             <HistoryMap 
               points={selectedTrip.points} 
               height="200px"
-              tripId={selectedTrip.id}
+              // tripId={selectedTrip.id}
             />
           </CardContent>
         </Card>
@@ -178,3 +178,7 @@ const HistoryDetail: React.FC = () => {
 };
 
 export default HistoryDetail; 
+
+function setTripResults(data: any) {
+  throw new Error('Function not implemented.');
+}

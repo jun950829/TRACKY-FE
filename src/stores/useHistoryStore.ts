@@ -61,7 +61,7 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   setSelectedRent: (rent) => set({ 
     selectedRent: rent,
     // 렌트를 선택하면 첫 번째 트립도 자동 선택
-    selectedTrip: rent && rent.trips.length > 0 ? rent.trips[0] : null 
+    // selectedTrip: rent && rent.trips.length > 0 ? rent.trips[0] : null 
   }),
   
   setSelectedTrip: (trip) => set({ selectedTrip: trip }),
