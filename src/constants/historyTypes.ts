@@ -8,14 +8,16 @@ export interface GpsData {
 
 // 운행 기록 타입 정의
 export interface DriveRecord {
-  id: string;
+  driveId: number;
   mdn: string;
   rentUuid: string;
-  startTime: string;
-  endTime: string;
-  startLocation: string;
-  endLocation: string;
-  distance: number;
+  driveOnTime: string;
+  driveOffTime: string;
+  onLat: number;
+  onLon: number;
+  offLat: number;
+  offLon: number;
+  sum: number;
   maxSpeed: number;
   avgSpeed: number;
   points: {
@@ -38,7 +40,7 @@ export interface RentRecord {
   rentEtime: string;
   rentLoc: string;
   returnLoc: string;
-  trips: DriveRecord[];
+  drivelist: DriveRecord[];
   totalDistance: number;
   createdAt: string;
 }
