@@ -97,35 +97,34 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="[&>th]:px-1 [&>th]:py-2">
-              <TableHead className="w-20">예약 번호</TableHead>
+            <TableHead className="w-14 text-center">예약 상태</TableHead>
+              <TableHead className="w-16">예약 번호</TableHead>
               <TableHead className="w-20">차량 관리번호</TableHead>
-              <TableHead className="w-28">대여 시작 날짜</TableHead>
-              <TableHead className="w-28">대여 종료 날짜</TableHead>
-              <TableHead className="w-16">예약 상태</TableHead>
-              <TableHead className="text-right w-20">관리</TableHead>
+              <TableHead className="w-24">대여 시작 날짜</TableHead>
+              <TableHead className="w-24">대여 종료 날짜</TableHead>
+              <TableHead className="text-right w-28">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rentList.map((rent) => (
-              <TableRow key={rent.rent_uuid} className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
-                <TableCell
-                  onClick={() => {
-                    setIsDetail(true);
-                    handleCellClick(rent.rent_uuid);
-                  }}
-                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
-                >
-                  {rent.rent_uuid}
+              <TableRow key={rent.rent_uuid} 
+              onClick={() => {
+                setIsDetail(true);
+                handleCellClick(rent.rent_uuid);
+              }}
+              className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
+                <TableCell className="whitespace-nowrap">
+                  <div className="flex items-center justify-center">
+                    <StatusBadge status={rent.rentStatus} type="rent" />
+                  </div>
                 </TableCell>
+                <TableCell className="whitespace-nowrap">{rent.rent_uuid}</TableCell>
                 <TableCell className="whitespace-nowrap">{rent.mdn}</TableCell>
                 <TableCell className="whitespace-nowrap">
                   {formatDateTime(rent.rentStime)}
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
                   {formatDateTime(rent.rentEtime)}
-                </TableCell>
-                <TableCell className="whitespace-nowrap">
-                  <StatusBadge status={rent.rentStatus} type="rent" />
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
@@ -134,7 +133,8 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                       size="sm"
                       className="h-8"
                       icon={<Edit className="h-4 w-4" />}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setIsUpdate(true);
                         setSelectedRentData(rent);
                       }}
@@ -146,7 +146,8 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                       size="sm"
                       className="h-8"
                       icon={<Trash className="h-4 w-4" />}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setIsDelete(true);
                         setSelectedRentData(rent);
                       }}

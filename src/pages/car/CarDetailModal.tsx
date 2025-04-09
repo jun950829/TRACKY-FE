@@ -1,6 +1,13 @@
-import { CarDetailTypes } from "@/constants/types/types";
-import React from "react";
+import { CarDetailTypes } from '@/constants/types/types';
+import React from 'react';
 import { CarStatus } from "@/constants/datas/status";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface CarDetailModalProps {
   isOpen: boolean;
@@ -17,15 +24,11 @@ const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carDat
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-xl relative">
-        <button
-          className="absolute top-3 right-4 text-gray-500 hover:text-gray-800 text-xl"
-          onClick={onClose}
-        >
-          &times;
-        </button>
-        <h2 className="text-xl font-semibold mb-4">차량 상세 정보</h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>차량 상세 정보</DialogTitle>
+        </DialogHeader>
         <div className="space-y-2 text-sm text-gray-700">
           <div>
             <strong>차량 관리번호:</strong> {carData.mdn}
@@ -52,8 +55,8 @@ const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carDat
             <strong>등록일자:</strong> {new Date(carData.createdAt).toLocaleDateString()}
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -96,28 +96,25 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="[&>th]:px-1 [&>th]:py-2">
-              <TableHead className="w-16">차량 상태</TableHead>
+              <TableHead className="w-8">차량 상태</TableHead>
               <TableHead className="w-20">차량 관리번호(MDN)</TableHead>
-              <TableHead className="w-24">차량 모델</TableHead>
-              <TableHead className="w-20">차량 번호</TableHead>
-              <TableHead className="text-right w-16">관리</TableHead>
+              <TableHead className="w-12">차량 모델</TableHead>
+              <TableHead className="w-16">차량 번호</TableHead>
+              <TableHead className="text-right w-40">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {carList.map((car, idx) => (
-              <TableRow key={idx} className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
+              <TableRow key={idx} 
+              onClick={() => {
+                setIsDetail(true);
+                handleCellClick(car.mdn)
+              }}
+              className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
                 <TableCell className="whitespace-nowrap">
                   <StatusBadge status={car.status} type="car" />
                 </TableCell>
-                <TableCell
-                  onClick={() => {
-                    setIsDetail(true);
-                    handleCellClick(car.mdn);
-                  }}
-                  className="cursor-pointer hover:text-blue-600 hover:underline font-medium whitespace-nowrap"
-                >
-                  {car.mdn}
-                </TableCell>
+                <TableCell className="whitespace-nowrap">{car.mdn}</TableCell>
                 <TableCell className="whitespace-nowrap">{car.carType}</TableCell>
                 <TableCell className="whitespace-nowrap">{car.carPlate}</TableCell>
                 <TableCell className="text-right">
@@ -127,7 +124,8 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                       size="sm"
                       className="h-8"
                       icon={<Edit className="h-4 w-4" />}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setIsUpdate(true);
                         setSelectedCarData(car);
                       }}
@@ -139,7 +137,8 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                       size="sm"
                       className="h-8"
                       icon={<Trash className="h-4 w-4" />}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setIsDelete(true);
                         setSelectedCarData(car);
                       }}
@@ -158,20 +157,15 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
       <div className="md:hidden space-y-4">
         {carList.map((car) => (
           <Card key={car.mdn} className="overflow-hidden">
-            <CardContent className="p-4">
+            <CardContent onClick={() => {
+                        setIsDetail(true);
+                        handleCellClick(car.mdn);
+                      }} className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 mb-1">
                     <StatusBadge status={car.status} type="car" />
-                    <h3
-                      className="font-semibold text-lg cursor-pointer hover:text-blue-600"
-                      onClick={() => {
-                        setIsDetail(true);
-                        handleCellClick(car.mdn);
-                      }}
-                    >
-                      {car.mdn}
-                    </h3>
+                    <h3 className="font-semibold text-lg">{car.mdn}</h3>
                   </div>
                   <p className="text-gray-500 text-sm">{car.carType}</p>
                 </div>
@@ -191,7 +185,8 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                   size="sm"
                   className="flex-1 h-8"
                   icon={<Edit className="h-4 w-4" />}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setIsUpdate(true);
                     setSelectedCarData(car);
                   }}
@@ -203,7 +198,8 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                   size="sm"
                   className="flex-1 h-8"
                   icon={<Trash className="h-4 w-4" />}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setIsDelete(true);
                     setSelectedCarData(car);
                   }}
