@@ -24,7 +24,9 @@ const schema = yup.object().shape({
   mdn: yup.string().required('식별 키를 입력하세요'),
   carType: yup.string().required('모델명을 입력하세요'),
   carPlate: yup.string().required('번호판을 입력하세요'),
-  carYear: yup.number().min(4).max(4).required('연식을 4자리 숫자로 입력하세요'),
+  carYear: yup.number().typeError('숫자로 입력해주세요.')
+  .min(1900, '유효한 연식을 입력해주세요.')
+  .max(new Date().getFullYear(), '미래 연도는 입력할 수 없습니다.').required('연식을 입력하세요'),
   purpose: yup.string().required('목적을 입력하세요'),
   status: yup.string().required('상태를 선택하세요'),
 });
@@ -91,7 +93,6 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
   const onConfirm = () => {
     setIsSuccess(false);
     closeModal();
-    // 천승준 - 임시 새로 고침
     reload(true);
   }
 

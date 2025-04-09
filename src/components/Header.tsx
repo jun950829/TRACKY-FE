@@ -97,6 +97,7 @@ function Header() {
               </CustomButton> 
             </div>
           ) : (
+            currentPath !== "/login" && (
             <CustomButton
               variant="default"
               size="sm"
@@ -104,6 +105,7 @@ function Header() {
             >
               로그인
             </CustomButton> 
+            )
           )}
         </div>
 
@@ -158,17 +160,19 @@ function Header() {
                   로그아웃
                 </CustomButton>
               ) : (
-                <CustomButton
-                  variant="default"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => {
-                    navigate("/login");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  로그인
-                </CustomButton>
+                (currentPath !== "/login" && 
+                  <CustomButton
+                    variant="default"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      navigate("/login");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    로그인
+                  </CustomButton>
+                )
               )}
             </div>
           </div>

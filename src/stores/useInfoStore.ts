@@ -4,12 +4,11 @@ import { RentDetailTypes, CarDetailTypes } from "@/constants/types/types";
 // 운행 정보 타입 정의
 export interface TripInfo {
   oTime: string;
-  lat: number;
-  lon: number;
-  sum: number;
-  spd: number;
+  offTime: string | null;
+  distance: number;
+  startAddress: string;
+  endAddress: string;
 }
-
 // 정보 조회 결과 타입 정의
 export interface InfoSearchResult {
   rent: RentDetailTypes | null;
@@ -30,17 +29,18 @@ const initialState: InfoSearchResult = {
   car: null,
   trips: [],
   isLoading: false,
-  error: null
+  error: null,
 };
 
 // Zustand 스토어 생성
 export const useInfoStore = create<InfoStore>((set) => ({
   ...initialState,
-  
-  setInfo: (data) => set((state) => ({
-    ...state,
-    ...data
-  })),
-  
-  resetInfo: () => set(initialState)
-})); 
+
+  setInfo: (data) =>
+    set((state) => ({
+      ...state,
+      ...data,
+    })),
+
+  resetInfo: () => set(initialState),
+}));
