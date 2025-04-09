@@ -9,13 +9,6 @@ type StatusBadgeProps = {
   className?: string;
 };
 
-// 상태 한글 라벨 매핑 함수
-const getStatusLabel = (type: "car" | "rent", value: string) => {
-  const statusList = type === "rent" ? RentStatus : CarStatus;
-  const found = statusList.find((item) => item.value === value);
-  return found ? found.label : value; // 못 찾으면 원래 값 출력
-};
-
 /**
  * 상태 표시를 위한 배지 컴포넌트
  * @param status - 표시할 상태 문자열
