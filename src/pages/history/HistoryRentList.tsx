@@ -51,10 +51,6 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     const rent = rentResults.find(r => r.rentUuid === rentUuid);
     if (rent) {
       setSelectedRent(rent);
-      
-      if (onItemClick) {
-        onItemClick();
-      }
     }
   };
 
@@ -62,11 +58,15 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   const handleDriveClick = async (driveId: number) => {
     // 예약 검색 모드일 때
     if (searchType === 'rent' && selectedRent) {
-          // 차량 검색 모드일 때
-    const response = await drivehistoryService.getDriveDetail(driveId);
 
-    setSelectedDetail(response.data);
+      // 운행 정보를 클릭했을 때 sheet 닫기
+      if (onItemClick) {
+        onItemClick();
+      }
 
+      // 차량 검색 모드일 때
+      const response = await drivehistoryService.getDriveDetail(driveId);
+      setSelectedDetail(response.data);
     } 
   };
 

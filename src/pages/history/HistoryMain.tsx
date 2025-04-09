@@ -3,8 +3,7 @@ import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
 import HistoryList from './HistoryRentList';
 import HistoryDetail from './HistoryDetail';
-import HistoryDrawer from './HistoryDrawer';
-import { mockRentRecords, mockTripRecords } from '@/constants/mocks/historyMockData';
+import HistorySheet from './HistorySheet';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
@@ -21,7 +20,7 @@ const HistoryMain = () => {
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
-  const [drawerStates, setDrawerStates] = useState<DrawerState>({
+  const [sheetStates, setDrawerStates] = useState<DrawerState>({
     search: false,
     // 다른 drawer가 있다면 여기에 추가
   });
@@ -77,11 +76,13 @@ const HistoryMain = () => {
       </div>
       
       {/* 모바일 검색 시트 */}
-      <HistoryDrawer
+      <HistorySheet
         id="search"
-        isOpen={drawerStates.search}
+        isOpen={sheetStates.search}
         onOpenChange={handleDrawerOpenChange}
-        onItemSelected={() => setDrawerStates(prev => ({ ...prev, search: false }))}
+        onItemSelected={() => {
+          sheetStates.search = false;
+        }}
         title="검색 및 목록"
       />
       

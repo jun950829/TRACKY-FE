@@ -16,7 +16,7 @@ interface HistoryListProps {
   onItemClick?: () => void;
 }
 
-const HistoryCarList: React.FC<HistoryListProps> = () => {
+const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   const { 
     driveResults, 
     searchType, 
@@ -26,6 +26,11 @@ const HistoryCarList: React.FC<HistoryListProps> = () => {
 
   // 주행 항목 클릭 핸들러
   const handleDriveClick = async (driveId: number) => {
+
+    if( onItemClick ) {
+      onItemClick();
+    }
+
     // 차량 검색 모드일 때
     const response = await drivehistoryService.getDriveDetail(driveId);
 

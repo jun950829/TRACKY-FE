@@ -7,7 +7,7 @@ import HistoryRentList from './HistoryRentList';
 import HistoryCarList from './HistoryCarList';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 
-interface HistoryDrawerProps {
+interface HistorySheetProps {
   id: string;
   isOpen: boolean;
   onOpenChange: (id: string, open: boolean) => void;
@@ -15,7 +15,7 @@ interface HistoryDrawerProps {
   title: string;
 }
 
-const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
+const HistorySheet: React.FC<HistorySheetProps> = ({
   id,
   isOpen,
   onOpenChange,
@@ -94,4 +94,4 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
   );
 };
 
-export default HistoryDrawer; 
+export default HistorySheet; 
