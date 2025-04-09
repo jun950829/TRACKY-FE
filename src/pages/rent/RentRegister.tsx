@@ -6,45 +6,45 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RentCreateTypes } from "@/constants/types/types";
 import rentApiService from "@/libs/apis/rentsApi";
-import { yupResolver } from "@hookform/resolvers/yup"
-import { useState } from "react"
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import * as yup from "yup"
+import * as yup from "yup";
 
 const schema = yup.object({
-    mdn: yup.string().min(10).required("MDN을 입력해주세요."),
-    renterName: yup.string().required("사용자 이름을 입력해주세요."),
-    renterPhone: yup.string().required("사용자 전화번호를 입력해주세요."),
-    rentStime: yup.string().required("대여 시간 입력해주세요."),
-    rentEtime: yup.string().required("반납 시간 입력해주세요."),
-    rentLoc: yup.string().required("대여 할 위치를 입력해주세요."),
-    returnLoc: yup.string().required("반납 할 위치를 입력해주세요."),
-    purpose: yup.string().required("사용목적 입력해주세요.")
-})
+  mdn: yup.string().min(10).required("차량 관리번호(MDN)을 입력해주세요."),
+  renterName: yup.string().required("사용자 이름을 입력해주세요."),
+  renterPhone: yup.string().required("사용자 전화번호를 입력해주세요."),
+  rentStime: yup.string().required("대여 시간 입력해주세요."),
+  rentEtime: yup.string().required("반납 시간 입력해주세요."),
+  rentLoc: yup.string().required("대여 할 위치를 입력해주세요."),
+  returnLoc: yup.string().required("반납 할 위치를 입력해주세요."),
+  purpose: yup.string().required("사용목적 입력해주세요."),
+});
 
 function RentRegister() {
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const navigate = useNavigate();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors }
-    } = useForm({
-        resolver: yupResolver(schema)
-    })
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const onClose = () => {
     setIsError(false);
-  }
+  };
 
   const onConfirm = () => {
     setIsSuccess(false);
     navigate("/rents");
-  }
+  };
 
   /**
    * 대여 등록 method
@@ -53,49 +53,47 @@ function RentRegister() {
   const onSubmit = async (data: RentCreateTypes) => {
     //console.log(data);
 
-    
     const requestData = {
-      ...data
-    }
+      ...data,
+    };
 
-    
-    const rentData  = await rentApiService.createRent(requestData);
+    const rentData = await rentApiService.createRent(requestData);
 
-    if(rentData.status === 200) {
+    if (rentData.status === 200) {
       setIsSuccess(true);
     } else {
       setIsError(true);
     }
     console.log("차량 등록 성공 데이터: ", rentData.data);
-  
-  }
-
+  };
 
   return (
     <div className="max-w-xl mx-auto py-10">
       <Card>
         <CardContent className="p-6 space-y-4">
           <PageHeader title="대여 등록" size="2xl" bold={true} />
-          <p className="text-sm text-muted-foreground">
-            대여 정보를 입력해 주세요.
-          </p>
+          <p className="text-sm text-muted-foreground">대여 정보를 입력해 주세요.</p>
 
           <div className="space-y-2">
-            <Label>차량 식별번호(MDN)</Label>
-            <Input placeholder="예: 6066499939" {...register("mdn")} />
+            <Label>차량 관리번호(MDN)</Label>
+            <Input placeholder="최소 10자 이상 (예: 0123456789)" {...register("mdn")} />
             {errors.mdn && <p className="text-sm text-red-500">{errors.mdn.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label>사용자 이름</Label>
             <Input placeholder="예: 구지원" {...register("renterName")} />
-            {errors.renterName && <p className="text-sm text-red-500">{errors.renterName.message}</p>}
+            {errors.renterName && (
+              <p className="text-sm text-red-500">{errors.renterName.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label>사용자 전화번호</Label>
             <Input placeholder="예: 010-1234-5678" {...register("renterPhone")} />
-            {errors.renterPhone && <p className="text-sm text-red-500">{errors.renterPhone.message}</p>}
+            {errors.renterPhone && (
+              <p className="text-sm text-red-500">{errors.renterPhone.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -129,8 +127,12 @@ function RentRegister() {
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" type="button" onClick={() => navigate("/rents")}>취소</Button>
-            <Button type="submit" onClick={handleSubmit(onSubmit)}>등록하기</Button>
+            <Button variant="outline" type="button" onClick={() => navigate("/rents")}>
+              취소
+            </Button>
+            <Button type="submit" onClick={handleSubmit(onSubmit)}>
+              등록하기
+            </Button>
           </div>
         </CardContent>
       </Card>
