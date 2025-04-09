@@ -10,7 +10,7 @@ import Emulator from "./pages/emulator/Emulator";
 import PrivateRoute from "./components/PrivateRoute";
 import Register from "./pages/Register";
 import DashboardMain from "./pages/dashboard/DashBoardMain";
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
 import { useAuthStore } from "./stores/useAuthStore";
 import HistoryMain from "./pages/history/HistoryMain";
 import InfoMain from "./pages/info/InfoMain";
@@ -19,7 +19,7 @@ import AdminRoute from "./components/AdminRoute";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
-  { path: "/", element: <Home /> },
+  { path: "/", element: <DashboardMain /> },
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },

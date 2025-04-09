@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
-import HistoryList from './HistoryList';
+import HistoryList from './HistoryRentList';
 import HistoryDetail from './HistoryDetail';
-import HistoryDrawer from './HistoryDrawer';
-import { mockRentRecords, mockTripRecords } from '@/constants/mocks/historyMockData';
+import HistorySheet from './HistorySheet';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
+import HistoryCarList from './HistoryCarList';
 
 interface DrawerState {
   [key: string]: boolean;
@@ -14,34 +15,36 @@ interface DrawerState {
 
 const HistoryMain = () => {
   const { 
+    searchType,
     setRentResults, 
-    setTripResults, 
-    isLoading
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
-  const [drawerStates, setDrawerStates] = useState<DrawerState>({
+  const [sheetStates, setDrawerStates] = useState<DrawerState>({
     search: false,
     // 다른 drawer가 있다면 여기에 추가
   });
-  const [isDataInitialized, setIsDataInitialized] = useState(false);
+
+  async function getDriveHistoryList() {
+    let driveList;
+    // 대여 기록 조회
+    if( searchType === 'rent' ) {
+      const response = await drivehistoryService.driveHistorybyRentUuid();
+      driveList = response;
+    }
+
+    // 차량 기록 조회
+    if( searchType === 'car' ) {
+      // 여기는 default 정보가 없음
+    }
+
+    setRentResults(driveList.data);
+  }
 
   // 초기 데이터 로드
   useEffect(() => {
-    if (!isDataInitialized) {
-      // mock 데이터 로드
-      setRentResults(mockRentRecords);
-      setTripResults(mockTripRecords);
-      setIsDataInitialized(true);
-    }
-  }, [setRentResults, setTripResults, isDataInitialized]);
-
-  // 검색 완료 시 검색 drawer 닫기
-  useEffect(() => {
-    if (!isLoading && drawerStates.search) {
-      setDrawerStates(prev => ({ ...prev, search: false }));
-    }
-  }, [isLoading, drawerStates.search]);
+    getDriveHistoryList();
+  }, []);
 
   // drawer 상태 변경 핸들러
   const handleDrawerOpenChange = (id: string, isOpen: boolean) => {
@@ -50,7 +53,7 @@ const HistoryMain = () => {
 
   // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
-    setDrawerStates(prev => ({ ...prev, search: !prev.search }));
+    setDrawerStates(prev => ({ ...prev, search: true }));
   };
 
   return (
@@ -73,11 +76,13 @@ const HistoryMain = () => {
       </div>
       
       {/* 모바일 검색 시트 */}
-      <HistoryDrawer
+      <HistorySheet
         id="search"
-        isOpen={drawerStates.search}
+        isOpen={sheetStates.search}
         onOpenChange={handleDrawerOpenChange}
-        onItemSelected={() => setDrawerStates(prev => ({ ...prev, search: false }))}
+        onItemSelected={() => {
+          sheetStates.search = false;
+        }}
         title="검색 및 목록"
       />
       
@@ -89,7 +94,13 @@ const HistoryMain = () => {
               <HistorySearch />
             </div>
             <div className="flex-grow overflow-y-auto">
-              <HistoryList />
+              {
+                searchType === 'rent' ? (
+                  <HistoryList />
+                ) : (
+                  <HistoryCarList />
+                )
+              }
             </div>
           </div>
         </div>
