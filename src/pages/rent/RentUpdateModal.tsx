@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import {
   Dialog,
   DialogContent,
@@ -19,17 +19,16 @@ import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';
 import { RentStatus } from '@/constants/datas/status';
 
-
 const schema = yup.object().shape({
-  mdn: yup.string().required('식별 키를 입력하세요'),
-  renterName: yup.string().required('대여자을 입력하세요'),
-  renterPhone: yup.string().required('대여자 전화번호를 입력하세요'),
-  purpose: yup.string().required('사용 목적을 입력하세요'),
-  rentStatus: yup.string().required('대여 상태를 입력하세요'),
-  rentStime: yup.string().required('대여 시작 시간을 선택하세요'),
-  rentLoc: yup.string().required('대여 시작 위치를 선택하세요'),
-  rentEtime: yup.string().required('반납 시간를 선택하세요'),
-  returnLoc: yup.string().required('반납 위치를 선택하세요'),
+  mdn: yup.string().required("차량 관리번호를 입력하세요"),
+  renterName: yup.string().required("대여자을 입력하세요"),
+  renterPhone: yup.string().required("대여자 전화번호를 입력하세요"),
+  purpose: yup.string().required("사용 목적을 입력하세요"),
+  rentStatus: yup.string().required("대여 상태를 입력하세요"),
+  rentStime: yup.string().required("대여 시작 시간을 선택하세요"),
+  rentLoc: yup.string().required("대여 시작 위치를 선택하세요"),
+  rentEtime: yup.string().required("반납 시간를 선택하세요"),
+  returnLoc: yup.string().required("반납 위치를 선택하세요"),
 });
 
 type FormValues = yup.InferType<typeof schema>;
@@ -104,26 +103,24 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
     };
 
     const updatedRentRes = await rentApiService.updateRent(rent_uuid, updateRentObj);
-    if(updatedRentRes.status === 200) {
+    if (updatedRentRes.status === 200) {
       setIsSuccess(true);
     } else {
       setIsError(true);
     }
-
-  }
+  };
 
   const onConfirm = () => {
     setIsSuccess(false);
     closeModal();
     // 천승준 - 임시 새로 고침
     window.location.reload();
-  }
+  };
 
   const onClose = () => {
     setIsError(false);
     setIsTimeError(false);
   }
-
 
   return (
     <>
@@ -134,10 +131,10 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">식별 키 (MDN)</label>
+              <label className="block text-sm font-medium">차량 관리번호(MDN)</label>
               <Select defaultValue={initialData.mdn} onValueChange={(val) => setValue('mdn', val)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="차량 ID를 선택하세요" />
+                  <SelectValue placeholder="차량 관리번호(MDN)를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
                   {mdnList.map((mdn: string, idx: number) => (
@@ -149,17 +146,21 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">대여자 이름</label>
-              <Input {...register('renterName')} />
-              {errors.renterName && <p className="text-sm text-red-500">{errors.renterName.message}</p>}
+              <Input {...register("renterName")} />
+              {errors.renterName && (
+                <p className="text-sm text-red-500">{errors.renterName.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium">대여자 전화번호</label>
-              <Input {...register('renterPhone')} />
-              {errors.renterPhone && <p className="text-sm text-red-500">{errors.renterPhone.message}</p>}
+              <Input {...register("renterPhone")} />
+              {errors.renterPhone && (
+                <p className="text-sm text-red-500">{errors.renterPhone.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium">사용 목적</label>
-              <Input {...register('purpose')} />
+              <Input {...register("purpose")} />
               {errors.purpose && <p className="text-sm text-red-500">{errors.purpose.message}</p>}
             </div>
             <div>
@@ -192,7 +193,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">대여 시작 위치</label>
-              <Input {...register('rentLoc')} />
+              <Input {...register("rentLoc")} />
               {errors.rentLoc && <p className="text-sm text-red-500">{errors.rentLoc.message}</p>}
             </div>
             <div>
@@ -206,8 +207,10 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>
             <div>
               <label className="block text-sm font-medium">반납 위치</label>
-              <Input {...register('returnLoc')} />
-              {errors.returnLoc && <p className="text-sm text-red-500">{errors.returnLoc.message}</p>}
+              <Input {...register("returnLoc")} />
+              {errors.returnLoc && (
+                <p className="text-sm text-red-500">{errors.returnLoc.message}</p>
+              )}
             </div>
 
             <DialogFooter>
@@ -219,7 +222,6 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </form>
         </DialogContent>
       </Dialog>
-
       <Modal open={isSuccess} onClose={onConfirm} title="안내" description="차량 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
       <Modal open={isError} onClose={onClose} title="에러" description="차량 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
       <Modal open={isTimeError} onClose={onClose} title="에러" description="반납 시간은 대여 시간 이후여야 합니다!" confirmText="확인" onConfirm={onClose} showCancel={false}/>

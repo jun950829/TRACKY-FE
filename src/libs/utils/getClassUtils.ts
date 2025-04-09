@@ -45,7 +45,7 @@ export const getStatusBadgeClass = (
  * @param type 유형 ('car' | 'rent')
  * @returns 해당 value에 맞는 label 문자열
  */
-export const getStatusLabel = (value: string, type: 'car' | 'rent'): string => {
+export const getStatusLabel = (type: 'car' | 'rent', value: string): string => {
   const statusOptions = type === 'car' ? CarStatus : RentStatus;
   const option = statusOptions.find(opt => opt.value === value);
   return option ? option.label : value;
