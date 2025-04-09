@@ -26,15 +26,18 @@ if (typeof window !== 'undefined') {
 interface MapViewProps {
   center: [number, number];
   zoom: number;
+  bounds: L.LatLngBounds;
 }
 
 // 지도 뷰 설정 컴포넌트
-const MapView: React.FC<MapViewProps> = ({ center, zoom }) => {
+const MapView: React.FC<MapViewProps> = ({ center, zoom, bounds }) => {
   const map = useMap();
   
   useEffect(() => {
     map.setView(center, zoom);
-  }, [center, zoom, map]);
+    // 경로가 모두 보이도록 bounds에 맞춤
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }, [center, zoom, map, bounds]);
   
   return null;
 };
@@ -73,6 +76,29 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
     (firstPoint.lat + lastPoint.lat) / 2 / 1_000_000,
     (firstPoint.lon + lastPoint.lon) / 2 / 1_000_000
   ];
+
+  // 경로의 전체 범위 계산
+  const bounds = gpsDataList.reduce((acc, point) => {
+    const lat = point.lat / 1_000_000;
+    const lon = point.lon / 1_000_000;
+    return {
+      minLat: Math.min(acc.minLat, lat),
+      maxLat: Math.max(acc.maxLat, lat),
+      minLon: Math.min(acc.minLon, lon),
+      maxLon: Math.max(acc.maxLon, lon),
+    };
+  }, {
+    minLat: Number.MAX_VALUE,
+    maxLat: Number.MIN_VALUE,
+    minLon: Number.MAX_VALUE,
+    maxLon: Number.MIN_VALUE,
+  });
+
+  // 경로의 전체 범위를 포함하는 bounds 생성
+  const mapBounds = L.latLngBounds(
+    [bounds.minLat, bounds.minLon],
+    [bounds.maxLat, bounds.maxLon]
+  );
   
   // 속도에 따른 경로 색상 계산
   const getPathColor = (speed: number) => {
@@ -137,7 +163,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
             ))}
             
             {/* 지도 뷰 설정 */}
-            <MapView center={center} zoom={12} />
+            <MapView center={center} zoom={12} bounds={mapBounds} />
           </MapContainer>
         </div>
       ) : (
