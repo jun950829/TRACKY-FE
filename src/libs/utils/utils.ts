@@ -1,12 +1,15 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function formatDateTime(dateString: string): string {
+export function formatDateTime(dateString: string | null | undefined): string {
+  if (!dateString) return "-";
+
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "-"; // 유효하지 않은 날짜일 경우
 
   const yyyy = date.getFullYear();
   const MM = String(date.getMonth() + 1).padStart(2, "0"); // 0-based
@@ -27,20 +30,20 @@ export function formatDateTime(dateString: string): string {
 export function formatRentPeriod(startTimeString: string, endTimeString: string): string {
   const startDate = new Date(startTimeString);
   const endDate = new Date(endTimeString);
-  
+
   // 시작 날짜 포맷팅 (yy/MM/dd hh:mm)
   const startYear = startDate.getFullYear().toString().slice(2); // 년도 뒤 2자리
   const startMonth = String(startDate.getMonth() + 1).padStart(2, "0");
   const startDay = String(startDate.getDate()).padStart(2, "0");
   const startHours = String(startDate.getHours()).padStart(2, "0");
   const startMinutes = String(startDate.getMinutes()).padStart(2, "0");
-  
+
   // 종료 날짜 포맷팅 (MM/dd hh:mm)
   const endYear = endDate.getFullYear().toString().slice(2); // 년도 뒤 2자리
   const endMonth = String(endDate.getMonth() + 1).padStart(2, "0");
   const endDay = String(endDate.getDate()).padStart(2, "0");
   const endHours = String(endDate.getHours()).padStart(2, "0");
   const endMinutes = String(endDate.getMinutes()).padStart(2, "0");
-  
+
   return `${startYear}/${startMonth}/${startDay} ${startHours}:${startMinutes} ~ ${endYear}/${endMonth}/${endDay} ${endHours}:${endMinutes}`;
 }

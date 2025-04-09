@@ -11,10 +11,10 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import * as yup from "yup"
+import * as yup from "yup";
 
 const schema = yup.object({
-    mdn: yup.string().required("MDN을 선택해주세요."),
+    mdn: yup.string().required("차량 관리번호(MDN)를 선택해주세요."),
     renterName: yup.string().required("사용자 이름을 입력해주세요."),
     renterPhone: yup.string().required("사용자 전화번호를 입력해주세요."),
     rentStime: yup.string().required("대여 시간 입력해주세요."),
@@ -91,10 +91,10 @@ function RentRegister() {
                     </p>
 
                     <div className="space-y-2">
-                        <Label>차량 식별번호(MDN)</Label>
+                        <Label>차량 관리번호(MDN)</Label>
                         <Select onValueChange={(val) => setValue('mdn', val)}>
                             <SelectTrigger>
-                                <SelectValue placeholder="차량 ID를 선택하세요" />
+                                <SelectValue placeholder="차량 관리번호(MDN) 선택하세요" />
                             </SelectTrigger>
                             <SelectContent>
                                 {mdnList.map((mdn: string, idx: number) => (
