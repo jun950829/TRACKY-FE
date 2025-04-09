@@ -29,7 +29,13 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
   } = useHistoryStore();
 
   // 렌트 항목 클릭 핸들러
-  const handleRentClick = (rentUuid: string) => {
+  const handleRentClick = (rentUuid: string, isArrowClick: boolean = false) => {
+    // 화살표 클릭 시에는 선택된 렌트와 동일한 경우에만 닫기
+    if (isArrowClick && selectedRent?.rentUuid === rentUuid) {
+      setSelectedRent(null);
+      return;
+    }
+
     const rent = rentResults.find(r => r.rentUuid === rentUuid);
     if (rent) {
       setSelectedRent(rent);
@@ -90,7 +96,14 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
             <div key={rent.rentUuid} className="text-sm">
               <div 
                 className={`p-3 cursor-pointer hover:bg-gray-50 flex justify-between items-center ${selectedRent?.rentUuid === rent.rentUuid ? 'bg-gray-100' : ''}`}
-                onClick={() => handleRentClick(rent.rentUuid)}
+                onClick={(e) => {
+                  // 화살표 영역 클릭인 경우
+                  if ((e.target as HTMLElement).closest('.arrow-container')) {
+                    handleRentClick(rent.rentUuid, true);
+                  } else {
+                    handleRentClick(rent.rentUuid);
+                  }
+                }}
               >
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{rent.rentUuid}</div>
@@ -101,7 +114,7 @@ const HistoryList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                     {formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}
                   </div>
                 </div>
-                <div className="flex-shrink-0 ml-2">
+                <div className="flex-shrink-0 ml-2 arrow-container">
                   {selectedRent?.rentUuid === rent.rentUuid ? 
                     <ChevronDown className="h-5 w-5 text-gray-500" /> : 
                     <ChevronRight className="h-5 w-5 text-gray-500" />
