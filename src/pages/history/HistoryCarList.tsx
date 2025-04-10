@@ -58,7 +58,7 @@ const HistoryCarList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                 onClick={() => handleDriveClick(drive.driveId)}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">차량: {drive.mdn}</div>
+                  <div className="font-medium truncate">차량 관리번호: {drive.mdn}</div>
                   <div className="text-xs text-gray-500 truncate">
                     예약: {drive.rentUuid}
                   </div>

@@ -15,7 +15,7 @@ function InfoSearchSection() {
   };
   const handleSearch = async () => {
     if (!searchText.trim()) {
-      setInfo({ error: "예약 ID를 입력해주세요.", rent: null, car: null, trips: [] });
+      setInfo({ error: "예약 번호를 입력해주세요.", rent: null, car: null, trips: [] });
       return;
     }
 
@@ -118,15 +118,15 @@ function InfoSearchSection() {
     <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-4 sm:mb-6">
       <div className="md:flex md:justify-between md:items-start">
         <div className="md:max-w-md mb-4 md:mb-0 md:mr-6">
-          <h2 className="text-lg sm:text-xl font-semibold mb-2">예약 ID로 조회하기</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-2">예약 번호로 조회하기</h2>
           <p className="text-sm text-gray-600">
-            예약 시 제공받은 예약 ID를 입력하여 예약 정보를 확인할 수 있습니다.
+            예약 시 제공받은 예약 번호를 입력하여 예약 정보를 확인할 수 있습니다.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row md:w-2/5 gap-2">
           <Input
-            placeholder="예약 ID를 입력하세요"
+            placeholder="예약 번호를 입력하세요"
             value={searchText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}

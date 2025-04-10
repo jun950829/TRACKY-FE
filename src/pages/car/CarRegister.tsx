@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const schema = yup.object({
-  mdn: yup.string().min(10).max(11).required("차량 관리번호(MDN)을 입력해주세요."),
+  mdn: yup.string().min(10).max(11).required("차량 관리번호를 입력해주세요."),
   // 추후 추가 예정
   // bizId: yup.string().required("업체를 선택해주세요."),
   carType: yup.string().required("차종을 입력해주세요."),
@@ -191,7 +191,7 @@ export default function CarRegister() {
           </div> */}
 
           <div className="space-y-2">
-            <Label>차량 관리번호(MDN)</Label>
+            <Label>차량 관리번호</Label>
             <div className="flex items-center gap-2">
               <Input placeholder="최소 10자 이상 (예: 0123456789)" {...register("mdn")} />
               <Button
@@ -224,7 +224,7 @@ export default function CarRegister() {
 
           <div className="space-y-2">
             <Label>차종</Label>
-            <Input placeholder="예: SUV, 승용차" {...register("carType")} />
+            <Input placeholder="예: 카니발, 아반떼" {...register("carType")} />
             {errors.carType && <p className="text-sm text-red-500">{errors.carType.message}</p>}
           </div>
 
