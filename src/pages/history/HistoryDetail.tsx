@@ -116,6 +116,9 @@ const HistoryDetail: React.FC = () => {
               <div className="text-xs sm:text-sm font-medium text-gray-500">운행 시간</div>
               <div className="text-base sm:text-xl font-bold mt-1">
                 {(() => {
+                  if(selectedDetail.driveOffTime === null) {
+                    return "운행중"
+                  }
                   const start = new Date(selectedDetail.driveOnTime);
                   const end = new Date(selectedDetail.driveOffTime);
                   const diffMs = end.getTime() - start.getTime();

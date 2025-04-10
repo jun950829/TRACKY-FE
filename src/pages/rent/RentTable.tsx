@@ -95,7 +95,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
       {/* PC 화면용 테이블 */}
       <div className="hidden md:block overflow-auto">
         <Table className="w-full table-fixed">
-          <TableHeader>
+          <TableHeader className="bg-gray-100">
             <TableRow className="[&>th]:px-1 [&>th]:py-2">
             <TableHead className="w-14 text-center">예약 상태</TableHead>
               <TableHead className="w-16">예약 번호</TableHead>
@@ -169,7 +169,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
             <CardContent className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-between space-x-2">
                     <h3
                       className="font-semibold text-lg cursor-pointer hover:text-blue-600"
                       onClick={() => {
@@ -177,7 +177,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                         handleCellClick(rent.rent_uuid);
                       }}
                     >
-                      {rent.rent_uuid.substring(0, 8)}...
+                      {rent.rent_uuid}
                     </h3>
                     <StatusBadge status={rent.rentStatus} type="rent" />
                   </div>
