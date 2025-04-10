@@ -30,7 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Custom components
 import GpsMap from "@/components/custom/GpsMap";
-import EmulatorSettings from "@/components/custom/EmulatorSettings";
+import EmulatorSettings from "@/pages/emulator/EmulatorSettings";
 
 // Car SVG icon
 const CarIcon = () => (

@@ -16,7 +16,7 @@ export default function Dashboard() {
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
-
+  
   useSseEvents();
 
   // 데이터 로드
@@ -29,8 +29,8 @@ export default function Dashboard() {
           getReservationStatusData(),
           getStatistics()
         ]);
-      } catch (error) {
-        console.error('데이터 조회 실패:', error);
+      } catch (err) {
+        console.error('데이터 조회 실패:', err);
       } finally {
         setIsLoading(false);
       }
