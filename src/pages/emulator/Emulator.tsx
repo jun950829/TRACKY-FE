@@ -8,6 +8,8 @@ import {
   createEngineOffRequest,
   initLocation
 } from "@/libs/utils/emulatorUtils";
+import { ErrorToast } from "@/components/custom/ErrorToast";
+import { ApiError, createApiError } from "@/types/error";
 
 // Import constants
 import {
@@ -105,6 +107,8 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
 
   const [onTime, setOnTime] = useState<string>("");
 
+  const [error, setError] = useState<ApiError | null>(null);
+
   // Initialize mock data when needed
   useEffect(() => {
     if (useMockData && mockDataRef.current.length === 0) {
@@ -123,7 +127,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   }, [packetInterval, cycleId]);
 
   // 에러 설정 함수
-  const setError = (errorMessage: string) => {
+  const setErrorFunc = (errorMessage: string) => {
     setTrackingState(prev => ({
       ...prev,
       error: errorMessage
@@ -161,7 +165,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
           previousPosition: position,
         }));
       },
-      setError
+      setErrorFunc
     );
   };
 
@@ -505,6 +509,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       startTracking();
     } catch (error) {
       console.error("시동 ON 요청 실패:", error);
+      setError(createApiError(error));
       showToast("시동 ON 요청에 실패했습니다.");
     }
   };
@@ -560,6 +565,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       
     } catch (error) {
       console.error(`❌ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
+      setError(createApiError(error));
       showToast("시동 OFF 요청에 실패했습니다.");
       
       // 오류가 발생해도 UI 상태는 업데이트
@@ -630,6 +636,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 max-w-screen-xl py-4 md:py-8">
+      {error && <ErrorToast error={error} />}
       <Card className="overflow-hidden bg-gradient-to-br from-background to-background/50 border-none shadow-xl">
         <CardHeader className="border-b bg-card/20 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
