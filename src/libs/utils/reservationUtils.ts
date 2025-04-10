@@ -23,11 +23,14 @@ export const formatTime = (date: Date): string => {
   });
 };
 
-export const isDateInFilter = (date: Date, filter: DateFilter): boolean => {
+export const isDateInFilter = (frDate: Date, ToDate: Date, filter: DateFilter): boolean => {
   const filterDate = getFilterDate(filter);
-  return date.getDate() === filterDate.getDate() &&
-         date.getMonth() === filterDate.getMonth() &&
-         date.getFullYear() === filterDate.getFullYear();
+
+  console.log(frDate, ToDate);
+  console.log("Today", filterDate);
+
+  return frDate.getTime() < filterDate.getTime() && ToDate.getTime() > filterDate.getTime();
+
 };
 
 export const getCarModelAndMdn = (index: number): CarModelInfo => {
