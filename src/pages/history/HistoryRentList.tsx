@@ -6,6 +6,11 @@ import { drivehistoryService } from "@/libs/apis/drivehistoryApi";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
+
+  if(dateStr === null) {
+    return "운행중"
+  }
+
   try {
     const date = new Date(dateStr);
     return format(date, "yyyy-MM-dd HH:mm");
