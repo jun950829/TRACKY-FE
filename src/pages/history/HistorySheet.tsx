@@ -11,7 +11,7 @@ interface HistorySheetProps {
   id: string;
   isOpen: boolean;
   onOpenChange: (id: string, open: boolean) => void;
-  onItemClick: () => void;
+  onItemSelected: () => void;
   title: string;
 }
 
@@ -19,7 +19,7 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
   id,
   isOpen,
   onOpenChange,
-  onItemClick,
+  onItemSelected,
   title,
 }) => {
   const [isListVisible, setIsListVisible] = useState(false);
@@ -77,9 +77,9 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
                 {id === "search" ? (
                   <HistorySearch />
                 ) : id === "rent" ? (
-                  <HistoryRentList onItemClick={onItemClick} />
+                  <HistoryRentList onItemClick={onItemSelected} />
                 ) : (
-                  <HistoryCarList onItemClick={onItemClick} />
+                  <HistoryCarList onItemClick={onItemSelected} />
                 )}
               </motion.div>
             )}
