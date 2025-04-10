@@ -8,10 +8,6 @@ import StatusBadge from "@/components/custom/StatusBadge";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
-  if(dateStr === null) {
-    return "운행중"
-  }
-
   try {
     const date = new Date(dateStr);
     return format(date, "yyyy년 MM월 dd일 HH:mm:ss");
@@ -154,7 +150,7 @@ const HistoryDetail: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">도착 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOffTime).slice(2, 22)}</div>
+                  <div className="mt-1 truncate">{selectedDetail.driveOffTime === null ? "운행중" : formatDateTime(selectedDetail.driveOffTime).slice(2, 22)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">출발 위치</div>
@@ -202,7 +198,7 @@ const HistoryDetail: React.FC = () => {
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">대여 종료 시간</div>
                   <div className="mt-1 truncate">
-                    {formatDateTime(selectedDetail.driveOffTime).slice(2, 19)}
+                    {selectedDetail.driveOffTime === null ? "운행중" : formatDateTime(selectedDetail.driveOffTime).slice(2, 19)}
                   </div>
                 </div>
                 <div className="col-span-2">
