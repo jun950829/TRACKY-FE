@@ -73,9 +73,17 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.2 }}
+                className="h-full"
               >
                 {id === "search" ? (
-                  <HistorySearch />
+                  <div className="h-full">
+                    <HistorySearch />
+                    {searchType === "rent" ? (
+                      <HistoryRentList onItemClick={onItemSelected} />
+                    ) : (
+                      <HistoryCarList onItemClick={onItemSelected} />
+                    )}
+                  </div>
                 ) : id === "rent" ? (
                   <HistoryRentList onItemClick={onItemSelected} />
                 ) : (
