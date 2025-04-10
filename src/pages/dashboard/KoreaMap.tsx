@@ -100,8 +100,6 @@ export default function KoreaMap() {
     const name = feature.properties.CTP_KOR_NM;
     const count = regionData[name] || 0;
 
-    console.log('regionData : ',regionData);
-
     layer.on({
       mouseover: highlightFeature,
       mouseout: resetHighlight,

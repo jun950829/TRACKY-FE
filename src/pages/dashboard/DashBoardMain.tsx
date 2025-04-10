@@ -9,6 +9,8 @@ import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
 import DashBoardCarousel from "./components/DashBoardCarousel";
 import { useSseEvents } from "@/hooks/useSseEvents";
 import MapLayer from "./MapLayer";
+import { ErrorToast } from "@/components/custom/ErrorToast";
+import { ApiError, createApiError } from "@/types/error";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +18,7 @@ export default function Dashboard() {
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
+  const [error, setError] = useState<ApiError | null>(null);
   
   useSseEvents();
 
@@ -23,6 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setError(null);
       try {
         await Promise.all([
           getCarStatus(),
@@ -31,6 +35,7 @@ export default function Dashboard() {
         ]);
       } catch (err) {
         console.error('데이터 조회 실패:', err);
+        setError(createApiError(err));
       } finally {
         setIsLoading(false);
       }
@@ -52,6 +57,7 @@ export default function Dashboard() {
       setCarStatus(response.data);
     } catch (error) {
       console.error('차량 상태 조회 실패:', error);
+      setError(createApiError(error));
       throw error;
     }
   };
@@ -63,6 +69,7 @@ export default function Dashboard() {
       setReservationStatus(response.data);
     } catch (error) {
       console.error('예약 현황 조회 실패:', error);
+      setError(createApiError(error));
       throw error;
     }
   };
@@ -74,12 +81,14 @@ export default function Dashboard() {
       setStatistics(response.data);
     } catch (error) {
       console.error('통계 조회 실패:', error);
+      setError(createApiError(error));
       throw error;
     }
   };
 
   return (
     <DashboardLayout>
+      {error && <ErrorToast error={error} />}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center h-[80vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>

@@ -1,6 +1,4 @@
 import React from 'react';
-import { RentStatus } from "@/constants/datas/status";
-import { CarStatus } from "@/constants/datas/status";
 import { getStatusBadgeClass, getStatusLabel } from '@/libs/utils/getClassUtils';
 
 type StatusBadgeProps = {
