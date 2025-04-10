@@ -120,13 +120,27 @@ function Header() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 rounded-md text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Navigation menu"
-        >
-          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="md:hidden">
+          {token ? (
+            <button
+              className="p-2 rounded-md text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Navigation menu"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          ) : (
+            currentPath !== "/login" && (
+              <CustomButton
+                variant="default"
+                size="sm"
+                onClick={() => navigate("/login")}
+              >
+                로그인
+              </CustomButton>
+            )
+          )}
+        </div>
       </div>
 
       {/* Mobile Menu */}
