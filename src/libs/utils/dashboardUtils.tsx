@@ -28,13 +28,13 @@ export const getCarStatusIcon = (status: string): React.ReactNode => {
 export const getReservationStatus = (status: string): { color: string, icon:  React.ReactNode } => {
 
   switch(status) {
-    case '예약완료':
+    case 'waiting':
       return { color: 'bg-blue-100 text-blue-600', icon: <Clock className="text-blue-800 w-5 h-5" /> };
-    case '이용중':
+    case 'renting':
       return { color: 'bg-green-100 text-green-600', icon: <Car className="text-green-800 w-5 h-5" /> };
-    case '반납완료':
+    case 'returned':
       return { color: 'bg-purple-100 text-purple-600', icon: <Car className="text-yellow-800 w-5 h-5" /> };
-    case '취소':
+    case 'canceled':
       return { color: 'bg-red-100 text-red-600', icon: <Ban className="text-red-800 w-5 h-5" />};
     default:
       return { color: 'bg-zinc-100 text-zinc-600', icon: <Car className="text-gray-800 w-5 h-5" />};

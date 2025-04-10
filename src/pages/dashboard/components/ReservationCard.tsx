@@ -4,6 +4,7 @@ import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "l
 import { ReservationCardProps, DateFilter } from "@/constants/types/reservation";
 import { getReservationStatus } from "@/libs/utils/dashboardUtils";
 import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
+import StatusBadge from "@/components/custom/StatusBadge";
 
 function ReservationCard({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DateFilter.TODAY);
@@ -93,10 +94,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
                   {/* 상단: 차량번호, 대여상태 */}
                   <div className="flex justify-between items-start">
                     <div className="font-medium text-md">{reservation.carPlate}</div>
-                    <div className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${color}`}>
-                      {icon}
-                      <span>{reservation.rentStatus}</span>
-                    </div>
+                    <StatusBadge status={reservation.rentStatus} type="rent" />
                   </div>
                   
                   {/* 중간: 대여자명, 차종, MDN */}

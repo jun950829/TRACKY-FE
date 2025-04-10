@@ -73,6 +73,8 @@ export default function Login() {
   const setToken = useAuthStore((state) => state.setToken);
   const setMember = useAuthStore((state) => state.setMember);
 
+  const [isShow, setIsShow] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -203,6 +205,22 @@ export default function Login() {
                     <p className="text-gray-600">{notice.content}</p>
                   </div>
                 ))}
+
+
+                  <button onClick={() => {
+                      setIsShow(!isShow)
+                    }} className="text-xxs text-white rounded-md px-2 py-1">
+                    ID 보기
+                    </button>
+
+                      {isShow ? 
+                      <>
+                        <h1>Test 계정</h1>
+                        <p>ID : kernel360</p>
+                        <p>PWD : 121212</p>
+                      </>
+                      : <>
+                      </>}
               </div>
             </div>
           </div>
