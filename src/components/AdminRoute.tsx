@@ -8,10 +8,14 @@ interface AdminRouteProps {
 
 const AdminRoute = ({ children }: AdminRouteProps) => {
   const token = useAuthStore((state) => state.token);
-  const isAdmin = useAuthStore((state) => state.member?.role === "ADMIN");
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
-  if (!token && !isAdmin) {
+  if (!token) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

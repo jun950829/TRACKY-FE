@@ -24,8 +24,17 @@ function Header() {
 
   const token = useAuthStore((state) => state.token);
   const member = useAuthStore((state) => state.member);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const logout = useLogout();
+
+  // 관리자 메뉴를 포함한 메뉴 목록 필터링
+  const filteredMenus = headerMenus.filter(menu => {
+    if (menu.path === "/admin") {
+      return isAdmin;
+    }
+    return true;
+  });
 
   return (
     <header className={`sticky top-0 z-40 w-full border-b ${
@@ -61,7 +70,7 @@ function Header() {
         {/* Desktop Nav */}
         {token ?
         <nav className="hidden md:flex items-center space-x-1">
-          {headerMenus.map((item) => {
+          {filteredMenus.map((item) => {
             const isActive = currentPath === item.path;
             return (
               <Link
@@ -128,7 +137,7 @@ function Header() {
         }`}>
           <div className="container py-4 space-y-4">
             <nav className="grid gap-2">
-              {headerMenus.map((item) => {
+              {filteredMenus.map((item) => {
                 const isActive = currentPath === item.path;
                 return (
                   <Link

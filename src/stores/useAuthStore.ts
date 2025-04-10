@@ -10,6 +10,7 @@ type AuthStore = {
   member: Member | null;
   token: string | null;
   isHydrated: boolean;
+  isAdmin: boolean;
   setMember: (member: Member) => void;
   setToken: (token: string) => void;
   clearAuth: () => void;
@@ -30,9 +31,10 @@ export const useAuthStore = create<AuthStore>((set) => {
     member,
     token,
     isHydrated: true,
+    isAdmin: member?.role === "admin",
     setMember: (member) => {
       localStorage.setItem("memberInfo", JSON.stringify(member));
-      set({ member });
+      set({ member, isAdmin: member.role === "admin" });
     },
     setToken: (token) => {
       localStorage.setItem("accessToken", token);
@@ -41,7 +43,7 @@ export const useAuthStore = create<AuthStore>((set) => {
     clearAuth: () => {
       localStorage.removeItem("memberInfo");
       localStorage.removeItem("accessToken");
-      set({ member: null, token: null });
+      set({ member: null, token: null, isAdmin: false });
     },
   };
 });
