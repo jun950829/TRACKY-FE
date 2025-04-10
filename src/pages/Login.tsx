@@ -6,6 +6,8 @@ import { useState } from "react";
 import { loginApiService } from "../libs/apis/loginApi";
 import { useAuthStore } from "../stores/useAuthStore";
 import { jwtDecode } from "jwt-decode";
+import { ErrorToast } from "@/components/custom/ErrorToast";
+import { ApiError, createApiError } from "@/types/error";
 
 // Shadcn components
 import { Button } from "@/components/ui/button";
@@ -66,7 +68,7 @@ const notices: Notice[] = [
 
 export default function Login() {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState<ApiError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const setToken = useAuthStore((state) => state.setToken);
   const setMember = useAuthStore((state) => state.setMember);
@@ -82,7 +84,7 @@ export default function Login() {
   // 로그인 요청 함수
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-    setErrorMessage("");
+    setError(null);
     
     try {
       const response = await loginApiService.login(data);
@@ -104,9 +106,9 @@ export default function Login() {
 
       navigate("/dashboard");
       
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Login error: ", error);
-      setErrorMessage("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
+      setError(createApiError(error));
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +116,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+      {error && <ErrorToast error={error} />}
       <div className="container mx-auto px-4 h-screen flex items-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mx-auto">
           {/* 로그인 폼 */}
@@ -159,9 +162,9 @@ export default function Login() {
                     )}
                   </div>
                   
-                  {errorMessage && (
+                  {error && (
                     <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                      {errorMessage}
+                      {error.message}
                     </div>
                   )}
                 </CardContent>

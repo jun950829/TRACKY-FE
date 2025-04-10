@@ -1,5 +1,6 @@
 import Header from "./components/Header";
 import Routing from "./Routing";
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
 
@@ -9,6 +10,7 @@ function App() {
       <main className="flex-1 pb-12">
         <Routing />
       </main>
+      <Toaster />
     </div>
   );
 }

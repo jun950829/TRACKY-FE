@@ -8,6 +8,8 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 import HistoryCarList from './HistoryCarList';
+import { ErrorToast } from '@/components/custom/ErrorToast';
+import { ApiError, createApiError } from '@/types/error';
 
 interface DrawerState {
   [key: string]: boolean;
@@ -24,21 +26,28 @@ const HistoryMain = () => {
     search: false,
     // 다른 drawer가 있다면 여기에 추가
   });
+  const [error, setError] = useState<ApiError | null>(null);
 
   async function getDriveHistoryList() {
-    let driveList;
-    // 대여 기록 조회
-    if( searchType === 'rent' ) {
-      const response = await drivehistoryService.driveHistorybyRentUuid();
-      driveList = response;
-    }
+    setError(null);
+    try {
+      let driveList;
+      // 대여 기록 조회
+      if( searchType === 'rent' ) {
+        const response = await drivehistoryService.driveHistorybyRentUuid();
+        driveList = response;
+      }
 
-    // 차량 기록 조회
-    if( searchType === 'car' ) {
-      // 여기는 default 정보가 없음
-    }
+      // 차량 기록 조회
+      if( searchType === 'car' ) {
+        // 여기는 default 정보가 없음
+      }
 
-    setRentResults(driveList.data);
+      setRentResults(driveList.data);
+    } catch (error) {
+      console.error('운행 기록 조회 실패:', error);
+      setError(createApiError(error));
+    }
   }
 
   // 초기 데이터 로드
@@ -58,6 +67,7 @@ const HistoryMain = () => {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 max-w-full h-[100vh] flex flex-col">
+      {error && <ErrorToast error={error} />}
       <div className="flex justify-between items-center mb-2 sm:mb-4">
         <h1 className="text-xl md:text-2xl font-bold text-center md:text-left">차량 운행 기록</h1>
         
