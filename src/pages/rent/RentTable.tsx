@@ -223,7 +223,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
       </div>
 
       {/* Pagination - 모바일/PC 공통 */}
-      <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
+      {/* <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
         <div className="mb-4 sm:mb-0 w-[80px]">총 {rentList.length}건</div>
         <Pagination>
           <PaginationContent>
@@ -240,7 +240,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-      </div>
+      </div> */}
 
       {/* 대여 상세 모달 */}
       {isDetail && selectedRentData && (
