@@ -175,7 +175,7 @@ function Header() {
                 <CustomButton
                   variant="default"
                   size="sm"
-                  className="w-full"
+                  className="w-full mx-8"
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
@@ -188,7 +188,7 @@ function Header() {
                   <CustomButton
                     variant="default"
                     size="sm"
-                    className="w-full"
+                    className="w-full  mx-8"
                     onClick={() => {
                       navigate("/login");
                       setMobileMenuOpen(false);

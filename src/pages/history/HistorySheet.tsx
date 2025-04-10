@@ -11,7 +11,7 @@ interface HistorySheetProps {
   id: string;
   isOpen: boolean;
   onOpenChange: (id: string, open: boolean) => void;
-  onItemSelected: () => void;
+  onItemClick: () => void;
   title: string;
 }
 
@@ -19,7 +19,7 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
   id,
   isOpen,
   onOpenChange,
-  onItemSelected,
+  onItemClick,
   title,
 }) => {
   const [isListVisible, setIsListVisible] = useState(false);
@@ -64,26 +64,27 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
             <ChevronDown className="h-5 w-5" />
           </motion.div>
         </SheetHeader>
-        <AnimatePresence>
-          {isListVisible && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <div className="overflow-y-auto">
-                <HistorySearch />
-                {searchType === "rent" ? (
-                  <HistoryRentList onItemClick={onItemSelected} />
+        
+        <div className="overflow-y-auto max-h-[calc(80vh-60px)]">
+          <AnimatePresence>
+            {isListVisible && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                {id === "search" ? (
+                  <HistorySearch />
+                ) : id === "rent" ? (
+                  <HistoryRentList onItemClick={onItemClick} />
                 ) : (
-                  <HistoryCarList onItemClick={onItemSelected} />
+                  <HistoryCarList onItemClick={onItemClick} />
                 )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </SheetContent>
     </Sheet>
   );
