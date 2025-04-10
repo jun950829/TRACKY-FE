@@ -49,7 +49,7 @@ const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carDat
             <strong>상태:</strong> {getStatusLabel(carData.status)}
           </div>
           <div>
-            <strong>누적 주행거리:</strong> {carData.sum} km
+            <strong>누적 주행거리:</strong> {(carData.sum * 0.001).toFixed(2)} km
           </div>
           <div>
             <strong>등록일자:</strong> {new Date(carData.createdAt).toLocaleDateString()}
