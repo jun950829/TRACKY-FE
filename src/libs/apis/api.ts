@@ -8,10 +8,6 @@ export const isTokenExpired = (token: string) => {
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const payload = JSON.parse(window.atob(base64));
 
-    console.log('payload :', payload.exp * 1000 < Date.now());
-    console.log('payload.exp :', payload.exp * 1000);
-    console.log('Date.now() :', Date.now());
-    
     // exp는 초 단위로 저장됨, 현재 시간은 밀리초 단위
     return payload.exp * 1000 < Date.now();
   } catch (e) {
@@ -41,7 +37,7 @@ export const handleSessionExpired = () => {
 // 기본 API 인스턴스 설정
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 5000, // 요청 제한 시간 (5초)
+  timeout: 10000, // 요청 제한 시간 (5초)
   headers: {
     "Content-Type": "application/json",
   },
