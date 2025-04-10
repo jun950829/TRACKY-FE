@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import HistoryMap from "./HistoryMap";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import StatusBadge from "@/components/custom/StatusBadge";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
+  if(dateStr === null) {
+    return "운행중"
+  }
+
   try {
     const date = new Date(dateStr);
     return format(date, "yyyy년 MM월 dd일 HH:mm:ss");
