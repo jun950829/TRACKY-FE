@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import HistoryMap from "./HistoryMap";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
+import StatusBadge from "@/components/custom/StatusBadge";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -135,19 +136,19 @@ const HistoryDetail: React.FC = () => {
               <div className="flex justify-between items-center">
                 <CardTitle className="text-base sm:text-lg">운행 정보</CardTitle>
                 <div className="text-xs font-medium text-gray-500 truncate">
-                  {selectedDetail.driveId}
+                  운행 ID : {selectedDetail.driveId}
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-2 sm:p-3 pt-0">
-              <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+              <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm">
                 <div>
                   <div className="text-xs font-medium text-gray-500">출발 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOnTime)}</div>
+                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOnTime).slice(2, 22)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">도착 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOffTime)}</div>
+                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOffTime).slice(2, 22)}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-gray-500">출발 위치</div>
@@ -165,14 +166,7 @@ const HistoryDetail: React.FC = () => {
             <CardHeader className="p-2 sm:p-3 pb-1">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-base sm:text-lg">예약 정보</CardTitle>
-                <Badge
-                  className={`text-xs px-2 py-0.5 ${getStatusBadgeColor(selectedDetail.rentStatus)}`}
-                >
-                  {selectedDetail.rentStatus === "SCHEDULED" && "예약됨"}
-                  {selectedDetail.rentStatus === "INPROGRESS" && "진행중"}
-                  {selectedDetail.rentStatus === "COMPLETED" && "완료됨"}
-                  {selectedDetail.rentStatus === "CANCELED" && "취소됨"}
-                </Badge>
+                  <StatusBadge status={selectedDetail.rentStatus} type="rent" />
               </div>
             </CardHeader>
             <CardContent className="p-2 sm:p-3 pt-0">
@@ -194,10 +188,15 @@ const HistoryDetail: React.FC = () => {
                   <div className="mt-1 truncate">{selectedDetail.renterPhone}</div>
                 </div>
                 <div className="col-span-2">
-                  <div className="text-xs font-medium text-gray-500">대여 기간</div>
+                  <div className="text-xs font-medium text-gray-500">대여 시작 시간</div>
                   <div className="mt-1 truncate">
-                    {formatDateTime(selectedDetail.driveOnTime).slice(0, 13)} ~{" "}
-                    {formatDateTime(selectedDetail.driveOffTime).slice(0, 13)}
+                    {formatDateTime(selectedDetail.driveOnTime).slice(2, 19)}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-xs font-medium text-gray-500">대여 종료 시간</div>
+                  <div className="mt-1 truncate">
+                    {formatDateTime(selectedDetail.driveOffTime).slice(2, 19)}
                   </div>
                 </div>
                 <div className="col-span-2">
