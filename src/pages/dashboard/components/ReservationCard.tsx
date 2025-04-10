@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { ReservationCardProps, DateFilter } from "@/constants/types/reservation";
-import { getReservationStatus } from "@/libs/utils/dashboardUtils";
 import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
 
@@ -83,7 +82,6 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
             </div>
             
             {filteredReservations.map((reservation, index) => {
-              const { color, icon } = getReservationStatus(reservation.rentStatus);
               const { mdn } = getCarModelAndMdn(index);
               
               return (
