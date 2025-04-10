@@ -8,6 +8,12 @@ export interface TripInfo {
   distance: number;
   startAddress: string;
   endAddress: string;
+
+  // 📌 좌표 추가!
+  driveStartLat: number;
+  driveStartLon: number;
+  driveEndLat: number;
+  driveEndLon: number;
 }
 // 정보 조회 결과 타입 정의
 export interface InfoSearchResult {
