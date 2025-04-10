@@ -90,7 +90,8 @@ function Header() {
             );
           })}
         </nav>
-        : null}
+        : null
+        }
         
         {/* right Login Info */}
         <div className="hidden md:flex items-center space-x-4">
