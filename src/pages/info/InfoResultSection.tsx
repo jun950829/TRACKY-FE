@@ -36,7 +36,7 @@ function InfoResultSection() {
     return (
       <div className="text-center text-gray-500 py-6 sm:py-10">
         <p className="text-sm sm:text-base">
-          예약 정보가 없습니다. 예약 ID를 입력하여 조회해주세요.
+          예약 정보가 없습니다. 예약 번호를 입력하여 조회해주세요.
         </p>
       </div>
     );
@@ -90,7 +90,7 @@ function InfoResultSection() {
           <CardContent className="p-4 pt-0">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <h3 className="text-xs sm:text-sm font-medium text-gray-500">예약 ID</h3>
+                <h3 className="text-xs sm:text-sm font-medium text-gray-500">예약 번호</h3>
                 <p className="mt-1 text-sm">{rent.rent_uuid}</p>
               </div>
               <div>

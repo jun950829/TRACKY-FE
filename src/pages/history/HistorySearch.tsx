@@ -81,7 +81,7 @@ const HistorySearch = () => {
         
         <div className="flex gap-2">
           <Input
-            placeholder={`${searchType === 'rent' ? '예약 ID' : '차량 ID'}로 검색`}
+            placeholder={`${searchType === 'rent' ? '예약 번호' : '차량 관리번호'}로 검색`}
             value={searchText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -103,8 +103,8 @@ const HistorySearch = () => {
       
       <div className="text-xs text-gray-500">
         {searchType === 'rent' 
-          ? '예약 ID으로 검색' 
-          : '차량 ID로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
+          ? '예약 번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다' 
+          : '차량 관리번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
         }
       </div>
     </div>

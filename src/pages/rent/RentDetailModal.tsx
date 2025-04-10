@@ -33,8 +33,8 @@ const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rent
                     <DialogTitle>대여 상세 정보</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-2 text-sm text-gray-700">
-                    <div><strong>대여고유UUID:</strong> {rentData.rent_uuid}</div>
-                    <div><strong>차량식별키:</strong> {rentData.mdn}</div>
+                    <div><strong>예약 번호:</strong> {rentData.rent_uuid}</div>
+                    <div><strong>차량 관리번호:</strong> {rentData.mdn}</div>
                     <div><strong>사용자 이름:</strong> {rentData.renterName}</div>
                     <div><strong>사용자 전화번호:</strong> {rentData.renterPhone}</div>
                     <div><strong>차량 사용 목적:</strong> {rentData.purpose}</div>

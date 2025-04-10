@@ -131,10 +131,10 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">차량 관리번호(MDN)</label>
+              <label className="block text-sm font-medium">차량 관리번호</label>
               <Select defaultValue={initialData.mdn} onValueChange={(val) => setValue('mdn', val)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="차량 관리번호(MDN)를 선택하세요" />
+                  <SelectValue placeholder="차량 관리번호를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
                   {mdnList.map((mdn: string, idx: number) => (
