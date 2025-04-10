@@ -3,7 +3,7 @@ const geocodeCache = new Map<string, string>();
 export async function reverseGeocodeOSM(lat: number, lon: number): Promise<string> {
   const key = `${lat.toFixed(6)},${lon.toFixed(6)}`;
 
-  // 캐시로 중복 방지
+  // 캐시 확인
   if (geocodeCache.has(key)) {
     return geocodeCache.get(key)!;
   }
@@ -13,7 +13,7 @@ export async function reverseGeocodeOSM(lat: number, lon: number): Promise<strin
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
       {
         headers: {
-          "User-Agent": "Tracky/1.0 (7tracky7@gmail.com)",
+          "User-Agent": "Tracky/1.0 (7tracky7@gmail.com)", // 예의상 유저 에이전트는 포함
         },
       }
     );
@@ -23,7 +23,13 @@ export async function reverseGeocodeOSM(lat: number, lon: number): Promise<strin
     }
 
     const data = await res.json();
-    const address = data.display_name || "주소 없음";
+
+    const address =
+      data.display_name ||
+      [data.address?.road, data.address?.city, data.address?.state, data.address?.country]
+        .filter(Boolean)
+        .join(" ") ||
+      "주소 없음";
 
     geocodeCache.set(key, address);
     return address;

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { motion, AnimatePresence } from 'framer-motion';
-import HistorySearch from './HistorySearch';
-import HistoryRentList from './HistoryRentList';
-import HistoryCarList from './HistoryCarList';
-import { useHistoryStore } from '@/stores/useHistoryStore';
+import React, { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { motion, AnimatePresence } from "framer-motion";
+import HistorySearch from "./HistorySearch";
+import HistoryRentList from "./HistoryRentList";
+import HistoryCarList from "./HistoryCarList";
+import { useHistoryStore } from "@/stores/useHistoryStore";
 
 interface HistorySheetProps {
   id: string;
@@ -24,9 +24,7 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
 }) => {
   const [isListVisible, setIsListVisible] = useState(false);
 
-  const { 
-    searchType,
-  } = useHistoryStore();
+  const { searchType } = useHistoryStore();
 
   // drawer가 열릴 때 리스트를 보이게 함
   useEffect(() => {
@@ -48,24 +46,21 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent 
-        side="bottom" 
+      <SheetContent
+        side="bottom"
         className="h-[80vh] p-0"
-        style={{ 
-          zIndex: 100, 
-          marginBottom: 'env(safe-area-inset-bottom, 0px)',
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)'
+        style={{
+          zIndex: 100,
+          marginBottom: "env(safe-area-inset-bottom, 0px)",
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)",
         }}
       >
-        <SheetHeader 
-          className="px-4 py-3 border-b cursor-pointer flex items-center justify-between" 
+        <SheetHeader
+          className="px-4 py-3 border-b cursor-pointer flex items-center justify-between"
           onClick={handleHeaderClick}
         >
           <SheetTitle className="text-left text-lg">{title}</SheetTitle>
-          <motion.div
-            animate={{ rotate: isListVisible ? 0 : 180 }}
-            transition={{ duration: 0.2 }}
-          >
+          <motion.div animate={{ rotate: isListVisible ? 0 : 180 }} transition={{ duration: 0.2 }}>
             <ChevronDown className="h-5 w-5" />
           </motion.div>
         </SheetHeader>
@@ -80,7 +75,7 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
             >
               <div className="overflow-y-auto">
                 <HistorySearch />
-                {searchType === 'rent' ? (
+                {searchType === "rent" ? (
                   <HistoryRentList onItemClick={onItemSelected} />
                 ) : (
                   <HistoryCarList onItemClick={onItemSelected} />
@@ -94,4 +89,4 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
   );
 };
 
-export default HistorySheet; 
+export default HistorySheet;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { getStatusBadgeClass, getStatusLabel } from '@/libs/utils/getClassUtils';
+import React from "react";
+import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 
 type StatusBadgeProps = {
   status: string;

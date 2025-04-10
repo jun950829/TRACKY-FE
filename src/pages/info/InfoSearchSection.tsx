@@ -1,10 +1,10 @@
+// ✅ InfoSearchSection.tsx (주소 없이 좌표만 전달)
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search as SearchIcon } from "lucide-react";
 import { useInfoStore } from "@/stores/useInfoStore";
 import infoApiService from "@/libs/apis/infoApi";
-import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 
@@ -27,7 +27,6 @@ function InfoSearchSection() {
     setError(null);
 
     try {
-      // 1. 예약 정보 + 차량 정보 조회
       const rentResponse = await infoApiService.getReservationWithCar(searchText);
       const reservation = rentResponse?.data?.reservation;
       const car = rentResponse?.data?.car;
@@ -53,52 +52,22 @@ function InfoSearchSection() {
         rentEtime: reservation.rentEtime,
         rentLoc: reservation.rentLoc ?? "-",
         returnLoc: reservation.returnLoc ?? "-",
-        rentStatus: "SCHEDULED", // 필요하면 추후 실제 상태값 적용
+        rentStatus: "SCHEDULED",
         createdAt: reservation.createdAt,
       };
 
-      // 2. 운행 정보 조회
       const drivingsResponse = await infoApiService.getDrivings(searchText);
-      const parsedTrips = await Promise.all(
-        (drivingsResponse?.data || []).map(async (driving: {
-          driveStartLat: number;
-          driveStartLon: number;
-          driveEndLat: number;
-          driveEndLon: number;
-          driveOnTime: string;
-          driveOffTim: string;
-          driveDistance: number;
-        }) => {
-          const startLat = driving.driveStartLat / 1_000_000;
-          const startLon = driving.driveStartLon / 1_000_000;
-          const endLat = driving.driveEndLat / 1_000_000;
-          const endLon = driving.driveEndLon / 1_000_000;
+      const parsedTrips = (drivingsResponse?.data || []).map((driving: any) => ({
+        oTime: driving.driveOnTime,
+        offTime: driving.driveOffTim,
+        distance: driving.driveDistance,
+        driveStartLat: driving.driveStartLat,
+        driveStartLon: driving.driveStartLon,
+        driveEndLat: driving.driveEndLat,
+        driveEndLon: driving.driveEndLon,
+      }));
 
-          // 시작 위치 주소 변환
-          const startAddress = await reverseGeocodeOSM(startLat, startLon);
-
-          // 종료 위치가 유효하면 주소 변환, 아니면 "운행중"
-          const hasValidEndCoords = driving.driveEndLat !== 0 && driving.driveEndLon !== 0;
-          const endAddress = hasValidEndCoords ? await reverseGeocodeOSM(endLat, endLon) : "운행중";
-
-          return {
-            oTime: driving.driveOnTime,
-            offTime: driving.driveOffTim,
-            distance: driving.driveDistance,
-            startAddress,
-            endAddress,
-          };
-        })
-      );
-
-      // 3. 상태 업데이트
-      setInfo({
-        rent: parsedRent,
-        car,
-        trips: parsedTrips,
-        isLoading: false,
-        error: null,
-      });
+      setInfo({ rent: parsedRent, car, trips: parsedTrips, isLoading: false, error: null });
     } catch (error) {
       console.error("검색 오류:", error);
       setError(createApiError(error));
@@ -113,9 +82,7 @@ function InfoSearchSection() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+    if (e.key === "Enter") handleSearch();
   };
 
   const { isLoading, error: infoError } = useInfoStore();
@@ -126,11 +93,8 @@ function InfoSearchSection() {
       <div className="md:flex md:justify-between md:items-start">
         <div className="md:max-w-md mb-4 md:mb-0 md:mr-6">
           <h2 className="text-lg sm:text-xl font-semibold mb-2">예약 번호로 조회하기</h2>
-          <p className="text-sm text-gray-600">
-            예약 시 제공받은 예약 번호를 입력하여 예약 정보를 확인할 수 있습니다.
-          </p>
+          <p className="text-sm text-gray-600">예약 시 제공받은 예약 번호를 입력하세요.</p>
         </div>
-
         <div className="flex flex-col sm:flex-row md:w-2/5 gap-2">
           <Input
             placeholder="예약 번호를 입력하세요"
@@ -153,12 +117,9 @@ function InfoSearchSection() {
           </Button>
         </div>
       </div>
-
       {infoError && <p className="text-sm text-red-500 mt-2">{infoError}</p>}
     </div>
   );
 }
-
-console.log("✅ InfoSearchSection 렌더링됨");
 
 export default InfoSearchSection;
