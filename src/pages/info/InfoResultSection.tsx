@@ -89,7 +89,7 @@ function InfoResultSection() {
   if (!rent) {
     return (
       <div className="text-center text-gray-500 py-8">
-        <p className="text-sm">예약 정보가 없습니다. 예약 번호를 입력하여 조회해주세요.</p>
+        <p className="text-sm">예약 번호를 입력하여 조회해주세요.</p>
       </div>
     );
   }
