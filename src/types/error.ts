@@ -10,6 +10,7 @@ export interface ApiErrorResponse {
   data?: {
     message?: string
   }
+  message?: string
 }
 
 export const isApiError = (error: unknown): error is AxiosError<ApiErrorResponse> => {
