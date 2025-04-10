@@ -60,9 +60,9 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
           onClick={handleHeaderClick}
         >
           <SheetTitle className="text-left text-lg">{title}</SheetTitle>
-          <motion.div animate={{ rotate: isListVisible ? 0 : 180 }} transition={{ duration: 0.2 }}>
+          {/* <motion.div animate={{ rotate: isListVisible ? 0 : 180 }} transition={{ duration: 0.2 }}>
             <ChevronDown className="h-5 w-5" />
-          </motion.div>
+          </motion.div> */}
         </SheetHeader>
         
         <div className="overflow-y-auto max-h-[calc(80vh-60px)]">
