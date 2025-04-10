@@ -13,8 +13,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
   }, [dateFilter]);
 
   const filteredReservations = reservations.filter((res) => 
-    isDateInFilter(new Date(res.rentStime), dateFilter) ||
-    isDateInFilter(new Date(res.rentEtime), dateFilter)
+    isDateInFilter(new Date(res.rentStime),new Date(res.rentEtime),  dateFilter)
   );
   
   return (
