@@ -24,14 +24,17 @@ export async function reverseGeocodeOSM(lat: number, lon: number): Promise<strin
 
     const data = await res.json();
 
+    console.log(data);
     const address =
-      data.display_name ||
-      [data.address?.road, data.address?.city, data.address?.state, data.address?.country]
+      [data.address?.province, data.address?.county, data.address?.road, data.address?.village]
+
+        // data.display_name ||
+        // [data.address?.road, data.address?.city, data.address?.state, data.address?.country]
         .filter(Boolean)
-        .join(" ") ||
-      "주소 없음";
+        .join(" ") || "주소 없음";
 
     geocodeCache.set(key, address);
+    console.log("address : ", address);
     return address;
   } catch (err) {
     console.error("역지오코딩 에러:", err);
