@@ -106,7 +106,7 @@ const HistoryDetail: React.FC = () => {
             <CardContent className="p-2 sm:p-3 text-center">
               <div className="text-xs sm:text-sm font-medium text-gray-500">총 주행 거리</div>
               <div className="text-base sm:text-xl font-bold mt-1">
-                {selectedDetail.sum * 0.001} km
+                {(selectedDetail.sum * 0.001).toFixed(2)} km
               </div>
             </CardContent>
           </Card>
