@@ -151,11 +151,12 @@ export default function CarRegister() {
       return;
     }
 
-    // 천승준 - 임시 싱크용 데이터 추가
+    // 천승준 - 기본 상태는 대기중
     const requestData = {
       ...data,
       sum: data.sum,
       bizId: 1,
+      status: "waiting",
     };
     requestData.carYear = requestData.carYear.toString();
 
@@ -244,24 +245,6 @@ export default function CarRegister() {
             <Label>사용 목적</Label>
             <Input placeholder="예: 렌트, 법인" {...register("purpose")} />
             {errors.purpose && <p className="text-sm text-red-500">{errors.purpose.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label>차량 상태</Label>
-            <Select onValueChange={(val) => setValue("status", val)}>
-              <SelectTrigger>
-                <SelectValue placeholder="선택해주세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {CarStatus
-                .filter(status => status.value !== 'all')
-                .filter(status => status.value !== 'closed')
-                  .map((status) => (
-                    <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
           </div>
 
           <div className="space-y-2">
