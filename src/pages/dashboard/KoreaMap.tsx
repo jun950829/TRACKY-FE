@@ -181,7 +181,7 @@ export default function KoreaMap() {
   // 원형 마커 생성 함수
   const createCircleMarker = (count: number, name: string) => {
     // 차량 수에 따라 원의 크기 결정 (최소 20px, 최대 90px)
-    const size = Math.min(90, Math.max(20, count * 4));
+    const size = Math.min(50, Math.max(20, count * 3));
     
     // 차량 수에 따라 색상 결정
     let color = '#cccccc';

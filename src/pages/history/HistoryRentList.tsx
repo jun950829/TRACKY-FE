@@ -101,9 +101,9 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                 }}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate"> 예약 ID : {rent.rentUuid}</div>
+                  <div className="font-medium truncate"> 예약 번호 : {rent.rentUuid}</div>
                   <div className="text-xs text-gray-500 truncate">
-                    {rent.renterName} | {rent.mdn}
+                    <strong>{rent.renterName}</strong> |  차량 관리번호 <strong>{rent.mdn}</strong>
                   </div>
                   <div className="text-xs text-gray-500">
                     {formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}

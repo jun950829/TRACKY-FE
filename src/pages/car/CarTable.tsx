@@ -97,7 +97,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
           <TableHeader>
             <TableRow className="[&>th]:px-1 [&>th]:py-2">
               <TableHead className="w-8">차량 상태</TableHead>
-              <TableHead className="w-20">차량 관리번호(MDN)</TableHead>
+              <TableHead className="w-20">차량 관리번호</TableHead>
               <TableHead className="w-12">차량 모델</TableHead>
               <TableHead className="w-16">차량 번호</TableHead>
               <TableHead className="text-right w-40">관리</TableHead>

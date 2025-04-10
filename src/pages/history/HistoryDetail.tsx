@@ -129,11 +129,11 @@ const HistoryDetail: React.FC = () => {
             <CardContent className="p-2 sm:p-3 pt-0">
               <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
-                  <div className="text-xs font-medium text-gray-500">예약 ID</div>
+                  <div className="text-xs font-medium text-gray-500">예약 번호</div>
                   <div className="mt-1 truncate">{selectedDetail.rentUuid}</div>
                 </div>
                 <div>
-                  <div className="text-xs font-medium text-gray-500">차량 ID</div>
+                  <div className="text-xs font-medium text-gray-500">차량 관리번호</div>
                   <div className="mt-1 truncate">{selectedDetail.mdn}</div>
                 </div>
                 <div>
