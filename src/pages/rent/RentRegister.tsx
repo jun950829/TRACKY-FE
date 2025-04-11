@@ -16,7 +16,7 @@ import * as yup from "yup";
 const schema = yup.object({
     mdn: yup.string().required("차량 관리번호를 선택해주세요."),
     renterName: yup.string().required("사용자 이름을 입력해주세요."),
-    renterPhone: yup.string().required("사용자 전화번호를 입력해주세요."),
+    renterPhone: yup.string().required("사용자 전화번호를 입력해주세요.").matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-0000-0000이어야 합니다."),
     rentStime: yup.string().required("대여 시간 입력해주세요."),
     rentEtime: yup.string().required("반납 시간 입력해주세요."),
     rentLoc: yup.string().required("대여 할 위치를 입력해주세요."),
