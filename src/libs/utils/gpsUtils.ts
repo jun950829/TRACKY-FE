@@ -95,7 +95,7 @@ function getKoreanTimeFormatted(): string {
   const now = new Date();
   
   // 한국 시간(UTC+9)으로 변환
-  const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+  const koreanTime = new Date(now.getTime());
   
   // 'yyyyMMddHHmm' 형식으로 변환
   const year = koreanTime.getFullYear();

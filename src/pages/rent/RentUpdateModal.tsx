@@ -22,7 +22,7 @@ import { RentStatus } from '@/constants/datas/status';
 const schema = yup.object().shape({
   mdn: yup.string().required("차량 관리번호를 입력하세요"),
   renterName: yup.string().required("대여자을 입력하세요"),
-  renterPhone: yup.string().required("대여자 전화번호를 입력하세요"),
+  renterPhone: yup.string().required("대여자 전화번호를 입력하세요").matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-0000-0000이어야 합니다."),
   purpose: yup.string().required("사용 목적을 입력하세요"),
   rentStatus: yup.string().required("대여 상태를 입력하세요"),
   rentStime: yup.string().required("대여 시작 시간을 선택하세요"),
