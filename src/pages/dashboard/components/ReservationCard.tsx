@@ -22,7 +22,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
             <Calendar className="h-4 w-4 text-primary" />
-            <span>예약 현황 (총 : {filteredReservations.length}건)</span>
+            <span>예약 현황</span>
           </CardTitle>
           
           <div className="flex items-center space-x-1 text-xs">
@@ -77,7 +77,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
         ) : (
           <div className="space-y-2 p-1">
             <div className="text-xs text-zinc-500 mb-1 font-medium">
-              {formatDate(getFilterDate(dateFilter))}
+              {formatDate(getFilterDate(dateFilter))}  (총 : {filteredReservations.length}건)
             </div>
             
             {filteredReservations.map((reservation, index) => {
