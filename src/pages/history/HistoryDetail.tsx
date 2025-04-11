@@ -91,7 +91,7 @@ const HistoryDetail: React.FC = () => {
       <div className="space-y-3 sm:space-y-4">
         {/* 모바일 우선: 지도 컴포넌트 */}
         <Card className="shadow-sm">
-          <CardHeader className="p-2 sm:p-4 pb-0">
+          <CardHeader className="p-2 sm:p-4 sm:pb-0 pb-0">
             <CardTitle className="text-base sm:text-lg">주행 경로</CardTitle>
           </CardHeader>
           <CardContent className="p-2 sm:p-4">
