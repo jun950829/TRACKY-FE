@@ -26,7 +26,7 @@ const schema = yup.object({
     .max(new Date().getFullYear(), "미래 연도는 입력할 수 없습니다.")
     .required("연식을 입력하세요"),
   purpose: yup.string().required("차량 용도를 입력해주세요."),
-  status: yup.string().required("차량 상태를 입력해주세요."),
+  // status: yup.string().required("차량 상태를 입력해주세요."),
   sum: yup.number().required("주행거리를 입력해주세요.").typeError("숫자만 입력 가능합니다."),
 });
 
@@ -50,7 +50,6 @@ export default function CarRegister() {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -133,10 +132,12 @@ export default function CarRegister() {
    */
   const onSubmit = async (data: CarCreateTypes) => {
     // MDN 체크를 하지 않았거나, 중복된 MDN인 경우 등록 불가
+    console.log(mdnCheckResult, data);
     if (!mdnCheckResult.checked) {
       setIsError(true);
       return;
     }
+    console.log("2 :", mdnCheckResult);
 
     if (mdnCheckResult.exists) {
       setIsError(true);
@@ -151,7 +152,6 @@ export default function CarRegister() {
       status: "waiting",
     };
     requestData.carYear = requestData.carYear.toString();
-
     const carData = await carApiService.createCar(requestData);
 
     if (carData.status === 200) {
