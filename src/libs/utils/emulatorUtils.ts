@@ -64,7 +64,7 @@ export const createEngineOnRequest = (position: GeolocationPosition): EngineRequ
     gcd: "A",
     lat: formatCoordinate(position.coords.latitude),
     lon: formatCoordinate(position.coords.longitude),
-    ang: position.coords.heading?.toString() || "0",
+    ang: position.coords.heading?.toFixed(0) || "0",
     spd: (position.coords.speed || 0).toString(),
     sum: 0
   };
@@ -92,7 +92,7 @@ export const createEngineOffRequest = (
     gcd: "A",
     lat: formatCoordinate(position.coords.latitude),
     lon: formatCoordinate(position.coords.longitude),
-    ang: position.coords.heading?.toString() || "0",
+    ang: position.coords.heading?.toFixed(0) || "0",
     spd: (position.coords.speed || 0).toString(),
     sum: Math.round(totalDistance)
   };

@@ -52,6 +52,8 @@ export interface DriveDetailRecord {
   rentUuid: string;
   driveOnTime: string;
   driveOffTime: string;
+  rentStime: string;
+  rentEtime: string;
   onLat: number;
   onLon: number;
   offLat: number;

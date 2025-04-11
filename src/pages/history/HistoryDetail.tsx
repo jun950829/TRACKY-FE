@@ -192,13 +192,13 @@ const HistoryDetail: React.FC = () => {
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">대여 시작 시간</div>
                   <div className="mt-1 truncate">
-                    {formatDateTime(selectedDetail.driveOnTime).slice(2, 19)}
+                    {formatDateTime(selectedDetail.rentStime).slice(2, 19)}
                   </div>
                 </div>
                 <div className="col-span-2">
                   <div className="text-xs font-medium text-gray-500">대여 종료 시간</div>
                   <div className="mt-1 truncate">
-                    {selectedDetail.driveOffTime === null ? "운행중" : formatDateTime(selectedDetail.driveOffTime).slice(2, 19)}
+                    {selectedDetail.rentEtime === null ? "운행중" : formatDateTime(selectedDetail.driveOffTime).slice(2, 19)}
                   </div>
                 </div>
                 <div className="col-span-2">
