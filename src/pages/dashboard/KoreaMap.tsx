@@ -39,31 +39,6 @@ export default function KoreaMap() {
     });
   }, []);
 
-  // 차량 데이터 불러오기 (예시)
-  // useEffect(() => {
-  //   // 실제로는 API 호출로 대체
-  //   const mockData: RegionData = {
-  //     "서울특별시": 7,
-  //     "부산광역시": 5,
-  //     "대구광역시": 3,
-  //     "인천광역시": 4,
-  //     "광주광역시": 2,
-  //     "대전광역시": 3,
-  //     "울산광역시": 2,
-  //     "세종특별자치시": 1,
-  //     "경기도": 8,
-  //     "강원도": 2,
-  //     "충청북도": 2,
-  //     "충청남도": 3,
-  //     "전라북도": 2,
-  //     "전라남도": 3,
-  //     "경상북도": 4,
-  //     "경상남도": 4,
-  //     "제주특별자치도": 2
-  //   };
-  //   setRegionData(mockData);
-  // }, []);
-
   // 도 경계 스타일
   const getRegionStyle = (feature: any) => {
     const name = feature.properties.CTP_KOR_NM;
@@ -105,7 +80,7 @@ export default function KoreaMap() {
       mouseout: resetHighlight,
     });
 
-    layer.bindPopup(`${name}<br/>차량 수: ${count}대`);
+    // layer.bindPopup(`${name}<br/>차량 수: ${count}대`);
   };
 
   // 폴리곤의 무게중심 계산 함수

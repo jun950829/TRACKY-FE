@@ -30,7 +30,7 @@ export default function MapLayer({ isLoading }: MapLayerProps) {
         ) : (
           <div className="h-[400px] sm:h-[450px]">
             <div 
-              className="h-full w-full relative isolate"
+              className="h-full w-full relative isolate overflow-hidden"
               style={{ isolation: 'isolate' }}
             >
               <KoreaMap />

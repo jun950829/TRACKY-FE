@@ -91,7 +91,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
           <MapContainer
             key={driveId}
             center={center}
-            zoom={12}
+            zoom={7}
             style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
             whenReady={() => {
               // 지도가 준비되면 경로 렌더링 시작
