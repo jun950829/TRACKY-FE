@@ -38,7 +38,7 @@ const HistoryDetail: React.FC = () => {
       return;
     }
 
-    // ✅ 정수형 좌표 → 실수형으로 변환
+    // 정수형 좌표 → 실수형으로 변환
     const startLat = onLat / 1_000_000;
     const startLon = onLon / 1_000_000;
     const endLat = offLat / 1_000_000;

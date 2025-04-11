@@ -5,7 +5,7 @@ const port = 5173;
 
 exec(`lsof -i :${port} -t`, (err, stdout, stderr) => {
   if (err || !stdout) {
-    console.log(`✅ 포트 ${port}는 사용 중이지 않음`);
+    console.log(`포트 ${port}는 사용 중이지 않음`);
     process.exit(0);
   }
 

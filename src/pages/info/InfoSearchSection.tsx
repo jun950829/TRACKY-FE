@@ -1,4 +1,4 @@
-// ✅ InfoSearchSection.tsx (주소 없이 좌표만 전달)
+// InfoSearchSection.tsx (주소 없이 좌표만 전달)
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

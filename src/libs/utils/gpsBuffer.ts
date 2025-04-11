@@ -130,11 +130,11 @@ class GpsBuffer {
       this.totalPacketsCount += gpsList.length;
       this.totalSentPackets += 1;
       
-      console.log(`✅ [${new Date().toLocaleTimeString()}] 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (누적: ${this.totalPacketsCount}개 항목, ${this.totalSentPackets}개 패킷)`);
+      console.log(`[${new Date().toLocaleTimeString()}] 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (누적: ${this.totalPacketsCount}개 항목, ${this.totalSentPackets}개 패킷)`);
       
       return true;
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] GPS 데이터 전송 실패:`, error);
+      console.error(`[${new Date().toLocaleTimeString()}] GPS 데이터 전송 실패:`, error);
       
       // 실패한 경우에는 버퍼 유지 (다음 전송 시도에 포함)
       return false;
@@ -148,7 +148,7 @@ class GpsBuffer {
    */
   private async sendDataArray(dataArray: GeolocationPosition[]): Promise<boolean> {
     if (dataArray.length === 0) {
-      console.log(`⚠️ [${new Date().toLocaleTimeString()}] 전송할 데이터가 없습니다. 전송을 건너뜁니다.`);
+      console.log(`[${new Date().toLocaleTimeString()}] 전송할 데이터가 없습니다. 전송을 건너뜁니다.`);
       return false;
     }
     
@@ -171,7 +171,7 @@ class GpsBuffer {
         cList: gpsList,
       };
       
-      console.log(`📤 [${new Date().toLocaleTimeString()}] 데이터 전송 시작: ${dataArray.length}개의 GPS 데이터 전송 중...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 데이터 전송 시작: ${dataArray.length}개의 GPS 데이터 전송 중...`);
       
       // API 전송
       await hubApiService.sendCycleInfo(request);
@@ -187,11 +187,11 @@ class GpsBuffer {
       const endTime = performance.now();
       const processingTime = (endTime - startTime).toFixed(2);
       
-      console.log(`✅ [${new Date().toLocaleTimeString()}] 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (처리 시간: ${processingTime}ms, 누적: ${this.totalPacketsCount}개 항목, ${this.totalSentPackets}개 패킷)`);
+      console.log(`[${new Date().toLocaleTimeString()}] 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (처리 시간: ${processingTime}ms, 누적: ${this.totalPacketsCount}개 항목, ${this.totalSentPackets}개 패킷)`);
       
       return true;
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] GPS 데이터 전송 실패:`, error);
+      console.error(`[${new Date().toLocaleTimeString()}] GPS 데이터 전송 실패:`, error);
       
       // 전송 실패한 데이터는 버퍼에 다시 넣어 다음에 재시도
       this.buffer = [...dataArray, ...this.buffer];
@@ -213,7 +213,7 @@ class GpsBuffer {
     // 최초 전송 시간이 0이면 현재 시간으로 설정
     if (this.lastSentTimestamp === 0) {
       this.lastSentTimestamp = Date.now();
-      console.log(`🕒 [${new Date().toLocaleTimeString()}] 타이머 초기화: 첫 전송까지 ${this.interval}초 카운트다운 시작`);
+      console.log(`[${new Date().toLocaleTimeString()}] 타이머 초기화: 첫 전송까지 ${this.interval}초 카운트다운 시작`);
     }
     
     // 성능 개선: 마지막 체크 시간 기록 변수 추가 (지연 감지용)
@@ -226,7 +226,7 @@ class GpsBuffer {
       // 성능 개선: 이전 체크와의 시간 차이 계산 (타이머 지연 감지)
       const timeSinceLastCheck = currentTime - lastCheckTime;
       if (timeSinceLastCheck > 1500) { // 1.5초 이상 지연되면 경고
-        console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 타이머 지연 감지: ${(timeSinceLastCheck / 1000).toFixed(1)}초 지연됨`);
+        console.warn(`[${new Date().toLocaleTimeString()}] 타이머 지연 감지: ${(timeSinceLastCheck / 1000).toFixed(1)}초 지연됨`);
       }
       lastCheckTime = currentTime;
       
@@ -235,12 +235,12 @@ class GpsBuffer {
       
       // 매 초마다가 아니라 5초 간격이나 중요 시점에만 로그
       if (secondsSinceLastSent % 5 < 1 || secondsSinceLastSent >= this.interval - 1) {
-        console.log(`⏱️ [${new Date().toLocaleTimeString()}] 타이머 상태: 다음 전송까지 ${secondsRemaining}초 남음 (버퍼: ${this.buffer.length}개)`);
+        console.log(`⏱[${new Date().toLocaleTimeString()}] 타이머 상태: 다음 전송까지 ${secondsRemaining}초 남음 (버퍼: ${this.buffer.length}개)`);
       }
       
       if (secondsSinceLastSent >= this.interval) {
         // 주기에 맞게 정확히 데이터 전송
-        console.log(`🔄 [${new Date().toLocaleTimeString()}] 주기 도달: ${this.interval}초가 지났습니다. 데이터 전송 시작...`);
+        console.log(`[${new Date().toLocaleTimeString()}] 주기 도달: ${this.interval}초가 지났습니다. 데이터 전송 시작...`);
         
         try {
           // 버퍼가 주기보다 크면 주기만큼만 전송, 작으면 있는만큼 전송
@@ -259,14 +259,14 @@ class GpsBuffer {
             await this.sendData();
           }
         } catch (error) {
-          console.error(`❌ [${new Date().toLocaleTimeString()}] 데이터 전송 중 예외 발생:`, error);
+          console.error(`[${new Date().toLocaleTimeString()}] 데이터 전송 중 예외 발생:`, error);
         }
         
-        console.log(`🔄 [${new Date().toLocaleTimeString()}] 새 주기 시작: 다음 전송까지 ${this.interval}초 대기, 남은 버퍼: ${this.buffer.length}개`);
+        console.log(`[${new Date().toLocaleTimeString()}] 새 주기 시작: 다음 전송까지 ${this.interval}초 대기, 남은 버퍼: ${this.buffer.length}개`);
       }
     }, 1000);
     
-    console.log(`⏱️ [${new Date().toLocaleTimeString()}] GPS 데이터 수집 타이머 시작 (주기: ${this.interval}초)`);
+    console.log(`⏱[${new Date().toLocaleTimeString()}] GPS 데이터 수집 타이머 시작 (주기: ${this.interval}초)`);
   }
 
   /**
@@ -276,7 +276,7 @@ class GpsBuffer {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
-      console.log(`⏹️ [${new Date().toLocaleTimeString()}] GPS 데이터 수집 타이머 중지됨`);
+      console.log(`⏹[${new Date().toLocaleTimeString()}] GPS 데이터 수집 타이머 중지됨`);
     }
     this.isActive = false;
   }
@@ -286,12 +286,12 @@ class GpsBuffer {
    * @param sendRemainingData 버퍼에 남은 데이터를 전송할지 여부
    */
   public async reset(sendRemainingData: boolean = false): Promise<void> {
-    console.log(`🔄 [${new Date().toLocaleTimeString()}] GPS 버퍼 초기화 시작 (남은 데이터 전송: ${sendRemainingData ? '예' : '아니오'}, 버퍼 크기: ${this.buffer.length}개)`);
+    console.log(`[${new Date().toLocaleTimeString()}] GPS 버퍼 초기화 시작 (남은 데이터 전송: ${sendRemainingData ? '예' : '아니오'}, 버퍼 크기: ${this.buffer.length}개)`);
     
     // 남은 데이터 전송 옵션이 켜져 있고, 버퍼에 데이터가 있으면 전송
     if (sendRemainingData && this.buffer.length > 0) {
       try {
-        console.log(`📤 [${new Date().toLocaleTimeString()}] 초기화 전 버퍼에 있는 ${this.buffer.length}개의 데이터 전송 시도...`);
+        console.log(`[${new Date().toLocaleTimeString()}] 초기화 전 버퍼에 있는 ${this.buffer.length}개의 데이터 전송 시도...`);
         
         // 시동 OFF 시 모든 데이터를 sendData 대신 sendDataArray를 사용하여 전송
         const allData = [...this.buffer];
@@ -325,12 +325,12 @@ class GpsBuffer {
         const endTime = performance.now();
         const processingTime = (endTime - startTime).toFixed(2);
         
-        console.log(`✅ [${new Date().toLocaleTimeString()}] 최종 데이터 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (처리 시간: ${processingTime}ms)`);
+        console.log(`[${new Date().toLocaleTimeString()}] 최종 데이터 전송 완료: ${gpsList.length}개 항목이 포함된 패킷 전송 (처리 시간: ${processingTime}ms)`);
         
         // 버퍼 비우기
         this.buffer = [];
       } catch (error) {
-        console.error(`❌ [${new Date().toLocaleTimeString()}] 초기화 전 데이터 전송 실패:`, error);
+        console.error(`[${new Date().toLocaleTimeString()}] 초기화 전 데이터 전송 실패:`, error);
         // 실패해도 계속 진행하여 버퍼를 비움
       }
     }
@@ -347,7 +347,7 @@ class GpsBuffer {
     const preservedPacketsCount = this.totalPacketsCount;
     const preservedSentPackets = this.totalSentPackets;
     
-    console.log(`✅ [${new Date().toLocaleTimeString()}] GPS 버퍼 초기화 완료: 버퍼 비움, 총 전송된 데이터: ${preservedPacketsCount}개 항목, ${preservedSentPackets}개 패킷`);
+    console.log(`[${new Date().toLocaleTimeString()}] GPS 버퍼 초기화 완료: 버퍼 비움, 총 전송된 데이터: ${preservedPacketsCount}개 항목, ${preservedSentPackets}개 패킷`);
   }
 
   /**

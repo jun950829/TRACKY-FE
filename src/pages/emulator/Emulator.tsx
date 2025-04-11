@@ -333,9 +333,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       gpsBuffer.sendData()
         .then(success => {
           if (success) {
-            console.log(`✅ [${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 성공`);
+            console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 성공`);
           } else {
-            console.log(`⚠️ [${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 실패 또는 버퍼가 비어있음`);
+            console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 실패 또는 버퍼가 비어있음`);
           }
           
           // 통계 UI 업데이트 (비동기 작업 후 최신 상태 반영)
@@ -539,7 +539,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
           }
         }));
         
-        console.log(`✅ [${new Date().toLocaleTimeString()}] 버퍼에 남은 모든 GPS 데이터 전송 완료, 버퍼: ${gpsBuffer.getBufferSize()}, 패킷: ${gpsBuffer.getTotalPacketsCount()}`);
+        console.log(`[${new Date().toLocaleTimeString()}] 버퍼에 남은 모든 GPS 데이터 전송 완료, 버퍼: ${gpsBuffer.getBufferSize()}, 패킷: ${gpsBuffer.getTotalPacketsCount()}`);
       }
       
       // 추적 중이면 추적 중지
@@ -557,7 +557,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       // 엔진 OFF API 요청
       const response = await hubApiService.sendEngineOff(engineRequest);
       
-      console.log(`✅ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 성공:`, response);
+      console.log(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 성공:`, response);
       showToast("시동 OFF 요청이 성공적으로 전송되었습니다.");
       
       // 초기 상태로 리셋

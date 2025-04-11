@@ -135,6 +135,7 @@ function Header() {
                 variant="default"
                 size="sm"
                 onClick={() => navigate("/login")}
+                className="mr-4"
               >
                 로그인
               </CustomButton>
@@ -170,12 +171,12 @@ function Header() {
                 );
               })}
             </nav>
-            <div className="pt-2 border-t border-foreground/10">
+            <div className="pt-2 w-full border-t border-foreground/10 flex justify-center">
               {token ? (
                 <CustomButton
                   variant="default"
                   size="sm"
-                  className="w-full mx-8"
+                  className="w-3/4"
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
@@ -188,7 +189,7 @@ function Header() {
                   <CustomButton
                     variant="default"
                     size="sm"
-                    className="w-full  mx-8"
+                    className="w-3/4"
                     onClick={() => {
                       navigate("/login");
                       setMobileMenuOpen(false);
