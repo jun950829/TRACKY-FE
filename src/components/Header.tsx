@@ -33,6 +33,11 @@ function Header() {
     if (menu.path === "/admin") {
       return isAdmin;
     }
+
+    if (menu.path === "/emulator") {
+      return isAdmin;
+    }
+
     return true;
   });
 
