@@ -112,13 +112,22 @@ const HistoryRentList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                     {formatDateTime(rent.rentStime)} ~ {formatDateTime(rent.rentEtime)}
                   </div>
                 </div>
+
+                {rent.drivelist.length === 0 ?
+                <div className="flex-shrink-0 ml-2 w-10">
+                  <div className="h-5 text-gray-500 text-xs">
+                    운행 전
+                  </div>
+                </div>
+                :
                 <div className="flex-shrink-0 ml-2 arrow-container">
                   {openRents.has(rent.rentUuid) ? (
                     <ChevronDown className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <ChevronRight className="h-5 w-5 text-gray-500" />
-                  )}
+                    ) : (
+                      <ChevronRight className="h-5 w-5 text-gray-500" />
+                    )}
                 </div>
+                }
               </div>
 
               {/* 하위 운행 목록 */}
