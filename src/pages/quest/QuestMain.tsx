@@ -17,6 +17,7 @@ function QuestMain() {
       console.log(result);
       setIsSubmitted(true);
     } catch (error) {
+      alert('문의 전송 실패, 서버오류');
       console.error('문의 전송 실패:', error);
     } finally {
       setIsLoading(false);
