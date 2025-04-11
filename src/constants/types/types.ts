@@ -40,7 +40,7 @@ export type CarCreateTypes = {
   carPlate: string;
   carYear: string | number;
   purpose: string;
-  status: string;
+  status?: string;
   sum: number;
 }
 
