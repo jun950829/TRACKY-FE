@@ -79,7 +79,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
   return (
     <>
       {mapLoaded ? (
-        <div style={{ height, width: '100%', position: 'relative' }}>
+        <div style={{ height: "300px", width: '100%', position: 'relative' }}>
           {isPathRendering && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
               <div className="flex flex-col items-center">
@@ -92,6 +92,10 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
             key={driveId}
             center={center}
             zoom={7}
+            minZoom={6}
+            maxZoom={18}
+            maxBounds={[[33.0, 124.0], [39.5, 132.0]]} // 대한민국 위경도 범위
+            maxBoundsViscosity={1.0}
             style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
             whenReady={() => {
               // 지도가 준비되면 경로 렌더링 시작
