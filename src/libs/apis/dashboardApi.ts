@@ -32,5 +32,10 @@ export const dashboardApi = {
   getStatistics: async () => {
     const response = await api.get(`${dashboardApiRoot}/statistics`);
     return response.data;
-  }
+  },
+
+  sendQuest: async (data: { title: string; content: string }) => {
+    const response = await api.post("/quests/create", data);
+    return response.data;
+  },
 };

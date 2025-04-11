@@ -125,7 +125,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   return (
     <>
       <Dialog open={isOpen} onOpenChange={closeModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>차량 정보 수정</DialogTitle>
           </DialogHeader>

@@ -16,6 +16,7 @@ import HistoryMain from "./pages/history/HistoryMain";
 import InfoMain from "./pages/info/InfoMain";
 import AdminMain from "./pages/admin/AdminMain";
 import AdminRoute from "./components/AdminRoute";
+import QuestMain from "./pages/quest/QuestMain";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
@@ -23,7 +24,6 @@ const publicRoutes = [
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-  { path: "/emulator", element: <Emulator /> },
   { path: "/info", element: <InfoMain /> },
 ];
 
@@ -35,11 +35,13 @@ const protectedRoutes = [
   { path: "/rents", element: <RentMain /> },
   { path: "/rents/register", element: <RentRegister /> },
   { path: "/history", element: <HistoryMain /> },
+  { path: "/quest", element: <QuestMain /> },
 ];
 
 // 관리자 로그인 후에만 접근 가능한 라우트들
 const adminRoutes = [
   { path: "/admin", element: <AdminMain /> },
+  { path: "/emulator", element: <Emulator /> },
 ];
 
 function Routing() {
