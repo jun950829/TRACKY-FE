@@ -551,7 +551,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       const engineRequest = createEngineOffRequest(
         trackingState.currentPosition,
         onTime,
-        trackingState.totalDistance
+        trackingState.stats.totalDistance
       );
       
       // 엔진 OFF API 요청
