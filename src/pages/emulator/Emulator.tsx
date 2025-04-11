@@ -554,7 +554,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         trackingState.stats.totalDistance
       );
       
-      // 엔진 OFF API 요청
+      // 엔진 OFF API 요청 
       const response = await hubApiService.sendEngineOff(engineRequest);
       
       console.log(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 성공:`, response);
