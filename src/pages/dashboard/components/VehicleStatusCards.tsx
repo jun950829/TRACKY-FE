@@ -16,7 +16,6 @@ const VehicleStatusCards: React.FC<VehicleStatusCardsProps> = ({ carStatus }) =>
         if(status === 'closed') return null;
 
         // 색상 클래스
-        console.log(status);
         const colorClass = CarStatusColorMap[status];
         const StatusIcon = getCarStatusIcon(status);
         

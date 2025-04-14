@@ -12,21 +12,6 @@ function CarSection() {
   const [error, setError] = useState<ApiError | null>(null);
   const [searchObj, setSearchObj] = useState<{searchText: string, status?: string, purpose?: string}>({searchText: ''});
 
-  async function getCars() {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await carApiService.getCars();
-      console.log('getCars: ', res.data);
-      setCarList(res.data);
-    } catch (error) {
-      console.error('차량 목록 조회 실패:', error);
-      setError(createApiError(error));
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   async function searchCars(isReload: boolean, searchText: string = "", status?: string, purpose?: string) {
     setIsLoading(true);
     setError(null);
@@ -59,7 +44,7 @@ function CarSection() {
   } 
 
   useEffect(() => {
-    getCars();
+    searchCars(false);
   }, []);
 
   return (
