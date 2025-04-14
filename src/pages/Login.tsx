@@ -90,23 +90,31 @@ export default function Login() {
     
     try {
       const response = await loginApiService.login(data);
-      const token = response.token;
-      const decoded = jwtDecode<DecodedToken>(token);
-      const member = {
-        memberId: decoded.sub,
-        role: decoded.role,
-        bizName: decoded.bizName,
-      };
 
-      // 로그인 정보 저장
-      setToken(token);
-      setMember(member);
+      if ( response.status === 200 ) {
 
-      // 새로고침 유지용 localStorage 저장
-      localStorage.setItem("memberInfo", JSON.stringify(member));
-      localStorage.setItem("accessToken", token);
+        const token = response.data;
+        const decoded = jwtDecode<DecodedToken>(token);
+        const member = {
+          memberId: decoded.sub,
+          role: decoded.role,
+          bizName: decoded.bizName,
+        };
 
-      navigate("/dashboard");
+        // 로그인 정보 저장
+        setToken(token);
+        setMember(member);
+
+        // 새로고침 유지용 localStorage 저장
+        localStorage.setItem("memberInfo", JSON.stringify(member));
+        localStorage.setItem("accessToken", token);
+
+        navigate("/dashboard");
+
+      } else {
+        setError(createApiError(response));
+      }
+
       
     } catch (error) {
       console.error("Login error: ", error);
