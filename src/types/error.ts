@@ -13,10 +13,6 @@ export interface ApiErrorResponse {
   message?: string
 }
 
-export interface ApiErrorString {
-  message: string
-}
-
 export const isApiError = (error: unknown): error is AxiosError<ApiErrorResponse> => {
   return (
     typeof error === 'object' &&
@@ -38,12 +34,6 @@ export const createApiError = (error: unknown): ApiError => {
   if (error instanceof Error) {
     return {
       message: error.message || '알 수 없는 오류가 발생했습니다.'
-    }
-  }
-
-  if (typeof error === 'object' && error !== null && 'message' in error) {
-    return {
-      message: (error as ApiErrorString).message
     }
   }
 
