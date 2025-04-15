@@ -144,7 +144,7 @@ export default function CarRegister() {
       return;
     }
 
-    // 천승준 - 기본 상태는 대기중
+    // 천승준 - 기본 상태는 대기 중
     const requestData = {
       ...data,
       sum: data.sum,
