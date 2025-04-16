@@ -19,16 +19,7 @@ function Sidebar() {
   const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const logout = useLogout();
-
-  // 현재 경로가 submenu의 경로인지 확인
-  const isSubmenuPath = (path: string) => {
-    return headerMenus.some(menu => 
-      menu.subMenus?.some(submenu => 
-        location.pathname.startsWith(submenu.path)
-      )
-    );
-  };
-
+  
   // 관리자 메뉴를 포함한 메뉴 목록 필터링
   const filteredMenus = headerMenus.filter(menu => {
     if (menu.path === "/admin" || menu.path === "/emulator") {
