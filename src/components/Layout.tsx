@@ -1,33 +1,22 @@
-import { Outlet } from "react-router-dom";
-import Header from "./Header";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { useEffect, useState } from "react";
+// src/components/Layout.tsx
+import { Outlet, useLocation } from "react-router-dom";
+import Sidebar from "@/components/Sidebar";
 
 function Layout() {
-  const token = useAuthStore((state) => state.token);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize(); // 초기 체크
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const location = useLocation();
+  const hideSidebarPaths = ["/login", "/register"];
+  const shouldHideSidebar = hideSidebarPaths.some(path =>
+    location.pathname.startsWith(path)
+  );
 
   return (
-    <div className="min-h-screen bg-background">
-      {token && <Header />}
-      <div className={`${!isMobile && token ? 'pl-64' : ''} transition-all duration-300`}>
-        <main className="container mx-auto px-4 py-6">
-          <Outlet />
-        </main>
-      </div>
+    <div className="flex">
+      {!shouldHideSidebar && <Sidebar />}
+      <main className="flex-1">
+        <Outlet />
+      </main>
     </div>
   );
 }
 
-export default Layout; 
+export default Layout;

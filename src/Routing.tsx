@@ -1,5 +1,6 @@
 // src/Routing.tsx
 import { Routes, Route } from "react-router-dom";
+import Layout from "@/components/Layout";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import CarMain from "./pages/car/CarMain";
@@ -47,26 +48,35 @@ const adminRoutes = [
 function Routing() {
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
-  if (!isHydrated) {
-    return null; // Wait for Zustand to hydrate from localStorage
-  }
+  if (!isHydrated) return null;
 
   return (
     <Routes>
-      {/* 공개 라우트 */}
+      {/* Layout 없이 접근 가능한 공개 라우트 */}
       {publicRoutes.map(({ path, element }) => (
         <Route key={path} path={path} element={element} />
       ))}
 
-      {/* 보호된 라우트 */}
-      {protectedRoutes.map(({ path, element }) => (
-        <Route key={path} path={path} element={<PrivateRoute>{element}</PrivateRoute>} />
-      ))} 
+      {/* Layout 포함된 보호/관리자 라우트 */}
+      <Route element={<Layout />}>
+        {/* 보호된 라우트 */}
+        {protectedRoutes.map(({ path, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<PrivateRoute>{element}</PrivateRoute>}
+          />
+        ))}
 
-      {/* 관리자 라우트 */}
-      {adminRoutes.map(({ path, element }) => (
-        <Route key={path} path={path} element={<AdminRoute>{element}</AdminRoute>} />
-      ))}
+        {/* 관리자 라우트 */}
+        {adminRoutes.map(({ path, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<AdminRoute>{element}</AdminRoute>}
+          />
+        ))}
+      </Route>
     </Routes>
   );
 }
