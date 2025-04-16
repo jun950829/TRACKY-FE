@@ -35,10 +35,10 @@ export const carApiService = {
     
     // 파라미터가 없으면 전체 검색
     if (searchParams === '') {
-      const response = await api.get(`${carApiRoot}/search`);
+      const response = await api.get(`${carApiRoot}`);
       return response.data;
     } else {
-      const response = await api.get(`${carApiRoot}/search?${searchParams}`);
+      const response = await api.get(`${carApiRoot}?${searchParams}`);
       return response.data;
     }
   },
