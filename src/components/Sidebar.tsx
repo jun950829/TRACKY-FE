@@ -12,12 +12,22 @@ function Sidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
   const token = useAuthStore((state) => state.token);
   const member = useAuthStore((state) => state.member);
   const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const logout = useLogout();
+
+  // 현재 경로가 submenu의 경로인지 확인
+  const isSubmenuPath = (path: string) => {
+    return headerMenus.some(menu => 
+      menu.subMenus?.some(submenu => 
+        location.pathname.startsWith(submenu.path)
+      )
+    );
+  };
 
   // 관리자 메뉴를 포함한 메뉴 목록 필터링
   const filteredMenus = headerMenus.filter(menu => {
@@ -48,86 +58,98 @@ function Sidebar() {
 
   if(!isMobile) {
     return (
-      <aside 
-        className={`relative left-0 top-0 h-screen bg-background border-r transition-all duration-300 w-48`}
-      >
-        <div className="flex flex-col h-full">
-          {/* Logo and Toggle */}
-          <div className="flex items-center justify-between p-4 border-b">
-              <div 
-                className="flex items-center gap-2 cursor-pointer" 
-                onClick={() => navigate("/dashboard")}
-              >
-                <svg 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="text-foreground"
-                >
-                  <path 
-                    d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10M7 13.5C7 14.3284 6.32843 15 5.5 15C4.67157 15 4 14.3284 4 13.5C4 12.6716 4.67157 12 5.5 12C6.32843 12 7 12.6716 7 13.5ZM20 13.5C20 14.3284 19.3284 15 18.5 15C17.6716 15 17 14.3284 17 13.5C17 12.6716 17.6716 12 18.5 12C19.3284 12 20 12.6716 20 13.5Z" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="font-bold text-xl text-foreground">Tracky ERP</span>
-              </div>
+      <aside className="h-screen w-64 border-r border-foreground/10 bg-background">
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex h-16 items-center border-b border-foreground/10 px-4">
+            <img 
+              src="/icons/tracky-logo.svg" 
+              alt="Tracky Logo" 
+              className="w-6 h-6 text-foreground"
+            />
+            <span className="ml-2 font-bold text-xl text-foreground">Tracky ERP</span>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-4">
-            {filteredMenus.map((item) => {
-              const isActive = currentPath === item.path;
+          <nav className="flex-1 space-y-1 p-2">
+            {filteredMenus.map((menu) => {
+              const isActive = location.pathname === menu.path;
+              const isSubmenuActive = menu.subMenus?.some(submenu => 
+                location.pathname.startsWith(submenu.path)
+              );
+              const showSubmenu = hoveredMenu === menu.path || isSubmenuActive;
+
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${
-                    isActive
-                      ? 'bg-foreground/5 font-medium'
-                      : 'text-foreground/70 hover:text-foreground hover:bg-foreground/5'
-                  }`}
+                <div 
+                  key={menu.path} 
+                  className="relative"
+                  onMouseEnter={() => setHoveredMenu(menu.path)}
+                  onMouseLeave={() => setHoveredMenu(null)}
                 >
-                  {item.icon && <item.icon size={20} />}
-                  {<span>{item.name}</span>}
-                </Link>
+                  <Link
+                    to={menu.path}
+                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                      isActive || isSubmenuActive
+                        ? "bg-foreground/5 text-foreground"
+                        : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
+                    }`}
+                  >
+                    <menu.icon className="h-4 w-4" />
+                    <span>{menu.name}</span>
+                  </Link>
+
+                  {/* Submenu */}
+                  {menu.subMenus && (
+                    <div 
+                      className={`overflow-hidden transition-all duration-200 ${
+                        showSubmenu ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <div className="pl-6 space-y-1 py-1">
+                        {menu.subMenus.map((submenu) => {
+                          const isSubActive = location.pathname.startsWith(submenu.path);
+                          return (
+                            <Link
+                              key={submenu.path}
+                              to={submenu.path}
+                              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                                isSubActive
+                                  ? "bg-foreground/5 text-foreground"
+                                  : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
+                              }`}
+                            >
+                              <submenu.icon className="h-4 w-4" />
+                              <span>{submenu.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>
 
-          {/* User Info and Logout */}
-          {token ? (
-            <div className="p-4 border-t">
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium">{member?.bizName} 님</span>
-                <CustomButton
-                  variant="default"
-                  size="sm"
-                  onClick={logout}
-                  className="w-full"
-                >
-                  로그아웃
-                </CustomButton>
+          {/* User Section */}
+          <div className="border-t border-foreground/10 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-foreground/10" />
+                <div className="text-sm">
+                  <div className="font-medium">{member?.bizName} 님</div>
+                  <div className="text-foreground/70">{member?.email}</div>
+                </div>
               </div>
+              <CustomButton
+                variant="ghost"
+                size="sm"
+                onClick={logout}
+              >
+                로그아웃
+              </CustomButton>
             </div>
-          ) : (
-            <div className="p-4 border-t">
-              <div className="flex flex-col gap-2">
-                <CustomButton
-                    variant="default"
-                    size="sm"
-                    onClick={() => navigate("/login")}
-                    className="w-full"
-                  >
-                    로그인
-                </CustomButton>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </aside>
     );

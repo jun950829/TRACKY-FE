@@ -1,11 +1,10 @@
 import { 
   Home, 
-  Users, 
-  Settings, 
   Car, 
   FileText, 
   BarChart2,
-  UserCog
+  UserCog,
+  Gamepad
 } from "lucide-react";
 
 export const headerMenus = [
@@ -38,12 +37,12 @@ export const headerMenus = [
     subMenus: [
       {
         name: "운행 일지",
-        path: "/history",
+        path: "/history/daily",
         icon: FileText
       },
       {
         name: "실시간",
-        path: "/history",
+        path: "/history/realtime",
         icon: FileText
       }
     ]
@@ -61,6 +60,6 @@ export const headerMenus = [
   {
     name: "에뮬레이터",
     path: "/emulator",
-    icon: Car
+    icon: Gamepad
   }
 ];
