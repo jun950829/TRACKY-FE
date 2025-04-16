@@ -21,7 +21,7 @@ import QuestMain from "./pages/quest/QuestMain";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
-  { path: "/", element: <About /> },
+  { path: "/", element: <Login /> },
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },

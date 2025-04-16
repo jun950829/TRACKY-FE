@@ -4,7 +4,7 @@ import Sidebar from "@/components/Sidebar";
 
 function Layout() {
   const location = useLocation();
-  const hideSidebarPaths = ["/login", "/register"];
+  const hideSidebarPaths = ["/login"];
   const shouldHideSidebar = hideSidebarPaths.some(path =>
     location.pathname.startsWith(path)
   );
