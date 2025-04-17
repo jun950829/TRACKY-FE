@@ -139,28 +139,27 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="w-full p-3 sm:p-4 space-y-4">
-          {/* 상단 레이어 */}
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+          <div className="w-full h-[250px] flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
-            <div className="w-full lg:w-1/2 h-[250px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
               <VehicleStatusCards statusObj={carStatus} />
             </div>
 
             {/* Reservation Status */}
-            <div className="w-full lg:w-1/2 h-[250px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
               <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
             </div>
           </div>
           
-          {/* 하단 레이어 */}
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+          {/* Main Content - Map and Right Column */}
+          <div className="w-full flex flex-row justify-between items-center gap-4">
             {/* 월별 통계 리포트 */}
-            <div className="w-full lg:w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MonthlyStats monthlyData={monthlyStatsData} />
             </div>
 
             {/* 지도 컴포넌트 영역 */}
-            <div className="w-full lg:w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <div className="w-full h-full relative">
                 <MapLayer isLoading={isLoading} />
               </div>
