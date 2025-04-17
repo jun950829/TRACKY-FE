@@ -81,15 +81,6 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
     );
   }
 
-  // 데이터 없음 표시
-  if (rentList.length === 0) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-gray-500">렌트 정보가 없습니다.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
@@ -106,6 +97,13 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
             </TableRow>
           </TableHeader>
           <TableBody>
+            {rentList.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">
+                    예약 정보가 없습니다.
+                  </TableCell>
+                </TableRow>
+              )}
             {rentList.map((rent) => (
               <TableRow key={rent.rent_uuid} 
               onClick={() => {
@@ -164,6 +162,13 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
+        {rentList.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              예약 정보가 없습니다.
+            </TableCell>
+          </TableRow>
+        )}
         {rentList.map((rent) => (
           <Card key={rent.rent_uuid} className="overflow-hidden">
             <CardContent className="p-4">

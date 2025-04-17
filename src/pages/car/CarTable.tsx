@@ -80,15 +80,6 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
     );
   }
 
-  // 데이터 없음 표시
-  if (carList.length === 0) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-gray-500">차량 정보가 없습니다.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
@@ -104,6 +95,13 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
             </TableRow>
           </TableHeader>
           <TableBody>
+            {carList.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  차량 정보가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
             {carList.map((car, idx) => (
               <TableRow key={idx} 
               onClick={() => {
@@ -155,6 +153,13 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
+        {carList.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  차량 정보가 없습니다.
+                </TableCell>
+              </TableRow>
+        )}
         {carList.map((car) => (
           <Card key={car.mdn} className="overflow-hidden">
             <CardContent onClick={() => {

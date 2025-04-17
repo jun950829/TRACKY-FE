@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 
 export const headerMenus = [
-  {
-    name: "대시보드",
-    path: "/dashboard",
-    icon: Home
-  },
+  // {
+  //   name: "대시보드",
+  //   path: "/dashboard",
+  //   icon: Home
+  // },
   {
     name: "차량",
     path: "/cars",

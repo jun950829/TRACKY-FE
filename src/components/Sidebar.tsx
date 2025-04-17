@@ -19,7 +19,7 @@ function Sidebar() {
   const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const logout = useLogout();
-  
+
   // 관리자 메뉴를 포함한 메뉴 목록 필터링
   const filteredMenus = headerMenus.filter(menu => {
     if (menu.path === "/admin" || menu.path === "/emulator") {
@@ -52,7 +52,7 @@ function Sidebar() {
       <aside className="h-screen w-64 border-r border-foreground/10 bg-background">
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center border-b border-foreground/10 px-4">
+          <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
             <img 
               src="/icons/tracky-logo.svg" 
               alt="Tracky Logo" 
@@ -79,7 +79,7 @@ function Sidebar() {
                 >
                   <Link
                     to={menu.path}
-                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-md font-bold transition-colors ${
                       isActive || isSubmenuActive
                         ? "bg-foreground/5 text-foreground"
                         : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
