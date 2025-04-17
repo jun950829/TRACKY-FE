@@ -14,7 +14,12 @@ import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [carStatus, setCarStatus] = useState<CarStatusTypes[]>([]);
+  const [carStatus, setCarStatus] = useState<CarStatusTypes>({
+    running: 0,
+    waiting: 0,
+    fixing: 0,
+    closed: 0
+  });
   const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
@@ -99,7 +104,7 @@ export default function Dashboard() {
 
           <div className="w-full flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
-            <VehicleStatusCards carStatus={carStatus} />
+            <VehicleStatusCards statusObj={carStatus} />
 
             {/* Reservation Status */}
             <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
