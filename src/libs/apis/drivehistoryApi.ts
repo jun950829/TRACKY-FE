@@ -21,4 +21,12 @@ export const drivehistoryService = {
     const response = await api.get(`${drivehistoryApiRoot}/history/cars?mdn=${mdn}`);
     return response.data;
   },
+  driveHistorybyBizId: async (bizId?: string) => {
+    try {
+      const response = await api.get(`/drivehistory/biz${bizId ? `/${bizId}` : ''}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

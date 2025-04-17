@@ -66,4 +66,15 @@ export interface DriveDetailRecord {
   renterPhone: string;
   purpose: string;
   rentStatus: string;
+}
+
+export interface BizRecord {
+  bizId: string;
+  bizName: string;
+  businessNumber: string;
+  managerName: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+  drivelist: DriveRecord[];
 } 

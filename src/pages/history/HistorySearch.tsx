@@ -11,7 +11,7 @@ const HistorySearch = () => {
     setSearchText, 
     searchType, 
     setSearchType, 
-    setRentResults, 
+    setBizResults, 
     setDriveResults, 
     setLoading, 
     setError,
@@ -23,13 +23,12 @@ const HistorySearch = () => {
     setLoading(true);
     setError(null);
     try {
-      if( searchType === 'rent' ) {
-        const response = await drivehistoryService.driveHistorybyRentUuid(searchText);
-        setRentResults( response.data );
-      setLoading(false);
-    } else if( searchType === 'car' ) {
-      const response = await drivehistoryService.getDriveDetailbyCar(searchText);
-        setDriveResults( response.data );
+      if( searchType === 'biz' ) {
+        const response = await drivehistoryService.driveHistorybyBizId(searchText);
+        setBizResults(response.data);
+      } else if( searchType === 'car' ) {
+        const response = await drivehistoryService.getDriveDetailbyCar(searchText);
+        setDriveResults(response.data);
       }
       setLoading(false);
     } catch (error) {
@@ -45,7 +44,7 @@ const HistorySearch = () => {
   };
 
   // 검색 타입 변경 핸들러
-  const handleTypeChange = (type: 'rent' | 'car') => {
+  const handleTypeChange = (type: 'biz' | 'car') => {
     setSearchText('');
     setSearchType(type);
   };
@@ -62,12 +61,12 @@ const HistorySearch = () => {
       <div className="mb-3">
         <div className="flex space-x-2 mb-2">
           <Button
-            variant={searchType === 'rent' ? 'default' : 'outline'}
+            variant={searchType === 'biz' ? 'default' : 'outline'}
             size="sm"
-            className={`flex-1 ${searchType === 'rent' ? 'bg-black text-white' : ''}`}
-            onClick={() => handleTypeChange('rent')}
+            className={`flex-1 ${searchType === 'biz' ? 'bg-black text-white' : ''}`}
+            onClick={() => handleTypeChange('biz')}
           >
-            예약 별
+            업체 별
           </Button>
           <Button
             variant={searchType === 'car' ? 'default' : 'outline'}
@@ -81,7 +80,7 @@ const HistorySearch = () => {
         
         <div className="flex gap-2">
           <Input
-            placeholder={`${searchType === 'rent' ? '예약 번호' : '차량 관리번호'}로 검색`}
+            placeholder={`${searchType === 'biz' ? '업체 ID' : '차량 관리번호'}로 검색`}
             value={searchText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -102,8 +101,8 @@ const HistorySearch = () => {
       </div>
       
       <div className="text-xs text-gray-500">
-        {searchType === 'rent' 
-          ? '예약 번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다' 
+        {searchType === 'biz' 
+          ? '업체 ID로 검색하여 해당 업체의 모든 운행 기록을 확인할 수 있습니다' 
           : '차량 관리번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
         }
       </div>

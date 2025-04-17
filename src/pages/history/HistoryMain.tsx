@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
-import HistoryList from './HistoryRentList';
+import HistoryBizList from './HistoryBizList';
 import HistoryDetail from './HistoryDetail';
 import HistorySheet from './HistorySheet';
 import { Search } from 'lucide-react';
@@ -18,7 +18,7 @@ interface DrawerState {
 const HistoryMain = () => {
   const { 
     searchType,
-    setRentResults, 
+    setBizResults, 
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
@@ -32,9 +32,9 @@ const HistoryMain = () => {
     setError(null);
     try {
       let driveList;
-      // 대여 기록 조회
-      if( searchType === 'rent' ) {
-        const response = await drivehistoryService.driveHistorybyRentUuid();
+      // 업체 기록 조회
+      if( searchType === 'biz' ) {
+        const response = await drivehistoryService.driveHistorybyBizId();
         driveList = response;
       }
 
@@ -43,7 +43,7 @@ const HistoryMain = () => {
         // 여기는 default 정보가 없음
       }
 
-      setRentResults(driveList.data);
+      setBizResults(driveList.data);
     } catch (error) {
       console.error('운행 기록 조회 실패:', error);
       setError(createApiError(error));
@@ -105,8 +105,8 @@ const HistoryMain = () => {
             </div>
             <div className="flex-grow overflow-y-auto">
               {
-                searchType === 'rent' ? (
-                  <HistoryList />
+                searchType === 'biz' ? (
+                  <HistoryBizList />
                 ) : (
                   <HistoryCarList />
                 )
