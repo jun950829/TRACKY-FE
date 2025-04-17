@@ -5,7 +5,7 @@ import { ReservationCardProps, DateFilter } from "@/constants/types/reservation"
 import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
 
-function ReservationCard({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
+function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DateFilter.TODAY);
 
   useEffect(() => {
@@ -17,12 +17,12 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
   );
   
   return (
-    <Card className="h-full overflow-hidden shadow-sm">
+    <Card className="w-1/2 h-1/2 overflow-hidden shadow-sm">
       <CardHeader className="p-2 bg-white border-b border-zinc-100">
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
             <Calendar className="h-4 w-4 text-primary" />
-            <span>예약 현황</span>
+            <span>반납 현황</span>
           </CardTitle>
           
           <div className="flex items-center space-x-1 text-xs">
@@ -129,4 +129,4 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
   );
 }
 
-export default ReservationCard;
+export default ReturnedStatus;

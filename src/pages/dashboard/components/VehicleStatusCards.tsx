@@ -10,7 +10,7 @@ interface VehicleStatusCardsProps {
 
 const VehicleStatusCards: React.FC<VehicleStatusCardsProps> = ({ carStatus }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div className="w-1/2 grid grid-cols-2 md:grid-cols-2 gap-3">
       {Object.entries(carStatus).length !== 0 && Object.entries(carStatus).map(([status, count]) => {
         
         if(status === 'closed') return null;

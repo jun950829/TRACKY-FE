@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
-import ReservationCard from "@/pages/dashboard/components/ReservationCard";
 import RecentActivity from "./RecentActivity";
 import { CarStatusTypes, ReservationStatus, Statistics, StatisticsItem } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
@@ -11,6 +10,7 @@ import { useSseEvents } from "@/hooks/useSseEvents";
 import MapLayer from "./MapLayer";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
+import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -95,9 +95,15 @@ export default function Dashboard() {
           <p className="text-lg font-medium text-gray-600">대시보드 로딩 중...</p>
         </div>
       ) : (
-        <div className="p-3 sm:p-4 space-y-4">
-          {/* Vehicle Status Cards */}
-          <VehicleStatusCards carStatus={carStatus} />
+        <div className="w-full p-3 sm:p-4 space-y-4">
+
+          <div className="w-full flex flex-row justify-between items-center gap-4">
+            {/* Vehicle Status Cards */}
+            <VehicleStatusCards carStatus={carStatus} />
+
+            {/* Reservation Status */}
+            <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
+          </div>
           
           {/* Main Content - Map and Right Column */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
@@ -118,11 +124,7 @@ export default function Dashboard() {
             
             {/* 오른쪽 컬럼 - 예약 현황과 최근 활동 세로 배치 */}
             <div className="lg:col-span-2">
-              <div className="space-y-5 flex flex-col">
-                <div className="h-[400px] overflow-hidden">
-                  <ReservationCard reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
-                </div>
-                
+              <div className="space-y-5 flex flex-col">      
                 {/* 최근 활동 */}
                 <div className="h-[220px] overflow-hidden">
                   <RecentActivity 
