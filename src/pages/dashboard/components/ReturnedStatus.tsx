@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { ReservationCardProps, DateFilter } from "@/constants/types/reservation";
 import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
@@ -17,7 +17,7 @@ function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: R
   );
   
   return (
-    <Card className="w-1/2 h-full bg-white rounded-lg shadow-sm border border-zinc-100">
+    <Card className="w-full h-full bg-white rounded-lg shadow-sm border border-zinc-100">
       <CardHeader className="p-4 bg-white border-b border-zinc-100">
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">

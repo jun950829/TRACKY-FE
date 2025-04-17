@@ -141,26 +141,26 @@ export default function Dashboard() {
         <div className="w-full p-3 sm:p-4 space-y-4">
           <div className="w-full h-[250px] flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
-            <VehicleStatusCards statusObj={carStatus} />
+            <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
+              <VehicleStatusCards statusObj={carStatus} />
+            </div>
 
             {/* Reservation Status */}
-            <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
+            <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
+              <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
+            </div>
           </div>
           
           {/* Main Content - Map and Right Column */}
           <div className="w-full flex flex-row justify-between items-center gap-4">
-
-
             {/* 월별 통계 리포트 */}
-            <div className="w-1/2 flex bg-white rounded-xl border bg-card text-card-foreground shadow">
+            <div className="w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MonthlyStats monthlyData={monthlyStatsData} />
             </div>
 
             {/* 지도 컴포넌트 영역 */}
-            <div className="w-1/2 flex">
-              {/* 지도 컴포넌트 */}
-              <div className="w-full h-full mb-6 relative">
-                {/* <KoreaMap /> */}
+            <div className="w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+              <div className="w-full h-full relative">
                 <MapLayer isLoading={isLoading} />
               </div>
             </div>
