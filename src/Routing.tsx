@@ -18,6 +18,7 @@ import InfoMain from "./pages/info/InfoMain";
 import AdminMain from "./pages/admin/AdminMain";
 import AdminRoute from "./components/AdminRoute";
 import QuestMain from "./pages/quest/QuestMain";
+import HistoryDetailPage from "./pages/history/HistoryDetailPage";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
@@ -36,6 +37,7 @@ const protectedRoutes = [
   { path: "/rents", element: <RentMain /> },
   { path: "/rents/register", element: <RentRegister /> },
   { path: "/history", element: <HistoryMain /> },
+  { path: "/history/:id", element: <HistoryDetailPage /> },
   { path: "/quest", element: <QuestMain /> },
 ];
 
