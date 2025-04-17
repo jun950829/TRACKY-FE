@@ -51,7 +51,7 @@ export default function VehicleStatusCards({ statusObj, accidentFreeDays = 365 }
 
   return (
     <div className="w-1/2 h-full bg-white rounded-lg shadow p-4">
-      <h2 className="text-lg font-semibold mb-2">차량 현황</h2>
+      <h2 className="text-lg font-semibold">차량 현황</h2>
       <div className="flex flex-row items-center justify-between w-full h-full">
         {/* 왼쪽: 차량 상태 리스트 */}
         <div className="space-y-4 pr-6">
