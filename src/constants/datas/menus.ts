@@ -37,7 +37,7 @@ export const headerMenus = [
     subMenus: [
       {
         name: "운행 일지",
-        path: "/history/daily",
+        path: "/history",
         icon: FileText
       },
       {

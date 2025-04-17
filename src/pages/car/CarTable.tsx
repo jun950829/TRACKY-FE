@@ -153,7 +153,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
-        {carList.length === 0 && (
+      {carList.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
                   차량 정보가 없습니다.

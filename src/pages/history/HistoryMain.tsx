@@ -98,7 +98,7 @@ const HistoryMain = () => {
       
       <div className="flex flex-col md:flex-row flex-grow h-[calc(100vh-80px)] overflow-hidden">
         {/* 데스크탑 검색/목록 영역 (모바일에서는 숨김) */}
-        <div className="hidden md:block w-[350px] lg:w-[400px] md:mr-4 bg-white rounded-lg shadow-md overflow-hidden h-full">
+        <div className="hidden md:block w-[200px] lg:w-[250px] md:mr-4 bg-white rounded-lg shadow-md overflow-hidden h-full">
           <div className="flex flex-col h-full">
             <div className="flex-shrink-0">
               <HistorySearch />
