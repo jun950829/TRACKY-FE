@@ -10,6 +10,7 @@ import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
 import HistoryCarList from './HistoryCarList';
 import { ErrorToast } from '@/components/custom/ErrorToast';
 import { ApiError, createApiError } from '@/types/error';
+import HistoryTable from './HistoryTable';
 
 interface DrawerState {
   [key: string]: boolean;
@@ -118,7 +119,7 @@ const HistoryMain = () => {
         {/* 상세 정보 영역 - 모바일과 데스크탑 모두 표시 */}
         <div className="flex-1 mt-2 md:mt-0 bg-white rounded-lg shadow-md overflow-hidden h-full" style={{ zIndex: 1 }}>
           <div className="h-full overflow-y-auto">
-            <HistoryDetail />
+            <HistoryTable />
           </div>
         </div>
       </div>
