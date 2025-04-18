@@ -113,16 +113,25 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
               className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
                 <TableCell className="whitespace-nowrap">
                   <div className="flex items-center justify-center">
-                    <StatusBadge status={rent.rentStatus} type="rent" />
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <StatusBadge status={rent.rentStatus} type="rent" />
+                    </span>
                   </div>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">{rent.rent_uuid}</TableCell>
-                <TableCell className="whitespace-nowrap">{rent.mdn}</TableCell>
                 <TableCell className="whitespace-nowrap">
-                  {formatDateTime(rent.rentStime)}
+                <span onClick={(e) => e.stopPropagation()}>{rent.rent_uuid}</span></TableCell>
+                <TableCell className="whitespace-nowrap">
+                <span onClick={(e) => e.stopPropagation()}>{rent.mdn}</span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap">
-                  {formatDateTime(rent.rentEtime)}
+                  <span onClick={(e) => e.stopPropagation()}>
+                    {formatDateTime(rent.rentStime)}
+                  </span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap">
+                <span onClick={(e) => e.stopPropagation()}>
+                    {formatDateTime(rent.rentEtime)}
+                  </span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
