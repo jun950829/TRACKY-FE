@@ -15,17 +15,17 @@ export const headerMenus = [
   // },
   {
     name: "차량",
-    path: "/cars",
+    path: "/car",
     icon: Car,
     subMenus: [
       {
         name: "차량 관리",
-        path: "/cars",
+        path: "/car",
         icon: Car
       },
       {
         name: "예약 관리",
-        path: "/rents",
+        path: "/car/rent",
         icon: Car
       }
     ]
@@ -49,7 +49,7 @@ export const headerMenus = [
   },
   {
     name: "통계",
-    path: "/statistics",
+    path: "/statistic",
     icon: BarChart2
   },
   {

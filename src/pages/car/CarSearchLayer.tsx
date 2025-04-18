@@ -85,7 +85,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
 
         <Button
           className="bg-black text-white hover:bg-gray-800"
-          onClick={() => navigate("/cars/register")}
+          onClick={() => navigate("/car/register")}
         >
           <Plus className="w-4 h-4 mr-2" />
           신규 차량 등록
@@ -127,7 +127,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
 
         <Button
           className="bg-black text-white hover:bg-gray-800 w-full"
-          onClick={() => navigate("/cars/register")}
+          onClick={() => navigate("/car/register")}
         >
           <Plus className="w-4 h-4 mr-2" />
           신규 차량 등록
