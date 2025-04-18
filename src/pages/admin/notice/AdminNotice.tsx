@@ -1,8 +1,12 @@
-function AdminNotice() {
+import PageHeader from "@/components/custom/PageHeader";
+import NoticeTable from "./NoticeTable";
+
+export function AdminNotice() {
   return (
-    <div>
-      <h1>공지사항</h1>
-    </div>
+    <section className="w-full h-full p-10">
+      <PageHeader title="시스템 공지사항" />
+      <NoticeTable />
+    </section>
   );
 }
 
