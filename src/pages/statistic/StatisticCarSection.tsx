@@ -1,7 +1,9 @@
+import StatisticCarTable from "./StatisticCarTable";
+
 function StatisticCarSection() {
   return (
-    <div className="w-full h-full flex flex-col p-10">
-      차량 통계 표시
+    <div className="w-full h-full">
+      <StatisticCarTable />
     </div>
   );
 }

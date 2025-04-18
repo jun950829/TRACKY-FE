@@ -9,6 +9,9 @@ export interface StatisticMonthData {
   totalVehicles: StatisticCardData;
   operatingVehicles: StatisticCardData;
   averageOperation: StatisticCardData;
+  averageTrips: StatisticCardData;
+  averageTime: StatisticCardData;
+  averageDistance: StatisticCardData;
 }
 
 export interface StatisticDayData {
@@ -22,6 +25,9 @@ export const monthlyCardData: StatisticMonthData = {
   totalVehicles: { value: 24, unit: '대' },
   operatingVehicles: { value: 18, unit: '대' },
   averageOperation: { value: 75, unit: '%' },
+  averageTrips: { value: 42, unit: '회' },
+  averageTime: { value: 156, unit: '시간' },
+  averageDistance: { value: 284, unit: 'km' },
 };
 
 export const monthlyOperationData: ChartData<'line'> = {
@@ -42,7 +48,7 @@ export const monthlyDistanceData: ChartData<'bar'> = {
   datasets: [
     {
       label: '월별 운행 거리',
-      data: [30.3, 45.23, 25.1, 60.5, 35.7, 50.3],
+      data: [30, 45, 25, 60, 35, 50],
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
   ],
