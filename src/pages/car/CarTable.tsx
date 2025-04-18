@@ -110,11 +110,16 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
               }}
               className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
                 <TableCell className="whitespace-nowrap">
+                 <span onClick={(e) => e.stopPropagation()}>
                   <StatusBadge status={car.status} type="car" />
+                 </span>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">{car.mdn}</TableCell>
-                <TableCell className="whitespace-nowrap">{car.carType}</TableCell>
-                <TableCell className="whitespace-nowrap">{car.carPlate}</TableCell>
+                <TableCell className="whitespace-nowrap">
+                <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span></TableCell>
+                <TableCell className="whitespace-nowrap">
+                <span onClick={(e) => e.stopPropagation()}>{car.carType}</span></TableCell>
+                <TableCell className="whitespace-nowrap">
+                <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span></TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
                     <CustomButton
