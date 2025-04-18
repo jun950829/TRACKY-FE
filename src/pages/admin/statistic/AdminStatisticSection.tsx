@@ -3,21 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  overallStatistics,
-  vehicleStatistics,
-  bizStatistics,
-  monthlyRentalData,
-  dailyActiveUsersData,
-  vehicleTypeDistribution,
-  bizRatingDistribution,
-} from "@/constants/mocks/adminStaticsMockData";
+
 import StatisticCards from "./StatisticCards";
 import BizStatisticTable from "./BizStatisticTable";
 import StatisticCharts from "./StatisticCharts";
 import VehicleStatisticTable from "./VehicleStatisticTable";
+import { bizRatingDistribution, bizStatistics, dailyActiveUsersData, monthlyRentalData, overallStatistics, vehicleStatistics, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
 
-export default function AdminStatisticSection() {
+function AdminStatisticSection() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
@@ -78,3 +71,5 @@ export default function AdminStatisticSection() {
     </div>
   );
 }
+
+export default AdminStatisticSection;
