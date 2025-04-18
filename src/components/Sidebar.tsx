@@ -98,7 +98,7 @@ function Sidebar() {
                     >
                       <div className="pl-6 space-y-1 py-1">
                         {menu.subMenus.map((submenu) => {
-                          const isSubActive = location.pathname.startsWith(submenu.path);
+                          const isSubActive = location.pathname == submenu.path;
                           return (
                             <Link
                               key={submenu.path}

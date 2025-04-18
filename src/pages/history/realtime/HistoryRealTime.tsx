@@ -1,12 +1,11 @@
 import RealTimeMap from "./RealTimeMap";
-import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import RealTimeMapSearch from "./RealTimeMapSearch";
 import { Search } from "lucide-react";
+import RealTimeClock from './RealTimeClock';
 
 function HistoryRealTime() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isVehicleListOpen, setIsVehicleListOpen] = useState(false);
 
   // Mock data for vehicles
   const vehicles = [
@@ -18,36 +17,34 @@ function HistoryRealTime() {
     <div className="w-full h-[calc(100vh-4rem)] relative">
       <RealTimeMap vehicles={vehicles} />
 
-      {/* Search Panel Overlay */}
-      <div className={`z-[1000] absolute top-4 left-4 bg-white rounded-lg shadow-lg transition-all duration-300 ${isSearchOpen ? 'w-4/10 p-4 display-block' : 'w-[40px] p-4'}`}>
-        <RealTimeMapSearch isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
-        <div className="z-[1000] absolute top-4 left-4 flex items-center justify-center">
-          <Search className={`h-4 w-4 rounded-lg ${isSearchOpen ? 'display-none' : ''}`} onClick={() => setIsSearchOpen(true)} />
+      {/* Search UI */}
+      <div className="z-[1000] absolute top-3 left-3">
+        {/* 돋보기 버튼 */}
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className={`flex items-center justify-center w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md hover:bg-gray-50 transition-all duration-300 ${
+            isSearchOpen ? 'opacity-0 invisible' : 'opacity-100 visible'
+          }`}
+        >
+          <Search className="h-4 w-4 text-gray-600" />
+        </button>
+
+        {/* 검색 패널 */}
+        <div
+          className={`absolute top-0 left-0 bg-white rounded-lg shadow-lg transition-all duration-300 origin-top-left ${
+            isSearchOpen
+              ? 'opacity-100 visible scale-100'
+              : 'opacity-0 invisible scale-95'
+          }`}
+        >
+          <div className="p-3">
+            <RealTimeMapSearch onToggle={() => setIsSearchOpen(false)} />
+          </div>
         </div>
       </div>
 
-      {/* Vehicle List Overlay */}
-      <div className={`z-[1000] absolute top-4 right-4 bg-white p-4 rounded-lg shadow-lg transition-all duration-300 ${isVehicleListOpen ? 'w-80' : 'w-12'}`}>
-        <Button
-          variant="outline"
-          size="icon"
-          className="mb-2"
-          onClick={() => setIsVehicleListOpen(!isVehicleListOpen)}
-        >
-          <span className="text-sm">차량</span>
-        </Button>
-        {isVehicleListOpen && (
-          <div className="space-y-2">
-            <div className="max-h-60 overflow-y-auto">
-              {vehicles.map(vehicle => (
-                <div key={vehicle.id} className="p-2 hover:bg-gray-100 cursor-pointer">
-                  {vehicle.name}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      {/* 현재 시간 정보 */}
+      <RealTimeClock />
     </div>
   );
 }

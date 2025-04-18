@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import StatusBadge from "@/components/custom/StatusBadge";
-import HistoryMap from "../HistoryMap";
+import HistoryMap from "./HistoryMap";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
