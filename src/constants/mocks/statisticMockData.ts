@@ -42,7 +42,7 @@ export const monthlyDistanceData: ChartData<'bar'> = {
   datasets: [
     {
       label: '월별 운행 거리',
-      data: [30, 45, 25, 60, 35, 50],
+      data: [30.3, 45.23, 25.1, 60.5, 35.7, 50.3],
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
   ],

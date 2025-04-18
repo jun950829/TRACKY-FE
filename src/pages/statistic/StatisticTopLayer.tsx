@@ -1,9 +1,13 @@
+import { useState } from 'react';
+import StatisticDatePicker from './StatisticDatePicker';
+
 interface StatisticTopLayerProps {
   selectedPeriod: 'month' | 'day';
   setSelectedPeriod: (period: 'month' | 'day') => void;
 }
 
 function StatisticTopLayer({ selectedPeriod, setSelectedPeriod }: StatisticTopLayerProps) {
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
     <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
@@ -29,9 +33,11 @@ function StatisticTopLayer({ selectedPeriod, setSelectedPeriod }: StatisticTopLa
           일별
         </button>
       </div>
-      <div className="text-sm text-gray-500">
-        {selectedPeriod === 'month' ? '월별 통계' : '일별 통계'}
-      </div>
+
+      <StatisticDatePicker
+        selectedPeriod={selectedPeriod}
+        onDateChange={setSelectedDate}
+      />
     </div>
   );
 }
