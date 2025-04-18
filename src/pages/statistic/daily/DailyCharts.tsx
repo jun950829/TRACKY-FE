@@ -1,27 +1,21 @@
-import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from 'chart.js';
-import {
-  dailyOperationData,
-  dailyDistanceData,
-  chartOptions,
-} from '@/constants/mocks/statisticMockData';
+import { Line } from 'react-chartjs-2';
+import { dailyHourlyOperationData } from '@/constants/mocks/statisticMockData';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
   Title,
   Tooltip,
   Legend
@@ -29,25 +23,38 @@ ChartJS.register(
 
 function DailyCharts() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="p-5 border-b border-gray-50">
-          <h3 className="text-lg font-semibold text-gray-900">일별 운행량</h3>
-        </div>
-        <div className="p-5">
+    <div className="p-4">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+        <div className="p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">시간별 운행량</h3>
           <div className="h-[300px]">
-            <Line data={dailyOperationData} options={chartOptions} />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
-        <div className="p-5 border-b border-gray-50">
-          <h3 className="text-lg font-semibold text-gray-900">일별 운행 거리</h3>
-        </div>
-        <div className="p-5">
-          <div className="h-[300px]">
-            <Bar data={dailyDistanceData} options={chartOptions} />
+            <Line
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top' as const,
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: '운행 차량 수'
+                    }
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: '시간'
+                    }
+                  }
+                }
+              }}
+              data={dailyHourlyOperationData}
+            />
           </div>
         </div>
       </div>

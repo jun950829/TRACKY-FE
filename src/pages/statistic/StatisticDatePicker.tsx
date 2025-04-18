@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
-import { format } from 'date-fns';
+import { Calendar as CalendarIcon, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 interface StatisticDatePickerProps {
   selectedPeriod: 'month' | 'day';
-  onDateChange?: (date: Date) => void;
+  selectedDate: Date;
+  onDateChange?: (dates: { start: Date; end: Date }) => void;
 }
 
-function StatisticDatePicker({ selectedPeriod, onDateChange }: StatisticDatePickerProps) {
+function StatisticDatePicker({ selectedPeriod, selectedDate, onDateChange }: StatisticDatePickerProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [displayMonth, setDisplayMonth] = useState(selectedDate);
 
   const formatDate = () => {
     if (selectedPeriod === 'month') {
@@ -20,16 +21,24 @@ function StatisticDatePicker({ selectedPeriod, onDateChange }: StatisticDatePick
   };
 
   const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-    onDateChange?.(date);
+    if (selectedPeriod === 'month') {
+      const start = startOfMonth(date);
+      const end = endOfMonth(date);
+      onDateChange?.({ start, end });
+    } else {
+      onDateChange?.({ start: date, end: date });
+    }
     setIsDatePickerOpen(false);
   };
 
-  const handleQuickSelect = (daysToSubtract: number) => {
-    const newDate = new Date();
-    newDate.setDate(newDate.getDate() - daysToSubtract);
-    handleDateSelect(newDate);
+  const getDaysInMonth = () => {
+    const start = startOfWeek(startOfMonth(displayMonth));
+    const end = endOfWeek(endOfMonth(displayMonth));
+    return eachDayOfInterval({ start, end });
   };
+
+  const days = getDaysInMonth();
+  const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
   return (
     <div className="relative">
@@ -37,64 +46,68 @@ function StatisticDatePicker({ selectedPeriod, onDateChange }: StatisticDatePick
         onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
         className="flex items-center space-x-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <Calendar className="w-4 h-4 text-gray-500" />
+        <CalendarIcon className="w-4 h-4 text-gray-500" />
         <span className="text-sm font-medium text-gray-700">{formatDate()}</span>
         <ChevronDown className="w-4 h-4 text-gray-500" />
       </button>
 
-      {/* 날짜 선택 드롭다운 */}
       {isDatePickerOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
+        <div className="absolute right-0 mt-2 w-[280px] bg-white rounded-lg shadow-lg border border-gray-100 z-50">
           <div className="p-3">
+            {/* 달력 헤더 */}
             <div className="flex items-center justify-between mb-4">
               <button 
                 className="p-2 hover:bg-gray-50 rounded-lg"
-                onClick={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setMonth(newDate.getMonth() - 1);
-                  handleDateSelect(newDate);
-                }}
+                onClick={() => setDisplayMonth(subMonths(displayMonth, 1))}
               >
-                <ChevronDown className="w-4 h-4 text-gray-500 rotate-90" />
+                <ChevronLeft className="w-4 h-4 text-gray-500" />
               </button>
               <span className="text-sm font-medium text-gray-700">
-                {selectedPeriod === 'month' ? '2024년' : '2024년 3월'}
+                {format(displayMonth, 'yyyy년 M월', { locale: ko })}
               </span>
               <button 
                 className="p-2 hover:bg-gray-50 rounded-lg"
-                onClick={() => {
-                  const newDate = new Date(selectedDate);
-                  newDate.setMonth(newDate.getMonth() + 1);
-                  handleDateSelect(newDate);
-                }}
+                onClick={() => setDisplayMonth(addMonths(displayMonth, 1))}
               >
-                <ChevronDown className="w-4 h-4 text-gray-500 -rotate-90" />
-              </button>
-            </div>
-            
-            {/* 빠른 선택 */}
-            <div className="space-y-1 mb-3">
-              <button 
-                onClick={() => handleQuickSelect(0)}
-                className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
-              >
-                이번 {selectedPeriod === 'month' ? '달' : '주'}
-              </button>
-              <button 
-                onClick={() => handleQuickSelect(selectedPeriod === 'month' ? 30 : 7)}
-                className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
-              >
-                지난 {selectedPeriod === 'month' ? '달' : '주'}
-              </button>
-              <button 
-                onClick={() => handleQuickSelect(selectedPeriod === 'month' ? 90 : 14)}
-                className="w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
-              >
-                {selectedPeriod === 'month' ? '3개월' : '2주'} 전
+                <ChevronRight className="w-4 h-4 text-gray-500" />
               </button>
             </div>
 
-            <div className="pt-3 border-t">
+            {/* 요일 헤더 */}
+            <div className="grid grid-cols-7 mb-2">
+              {weekDays.map(day => (
+                <div key={day} className="text-center text-xs font-medium text-gray-500">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* 달력 날짜 */}
+            <div className="grid grid-cols-7 gap-1">
+              {days.map((day, index) => {
+                const isCurrentMonth = isSameMonth(day, displayMonth);
+                const isSelected = isSameDay(day, selectedDate);
+                const isToday = isSameDay(day, new Date());
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleDateSelect(day)}
+                    className={`
+                      p-1 text-sm rounded-lg flex items-center justify-center
+                      ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-700'}
+                      ${isSelected ? 'bg-blue-50 text-blue-600 font-medium' : 'hover:bg-gray-50'}
+                      ${isToday && !isSelected ? 'border border-blue-200' : ''}
+                    `}
+                    disabled={selectedPeriod === 'month' && !isCurrentMonth}
+                  >
+                    {format(day, 'd')}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 pt-3 border-t">
               <button
                 onClick={() => setIsDatePickerOpen(false)}
                 className="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"

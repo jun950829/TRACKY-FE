@@ -4,12 +4,22 @@ import { useState } from "react";
 import StatisticMonthSection from "./monthly/StatisticMonthSection";
 import StatisticDailySection from "./daily/StatisticDailySection";
 import StatisticCarSection from "./StatisticCarSection";
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 function StatisticMain() {
   const [selectedPeriod, setSelectedPeriod] = useState<'month' | 'day'>('month');
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    start: selectedPeriod === 'month' ? startOfMonth(new Date()) : new Date(),
+    end: selectedPeriod === 'month' ? endOfMonth(new Date()) : new Date()
+  });
+
+  const handleDateChange = (dates: { start: Date; end: Date }) => {
+    setSelectedDateRange(dates);
+    // 여기에서 선택된 날짜 범위에 따른 데이터 fetch 로직을 추가할 수 있습니다.
+  };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50">
+    <div className="w-full h-screen overflow-auto bg-gray-50/50">
       <div className="max-w-[1920px] mx-auto p-8">
         {/* 헤더 섹션 */}
         <div className="mb-6">
@@ -21,7 +31,9 @@ function StatisticMain() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <StatisticTopLayer 
               selectedPeriod={selectedPeriod} 
-              setSelectedPeriod={setSelectedPeriod} 
+              setSelectedPeriod={setSelectedPeriod}
+              selectedDateRange={selectedDateRange}
+              onDateChange={handleDateChange}
             />
             {/* 기간별 통계 */}
             <div className="p-6">

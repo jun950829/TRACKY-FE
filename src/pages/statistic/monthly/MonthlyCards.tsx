@@ -33,7 +33,7 @@ function MonthlyCards() {
 
       <div className="bg-gradient-to-br from-green-50 to-white rounded-xl border border-green-100 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="p-5">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">평균 가동률</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">월 평균 가동률</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-green-600">
               {monthlyCardData.averageOperation.value}
@@ -47,13 +47,13 @@ function MonthlyCards() {
 
       <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="p-5">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">평균 운행량</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">월 평균 운행량</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-purple-600">
-              {monthlyCardData.averageTrips?.value || 42}
+              {monthlyCardData.averageTrips.value}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">
-              회
+              {monthlyCardData.averageTrips.unit}
             </span>
           </div>
         </div>
@@ -61,13 +61,13 @@ function MonthlyCards() {
 
       <div className="bg-gradient-to-br from-orange-50 to-white rounded-xl border border-orange-100 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="p-5">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">평균 운행 시간</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">월 평균 운행 시간</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-orange-600">
-              {monthlyCardData.averageTime?.value || 156}
+              {monthlyCardData.averageTime.value}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">
-              시간
+              {monthlyCardData.averageTime.unit}
             </span>
           </div>
         </div>
@@ -78,10 +78,10 @@ function MonthlyCards() {
           <h3 className="text-sm font-medium text-gray-500 mb-4">하루 평균 운행거리</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-cyan-600">
-              {monthlyCardData.averageDistance?.value || 284}
+              {monthlyCardData.averageDistance.value}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">
-              km
+              {monthlyCardData.averageDistance.unit}
             </span>
           </div>
         </div>
