@@ -84,33 +84,35 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
-      <div className="hidden md:block overflow-auto">
+      <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
         <Table className="w-full table-fixed">
-          <TableHeader className="bg-gray-100">
-            <TableRow className="[&>th]:px-1 [&>th]:py-2">
-            <TableHead className="w-14 text-center">예약 상태</TableHead>
-              <TableHead className="w-16">예약 번호</TableHead>
-              <TableHead className="w-20">차량 관리번호</TableHead>
-              <TableHead className="w-24">대여 시작 날짜</TableHead>
-              <TableHead className="w-24">대여 종료 날짜</TableHead>
-              <TableHead className="text-right w-28">관리</TableHead>
+          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+              <TableHead className="w-14 text-center text-gray-600 font-medium">예약 상태</TableHead>
+              <TableHead className="w-16 text-gray-600 font-medium">예약 번호</TableHead>
+              <TableHead className="w-20 text-gray-600 font-medium">차량 관리번호</TableHead>
+              <TableHead className="w-24 text-gray-600 font-medium">대여 시작 날짜</TableHead>
+              <TableHead className="w-24 text-gray-600 font-medium">대여 종료 날짜</TableHead>
+              <TableHead className="text-right w-28 text-gray-600 font-medium">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rentList.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">
-                    예약 정보가 없습니다.
-                  </TableCell>
-                </TableRow>
-              )}
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  예약 정보가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
             {rentList.map((rent) => (
-              <TableRow key={rent.rent_uuid} 
-              onClick={() => {
-                setIsDetail(true);
-                handleCellClick(rent.rent_uuid);
-              }}
-              className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
+              <TableRow 
+                key={rent.rent_uuid} 
+                onClick={() => {
+                  setIsDetail(true);
+                  handleCellClick(rent.rent_uuid);
+                }}
+                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+              >
                 <TableCell className="whitespace-nowrap">
                   <div className="flex items-center justify-center">
                     <span onClick={(e) => e.stopPropagation()}>
@@ -118,18 +120,19 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">
-                <span onClick={(e) => e.stopPropagation()}>{rent.rent_uuid}</span></TableCell>
-                <TableCell className="whitespace-nowrap">
-                <span onClick={(e) => e.stopPropagation()}>{rent.mdn}</span>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{rent.rent_uuid}</span>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{rent.mdn}</span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-gray-700">
                   <span onClick={(e) => e.stopPropagation()}>
                     {formatDateTime(rent.rentStime)}
                   </span>
                 </TableCell>
-                <TableCell className="whitespace-nowrap">
-                <span onClick={(e) => e.stopPropagation()}>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>
                     {formatDateTime(rent.rentEtime)}
                   </span>
                 </TableCell>
@@ -138,7 +141,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     <CustomButton
                       variant="edit"
                       size="sm"
-                      className="h-8"
+                      className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
                       icon={<Edit className="h-4 w-4" />}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -151,7 +154,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     <CustomButton
                       variant="destructive"
                       size="sm"
-                      className="h-8"
+                      className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                       icon={<Trash className="h-4 w-4" />}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -172,20 +175,21 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
         {rentList.length === 0 && (
-          <TableRow>
-            <TableCell colSpan={5} className="text-center">
-              예약 정보가 없습니다.
-            </TableCell>
-          </TableRow>
+          <div className="text-center py-8 text-gray-500">
+            예약 정보가 없습니다.
+          </div>
         )}
         {rentList.map((rent) => (
-          <Card key={rent.rent_uuid} className="overflow-hidden">
+          <Card 
+            key={rent.rent_uuid} 
+            className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
             <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-3">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between space-x-2">
                     <h3
-                      className="font-semibold text-lg cursor-pointer hover:text-blue-600"
+                      className="font-semibold text-gray-800 cursor-pointer hover:text-blue-600 transition-colors duration-200"
                       onClick={() => {
                         setIsDetail(true);
                         handleCellClick(rent.rent_uuid);
@@ -195,21 +199,23 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                     </h3>
                     <StatusBadge status={rent.rentStatus} type="rent" />
                   </div>
-                  <p className="text-gray-500 text-sm">차량: {rent.mdn}</p>
+                  <p className="text-gray-600 text-sm">차량: {rent.mdn}</p>
                 </div>
               </div>
-              <div className="mt-2 text-sm">
-                <div className="flex justify-between py-1 border-b">
+              <div className="mt-3 text-sm">
+                <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-500">대여 기간</span>
-                  <span className="text-xs">{formatDateTime(rent.rentStime)}</span>
-                  <span className="text-xs">{formatDateTime(rent.rentEtime)}</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-gray-700 text-xs">{formatDateTime(rent.rentStime)}</span>
+                    <span className="text-gray-700 text-xs">{formatDateTime(rent.rentEtime)}</span>
+                  </div>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
                 <CustomButton
                   variant="edit"
                   size="sm"
-                  className="flex-1 h-8"
+                  className="flex-1 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
                   icon={<Edit className="h-4 w-4" />}
                   onClick={() => {
                     setIsUpdate(true);
@@ -221,7 +227,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                 <CustomButton
                   variant="destructive"
                   size="sm"
-                  className="flex-1 h-8"
+                  className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                   icon={<Trash className="h-4 w-4" />}
                   onClick={() => {
                     setIsDelete(true);

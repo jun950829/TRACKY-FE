@@ -76,20 +76,24 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
 
   // 결과가 없을 때 표시할 메시지
   if (searchType === "biz" && bizResults.length === 0) {
-    return <div className="p-4 text-center text-gray-500">검색 결과가 없습니다</div>;
+    return (
+      <div className="p-6 text-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
+        검색 결과가 없습니다
+      </div>
+    );
   }
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto space-y-2">
       {searchType === "biz" ? (
         // 업체 검색 결과 목록
-        <div className="divide-y">
+        <div className="divide-y divide-gray-100">
           {bizResults.map((biz) => (
             <div key={biz.bizId} className="text-sm">
               <div
-                className={`p-3 cursor-pointer transition-colors duration-200 flex justify-between items-center
+                className={`p-4 cursor-pointer transition-all duration-200 flex justify-between items-center
                   ${selectedBiz?.bizId === biz.bizId 
-                    ? "bg-blue-50 border-l-4 border-blue-500" 
+                    ? "bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500" 
                     : "hover:bg-gray-50"}`}
                 onClick={(e) => {
                   // 화살표 영역 클릭이거나 drawer가 열려있는 경우
@@ -107,27 +111,27 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                 }}
               >
                 <div className="flex-1 min-w-0">
-                  <div className={`font-medium truncate ${selectedBiz?.bizId === biz.bizId ? "text-blue-700" : ""}`}>
+                  <div className={`font-medium truncate ${selectedBiz?.bizId === biz.bizId ? "text-blue-700" : "text-gray-800"}`}>
                     업체명 : {biz.bizName}
                   </div>
-                  <div className="text-xs text-gray-500 truncate">
-                    <strong>{biz.managerName}</strong> | 사업자번호 <strong>{biz.businessNumber}</strong>
+                  <div className="text-xs text-gray-500 truncate mt-1">
+                    <strong className="text-gray-700">{biz.managerName}</strong> | 사업자번호 <strong className="text-gray-700">{biz.businessNumber}</strong>
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 mt-1">
                     {formatDateTime(biz.createdAt)} ~ {formatDateTime(biz.updatedAt)}
                   </div>
                 </div>
 
                 {biz.drivelist.length === 0 ? (
                   <div className="flex-shrink-0 ml-2 w-10">
-                    <div className="h-5 text-gray-500 text-xs">운행 전</div>
+                    <div className="h-5 text-gray-400 text-xs bg-gray-50 px-2 py-1 rounded">운행 전</div>
                   </div>
                 ) : (
                   <div className="flex-shrink-0 ml-2 arrow-container">
                     {openBiz.has(biz.bizId) ? (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                      <ChevronDown className="h-5 w-5 text-gray-400 transition-transform duration-200" />
                     ) : (
-                      <ChevronRight className="h-5 w-5 text-gray-500" />
+                      <ChevronRight className="h-5 w-5 text-gray-400 transition-transform duration-200" />
                     )}
                   </div>
                 )}
@@ -139,21 +143,25 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
                   {biz.drivelist.map((drive, idx: number) => (
                     <div
                       key={idx}
-                      className={`p-2 pl-3 border-l-2 cursor-pointer transition-colors duration-200 mb-1 ml-2 text-xs
+                      className={`p-3 pl-4 border-l-2 cursor-pointer transition-all duration-200 mb-1 ml-2 text-xs
                         ${selectedDetail?.driveId === drive.driveId 
-                          ? "border-blue-500 bg-blue-50" 
-                          : "border-gray-300 hover:bg-gray-100"}`}
+                          ? "border-blue-500 bg-gradient-to-r from-blue-50 to-blue-100" 
+                          : "border-gray-200 hover:bg-gray-100"}`}
                       onClick={() => handleDriveClick(drive.driveId)}
                     >
-                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-500"}`}>운행 ID : {drive.driveId}</div>
-                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-500"}`}>
+                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
+                        운행 ID : {drive.driveId}
+                      </div>
+                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"} mt-1`}>
                         {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
                       </div>
-                      <div className="mt-1 text-xs">
+                      <div className="mt-1">
                         <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
                           거리:
                         </span>{" "}
-                        {(drive.sum * 0.001).toFixed(2)}km
+                        <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"}`}>
+                          {(drive.sum * 0.001).toFixed(2)}km
+                        </span>
                       </div>
                     </div>
                   ))}
