@@ -1,6 +1,7 @@
 import PageHeader from "@/components/custom/PageHeader";
 import NoticeTable from "./NoticeTable";
 
+
 export function AdminNotice() {
   return (
     <section className="w-full h-full p-10">
