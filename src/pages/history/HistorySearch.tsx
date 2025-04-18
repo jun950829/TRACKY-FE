@@ -61,20 +61,20 @@ const HistorySearch = () => {
       <div className="mb-3">
         <div className="flex space-x-2 mb-2">
           <Button
-            variant={searchType === 'biz' ? 'default' : 'outline'}
-            size="sm"
-            className={`flex-1 ${searchType === 'biz' ? 'bg-black text-white' : ''}`}
-            onClick={() => handleTypeChange('biz')}
-          >
-            업체 별
-          </Button>
-          <Button
             variant={searchType === 'car' ? 'default' : 'outline'}
             size="sm"
             className={`flex-1 ${searchType === 'car' ? 'bg-black text-white' : ''}`}
             onClick={() => handleTypeChange('car')}
           >
             차량 별
+          </Button>
+          <Button
+            variant={searchType === 'biz' ? 'default' : 'outline'}
+            size="sm"
+            className={`flex-1 ${searchType === 'biz' ? 'bg-black text-white' : ''}`}
+            onClick={() => handleTypeChange('biz')}
+          >
+            업체 별
           </Button>
         </div>
         

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RentRecord, DriveRecord, DriveDetailRecord, BizRecord } from "@/constants/historyTypes";
+import { RentRecord, DriveRecord, DriveDetailRecord, BizRecord } from "@/constants/types/historyTypes";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
@@ -38,7 +38,7 @@ interface HistoryState {
 // 초기 상태
 const initialState = {
   searchText: '',
-  searchType: 'biz' as const,
+  searchType: 'car' as const,
   isLoading: false,
   error: null,
   selectedBiz: null,
