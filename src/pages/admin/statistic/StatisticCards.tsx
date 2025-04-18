@@ -5,7 +5,7 @@ interface StatisticCardsProps {
   data: OverallStatistic;
 }
 
-export default function StatisticCards({ data }: StatisticCardsProps) {
+function StatisticCards({ data }: StatisticCardsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
@@ -50,3 +50,5 @@ export default function StatisticCards({ data }: StatisticCardsProps) {
     </div>
   );
 } 
+
+export default StatisticCards;

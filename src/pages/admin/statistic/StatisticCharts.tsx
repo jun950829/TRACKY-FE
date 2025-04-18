@@ -31,7 +31,7 @@ interface StatisticChartsProps {
   bizRatingDistribution: { rating: string; count: number }[];
 }
 
-export default function StatisticCharts({
+function StatisticCharts({
   monthlyRentalData,
   dailyActiveUsersData,
   vehicleTypeDistribution,
@@ -163,3 +163,5 @@ export default function StatisticCharts({
     </div>
   );
 } 
+
+export default StatisticCharts;

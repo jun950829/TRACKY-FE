@@ -8,7 +8,7 @@ interface BizStatisticTableProps {
   data: BizStatistic[];
 }
 
-export default function BizStatisticTable({ data }: BizStatisticTableProps) {
+function BizStatisticTable({ data }: BizStatisticTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -95,3 +95,5 @@ export default function BizStatisticTable({ data }: BizStatisticTableProps) {
     </div>
   );
 } 
+
+export default BizStatisticTable;

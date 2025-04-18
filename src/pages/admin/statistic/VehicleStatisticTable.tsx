@@ -8,7 +8,7 @@ interface VehicleStatisticTableProps {
   data: VehicleStatistic[];
 }
 
-export default function VehicleStatisticTable({ data }: VehicleStatisticTableProps) {
+function VehicleStatisticTable({ data }: VehicleStatisticTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -95,3 +95,5 @@ export default function VehicleStatisticTable({ data }: VehicleStatisticTablePro
     </div>
   );
 } 
+
+export default VehicleStatisticTable;
