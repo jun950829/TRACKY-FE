@@ -55,7 +55,24 @@ export const headerMenus = [
   {
     name: "관리자",
     path: "/admin",
-    icon: UserCog
+    icon: UserCog,
+    subMenus: [
+      {
+        name: "공지사항",
+        path: "/admin/notice",
+        icon: UserCog
+      },
+      {
+        name: "업체 관리",
+        path: "/admin/biz",
+        icon: UserCog
+      },
+      {
+        name: "관리자 통계",
+        path: "/admin/statistic",
+        icon: UserCog
+      }
+    ]
   },
   {
     name: "에뮬레이터",
