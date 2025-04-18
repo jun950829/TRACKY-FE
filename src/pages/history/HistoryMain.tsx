@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
 import HistoryBizList from './HistoryBizList';
-import HistoryDetail from './HistoryDetail';
 import HistorySheet from './HistorySheet';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
