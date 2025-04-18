@@ -1,11 +1,15 @@
 import DailyCards from './DailyCards';
 import DailyCharts from './DailyCharts';
 
-function StatisticDailySection() {
+interface StatisticDailySectionProps {
+  selectedDate: Date;
+}
+
+function StatisticDailySection({ selectedDate }: StatisticDailySectionProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <DailyCards />
-      <DailyCharts />
+      <DailyCharts selectedDate={selectedDate} />
     </div>
   );
 }

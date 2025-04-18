@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -7,9 +7,19 @@ interface StatisticDatePickerProps {
   selectedPeriod: 'month' | 'day';
   selectedDate: Date;
   onDateChange?: (dates: { start: Date; end: Date }) => void;
+  placeholder?: string;
+  clearable?: boolean;
+  onClear?: () => void;
 }
 
-function StatisticDatePicker({ selectedPeriod, selectedDate, onDateChange }: StatisticDatePickerProps) {
+function StatisticDatePicker({ 
+  selectedPeriod, 
+  selectedDate, 
+  onDateChange,
+  placeholder = '날짜 선택',
+  clearable = false,
+  onClear
+}: StatisticDatePickerProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [displayMonth, setDisplayMonth] = useState(selectedDate);
 
@@ -19,7 +29,7 @@ function StatisticDatePicker({ selectedPeriod, selectedDate, onDateChange }: Sta
     }
     return format(selectedDate, 'yyyy년 M월 d일', { locale: ko });
   };
-
+  
   const handleDateSelect = (date: Date) => {
     if (selectedPeriod === 'month') {
       const start = startOfMonth(date);
@@ -42,14 +52,26 @@ function StatisticDatePicker({ selectedPeriod, selectedDate, onDateChange }: Sta
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-        className="flex items-center space-x-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-      >
-        <CalendarIcon className="w-4 h-4 text-gray-500" />
-        <span className="text-sm font-medium text-gray-700">{formatDate()}</span>
-        <ChevronDown className="w-4 h-4 text-gray-500" />
-      </button>
+      <div className="flex items-center">
+        <button
+          onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+          className="flex items-center space-x-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <CalendarIcon className="w-4 h-4 text-gray-500" />
+          <span className="text-sm font-medium text-gray-700">
+            {onClear && !selectedDate ? placeholder : formatDate()}
+          </span>
+          <ChevronDown className="w-4 h-4 text-gray-500" />
+        </button>
+        {clearable && onClear && selectedDate && (
+          <button
+            onClick={onClear}
+            className="ml-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4 text-gray-500" />
+          </button>
+        )}
+      </div>
 
       {isDatePickerOpen && (
         <div className="absolute right-0 mt-2 w-[280px] bg-white rounded-lg shadow-lg border border-gray-100 z-50">
@@ -86,7 +108,7 @@ function StatisticDatePicker({ selectedPeriod, selectedDate, onDateChange }: Sta
             <div className="grid grid-cols-7 gap-1">
               {days.map((day, index) => {
                 const isCurrentMonth = isSameMonth(day, displayMonth);
-                const isSelected = isSameDay(day, selectedDate);
+                const isSelected = selectedDate && isSameDay(day, selectedDate);
                 const isToday = isSameDay(day, new Date());
 
                 return (

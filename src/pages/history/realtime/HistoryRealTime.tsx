@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
 
 function HistoryRealTime() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
 
   // Mock data for vehicles
   const vehicles = [
