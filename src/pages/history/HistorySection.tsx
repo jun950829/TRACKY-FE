@@ -5,7 +5,7 @@ import HistoryBizList from './HistoryBizList';
 import HistorySheet from './HistorySheet';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
+import { driveService } from '@/libs/apis/driveApi';
 import HistoryCarList from './HistoryCarList';
 import { ErrorToast } from '@/components/custom/ErrorToast';
 import { ApiError, createApiError } from '@/types/error';
@@ -19,7 +19,8 @@ function HistorySection() {
 
   const { 
     searchType,
-    setBizResults, 
+    setBizResults,
+    setDriveResults,
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
@@ -29,22 +30,27 @@ function HistorySection() {
   });
   const [error, setError] = useState<ApiError | null>(null);
 
-  async function getDriveHistoryList() {
+  async function getDriveList() {
     setError(null);
     try {
       let driveList;
       // 업체 기록 조회
-      if( searchType === 'biz' ) {
-        const response = await drivehistoryService.driveHistorybyBizId();
-        driveList = response;
-      }
+      // if( searchType === 'biz' ) {
+      //   const response = await driveService.driveHistorybyBizId();
+      //   driveList = response;
+      // }
 
       // 차량 기록 조회
       if( searchType === 'car' ) {
+        const response = await driveService.getCars();
+        driveList = response;
+
+        setDriveResults(driveList.data);
         // 여기는 default 정보가 없음
+
       }
 
-      setBizResults(driveList.data);
+      // setBizResults(driveList.data);
     } catch (error) {
       console.error('운행 기록 조회 실패:', error);
       setError(createApiError(error));
@@ -53,7 +59,7 @@ function HistorySection() {
 
   // 초기 데이터 로드
   useEffect(() => {
-    getDriveHistoryList();
+    getDriveList();
   }, []);
 
 
