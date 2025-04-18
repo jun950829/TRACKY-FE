@@ -1,27 +1,30 @@
 // src/Routing.tsx
 import { Routes, Route } from "react-router-dom";
-import { useAuthStore } from "./stores/useAuthStore";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 import Layout from "@/components/Layout";
-import Login from "./pages/Login";
-import About from "./pages/About";
-import CarMain from "./pages/car/CarMain";
-import CarRegister from "./pages/car/CarRegister";
-import RentMain from "./pages/rent/RentMain";
-import RentRegister from "./pages/rent/RentRegister";
-import Emulator from "./pages/emulator/Emulator";
-import PrivateRoute from "./components/PrivateRoute";
-import Register from "./pages/Register";
-import DashboardMain from "./pages/dashboard/DashBoardMain";
+import Login from "../../pages/Login";
+import About from "../../pages/About";
+import CarMain from "../../pages/car/CarMain";
+import RentMain from "../../pages/rent/RentMain";
+import Emulator from "../../pages/emulator/Emulator";
+import PrivateRoute from "./PrivateRoute";
+import Register from "../../pages/Register";
+import DashboardMain from "../../pages/dashboard/DashBoardMain";
 
-import HistoryMain from "./pages/history/HistoryMain";
-import InfoMain from "./pages/info/InfoMain";
-import AdminMain from "./pages/admin/AdminMain";
-import AdminRoute from "./components/AdminRoute";
-import QuestMain from "./pages/quest/QuestMain";
-import HistoryRealTime from "./pages/history/realtime/HistoryRealTime";
-import HistoryDetailPage from "./pages/history/detail/HistoryDetailPage";
-import StatisticMain from "./pages/statistic/StatisticMain";
+import HistoryMain from "../../pages/history/HistoryMain";
+import InfoMain from "../../pages/info/InfoMain";
+import AdminMain from "../../pages/admin/AdminMain";
+import AdminRoute from "./AdminRoute";
+import QuestMain from "../../pages/quest/QuestMain";
+import HistoryRealTime from "../../pages/history/realtime/HistoryRealTime";
+import HistoryDetailPage from "../../pages/history/detail/HistoryDetailPage";
+import StatisticMain from "../../pages/statistic/StatisticMain";
+import CarRegister from "../../pages/car/register/CarRegister";
+import RentRegister from "../../pages/rent/register/RentRegister";
+import AdminBizSection from "@/pages/admin/biz/AdminBizSection";
+import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection";
+import AdminNotice from "@/pages/admin/notice/AdminNotice";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
@@ -49,6 +52,9 @@ const protectedRoutes = [
 // 관리자 로그인 후에만 접근 가능한 라우트들
 const adminRoutes = [
   { path: "/admin", element: <AdminMain /> },
+  { path: "/admin/biz", element: <AdminBizSection /> },
+  { path: "/admin/statistic", element: <AdminStatisticSection /> },
+  { path: "/admin/notice", element: <AdminNotice /> },
   { path: "/emulator", element: <Emulator /> },
 ];
 
