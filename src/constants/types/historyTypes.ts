@@ -7,26 +7,30 @@ export interface GpsData {
 }
 
 // 운행 기록 타입 정의
-export interface DriveRecord {
-  driveId: number;
-  mdn: string;
-  rentUuid: string;
-  driveOnTime: string;
-  driveOffTime: string;
-  onLat: number;
-  onLon: number;
-  offLat: number;
-  offLon: number;
-  sum: number;
-  maxSpeed: number;
-  avgSpeed: number;
-  points: {
-    lat: number;
-    lng: number;
-    speed: number;
-    timestamp: string;
-  }[];
+export interface CarRecord {
+  carPlate: string;
+  carType: string;
 }
+// export interface DriveRecord {
+//   driveId: number;
+//   mdn: string;
+//   rentUuid: string;
+//   driveOnTime: string;
+//   driveOffTime: string;
+//   onLat: number;
+//   onLon: number;
+//   offLat: number;
+//   offLon: number;
+//   sum: number;
+//   maxSpeed: number;
+//   avgSpeed: number;
+//   points: {
+//     lat: number;
+//     lng: number;
+//     speed: number;
+//     timestamp: string;
+//   }[];
+// }
 
 // 대여 기록 타입 정의
 export interface RentRecord {
@@ -40,7 +44,7 @@ export interface RentRecord {
   rentEtime: string;
   rentLoc: string;
   returnLoc: string;
-  drivelist: DriveRecord[];
+  drivelist: CarRecord[];
   totalDistance: number;
   createdAt: string;
 }
@@ -76,5 +80,5 @@ export interface BizRecord {
   phone: string;
   createdAt: string;
   updatedAt: string;
-  drivelist: DriveRecord[];
+  drivelist: CarRecord[];
 } 

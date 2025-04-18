@@ -19,7 +19,7 @@ export const rentApiService = {
             const response = await api.get(`${rentApiRoot}/?rentUuid=${searchText}`);
             return response.data;
         }else {
-            const response = await api.get(`${rentApiRoot}/all`);
+            const response = await api.get(`${rentApiRoot}`);
             return response.data;
         }
     },
@@ -45,10 +45,10 @@ export const rentApiService = {
         console.log('검색 파라미터 문자열:', searchParams);
         
         if (searchParams === "") {
-            const response = await api.get(`${rentApiRoot}/all`);
+            const response = await api.get(`${rentApiRoot}`);
             return response.data;
         } else {
-            const response = await api.get(`${rentApiRoot}/?${searchParams}`);
+            const response = await api.get(`${rentApiRoot}?${searchParams}`);
             return response.data;
         }
     },

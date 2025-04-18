@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RentRecord, DriveRecord, DriveDetailRecord, BizRecord } from "@/constants/types/historyTypes";
+import { RentRecord, CarRecord, DriveDetailRecord, BizRecord } from "@/constants/types/historyTypes";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
@@ -11,12 +11,12 @@ interface HistoryState {
   
   // 선택된 항목
   selectedBiz: BizRecord | null;
-  selectedDrive: DriveRecord | null;
+  selectedDrive: CarRecord | null;
   selectedDetail: DriveDetailRecord | null;
   
   // 검색 결과
   bizResults: BizRecord[];
-  driveResults: DriveRecord[];
+  driveResults: CarRecord[];
   
   // 드로어 상태
   isDrawerOpen: boolean;
@@ -25,9 +25,9 @@ interface HistoryState {
   setSearchText: (text: string) => void;
   setSearchType: (type: 'biz' | 'car') => void;
   setBizResults: (bizs: BizRecord[]) => void;
-  setDriveResults: (drives: DriveRecord[]) => void;
+  setDriveResults: (drives: CarRecord[]) => void;
   setSelectedBiz: (biz: BizRecord | null) => void;
-  setSelectedDrive: (drive: DriveRecord | null) => void;
+  setSelectedDrive: (drive: CarRecord | null) => void;
   setSelectedDetail: (detail: DriveDetailRecord | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;

@@ -1,6 +1,6 @@
 import api from "./api";
 
-const drivehistoryApiRoot = "/drives";
+const drivehistoryApiRoot = "/drivess";
 
 export const drivehistoryService = {
   driveHistorybyRentUuid: async (rentUuid: string = "") => {
