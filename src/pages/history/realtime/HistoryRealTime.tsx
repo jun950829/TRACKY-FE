@@ -2,6 +2,7 @@ import RealTimeMap from "./RealTimeMap";
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import RealTimeMapSearch from "./RealTimeMapSearch";
+import { Search } from "lucide-react";
 
 function HistoryRealTime() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -17,10 +18,12 @@ function HistoryRealTime() {
     <div className="w-full h-[calc(100vh-4rem)] relative">
       <RealTimeMap vehicles={vehicles} />
 
-
       {/* Search Panel Overlay */}
-      <div className={`z-[1000] absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg transition-all duration-300 ${isSearchOpen ? 'w-80' : 'w-12'}`}>
-        <RealTimeMapSearch />
+      <div className={`z-[1000] absolute top-4 left-4 bg-white rounded-lg shadow-lg transition-all duration-300 ${isSearchOpen ? 'w-4/10 p-4 display-block' : 'w-[40px] p-4'}`}>
+        <RealTimeMapSearch isOpen={isSearchOpen} onToggle={() => setIsSearchOpen(!isSearchOpen)} />
+        <div className="z-[1000] absolute top-4 left-4 flex items-center justify-center">
+          <Search className={`h-4 w-4 rounded-lg ${isSearchOpen ? 'display-none' : ''}`} onClick={() => setIsSearchOpen(true)} />
+        </div>
       </div>
 
       {/* Vehicle List Overlay */}
