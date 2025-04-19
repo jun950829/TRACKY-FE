@@ -15,20 +15,17 @@ export const carApiService = {
     return response.data;
   },
 
-  searchByFilters: async (searchText: string, status?: string, purpose?: string) => {
+  searchByFilters: async (search: string, status?: string) => {
     // 검색 파라미터 구성
     const params = new URLSearchParams();
     
     // searchText가 빈 문자열이 아닐 때만 mdn 파라미터로 추가
-    if (searchText && searchText.trim() !== '') {
-      params.append('mdn', searchText.trim());
+    if (search && search.trim() !== '') {
+      params.append('search', search.trim());
     }
     
     if (status) {
       params.append('status', status);
-    }
-    if (purpose) {
-      params.append('purpose', purpose);
     }
 
     const searchParams = params.toString();

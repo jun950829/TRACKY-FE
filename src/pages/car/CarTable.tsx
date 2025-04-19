@@ -88,9 +88,9 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
           <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
             <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
               <TableHead className="w-10 text-gray-600 font-medium">차량 상태</TableHead>
-              <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
-              <TableHead className="w-12 text-gray-600 font-medium">차량 모델</TableHead>
               <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
+              <TableHead className="w-12 text-gray-600 font-medium">차량 모델</TableHead>
+              <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
               <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
             </TableRow>
           </TableHeader>
@@ -117,13 +117,13 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                   </span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
+                  <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
                   <span onClick={(e) => e.stopPropagation()}>{car.carType}</span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
+                  <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
