@@ -31,8 +31,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Custom components
-import GpsMap from "@/components/custom/GpsMap";
 import EmulatorSettings from "@/pages/emulator/EmulatorSettings";
+import GpsMap from "@/components/GpsMap";
 
 // Car SVG icon
 const CarIcon = () => (

@@ -5,21 +5,21 @@ const rentApiRoot = "/rents";
 
 export const rentApiService = {
     getRents: async () => {
-        const response = await api.get(`${rentApiRoot}/all`);
+        const response = await api.get(`${rentApiRoot}`);
         return response.data;
     },
 
     getMdns: async () => {
-        const response = await api.get(`${rentApiRoot}/cars/all`);
+        const response = await api.get(`${rentApiRoot}/cars`);
         return response.data;
     },
 
     searchByRentUuid: async (searchText: string) => {
         if(searchText != '') {
-            const response = await api.get(`/rents/search?rentUuid=${searchText}`);
+            const response = await api.get(`${rentApiRoot}/?rentUuid=${searchText}`);
             return response.data;
         }else {
-            const response = await api.get(`${rentApiRoot}/all`);
+            const response = await api.get(`${rentApiRoot}`);
             return response.data;
         }
     },
@@ -45,37 +45,37 @@ export const rentApiService = {
         console.log('검색 파라미터 문자열:', searchParams);
         
         if (searchParams === "") {
-            const response = await api.get(`${rentApiRoot}/all`);
+            const response = await api.get(`${rentApiRoot}`);
             return response.data;
         } else {
-            const response = await api.get(`${rentApiRoot}/search?${searchParams}`);
+            const response = await api.get(`${rentApiRoot}?${searchParams}`);
             return response.data;
         }
     },
 
     searchOneByRentUuid: async (rentUuid: string) => {
-        const response = await api.get(`${rentApiRoot}/search/${rentUuid}`);
+        const response = await api.get(`${rentApiRoot}/${rentUuid}`);
         return response.data;
     },
 
     searchByRentUuidDetail: async (rentUuid: string) => {
         console.log('searchByRentUuidDetail rentUuid :', rentUuid);
-        const response = await api.get(`${rentApiRoot}/search/${rentUuid}/detail`);
+        const response = await api.get(`${rentApiRoot}/${rentUuid}`);
         return response.data;
     },
 
     createRent: async (data: RentCreateTypes) => {
-        const response = await api.post(`${rentApiRoot}/create`, data);
+        const response = await api.post(`${rentApiRoot}`, data);
         return response.data;
     },
 
     updateRent: async ( rentUuid: string, data: RentUpdateTypes) => {
-        const response = await api.patch(`${rentApiRoot}/update/${rentUuid}`, data);
+        const response = await api.patch(`${rentApiRoot}/${rentUuid}`, data);
         return response.data;
     },
 
     deleteRent: async (rentUuid: string) => {
-        const response = await api.delete(`${rentApiRoot}/delete/${rentUuid}`);
+        const response = await api.delete(`${rentApiRoot}/${rentUuid}`);
         return response.data;
     }
 };

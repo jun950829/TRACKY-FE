@@ -8,7 +8,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // 컴포넌트 임포트
-import MapView from './components/MapView';
+import MapView from '../components/MapView';
 
 // 유틸리티 함수 임포트
 import { 

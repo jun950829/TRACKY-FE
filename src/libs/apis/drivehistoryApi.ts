@@ -1,6 +1,6 @@
 import api from "./api";
 
-const drivehistoryApiRoot = "/drives";
+const drivehistoryApiRoot = "/drivess";
 
 export const drivehistoryService = {
   driveHistorybyRentUuid: async (rentUuid: string = "") => {
@@ -20,5 +20,13 @@ export const drivehistoryService = {
     console.log("mdn", mdn);
     const response = await api.get(`${drivehistoryApiRoot}/history/cars?mdn=${mdn}`);
     return response.data;
+  },
+  driveHistorybyBizId: async (bizId?: string) => {
+    try {
+      const response = await api.get(`/drivehistory/biz${bizId ? `/${bizId}` : ''}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   },
 };

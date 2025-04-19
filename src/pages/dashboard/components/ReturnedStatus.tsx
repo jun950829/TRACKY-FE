@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { ReservationCardProps, DateFilter } from "@/constants/types/reservation";
 import { getFilterDate, formatDate, formatTime, isDateInFilter, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
 
-function ReservationCard({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
+function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: ReservationCardProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>(DateFilter.TODAY);
 
   useEffect(() => {
@@ -17,12 +17,12 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
   );
   
   return (
-    <Card className="h-full overflow-hidden shadow-sm">
-      <CardHeader className="p-2 bg-white border-b border-zinc-100">
+    <Card className="w-full h-full bg-white rounded-lg shadow-sm border border-zinc-100">
+      <CardHeader className="p-4 bg-white border-b border-zinc-100">
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-primary" />
-            <span>예약 현황</span>
+            {/* <Calendar className="h-4 w-4 text-primary" /> */}
+            <h2 className="text-lg font-semibold">반납 현황</h2>
           </CardTitle>
           
           <div className="flex items-center space-x-1 text-xs">
@@ -54,11 +54,11 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-2 overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
+      <CardContent className="p-4 overflow-y-auto" style={{ height: 'calc(100% - 65px)' }}>
         {isLoading ? (
-          <div className="p-3 space-y-3">
+          <div className="space-y-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse p-2 border border-zinc-100 rounded-lg mb-2">
+              <div key={i} className="animate-pulse p-3 border border-zinc-100 rounded-lg">
                 <div className="h-4 bg-zinc-200 rounded w-3/4 mb-2"></div>
                 <div className="h-3 bg-zinc-200 rounded w-1/2 mb-2"></div>
                 <div className="h-3 bg-zinc-200 rounded w-1/3"></div>
@@ -75,8 +75,8 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
             </p>
           </div>
         ) : (
-          <div className="space-y-2 p-1">
-            <div className="text-xs text-zinc-500 mb-1 font-medium">
+          <div className="space-y-3">
+            <div className="text-xs text-zinc-500 font-medium">
               {formatDate(getFilterDate(dateFilter))}  (총 : {filteredReservations.length}건)
             </div>
             
@@ -86,7 +86,7 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
               return (
                 <div 
                   key={reservation.rentUuid} 
-                  className="p-2 bg-white border border-zinc-200 rounded-lg shadow-sm mb-2"
+                  className="p-3 bg-white border border-zinc-100 rounded-lg hover:bg-zinc-50 transition-colors"
                 >
                   {/* 상단: 차량번호, 대여상태 */}
                   <div className="flex justify-between items-start">
@@ -129,4 +129,5 @@ function ReservationCard({ reservations, isLoading, getReservationStatusData }: 
   );
 }
 
-export default ReservationCard;
+export default ReturnedStatus;
+

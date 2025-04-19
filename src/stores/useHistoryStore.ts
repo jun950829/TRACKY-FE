@@ -1,33 +1,33 @@
 import { create } from "zustand";
-import { RentRecord, DriveRecord, DriveDetailRecord } from "@/constants/historyTypes";
+import { RentRecord, CarRecord, DriveDetailRecord, BizRecord } from "@/constants/types/historyTypes";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
   // 검색 관련
   searchText: string;
-  searchType: 'rent' | 'car';
+  searchType: 'biz' | 'car';
   isLoading: boolean;
   error: string | null;
   
   // 선택된 항목
-  selectedRent: RentRecord | null;
-  selectedDrive: DriveRecord | null;
+  selectedBiz: BizRecord | null;
+  selectedDrive: CarRecord | null;
   selectedDetail: DriveDetailRecord | null;
   
   // 검색 결과
-  rentResults: RentRecord[];
-  driveResults: DriveRecord[];
+  bizResults: BizRecord[];
+  driveResults: CarRecord[];
   
   // 드로어 상태
   isDrawerOpen: boolean;
   
   // 액션
   setSearchText: (text: string) => void;
-  setSearchType: (type: 'rent' | 'car') => void;
-  setRentResults: (rents: RentRecord[]) => void;
-  setDriveResults: (drives: DriveRecord[]) => void;
-  setSelectedRent: (rent: RentRecord | null) => void;
-  setSelectedDrive: (drive: DriveRecord | null) => void;
+  setSearchType: (type: 'biz' | 'car') => void;
+  setBizResults: (bizs: BizRecord[]) => void;
+  setDriveResults: (drives: CarRecord[]) => void;
+  setSelectedBiz: (biz: BizRecord | null) => void;
+  setSelectedDrive: (drive: CarRecord | null) => void;
   setSelectedDetail: (detail: DriveDetailRecord | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
@@ -38,13 +38,13 @@ interface HistoryState {
 // 초기 상태
 const initialState = {
   searchText: '',
-  searchType: 'rent' as const,
+  searchType: 'car' as const,
   isLoading: false,
   error: null,
-  selectedRent: null,
+  selectedBiz: null,
   selectedDrive: null,
   selectedDetail: null,
-  rentResults: [],
+  bizResults: [],
   driveResults: [],
   isDrawerOpen: true
 };
@@ -57,11 +57,11 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   
   setSearchType: (type) => set({ searchType: type }),
   
-  setRentResults: (rents) => set({ rentResults: rents }),
+  setBizResults: (bizs) => set({ bizResults: bizs }),
   
   setDriveResults: (drives) => set({ driveResults: drives }),
   
-  setSelectedRent: (rent) => set({ selectedRent: rent }),
+  setSelectedBiz: (biz) => set({ selectedBiz: biz }),
   
   setSelectedDrive: (drive) => set({ selectedDrive: drive }),
 

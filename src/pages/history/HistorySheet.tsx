@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { motion, AnimatePresence } from "framer-motion";
 import HistorySearch from "./HistorySearch";
-import HistoryRentList from "./HistoryRentList";
 import HistoryCarList from "./HistoryCarList";
 import { useHistoryStore } from "@/stores/useHistoryStore";
+import HistoryBizList from "./HistoryBizList";
 
 interface HistorySheetProps {
   id: string;
@@ -78,14 +77,14 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
                 {id === "search" ? (
                   <div className="h-full">
                     <HistorySearch />
-                    {searchType === "rent" ? (
-                      <HistoryRentList onItemClick={onItemSelected} />
+                    {searchType === "biz" ? (
+                      <HistoryBizList onItemClick={onItemSelected} />
                     ) : (
                       <HistoryCarList onItemClick={onItemSelected} />
                     )}
                   </div>
-                ) : id === "rent" ? (
-                  <HistoryRentList onItemClick={onItemSelected} />
+                ) : id === "biz" ? (
+                  <HistoryBizList onItemClick={onItemSelected} />
                 ) : (
                   <HistoryCarList onItemClick={onItemSelected} />
                 )}

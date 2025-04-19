@@ -69,7 +69,9 @@ export type CarDetailTypes = {
   createdAt: string;
 }
 
-export type CarStatusTypes = Record<string, number>;
+export type CarStatusEnum = 'running' | 'waiting' | 'fixing' | 'closed';
+
+export type CarStatusTypes = Record<CarStatusEnum, number>;
 
 export type Devices = {
   id: number;

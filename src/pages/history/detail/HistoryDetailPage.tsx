@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import HistoryMap from "./HistoryMap";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import StatusBadge from "@/components/custom/StatusBadge";
+import HistoryMap from "./HistoryMap";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -16,7 +16,7 @@ const formatDateTime = (dateStr: string) => {
   }
 };
 
-const HistoryDetail: React.FC = () => {
+const HistoryDetailPage: React.FC = () => {
   const { selectedDetail } = useHistoryStore();
 
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
@@ -214,4 +214,4 @@ const HistoryDetail: React.FC = () => {
   );
 };
 
-export default HistoryDetail;
+export default HistoryDetailPage;
