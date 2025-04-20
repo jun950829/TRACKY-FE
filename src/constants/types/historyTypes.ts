@@ -9,44 +9,21 @@ export interface GpsData {
 // 운행 기록 타입 정의
 export interface CarRecord {
   carPlate: string;
-  carType: string;
+  carType?: string;
 }
-// export interface DriveRecord {
-//   driveId: number;
-//   mdn: string;
-//   rentUuid: string;
-//   driveOnTime: string;
-//   driveOffTime: string;
-//   onLat: number;
-//   onLon: number;
-//   offLat: number;
-//   offLon: number;
-//   sum: number;
-//   maxSpeed: number;
-//   avgSpeed: number;
-//   points: {
-//     lat: number;
-//     lng: number;
-//     speed: number;
-//     timestamp: string;
-//   }[];
-// }
 
-// 대여 기록 타입 정의
-export interface RentRecord {
-  rentUuid: string;
+export interface DriveRecord {
+  id: number;
   mdn: string;
+  carPlate: string;
+  rentUuid: string;
   renterName: string;
-  renterPhone: string;
   purpose: string;
-  rentStatus: string;
-  rentStime: string;
-  rentEtime: string;
-  rentLoc: string;
-  returnLoc: string;
-  drivelist: CarRecord[];
-  totalDistance: number;
-  createdAt: string;
+  driveDistance: number;
+  driveOnTime: string;
+  driveOffTime: string;
+  driveEndLat: number;
+  driveEndLon: number;
 }
 
 // 운행 상세 기록 타입 정의

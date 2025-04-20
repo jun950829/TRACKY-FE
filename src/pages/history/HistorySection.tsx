@@ -20,7 +20,7 @@ function HistorySection() {
   const { 
     searchType,
     setBizResults,
-    setDriveResults,
+    setCarResults
   } = useHistoryStore();
 
   // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
@@ -30,7 +30,7 @@ function HistorySection() {
   });
   const [error, setError] = useState<ApiError | null>(null);
 
-  async function getDriveList() {
+  async function getDataList() {
     setError(null);
     try {
       let driveList;
@@ -45,7 +45,7 @@ function HistorySection() {
         const response = await driveService.getCars();
         driveList = response;
 
-        setDriveResults(driveList.data);
+        setCarResults(driveList.data);
         // 여기는 default 정보가 없음
 
       }
@@ -59,7 +59,7 @@ function HistorySection() {
 
   // 초기 데이터 로드
   useEffect(() => {
-    getDriveList();
+    getDataList();
   }, []);
 
 
