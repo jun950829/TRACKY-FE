@@ -80,13 +80,13 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
                     {searchType === "biz" ? (
                       <HistoryBizList onItemClick={onItemSelected} />
                     ) : (
-                      <HistoryCarList onItemClick={onItemSelected} />
+                      <HistoryCarList />
                     )}
                   </div>
                 ) : id === "biz" ? (
                   <HistoryBizList onItemClick={onItemSelected} />
                 ) : (
-                  <HistoryCarList onItemClick={onItemSelected} />
+                  <HistoryCarList />
                 )}
               </motion.div>
             )}

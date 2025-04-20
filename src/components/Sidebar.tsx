@@ -129,7 +129,7 @@ function Sidebar() {
                 <div className="h-8 w-8 rounded-full bg-foreground/10" />
                 <div className="text-sm">
                   <div className="font-medium">{member?.bizName} 님</div>
-                  <div className="text-foreground/70">{member?.email}</div>
+                  {/* <div className="text-foreground/70">{member?.email}</div> */}
                 </div>
               </div>
               <CustomButton
