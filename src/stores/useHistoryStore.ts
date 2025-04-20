@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { RentRecord, CarRecord, DriveDetailRecord, BizRecord } from "@/constants/types/historyTypes";
+import { CarRecord, DriveDetailRecord, BizRecord, DriveRecord } from "@/constants/types/historyTypes";
 
 // 히스토리 상태 인터페이스
 interface HistoryState {
@@ -11,12 +11,14 @@ interface HistoryState {
   
   // 선택된 항목
   selectedBiz: BizRecord | null;
-  selectedDrive: CarRecord | null;
+  selectedCar: CarRecord | null;
+  selectedDriveId: number | null;
   selectedDetail: DriveDetailRecord | null;
   
   // 검색 결과
   bizResults: BizRecord[];
-  driveResults: CarRecord[];
+  carResults: CarRecord[];
+  driveResults: DriveRecord[];
   
   // 드로어 상태
   isDrawerOpen: boolean;
@@ -25,9 +27,11 @@ interface HistoryState {
   setSearchText: (text: string) => void;
   setSearchType: (type: 'biz' | 'car') => void;
   setBizResults: (bizs: BizRecord[]) => void;
-  setDriveResults: (drives: CarRecord[]) => void;
+  setCarResults: (cars: CarRecord[]) => void;
+  setDriveResults: (drives: DriveRecord[]) => void;
   setSelectedBiz: (biz: BizRecord | null) => void;
-  setSelectedDrive: (drive: CarRecord | null) => void;
+  setSelectedCar: (car: CarRecord | null) => void;
+  setSelectedDriveId: (driveId: number | null) => void;
   setSelectedDetail: (detail: DriveDetailRecord | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
@@ -42,9 +46,11 @@ const initialState = {
   isLoading: false,
   error: null,
   selectedBiz: null,
-  selectedDrive: null,
+  selectedCar: null,
+  selectedDriveId: null,
   selectedDetail: null,
   bizResults: [],
+  carResults: [],
   driveResults: [],
   isDrawerOpen: true
 };
@@ -58,12 +64,16 @@ export const useHistoryStore = create<HistoryState>((set) => ({
   setSearchType: (type) => set({ searchType: type }),
   
   setBizResults: (bizs) => set({ bizResults: bizs }),
+
+  setCarResults: (cars) => set({ carResults: cars }),
   
   setDriveResults: (drives) => set({ driveResults: drives }),
   
   setSelectedBiz: (biz) => set({ selectedBiz: biz }),
+
+  setSelectedCar: (car) => set({ selectedCar: car }),
   
-  setSelectedDrive: (drive) => set({ selectedDrive: drive }),
+  setSelectedDriveId: (driveId) => set({ selectedDriveId: driveId }),
 
   setSelectedDetail: (detail) => set({ selectedDetail: detail }),
   

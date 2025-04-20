@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -10,9 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
-import StatusBadge from "@/components/custom/StatusBadge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Calendar, ChevronLeft, ChevronRight, Download, Filter, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -32,9 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 
-const HistoryTable = () => {
-  const { driveResults, setDriveResults } = useHistoryStore();
+function HistoryTable() {
+  const navigate = useNavigate();
+  
+  const { driveResults, setSelectedDriveId } = useHistoryStore();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [date, setDate] = useState<DateRange | undefined>({
@@ -62,15 +63,11 @@ const HistoryTable = () => {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter((drive) => 
-        drive.driveId.toLowerCase().includes(term) ||
+        drive.id.toString().toLowerCase().includes(term) ||
         (drive.renterName && drive.renterName.toLowerCase().includes(term))
       );
     }
 
-    // 유형 필터링
-    if (filterType !== "all") {
-      filtered = filtered.filter((drive) => drive.type === filterType);
-    }
 
     return filtered;
   }, [driveResults, date, searchTerm, filterType]);
@@ -99,52 +96,16 @@ const HistoryTable = () => {
     setCurrentPage(1);
   };
 
-  const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
-  const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
-
-  useEffect(() => {
-    if (!driveResults) return;
-
-    const { onLat, onLon, offLat, offLon } = driveResults;
-
-    if (
-      typeof onLat !== "number" ||
-      typeof onLon !== "number" ||
-      typeof offLat !== "number" ||
-      typeof offLon !== "number"
-    ) {
-      setOnAddress("좌표 없음");
-      setOffAddress("좌표 없음");
-      return;
-    }
-
-    // 정수형 좌표 → 실수형으로 변환
-    const startLat = onLat / 1_000_000;
-    const startLon = onLon / 1_000_000;
-    const endLat = offLat / 1_000_000;
-    const endLon = offLon / 1_000_000;
-
-    const fetchAddress = async () => {
-      try {
-        const [on, off] = await Promise.all([
-          reverseGeocodeOSM(startLat, startLon),
-          reverseGeocodeOSM(endLat, endLon),
-        ]);
-        setOnAddress(on);
-        setOffAddress(off);
-      } catch {
-        setOnAddress("주소 불러오기 실패");
-        setOffAddress("주소 불러오기 실패");
-      }
-    };
-
-    fetchAddress();
-  }, [driveResults]);
+  const clickDrive = (driveId: number) => {
+    console.log("driveId: ", driveId);
+    navigate(`/history/${driveId}`);
+    setSelectedDriveId(driveId);
+  };
 
   if (!driveResults) {
     return (
       <div className="h-full flex items-center justify-center bg-white p-6">
-        <p className="text-gray-500">좌측 목록에서 운행 기록을 선택하세요</p>
+        <p className="text-gray-500">좌측 목록에서 차량을 선택하세요</p>
       </div>
     );
   }
@@ -229,10 +190,10 @@ const HistoryTable = () => {
               <TableHead className="w-[30px]">
                 <input type="checkbox" className="rounded border-gray-300" />
               </TableHead>
+              <TableHead>운행 ID</TableHead>
               <TableHead>운행일자</TableHead>
               <TableHead>운행목적</TableHead>
-              <TableHead>법인/개인</TableHead>
-              <TableHead>차량번호(차량명)</TableHead>
+              <TableHead>차량번호(MDN)</TableHead>
               <TableHead>사용자</TableHead>
               <TableHead>운행거리(km)</TableHead>
               <TableHead>운행시간</TableHead>
@@ -240,33 +201,25 @@ const HistoryTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentData.map((drive) => (
-              <TableRow key={drive.driveId} className="hover:bg-gray-50">
+            {currentData.map((drive, index) => (
+              <TableRow key={index} className="hover:bg-gray-50">
                 <TableCell>
                   <input type="checkbox" className="rounded border-gray-300" />
                 </TableCell>
+                <TableCell className="cursor-pointer" onClick={() => clickDrive(drive.id)}>{drive.id}</TableCell>
                 <TableCell>
                   {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
                 </TableCell>
-                <TableCell>{drive.purpose || '일반업무'}</TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-800">
-                    법인
-                  </span>
-                </TableCell>
-                <TableCell>{drive.carNumber}</TableCell>
+                <TableCell>{drive.purpose || '기타업무'}</TableCell>
+                <TableCell>{drive.carPlate}({drive.mdn})</TableCell>
                 <TableCell>{drive.renterName}</TableCell>
                 <TableCell>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
                 <TableCell>
-                  {(() => {
-                    const duration = Math.floor((drive.driveTime || 0) / 60);
-                    const hours = Math.floor(duration / 60);
-                    const minutes = duration % 60;
-                    return `${hours ? `${hours}시간 ` : ''}${minutes}분`;
-                  })()}
+                  {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
                 </TableCell>
                 <TableCell className="truncate max-w-[200px]">
-                  {drive.destination || '대구광역시 수성구 고산3동'}
+                  <p>{drive.driveEndLat}</p>
+                  <p>{drive.driveEndLon}</p>
                 </TableCell>
               </TableRow>
             ))}

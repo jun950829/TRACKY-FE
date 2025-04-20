@@ -58,3 +58,21 @@ export const createPathSegments = (gpsDataList: GpsData[]) => {
   }
   return segments;
 };
+
+
+export const calculateDriveDuration = (driveOnTimeStr: string, driveOffTimeStr: string) => {
+  const driveOnTime = new Date(driveOnTimeStr).getTime();
+  const driveOffTime = new Date(driveOffTimeStr).getTime();
+
+  const durationMs = driveOffTime - driveOnTime;
+
+  if (isNaN(durationMs) || durationMs < 0) {
+    return '잘못된 시간 값입니다';
+  }
+
+  const totalMinutes = Math.floor(durationMs / 1000 / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${hours}시간 ${minutes}분`;
+}
