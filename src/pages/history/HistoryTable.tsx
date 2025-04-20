@@ -45,8 +45,6 @@ function HistoryTable() {
   const [filterType, setFilterType] = useState<string>("all");
   const itemsPerPage = 10;
 
-
-  console.log("driveResults: ", driveResults);
   // 필터링된 데이터 계산
   const filteredData = React.useMemo(() => {
     if (!driveResults) return [];

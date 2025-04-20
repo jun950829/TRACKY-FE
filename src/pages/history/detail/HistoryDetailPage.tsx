@@ -18,14 +18,12 @@ const formatDateTime = (dateStr: string) => {
 };
 
 const HistoryDetailPage: React.FC = () => {
-  const { selectedDriveId, selectedDetail } = useHistoryStore();
+  const { selectedDriveId, selectedDetail, setSelectedDetail } = useHistoryStore();
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
   const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
 
   useEffect(() => {
-    if (!selectedDriveId) return;
-    const response = driveService.getDriveById(selectedDriveId);
-    console.log("response: ", response);
+    getDriveById();
   }, [selectedDriveId]);
 
   useEffect(() => {
@@ -76,21 +74,12 @@ const HistoryDetailPage: React.FC = () => {
     );
   }
 
-  // 렌트 상태에 따른 배지 색상
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "SCHEDULED":
-        return "bg-blue-100 text-blue-800";
-      case "INPROGRESS":
-        return "bg-green-100 text-green-800";
-      case "COMPLETED":
-        return "bg-gray-100 text-gray-800";
-      case "CANCELED":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  async function getDriveById() {
+    if (!selectedDriveId) return;
+    const response = await driveService.getDriveById(selectedDriveId);
+    console.log("response: ", response);
+    setSelectedDetail(response.data);
+  }
 
   return (
     <div className="p-2 sm:p-4 h-full overflow-y-auto">
