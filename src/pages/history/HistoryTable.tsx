@@ -51,13 +51,13 @@ function HistoryTable() {
     
     let filtered = [...driveResults];
 
-    // 날짜 필터링
-    if (date?.from && date?.to) {
-      filtered = filtered.filter((drive) => {
-        const driveDate = new Date(drive.driveOnTime);
-        return driveDate >= date.from && driveDate <= addDays(date.to, 1);
-      });
-    }
+    // // 날짜 필터링
+    // if (date?.from && date?.to) {
+    //   filtered = filtered.filter((drive) => {
+    //     const driveDate = new Date(drive.driveOnTime);
+    //     return driveDate >= date.from && driveDate <= addDays(date.to, 1);
+    //   });
+    // }
 
     // 검색어 필터링
     if (searchTerm) {
