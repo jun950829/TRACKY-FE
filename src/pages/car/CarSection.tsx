@@ -21,7 +21,7 @@ function CarSection() {
       setSearchObj({searchText: searchText, status: status, purpose: purpose});
       
       try {
-        const res = await carApiService.searchByFilters(searchText, status, purpose);
+        const res = await carApiService.searchByFilters(searchText, status);
         setCarList(res.data);
       } catch (error) {
         console.error('차량 검색 실패:', error);
@@ -32,7 +32,7 @@ function CarSection() {
     } else {
       // isReload가 true인 경우 이전 검색 옵션 사용
       try {
-        const res = await carApiService.searchByFilters(searchObj.searchText, searchObj.status, searchObj.purpose);
+        const res = await carApiService.searchByFilters(searchObj.searchText, searchObj.status);
         setCarList(res.data);
       } catch (error) {
         console.error('차량 검색 실패:', error);

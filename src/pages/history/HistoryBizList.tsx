@@ -27,7 +27,6 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     bizResults,
     searchType,
     selectedBiz,
-    selectedDrive,
     selectedDetail,
     setSelectedBiz,
     setSelectedDetail,
@@ -141,29 +140,30 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
               {openBiz.has(biz.bizId) && (
                 <div className="bg-gray-50 pl-4 max-h-[300px] overflow-y-auto">
                   {biz.drivelist.map((drive, idx: number) => (
-                    <div
-                      key={idx}
-                      className={`p-3 pl-4 border-l-2 cursor-pointer transition-all duration-200 mb-1 ml-2 text-xs
-                        ${selectedDetail?.driveId === drive.driveId 
-                          ? "border-blue-500 bg-gradient-to-r from-blue-50 to-blue-100" 
-                          : "border-gray-200 hover:bg-gray-100"}`}
-                      onClick={() => handleDriveClick(drive.driveId)}
-                    >
-                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
-                        운행 ID : {drive.driveId}
-                      </div>
-                      <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"} mt-1`}>
-                        {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
-                      </div>
-                      <div className="mt-1">
-                        <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
-                          거리:
-                        </span>{" "}
-                        <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"}`}>
-                          {(drive.sum * 0.001).toFixed(2)}km
-                        </span>
-                      </div>
-                    </div>
+                    <></>
+                    // <div
+                    //   key={idx}
+                    //   className={`p-3 pl-4 border-l-2 cursor-pointer transition-all duration-200 mb-1 ml-2 text-xs
+                    //     ${selectedDetail?.driveId === drive.driveId 
+                    //       ? "border-blue-500 bg-gradient-to-r from-blue-50 to-blue-100" 
+                    //       : "border-gray-200 hover:bg-gray-100"}`}
+                    //   onClick={() => handleDriveClick(drive.driveId)}
+                    // >
+                    //   <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
+                    //     운행 ID : {drive.driveId}
+                    //   </div>
+                    //   <div className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"} mt-1`}>
+                    //     {formatDateTime(drive.driveOnTime)} ~ {formatDateTime(drive.driveOffTime)}
+                    //   </div>
+                    //   <div className="mt-1">
+                    //     <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-700"}`}>
+                    //       거리:
+                    //     </span>{" "}
+                    //     <span className={`${selectedDetail?.driveId === drive.driveId ? "text-blue-700" : "text-gray-600"}`}>
+                    //       {(drive.sum * 0.001).toFixed(2)}km
+                    //     </span>
+                    //   </div>
+                    // </div>
                   ))}
                 </div>
               )}

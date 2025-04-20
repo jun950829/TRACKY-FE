@@ -151,6 +151,10 @@ function Sidebar() {
                 <div className="h-8 w-8 rounded-full bg-foreground/10" />
                 <div className="text-sm">
                   <div className="font-medium">{member?.bizName} 님</div>
+<<<<<<< HEAD
+=======
+                  {/* <div className="text-foreground/70">{member?.email}</div> */}
+>>>>>>> 44ac79c2787504b748cf3dc2d5c8db6234351dfc
                 </div>
               </div>
               <CustomButton
