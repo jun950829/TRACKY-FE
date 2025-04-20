@@ -25,7 +25,7 @@ const HistorySearch = () => {
     try {
       if( searchType === 'biz' ) {
         const response = await drivehistoryService.driveHistorybyBizId(searchText);
-        setBizResults(response.data);
+        // setBizResults(response.data);
       } else if( searchType === 'car' ) {
         const response = await drivehistoryService.getDriveDetailbyCar(searchText);
         setDriveResults(response.data);
