@@ -17,7 +17,6 @@ import InfoMain from "../../pages/info/InfoMain";
 import AdminMain from "../../pages/admin/AdminMain";
 import AdminRoute from "./AdminRoute";
 import QuestMain from "../../pages/quest/QuestMain";
-import HistoryRealTime from "../../pages/history/realtime/HistoryRealTime";
 import HistoryDetailPage from "../../pages/history/detail/HistoryDetailPage";
 import StatisticMain from "../../pages/statistic/StatisticMain";
 import CarRegister from "../../pages/car/register/CarRegister";
@@ -25,6 +24,7 @@ import RentRegister from "../../pages/rent/register/RentRegister";
 import AdminBizSection from "@/pages/admin/biz/AdminBizSection";
 import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection";
 import AdminNotice from "@/pages/admin/notice/AdminNotice";
+import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
@@ -44,7 +44,7 @@ const protectedRoutes = [
   { path: "/car/rent/register", element: <RentRegister /> },
   { path: "/history", element: <HistoryMain /> },
   { path: "/history/:id", element: <HistoryDetailPage /> },
-  { path: "/history/realtime", element: <HistoryRealTime /> },
+  { path: "/history/realtime", element: <RealTimeMain /> },
   { path: "/statistic", element: <StatisticMain /> },
   { path: "/quest", element: <QuestMain /> },
 ];

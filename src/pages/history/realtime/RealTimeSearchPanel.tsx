@@ -10,8 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface RealTimeMapSearchProps {
+interface RealTimeSearchPanelProps {
   onToggle: () => void;
+  onSelectCarNumber: (carNumber: string) => void;
 }
 
 type SortField = 'status' | 'carNumber' | 'driver' | 'distance' | 'time';
@@ -26,7 +27,7 @@ interface Vehicle {
   time: number;
 }
 
-function RealTimeMapSearch({ onToggle }: RealTimeMapSearchProps) {
+function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('distance');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -138,6 +139,7 @@ function RealTimeMapSearch({ onToggle }: RealTimeMapSearchProps) {
               {sortedVehicles.map((vehicle) => (
                 <tr 
                   key={vehicle.id}
+                  onClick={() => onSelectCarNumber(vehicle.carNumber)}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="px-2 py-1.5">
@@ -173,4 +175,4 @@ function RealTimeMapSearch({ onToggle }: RealTimeMapSearchProps) {
   );
 }
 
-export default RealTimeMapSearch;
+export default RealTimeSearchPanel;
