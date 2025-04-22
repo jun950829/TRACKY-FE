@@ -197,7 +197,7 @@ export default function Login() {
                   
                   <div className="mt-4 text-center text-sm text-muted-foreground">
                     <span>계정이 없으신가요? </span>
-                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/about")}>
+                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/signup")}>
                       회원가입
                     </Button>
                   </div>

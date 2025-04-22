@@ -15,6 +15,7 @@ import DashboardMain from "../../pages/dashboard/DashBoardMain";
 import HistoryMain from "../../pages/history/HistoryMain";
 import InfoMain from "../../pages/info/InfoMain";
 import AdminMain from "../../pages/admin/AdminMain";
+import Signup from "../../pages/signup/SignupMain";
 import AdminRoute from "./AdminRoute";
 import QuestMain from "../../pages/quest/QuestMain";
 import HistoryDetailPage from "../../pages/history/detail/HistoryDetailPage";
@@ -29,6 +30,7 @@ import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
   { path: "/", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
   { path: "/about", element: <About /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
