@@ -1,4 +1,4 @@
-import { CarStatus, CarStatusColorMap, RentStatus, RentStatusColorMap } from "@/constants/datas/status";
+import { CarStatus, CarStatusColorMap, CarType, RentStatus, RentStatusColorMap } from "@/constants/datas/status";
 
 /**
  * UI 관련 유틸리티 함수 모음
@@ -50,3 +50,13 @@ export const getStatusLabel = (type: 'car' | 'rent', value: string): string => {
   const option = statusOptions.find(opt => opt.value === value);
   return option ? option.label : value;
 }; 
+
+/**
+ * 차량 타입 value에 해당하는 label 값을 반환합니다.
+ * @param value 차량 타입 value 문자열
+ * @returns 해당 value에 맞는 label 문자열
+ */
+export const getCarTypeLabel = (value: string): string => {
+  const option = CarType.find(opt => opt.value === value);
+  return option ? option.label : value;
+};
