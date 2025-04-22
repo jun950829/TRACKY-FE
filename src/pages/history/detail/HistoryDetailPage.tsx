@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import HistoryMap from "./HistoryMap";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import StatusBadge from "@/components/custom/StatusBadge";
+import HistoryMap from "./HistoryMap";
+import driveService from "@/libs/apis/driveApi";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -16,11 +17,14 @@ const formatDateTime = (dateStr: string) => {
   }
 };
 
-const HistoryDetail: React.FC = () => {
-  const { selectedDetail } = useHistoryStore();
-
+const HistoryDetailPage: React.FC = () => {
+  const { selectedDriveId, selectedDetail, setSelectedDetail } = useHistoryStore();
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
   const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
+
+  useEffect(() => {
+    getDriveById();
+  }, [selectedDriveId]);
 
   useEffect(() => {
     if (!selectedDetail) return;
@@ -70,21 +74,12 @@ const HistoryDetail: React.FC = () => {
     );
   }
 
-  // 렌트 상태에 따른 배지 색상
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "SCHEDULED":
-        return "bg-blue-100 text-blue-800";
-      case "INPROGRESS":
-        return "bg-green-100 text-green-800";
-      case "COMPLETED":
-        return "bg-gray-100 text-gray-800";
-      case "CANCELED":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  async function getDriveById() {
+    if (!selectedDriveId) return;
+    const response = await driveService.getDriveById(selectedDriveId);
+    console.log("response: ", response);
+    setSelectedDetail(response.data);
+  }
 
   return (
     <div className="p-2 sm:p-4 h-full overflow-y-auto">
@@ -214,4 +209,4 @@ const HistoryDetail: React.FC = () => {
   );
 };
 
-export default HistoryDetail;
+export default HistoryDetailPage;

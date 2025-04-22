@@ -57,7 +57,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
       <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <Input
-            placeholder="차량 관리번호 검색"
+            placeholder="번호판, 관리번호 검색"
             className="w-64"
             value={searchValue}
             onChange={handleInputChange}
@@ -85,7 +85,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
 
         <Button
           className="bg-black text-white hover:bg-gray-800"
-          onClick={() => navigate("/cars/register")}
+          onClick={() => navigate("/car/register")}
         >
           <Plus className="w-4 h-4 mr-2" />
           신규 차량 등록
@@ -127,7 +127,7 @@ function CarSearchLayer({ onSearch }: CarSearchLayer) {
 
         <Button
           className="bg-black text-white hover:bg-gray-800 w-full"
-          onClick={() => navigate("/cars/register")}
+          onClick={() => navigate("/car/register")}
         >
           <Plus className="w-4 h-4 mr-2" />
           신규 차량 등록

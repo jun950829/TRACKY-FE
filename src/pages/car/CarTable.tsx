@@ -80,49 +80,57 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
     );
   }
 
-  // 데이터 없음 표시
-  if (carList.length === 0) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-gray-500">차량 정보가 없습니다.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
-      <div className="hidden md:block overflow-auto">
+      <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
         <Table className="w-full table-fixed">
-          <TableHeader className="bg-gray-100">
-            <TableRow className="[&>th]:px-1 [&>th]:py-2">
-              <TableHead className="w-10">차량 상태</TableHead>
-              <TableHead className="w-16">차량 관리번호</TableHead>
-              <TableHead className="w-12">차량 모델</TableHead>
-              <TableHead className="w-16">차량 번호</TableHead>
-              <TableHead className="text-right w-40">관리</TableHead>
+          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+              <TableHead className="w-10 text-gray-600 font-medium">차량 상태</TableHead>
+              <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
+              <TableHead className="w-12 text-gray-600 font-medium">차량 모델</TableHead>
+              <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
+              <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {carList.map((car, idx) => (
-              <TableRow key={idx} 
-              onClick={() => {
-                setIsDetail(true);
-                handleCellClick(car.mdn)
-              }}
-              className="hover:bg-gray-50 [&>td]:px-1 [&>td]:py-2">
-                <TableCell className="whitespace-nowrap">
-                  <StatusBadge status={car.status} type="car" />
+            {carList.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  차량 정보가 없습니다.
                 </TableCell>
-                <TableCell className="whitespace-nowrap">{car.mdn}</TableCell>
-                <TableCell className="whitespace-nowrap">{car.carType}</TableCell>
-                <TableCell className="whitespace-nowrap">{car.carPlate}</TableCell>
+              </TableRow>
+            )}
+            {carList.map((car, idx) => (
+              <TableRow 
+                key={idx} 
+                onClick={() => {
+                  setIsDetail(true);
+                  handleCellClick(car.mdn)
+                }}
+                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+              >
+                <TableCell className="whitespace-nowrap">
+                  <span onClick={(e) => e.stopPropagation()}>
+                    <StatusBadge status={car.status} type="car" />
+                  </span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{car.carType}</span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
                     <CustomButton
                       variant="edit"
                       size="sm"
-                      className="h-8"
+                      className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
                       icon={<Edit className="h-4 w-4" />}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -135,7 +143,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                     <CustomButton
                       variant="destructive"
                       size="sm"
-                      className="h-8"
+                      className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                       icon={<Trash className="h-4 w-4" />}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -155,35 +163,46 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
+        {carList.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            차량 정보가 없습니다.
+          </div>
+        )}
         {carList.map((car) => (
-          <Card key={car.mdn} className="overflow-hidden">
-            <CardContent onClick={() => {
-                        setIsDetail(true);
-                        handleCellClick(car.mdn);
-                      }} className="p-4">
-              <div className="flex justify-between items-start mb-2">
+          <Card 
+            key={car.mdn} 
+            className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
+            <CardContent 
+              onClick={() => {
+                setIsDetail(true);
+                handleCellClick(car.mdn);
+              }}
+              className="p-4"
+            >
+              <div className="flex justify-between items-start mb-3">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-2">
                     <StatusBadge status={car.status} type="car" />
-                    <h3 className="font-semibold text-lg">{car.mdn}</h3>
+                    <h3 className="font-semibold text-gray-800">{car.mdn}</h3>
                   </div>
-                  <p className="text-gray-500 text-sm">{car.carType}</p>
+                  <p className="text-gray-600 text-sm">{car.carType}</p>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-md">
                   <p className="text-sm text-gray-700">{car.purpose}</p>
                 </div>
               </div>
-              <div className="mt-2 text-sm">
-                <div className="flex justify-between py-1 border-b">
+              <div className="mt-3 text-sm">
+                <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-500">번호판</span>
-                  <span>{car.carPlate}</span>
+                  <span className="text-gray-700">{car.carPlate}</span>
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
                 <CustomButton
                   variant="edit"
                   size="sm"
-                  className="flex-1 h-8"
+                  className="flex-1 h-9 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
                   icon={<Edit className="h-4 w-4" />}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -196,7 +215,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                 <CustomButton
                   variant="destructive"
                   size="sm"
-                  className="flex-1 h-8"
+                  className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                   icon={<Trash className="h-4 w-4" />}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -211,26 +230,6 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
           </Card>
         ))}
       </div>
-
-      {/* Pagination - 모바일/PC 공통 */}
-      {/* <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
-        <div className="mb-4 sm:mb-0 w-[80px]">총 {carList.length}건</div>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <CustomButton variant="outline" size="sm">
-                1
-              </CustomButton>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div> */}
 
       {/* 차량 상세 모달 */}
       {selectedCarData && isDetail && (
