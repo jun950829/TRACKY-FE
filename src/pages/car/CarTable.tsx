@@ -24,6 +24,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react";
 import { CustomButton } from "@/components/custom/CustomButton";
 import StatusBadge from "@/components/custom/StatusBadge";
+import { getCarTypeLabel } from "@/libs/utils/getClassUtils";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
@@ -120,7 +121,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                   <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.carType}</span>
+                  <span onClick={(e) => e.stopPropagation()}>{getCarTypeLabel(car.carType)}</span>
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
                   <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
@@ -186,7 +187,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                     <StatusBadge status={car.status} type="car" />
                     <h3 className="font-semibold text-gray-800">{car.mdn}</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">{car.carType}</p>
+                  <p className="text-gray-600 text-sm">{getCarTypeLabel(car.carType)}</p>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-md">
                   <p className="text-sm text-gray-700">{car.purpose}</p>
