@@ -1,3 +1,15 @@
+export type Approves = {
+  bizName: string;
+  bizRegName: string;
+  bizAdmin: string;
+  bizPhoneNumber: string;
+  memberId: string;
+  email: string;
+  role: string;
+  status: string;
+  createAt: string;
+}
+
 export type SseEventPayloadType = {
   event: string;
   method: string;
