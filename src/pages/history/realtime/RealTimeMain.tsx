@@ -6,7 +6,7 @@ import { Search, X } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
 
 function RealTimeMain() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
   const [selectedCarNumber, setSelectedCarNumber] = useState<string | null>(null);
 
   // 목 데이터 (지도용 차량 정보)
