@@ -113,7 +113,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
           </div>
         </div>
 
-        <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/rents/register')}>
+        <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/car/rent/register')}>
           <Plus className="w-4 h-4 mr-2" />
           신규 렌트 등록
         </Button>
@@ -191,7 +191,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
         
         <Button 
           className="bg-black text-white hover:bg-gray-800 w-full" 
-          onClick={() => navigate('/rents/register')}
+          onClick={() => navigate('/car/rent/register')}
         >
           <Plus className="w-4 h-4 mr-2" />
           신규 렌트 등록

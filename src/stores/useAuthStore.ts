@@ -31,10 +31,10 @@ export const useAuthStore = create<AuthStore>((set) => {
     member,
     token,
     isHydrated: true,
-    isAdmin: member?.role === "admin",
+    isAdmin: member?.role.toLowerCase() === "admin",
     setMember: (member) => {
       localStorage.setItem("memberInfo", JSON.stringify(member));
-      set({ member, isAdmin: member.role === "admin" });
+      set({ member, isAdmin: member.role.toLowerCase() === "admin" });
     },
     setToken: (token) => {
       localStorage.setItem("accessToken", token);

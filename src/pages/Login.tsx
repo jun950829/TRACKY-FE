@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginApiService } from "../libs/apis/loginApi";
 import { useAuthStore } from "../stores/useAuthStore";
 import { jwtDecode } from "jwt-decode";
@@ -124,6 +124,13 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       {error && <ErrorToast error={error} />}
@@ -190,7 +197,7 @@ export default function Login() {
                   
                   <div className="mt-4 text-center text-sm text-muted-foreground">
                     <span>계정이 없으신가요? </span>
-                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/about")}>
+                    <Button type="button" variant="link" size="sm" className="p-0" onClick={() => navigate("/signup")}>
                       회원가입
                     </Button>
                   </div>
