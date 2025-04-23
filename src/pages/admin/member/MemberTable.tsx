@@ -9,14 +9,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Trash, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MemberModal from "./MemberModal";
-import { Member, mockMembers } from "../../../constants/mocks/memberMockData";
+import { Member } from "../../../constants/mocks/memberMockData";
+import signupApiService from "@/libs/apis/signupApi";
 
 export default function MemberTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 초기 데이터 로드
+  useEffect(() => {
+    searchMembers();
+  }, []);
+
+  const searchMembers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await signupApiService.searchMembers(searchTerm);
+      setMembers(response.data);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    }
+    setIsLoading(false);
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      searchMembers();
+    }
+  };
 
   const handleEdit = (member: Member) => {
     setSelectedMember(member);
@@ -43,35 +68,29 @@ export default function MemberTable() {
     }
   };
 
-  const filteredMembers = mockMembers.filter((member) =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.businessNumber.includes(searchTerm) ||
-    member.manager.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center h-10">
         <h2 className="text-2xl font-semibold text-gray-800">회원 관리</h2>
-        <Button
-          onClick={handleAdd}
-          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm hover:shadow-md transition-all duration-200"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          새 회원 등록
-        </Button>
       </div>
 
       <div className="flex items-center space-x-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="회원명, 담당자로 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            onKeyDown={handleKeyPress}
+            className="pl-4 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
         </div>
+        <Button
+          onClick={searchMembers}
+          className="bg-blue-500 text-white hover:bg-blue-600"
+        >
+          <Search className="h-4 w-4 mr-2" />
+          검색
+        </Button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -88,47 +107,61 @@ export default function MemberTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredMembers.map((member) => (
-              <TableRow 
-                key={member.id}
-                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
-              >
-                <TableCell className="text-gray-700">{member.name}</TableCell>
-                {/* <TableCell className="text-gray-600">{member.businessNumber}</TableCell> */}
-                <TableCell className="text-gray-600">{member.manager}</TableCell>
-                <TableCell className="text-gray-600">{member.phone}</TableCell>
-                <TableCell className="text-gray-600">{member.email}</TableCell>
-                <TableCell>
-                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                    member.status === "active" 
-                      ? "text-green-600 bg-green-50" 
-                      : "text-red-600 bg-red-50"
-                  }`}>
-                    {member.status === "active" ? "활성" : "비활성"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
-                      onClick={() => handleEdit(member)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
-                      onClick={() => handleDelete(member.id)}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-4">
+                  검색 중...
                 </TableCell>
               </TableRow>
-            ))}
+            ) : members.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-4">
+                  검색 결과가 없습니다.
+                </TableCell>
+              </TableRow>
+            ) : (
+              members.map((member) => (
+                <TableRow 
+                  key={member.memberId}
+                  className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+                >
+                  <TableCell className="text-gray-700">{member.bizName}</TableCell>
+                  {/* <TableCell className="text-gray-600">{member.businessNumber}</TableCell> */}
+                  <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
+                  <TableCell className="text-gray-600">{member.bizPhoneNumber}</TableCell>
+                  <TableCell className="text-gray-600">{member.email}</TableCell>
+                  <TableCell>
+                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                      member.status === "active" 
+                        ? "text-green-600 bg-green-50" 
+                        : "text-red-600 bg-red-50"
+                    }`}>
+                      {member.status === "active" ? "활성" : "비활성"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
+                        onClick={() => handleEdit(member)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
+                        onClick={() => handleDelete(member.memberId)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

@@ -1,33 +1,36 @@
 export interface Member {
-  id: string;
-  name: string;
-  businessNumber: string;
-  manager: string;
-  phone: string;
+  bizName: string;
+  bizRegName: string;
+  bizAdmin: string;
+  bizPhoneNumber: string;
+  memberId: string;
   email: string;
-  address: string;
-  status: "active" | "inactive";
+  role: string;
+  status: string;
+  createAt: string;
 }
 
 export const mockMembers: Member[] = [
   {
-    id: "1",
-    name: "회원 1",
-    businessNumber: "123-45-67890",
-    manager: "홍길동",
-    phone: "010-1234-5678",
+    bizName: "회원 1",
+    bizRegName: "123-45-67890",
+    bizAdmin: "홍길동",
+    bizPhoneNumber: "010-1234-5678",
+    memberId: "member1@example.com",
     email: "member1@example.com",
-    address: "서울시 강남구",
+    role: "active",
     status: "active",
+    createAt: "2021-01-01",
   },
   {
-    id: "2",
-    name: "회원 2",
-    businessNumber: "987-65-43210",
-    manager: "김철수",
-    phone: "010-8765-4321",
+    bizName: "회원 2",
+    bizRegName: "987-65-43210",
+    bizAdmin: "김철수",
+    bizPhoneNumber: "010-8765-4321",
+    memberId: "member2@example.com",
     email: "member2@example.com",
-    address: "서울시 서초구",
-    status: "inactive",
+    role: "active",
+    status: "active",
+    createAt: "2021-01-01",
   },
 ]; 

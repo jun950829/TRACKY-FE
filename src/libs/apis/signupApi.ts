@@ -13,6 +13,16 @@ export interface SignupRequestType {
   }
   
   export const signupApiService = {
+    searchMembers: async (search: string) => {
+      if(search.length === 0) {
+        const response = await api.get("/members");
+        return response.data;
+      } else {
+        const response = await api.get(`/members?search=${search}`);
+        return response.data;
+      }
+    },
+
     signup: async (data: SignupRequestType) => {
       const response = await api.post("/signup", data);
       return response.data;
