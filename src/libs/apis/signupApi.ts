@@ -49,6 +49,11 @@ export interface SignupRequestType {
       return response.data;
     },
 
+    checkIdDuplication: async (memberId: string) => {
+      const response = await api.get(`/signup/${memberId}`);
+      return response.data;
+    },
+
     getApproves: async () => {
       const response = await api.get("/approves");
       return response.data;

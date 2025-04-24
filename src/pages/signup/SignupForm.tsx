@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { SignupRequestType } from '@/libs/apis/signupApi';
+import signupApiService from '@/libs/apis/signupApi';
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
+import { Check, X } from 'lucide-react';
 
 
 const schema = yup.object().shape({
@@ -41,14 +43,34 @@ interface SignupFormProps {
 
 function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
   const navigate = useNavigate();
+  const [isCheckingId, setIsCheckingId] = useState(false);
+  const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<SignupRequestType>({
     resolver: yupResolver(schema),
   });
+
+  const memberId = watch('memberId');
+
+  // 아이디 중복 체크
+  const checkIdDuplication = async () => {
+    if (!memberId || memberId.length < 4) return;
+    
+    setIsCheckingId(true);
+    try {
+      const response = await signupApiService.checkIdDuplication(memberId);
+      setIsIdAvailable(!response.data);
+    } catch (error) {
+      console.error('Error checking ID:', error);
+      setIsIdAvailable(false);
+    }
+    setIsCheckingId(false);
+  };
 
   // 취소 처리
   const handleCancel = () => {
@@ -107,14 +129,42 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
           <p className='text-md font-bold'>계정 정보</p>
           <div className="space-y-2">
             <Label htmlFor="memberId">아이디</Label>
-            <Input
-              id="memberId"
-              placeholder="아이디를 입력하세요"
-              {...register("memberId")}
-              autoComplete="username"
-            />
+            <div className="flex gap-2">
+              <Input
+                id="memberId"
+                placeholder="아이디를 입력하세요"
+                {...register("memberId")}
+                autoComplete="username"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={checkIdDuplication}
+                disabled={isCheckingId || !memberId || memberId.length < 4}
+                className="w-24"
+              >
+                {isCheckingId ? "확인중..." : "중복체크"}
+              </Button>
+            </div>
             {errors.memberId && (
               <p className="text-sm text-destructive">{errors.memberId.message}</p>
+            )}
+            {isIdAvailable !== null && (
+              <div className="flex items-center gap-1 text-sm">
+                {isIdAvailable ? (
+                  <>
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-green-500">사용 가능한 아이디입니다</span>
+                  </>
+                ) : (
+                  <>
+                    <X className="h-4 w-4 text-destructive" />
+                    <span className="text-destructive">이미 사용중인 아이디입니다</span>
+                  </>
+                )}
+              </div>
             )}
           </div>
 
