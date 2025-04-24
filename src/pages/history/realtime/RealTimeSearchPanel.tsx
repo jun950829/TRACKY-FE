@@ -13,7 +13,8 @@ import realtimeApi from '@/libs/apis/realtimeApi';
 
 interface RealTimeSearchPanelProps {
   onToggle: () => void;
-  onSelectCarNumber: (carNumber: string) => void;
+  setSelectedDriveId: (driveId : number) => void;
+  goDetail: () => void;
 }
 
 type SortField = 'status' | 'carNumber' | 'driver' | 'distance' | 'time';
@@ -29,6 +30,7 @@ interface Vehicle {
 }
 
 interface RunningCar  {
+  id: number;
   mdn: string;
   carPlate: string;
   renterName: string;
@@ -37,7 +39,7 @@ interface RunningCar  {
   status: string;
 }
 
-function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPanelProps) {
+function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTimeSearchPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('distance');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
@@ -160,7 +162,10 @@ function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPane
               {sortedRunningCarList.map((runningCar, index) => (
                 <tr 
                   key={index}
-                  onClick={() => onSelectCarNumber(runningCar.carPlate)}
+                  onClick={() => {
+                    setSelectedDriveId(runningCar.id) 
+                    goDetail()
+                  }}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="px-2 py-1.5">
