@@ -24,7 +24,7 @@ import CarRegister from "../../pages/car/register/CarRegister";
 import RentRegister from "../../pages/rent/register/RentRegister";
 import AdminBizSection from "@/pages/admin/biz/AdminBizSection";
 import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection";
-import AdminNotice from "@/pages/admin/notice/AdminNotice";
+import AdminNotice from "@/pages/admin/notice/NoticeMain";
 import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
 
 // 로그인 없이 접근 가능한 라우트들
