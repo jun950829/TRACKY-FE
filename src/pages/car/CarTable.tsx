@@ -6,13 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+
 import { CarDetailTypes } from "@/constants/types/types";
 import { useState } from "react";
 import CarDetailModal from "./CarDetailModal";
@@ -88,10 +82,11 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
         <Table className="w-full table-fixed">
           <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
             <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="w-10 text-gray-600 font-medium">차량 상태</TableHead>
+              <TableHead className="w-10 text-gray-600 font-medium">상태</TableHead>
               <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
-              <TableHead className="w-12 text-gray-600 font-medium">차량 모델</TableHead>
+              <TableHead className="w-12 text-gray-600 font-medium">종류</TableHead>
               <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
+              <TableHead className="w-16 text-gray-600 font-medium">연식</TableHead>
               <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
             </TableRow>
           </TableHeader>
@@ -104,11 +99,11 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
               </TableRow>
             )}
             {carList.map((car, idx) => (
-              <TableRow 
-                key={idx} 
+              <TableRow
+                key={idx}
                 onClick={() => {
                   setIsDetail(true);
-                  handleCellClick(car.mdn)
+                  handleCellClick(car.mdn);
                 }}
                 className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
               >
@@ -125,6 +120,9 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                 </TableCell>
                 <TableCell className="whitespace-nowrap text-gray-700">
                   <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-gray-700">
+                  <span onClick={(e) => e.stopPropagation()}>{car.carYear}</span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
@@ -165,16 +163,14 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
         {carList.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            차량 정보가 없습니다.
-          </div>
+          <div className="text-center py-8 text-gray-500">차량 정보가 없습니다.</div>
         )}
         {carList.map((car) => (
-          <Card 
-            key={car.mdn} 
+          <Card
+            key={car.mdn}
             className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
-            <CardContent 
+            <CardContent
               onClick={() => {
                 setIsDetail(true);
                 handleCellClick(car.mdn);
