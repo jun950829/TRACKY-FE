@@ -13,6 +13,7 @@ function SignupMain() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSignup = async (data: SignupRequestType) => {

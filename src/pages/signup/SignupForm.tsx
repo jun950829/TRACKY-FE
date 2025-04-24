@@ -41,7 +41,7 @@ interface SignupFormProps {
 
 function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
   const navigate = useNavigate();
-  
+
   const {
     register,
     handleSubmit,
