@@ -43,13 +43,9 @@ interface SignupFormProps {
 
 function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
   const navigate = useNavigate();
-<<<<<<< HEAD
   const [isCheckingId, setIsCheckingId] = useState(false);
   const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
   
-=======
-
->>>>>>> 0a3c7dd667b6c853caf1712e1a99dfb286969b3e
   const {
     register,
     handleSubmit,
