@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import NoticeTable from "./NoticeTable";
-import adminApiService from "@/libs/apis/adminApi";
+import adminApiService from "@/libs/apis/noticeApi";
 import { NoticeDetailTypes } from "@/constants/types/noticeTypes";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";

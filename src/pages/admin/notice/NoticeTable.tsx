@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import NoticeModal from "./NoticeModal";
 import NoticeDetailModal from "./modal/NoticeDetailModal";
 import { NoticeDetailTypes, NoticeTypes } from "@/constants/types/noticeTypes";
-import adminApiService from "@/libs/apis/adminApi";
+import adminApiService from "@/libs/apis/noticeApi";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { CustomButton } from "@/components/custom/CustomButton";
