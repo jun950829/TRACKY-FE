@@ -8,18 +8,24 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Search } from "lucide-react";
+import { Edit, Trash, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import MemberModal from "./MemberModal";
-import { Member } from "../../../constants/mocks/memberMockData";
-import signupApiService from "@/libs/apis/signupApi";
+import signupApiService, { UpdateMemberRequestType } from "@/libs/apis/signupApi";
+import Modal from "@/components/custom/Modal";
+import { Member } from "@/constants/types/types";
+import { getStatusStyle, getStatusText } from "@/libs/utils/getClassUtils";
 
 export default function MemberTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedMember, setSelectedMember] = useState<UpdateMemberRequestType | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   // 초기 데이터 로드
   useEffect(() => {
@@ -37,36 +43,52 @@ export default function MemberTable() {
     setIsLoading(false);
   }
 
+  const onConfirm = () => {
+    setIsUpdated(false);
+    setIsDelete(false);
+    setIsDeleted(false);
+  }
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       searchMembers();
     }
   };
 
-  const handleEdit = (member: Member) => {
+  const handleEdit = (member: UpdateMemberRequestType) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (member: Member ) => {
     // 삭제 로직 구현
-    console.log("Delete member:", id);
+    setSelectedMember(member);
+    setIsDelete(true);
   };
 
-  const handleAdd = () => {
-    setSelectedMember(null);
-    setIsModalOpen(true);
-  };
-
-  const handleSave = (memberData: Omit<Member, "id">) => {
+  const handleSave = async (memberData: UpdateMemberRequestType) => {
     if (selectedMember) {
       // 수정 로직 구현
-      console.log("Update member:", { ...selectedMember, ...memberData });
+      const response = await signupApiService.updateMember(memberData);
+      if (response.status === 200) {
+        searchMembers();
+        setIsModalOpen(false);
+        setIsUpdated(true);
+      }
     } else {
       // 추가 로직 구현
       console.log("Add member:", memberData);
     }
   };
+
+  const deleteMember = async (memberId: string) => {
+    const response = await signupApiService.deleteMember({"memberId" : memberId});
+    if (response.status === 200) {
+      searchMembers();
+      setIsDelete(false);
+      setIsDeleted(true);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -128,15 +150,11 @@ export default function MemberTable() {
                   <TableCell className="text-gray-700">{member.bizName}</TableCell>
                   {/* <TableCell className="text-gray-600">{member.businessNumber}</TableCell> */}
                   <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
-                  <TableCell className="text-gray-600">{member.bizPhoneNumber}</TableCell>
+                  <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
                   <TableCell className="text-gray-600">{member.email}</TableCell>
                   <TableCell>
-                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                      member.status === "active" 
-                        ? "text-green-600 bg-green-50" 
-                        : "text-red-600 bg-red-50"
-                    }`}>
-                      {member.status === "active" ? "활성" : "비활성"}
+                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
+                      {getStatusText(member.status)}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
@@ -153,7 +171,7 @@ export default function MemberTable() {
                         variant="outline"
                         size="sm"
                         className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
-                        onClick={() => handleDelete(member.memberId)}
+                        onClick={() => handleDelete(member)}
                       >
                         <Trash className="h-4 w-4" />
                       </Button>
@@ -166,12 +184,32 @@ export default function MemberTable() {
         </Table>
       </div>
 
-      <MemberModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        member={selectedMember || undefined}
-        onSave={handleSave}
-      />
+      {selectedMember && (
+        <MemberModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          member={selectedMember}
+          onSave={handleSave}
+        />
+      )}
+
+      <Modal open={isUpdated} onClose={onConfirm} title="안내" description="계정 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
+      <Modal open={isDeleted} onClose={onConfirm} title="안내" description="계정 삭제 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
+
+
+      {selectedMember && isDelete && (
+        <Modal
+          open={isDelete}
+          onClose={() => setIsDelete(false)}
+          title="삭제"
+          description="계정을 삭제하시겠습니까?"
+          confirmText="삭제"
+          onConfirm={() => {
+            deleteMember(selectedMember.memberId);
+            setIsDelete(true);
+          }}
+        />
+      )}
     </div>
   );
 } 

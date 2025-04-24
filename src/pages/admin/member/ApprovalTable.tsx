@@ -109,9 +109,9 @@ export default function ApprovalTable() {
                 className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
               >
                 <TableCell className="text-gray-700">{member.bizName}</TableCell>
-                <TableCell className="text-gray-600">{member.bizRegName}</TableCell>
+                <TableCell className="text-gray-600">{member.bizRegNum}</TableCell>
                 <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
-                <TableCell className="text-gray-600">{member.bizPhoneNumber}</TableCell>
+                <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
                 <TableCell className="text-gray-600">{member.email}</TableCell>
                 <TableCell>
                   <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${

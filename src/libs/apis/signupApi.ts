@@ -11,6 +11,17 @@ export interface SignupRequestType {
     pwdConfirm: string;
     email: string;
   }
+
+  export interface UpdateMemberRequestType {
+    memberId: string;
+    bizName: string;
+    bizRegNum: string;
+    bizAdmin: string;
+    bizPhoneNum: string;
+    email: string;
+    role: string;
+    status: string;
+  }
   
   export const signupApiService = {
     searchMembers: async (search: string) => {
@@ -21,6 +32,16 @@ export interface SignupRequestType {
         const response = await api.get(`/members?search=${search}`);
         return response.data;
       }
+    },
+
+    updateMember: async (data: UpdateMemberRequestType) => {
+      const response = await api.post(`/members`, data);
+      return response.data;
+    },
+
+    deleteMember: async (data: {memberId: string}) => {
+      const response = await api.delete(`/members`, {data});
+      return response.data;
     },
 
     signup: async (data: SignupRequestType) => {

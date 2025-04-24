@@ -1,8 +1,8 @@
 export type Approves = {
   bizName: string;
-  bizRegName: string;
+  bizRegNum: string;
   bizAdmin: string;
-  bizPhoneNumber: string;
+  bizPhoneNum: string;
   memberId: string;
   email: string;
   role: string;
@@ -160,4 +160,16 @@ export type RentDetailTypes = {
     rentEtime: string;       // 대여 종료 시간
     returnLoc: string;      // 반납 위치
     createdAt: string;      // 생성 시간
+}
+
+
+export type Member = {
+  bizName: string;
+  bizRegNum: string;
+  bizAdmin: string;
+  bizPhoneNum: string;
+  memberId: string;
+  email: string;
+  role: string;
+  status: "active" | "deactive" | "wait" | "deleted";
 }

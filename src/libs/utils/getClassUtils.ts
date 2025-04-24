@@ -1,4 +1,5 @@
 import { CarStatus, CarStatusColorMap, CarType, RentStatus, RentStatusColorMap } from "@/constants/datas/status";
+import { Member } from "@/constants/types/types";
 
 /**
  * UI 관련 유틸리티 함수 모음
@@ -59,4 +60,36 @@ export const getStatusLabel = (type: 'car' | 'rent', value: string): string => {
 export const getCarTypeLabel = (value: string): string => {
   const option = CarType.find(opt => opt.value === value);
   return option ? option.label : value;
+};
+
+
+
+export const getStatusStyle = (status: Member["status"]) => {
+  switch (status) {
+    case "active":
+      return "text-green-600 bg-green-50";
+    case "deactive":
+      return "text-red-600 bg-red-50";
+    case "wait":
+      return "text-yellow-600 bg-yellow-50";
+    case "deleted":
+      return "text-gray-600 bg-gray-50";
+    default:
+      return "text-gray-600 bg-gray-50";
+  }
+};
+
+export const getStatusText = (status: Member["status"]) => {
+  switch (status) {
+    case "active":
+      return "활성화";
+    case "deactive":
+      return "비활성화";
+    case "wait":
+      return "승인대기";
+    case "deleted":
+      return "삭제됨";
+    default:
+      return "알 수 없음";
+  }
 };
