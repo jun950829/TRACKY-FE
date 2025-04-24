@@ -8,17 +8,33 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Search } from "lucide-react";
+import { Edit, Trash, Search, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
 import MemberModal from "./MemberModal";
+import MemberDetailModal from "./MemberDetailModal";
 import signupApiService, { UpdateMemberRequestType } from "@/libs/apis/signupApi";
 import Modal from "@/components/custom/Modal";
 import { Member } from "@/constants/types/types";
 import { getStatusStyle, getStatusText } from "@/libs/utils/getClassUtils";
 
+const convertMemberToUpdateRequest = (member: Member): UpdateMemberRequestType => {
+  return {
+    memberId: member.memberId,
+    bizName: member.bizName,
+    bizRegNum: member.bizRegNum,
+    bizAdmin: member.bizAdmin,
+    bizPhoneNum: member.bizPhoneNum,
+    email: member.email,
+    role: member.role,
+    status: member.status,
+  };
+};
+
 export default function MemberTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<UpdateMemberRequestType | null>(null);
+  const [selectedMemberForDetail, setSelectedMemberForDetail] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,14 +71,13 @@ export default function MemberTable() {
     }
   };
 
-  const handleEdit = (member: UpdateMemberRequestType) => {
-    setSelectedMember(member);
+  const handleEdit = (member: Member) => {
+    setSelectedMember(convertMemberToUpdateRequest(member));
     setIsModalOpen(true);
   };
 
-  const handleDelete = (member: Member ) => {
-    // 삭제 로직 구현
-    setSelectedMember(member);
+  const handleDelete = (member: Member) => {
+    setSelectedMember(convertMemberToUpdateRequest(member));
     setIsDelete(true);
   };
 
@@ -89,6 +104,11 @@ export default function MemberTable() {
       setIsDeleted(true);
     }
   }
+
+  const handleViewDetails = (member: Member) => {
+    setSelectedMemberForDetail(member);
+    setIsDetailModalOpen(true);
+  };
 
   return (
     <div className="space-y-4">
@@ -125,19 +145,19 @@ export default function MemberTable() {
               <TableHead className="text-gray-600 font-medium">연락처</TableHead>
               <TableHead className="text-gray-600 font-medium">이메일</TableHead>
               <TableHead className="text-gray-600 font-medium">상태</TableHead>
-              <TableHead className="w-24 text-right text-gray-600 font-medium">관리</TableHead>
+              <TableHead className="w-32 text-right text-gray-600 font-medium">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-4">
+                <TableCell colSpan={6} className="text-center py-4">
                   검색 중...
                 </TableCell>
               </TableRow>
             ) : members.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-4">
+                <TableCell colSpan={6} className="text-center py-4">
                   검색 결과가 없습니다.
                 </TableCell>
               </TableRow>
@@ -159,6 +179,14 @@ export default function MemberTable() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
+                        onClick={() => handleViewDetails(member)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
@@ -193,9 +221,16 @@ export default function MemberTable() {
         />
       )}
 
+      {selectedMemberForDetail && (
+        <MemberDetailModal
+          open={isDetailModalOpen}
+          onClose={() => setIsDetailModalOpen(false)}
+          member={selectedMemberForDetail}
+        />
+      )}
+
       <Modal open={isUpdated} onClose={onConfirm} title="안내" description="계정 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
       <Modal open={isDeleted} onClose={onConfirm} title="안내" description="계정 삭제 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
-
 
       {selectedMember && isDelete && (
         <Modal
