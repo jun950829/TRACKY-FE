@@ -7,7 +7,6 @@ function HistoryCarList() {
   // 주행 항목 클릭 핸들러
   const handleCarClick = async (carPlate: string) => {
 
-    // 차량 검색 모드일 때
     const response = await driveService.getDriveBySearchFilter(carPlate);
 
     setDriveResults(response.data);

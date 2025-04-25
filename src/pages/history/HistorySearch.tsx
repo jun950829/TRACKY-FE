@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon } from 'lucide-react';
 import { useHistoryStore } from '@/stores/useHistoryStore';
-import { drivehistoryService } from '@/libs/apis/drivehistoryApi';
+import driveService from '@/libs/apis/driveApi';
 
 const HistorySearch = () => {
   const { 
@@ -12,7 +12,7 @@ const HistorySearch = () => {
     searchType, 
     setSearchType, 
     setBizResults, 
-    setDriveResults, 
+    setCarResults, 
     setLoading, 
     setError,
     isLoading 
@@ -24,11 +24,11 @@ const HistorySearch = () => {
     setError(null);
     try {
       if( searchType === 'biz' ) {
-        const response = await drivehistoryService.driveHistorybyBizId(searchText);
+        const response = await driveService.getDriveBySearchFilter(searchText);
         // setBizResults(response.data);
       } else if( searchType === 'car' ) {
-        const response = await drivehistoryService.getDriveDetailbyCar(searchText);
-        setDriveResults(response.data);
+        const response = await driveService.getCars(searchText);
+        setCarResults(response.data);
       }
       setLoading(false);
     } catch (error) {

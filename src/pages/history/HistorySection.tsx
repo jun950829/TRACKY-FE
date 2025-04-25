@@ -42,7 +42,7 @@ function HistorySection() {
 
       // 차량 기록 조회
       if( searchType === 'car' ) {
-        const response = await driveService.getCars();
+        const response = await driveService.getCars("");
         driveList = response;
 
         setCarResults(driveList.data);

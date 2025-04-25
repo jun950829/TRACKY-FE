@@ -4,8 +4,13 @@ import api from "./api";
 const driveApiRoot = "/drives";
 
 export const driveService = {
-    getCars: async () => {
-        const response = await api.get(`${driveApiRoot}/cars`);
+    getCars: async (search: string) => {
+        let response;
+        if (search === "") {
+            response = await api.get(`${driveApiRoot}/cars`);
+        } else {
+            response = await api.get(`${driveApiRoot}/cars?search=${search}`);
+        }
         return response.data;
     },
 
