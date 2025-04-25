@@ -5,7 +5,7 @@ const driveApiRoot = "/drives";
 export const driveService = {
     getCars: async (search: string, page?: number, pageSize: number = 20) => {
         const params = new URLSearchParams();
-        params.append('searchText', search ? search : "");
+        params.append('search', search ? search : "");
         if (page !== undefined) {
             params.append('page', String(page)); // API는 0-based 페이지를 사용
             params.append('size', String(pageSize));

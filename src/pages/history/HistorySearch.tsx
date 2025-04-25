@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon, Loader2 } from 'lucide-react';
@@ -16,13 +16,15 @@ const HistorySearch = () => {
   const [searchText, setSearchText] = useState('');
   const [searchType, setSearchType] = React.useState<'biz' | 'car'>('car');
 
+  // 초기 데이터 로딩
   useEffect(() => {
-    fetchCars(searchText);
-  }, [fetchCars, searchText]);
-  
+    fetchCars('', 0);
+  }, []);
+
   const handleSearch = async () => {
     setStoreSearchText(searchText);
-    await fetchCars(searchText);
+    setCurrentPage(0); // 첫 페이지로 초기화
+    await fetchCars(searchText, 0);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +34,8 @@ const HistorySearch = () => {
   const handleTypeChange = (type: 'biz' | 'car') => {
     setSearchText('');
     setSearchType(type);
-    setCurrentPage(1);
+    setCurrentPage(0);
+    fetchCars('', 0);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -84,7 +87,7 @@ const HistorySearch = () => {
         />
         <Button 
           onClick={handleSearch}
-          disabled={isLoading || !searchText.trim()}
+          disabled={isLoading}
           size="icon"
           variant="ghost"
           className="absolute right-0 top-0 h-full px-3"
