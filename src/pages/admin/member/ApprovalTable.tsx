@@ -20,14 +20,29 @@ export default function ApprovalTable() {
   const [selectedMember, setSelectedMember] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [approves, setApproves] = useState<Approves[]>([]);
+  const [filteredApproves, setFilteredApproves] = useState<Approves[]>([]);
 
   useEffect(() => {
     getApproves();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredApproves(approves);
+    } else {
+      const filtered = approves.filter(
+        (member) =>
+          member.bizName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          member.bizAdmin.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredApproves(filtered);
+    }
+  }, [searchTerm, approves]);
+
   const getApproves = async () => {
     const result = await signupApiService.getApproves();
     setApproves(result.data);
+    setFilteredApproves(result.data);
   };
 
   const handleApprove = (memberId: string) => {
@@ -36,7 +51,6 @@ export default function ApprovalTable() {
   };
 
   const handleDelete = async (id: string) => {
-    // 삭제 로직 구현
     const result = await signupApiService.reject({memberId: id});
     if(result.status === 200) {
       alert("거절 처리가 완료되었습니다.");
@@ -48,7 +62,6 @@ export default function ApprovalTable() {
 
   const handleSave = async (memberId: string) => {
     if (selectedMember && memberId !==  "") {
-      // 수정 로직 구현
       const result = await signupApiService.approve({memberId: memberId});
 
       if(result.status === 200) {
@@ -58,7 +71,6 @@ export default function ApprovalTable() {
       } else {
         alert("승인 처리에 실패했습니다.");
       }
-
     } else {
       alert("승인 요청이 보내지지 않았습니다.");
     }
@@ -102,15 +114,15 @@ export default function ApprovalTable() {
           <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
             <Table>
               <TableBody>
-                {approves.length === 0 && (
+                {filteredApproves.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center">
-                      승인 대기 목록이 없습니다.
+                      {searchTerm ? "검색 결과가 없습니다." : "승인 대기 목록이 없습니다."}
                     </TableCell>
                   </TableRow>
                 )}
 
-                {approves.map((member) => (
+                {filteredApproves.map((member) => (
                   <TableRow 
                     key={member.memberId}
                     className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
