@@ -9,81 +9,55 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Trash, Search, Eye } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import MemberModal from "./MemberModal";
 import MemberDetailModal from "./MemberDetailModal";
 import signupApiService, { UpdateMemberRequestType } from "@/libs/apis/signupApi";
 import Modal from "@/components/custom/Modal";
 import { Member } from "@/constants/types/types";
 import { getStatusStyle, getStatusText } from "@/libs/utils/getClassUtils";
-import Pagination from "@/components/custom/Pagination";
 import { convertMemberToUpdateRequest } from "./convert/memberConvert";
 
-export default function MemberTable() {
+interface MemberTableProps {
+  members: Member[];
+  isLoading: boolean;
+  searchTerm: string;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalElements: number;
+  };
+  onSearch: (term: string) => void;
+  setSearchTerm: (term: string) => void;
+  onPageChange: (page: number) => void;
+  onMemberUpdate: () => Promise<void>;
+}
+
+export default function MemberTable({
+  members,
+  isLoading,
+  searchTerm,
+  setSearchTerm,
+  onSearch,
+  onMemberUpdate,
+}: MemberTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<UpdateMemberRequestType | null>(null);
   const [selectedMemberForDetail, setSelectedMemberForDetail] = useState<Member | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [members, setMembers] = useState<Member[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-
-  // 페이지네이션 상태
-  const [pagination, setPagination] = useState({
-    currentPage: 0,
-    totalPages: 0,
-    totalElements: 0,
-  });
-
-  // 검색 및 필터 상태
-  const [searchParams, setSearchParams] = useState({
-    search: searchTerm,
-    status: undefined as string | undefined,
-    carType: undefined as string | undefined,
-    page: 0,
-    size: 10,
-  });
-
   const [isUpdated, setIsUpdated] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
-
-  // 초기 데이터 로드
-  useEffect(() => {
-    searchMembers(searchParams);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.page]);
-
-  const searchMembers = async (params: typeof searchParams) => {
-    setIsLoading(true);
-    try {
-      const response = await signupApiService.searchMembers(
-        params.search,
-        params.page,
-        params.size
-      );
-      setMembers(response.data);
-      setPagination({
-        currentPage: response.pageResponse.page || 0,
-        totalPages: response.pageResponse.totalPages || 1,
-        totalElements: response.pageResponse.total || response.data.length,
-      });
-    } catch (error) {
-      console.error('Error fetching members:', error);
-    }
-    setIsLoading(false);
-  }
 
   const onConfirm = () => {
     setIsUpdated(false);
     setIsDelete(false);
     setIsDeleted(false);
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      setSearchParams(prev => ({ ...prev, page: 0, search: searchTerm }));
+      onSearch(e.currentTarget.value);
     }
   };
 
@@ -106,7 +80,7 @@ export default function MemberTable() {
     if (selectedMember) {
       const response = await signupApiService.updateMember(memberData);
       if (response.status === 200) {
-        searchMembers(searchParams);
+        await onMemberUpdate();
         setIsModalOpen(false);
         setIsUpdated(true);
       }
@@ -116,19 +90,10 @@ export default function MemberTable() {
   const deleteMember = async (memberId: string) => {
     const response = await signupApiService.deleteMember({"memberId" : memberId});
     if (response.status === 200) {
-      searchMembers(searchParams);
+      await onMemberUpdate();
       setIsDelete(false);
       setIsDeleted(true);
     }
-  }
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    setSearchParams(prev => ({ ...prev, page }));
-  };
-
-  const handleSearch = () => {
-    setSearchParams(prev => ({ ...prev, page: 0, search: searchTerm }));
   };
 
   return (
@@ -148,7 +113,7 @@ export default function MemberTable() {
           />
         </div>
         <Button
-          onClick={handleSearch}
+          onClick={() => onSearch(searchTerm)}
           className="bg-primary text-white hover:bg-primary/90"
         >
           <Search className="h-4 w-4 mr-2" />
@@ -230,17 +195,6 @@ export default function MemberTable() {
           </TableBody>
         </Table>
       </div>
-      {pagination.totalElements > 0 &&  (
-        <div className="w-full flex flex-col justify-between items-center gap-4 mt-4">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={Math.max(1, pagination.totalPages)}
-            pageSize={searchParams.size}
-            totalElements={pagination.totalElements}
-            onPageChange={handlePageChange}
-          />
-        </div>
-      )}
 
       {selectedMember && (
         <MemberModal
