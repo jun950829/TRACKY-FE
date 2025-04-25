@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useDriveListStore } from "@/stores/useDriveListStore";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronLeft, ChevronRight, Download, Filter, Search, X } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Download, Filter, Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DateRange } from "react-day-picker";
 import { subDays } from "date-fns";
@@ -31,10 +31,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
+import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, setSelectedDriveId } = useHistoryStore();
+  const { driveResults, isLoading } = useDriveListStore();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [date, setDate] = useState<DateRange | undefined>({
@@ -83,13 +84,20 @@ function HistoryTable() {
 
   const clickDrive = (driveId: number) => {
     navigate(`/history/${driveId}`);
-    setSelectedDriveId(driveId);
   };
 
-  if (!driveResults) {
+  if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-white p-6">
-        <p className="text-gray-500">좌측 목록에서 차량을 선택하세요</p>
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (driveResults.length === 0) {
+    return (
+      <div className="p-6 text-center text-gray-500">
+        운행 기록이 없습니다
       </div>
     );
   }

@@ -1,39 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon, Loader2 } from 'lucide-react';
-import { useHistoryStore } from '@/stores/useHistoryStore';
-import driveService from '@/libs/apis/driveApi';
+import { useCarListStore } from '@/stores/useCarListStore';
 import { cn } from '@/libs/utils/utils';
 
 const HistorySearch = () => {
-  const { 
-    searchText, 
-    setSearchText, 
-    searchType, 
-    setSearchType, 
-    setCarResults, 
-    setLoading, 
-    setError,
-    isLoading 
-  } = useHistoryStore();
+  const {
+    isLoading,
+    setCurrentPage,
+    fetchCars,
+    setSearchText: setStoreSearchText
+  } = useCarListStore();
 
-  const handleSearch = async() => {
-    if (!searchText.trim()) return;
-    
-    setLoading(true);
-    setError(null);
-    try {
-      if (searchType === 'car') {
-        const response = await driveService.getCars(searchText);
-        setCarResults(response.data);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('검색 오류:', error);
-      setError('검색 중 오류가 발생했습니다');
-      setLoading(false);
-    }
+  const [searchText, setSearchText] = useState('');
+  const [searchType, setSearchType] = React.useState<'biz' | 'car'>('car');
+
+  useEffect(() => {
+    fetchCars(searchText);
+  }, [fetchCars, searchText]);
+  
+  const handleSearch = async () => {
+    setStoreSearchText(searchText);
+    await fetchCars(searchText);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +32,7 @@ const HistorySearch = () => {
   const handleTypeChange = (type: 'biz' | 'car') => {
     setSearchText('');
     setSearchType(type);
+    setCurrentPage(1);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -61,8 +51,8 @@ const HistorySearch = () => {
           className={cn(
             "flex-1 transition-all duration-200",
             searchType === 'car' 
-              ? 'bg-primary text-white hover:bg-primary/80' 
-              : 'border-gray-200 hover:border-primary hover:text-primary'
+              ? 'bg-blue-600 text-white hover:bg-blue-700' 
+              : 'border-gray-200 hover:border-blue-500 hover:text-blue-600'
           )}
           onClick={() => handleTypeChange('car')}
         >
@@ -74,8 +64,8 @@ const HistorySearch = () => {
           className={cn(
             "flex-1 transition-all duration-200",
             searchType === 'biz' 
-              ? 'bg-primary text-white hover:bg-primary/80' 
-              : 'border-gray-200 hover:border-primary hover:text-primary'
+              ? 'bg-blue-600 text-white hover:bg-blue-700' 
+              : 'border-gray-200 hover:border-blue-500 hover:text-blue-600'
           )}
           onClick={() => handleTypeChange('biz')}
         >

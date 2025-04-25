@@ -50,7 +50,7 @@ export const getStatusLabel = (type: 'car' | 'rent', value: string): string => {
   const statusOptions = type === 'car' ? CarStatus : RentStatus;
   const option = statusOptions.find(opt => opt.value === value);
   return option ? option.label : value;
-}; 
+};
 
 /**
  * 차량 타입 value에 해당하는 label 값을 반환합니다.
@@ -61,8 +61,6 @@ export const getCarTypeLabel = (value: string): string => {
   const option = CarType.find(opt => opt.value === value);
   return option ? option.label : value;
 };
-
-
 
 export const getStatusStyle = (status: Member["status"]) => {
   switch (status) {

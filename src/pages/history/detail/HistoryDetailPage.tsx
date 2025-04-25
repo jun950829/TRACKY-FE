@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistoryStore } from "@/stores/useHistoryStore";
+import { useDriveListStore } from "@/stores/useDriveListStore";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
@@ -18,7 +18,7 @@ const formatDateTime = (dateStr: string) => {
 };
 
 const HistoryDetailPage: React.FC = () => {
-  const { selectedDriveId, selectedDetail, setSelectedDetail } = useHistoryStore();
+  const { selectedDriveId, driveDetail, setDriveDetail, setLoading, setError } = useDriveListStore();
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
   const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
 
@@ -27,9 +27,9 @@ const HistoryDetailPage: React.FC = () => {
   }, [selectedDriveId]);
 
   useEffect(() => {
-    if (!selectedDetail) return;
+    if (!driveDetail) return;
 
-    const { onLat, onLon, offLat, offLon } = selectedDetail;
+    const { onLat, onLon, offLat, offLon } = driveDetail;
 
     if (
       typeof onLat !== "number" ||
@@ -63,10 +63,10 @@ const HistoryDetailPage: React.FC = () => {
     };
 
     fetchAddress();
-  }, [selectedDetail]);
+  }, [driveDetail]);
 
   // 선택된 데이터가 없는 경우
-  if (!selectedDetail) {
+  if (!driveDetail) {
     return (
       <div className="h-full flex items-center justify-center bg-white p-6">
         <p className="text-gray-500">좌측 목록에서 운행 기록을 선택하세요</p>
@@ -76,9 +76,17 @@ const HistoryDetailPage: React.FC = () => {
 
   async function getDriveById() {
     if (!selectedDriveId) return;
-    const response = await driveService.getDriveById(selectedDriveId);
-    console.log("response: ", response);
-    setSelectedDetail(response.data);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await driveService.getDriveById(selectedDriveId);
+      setDriveDetail(response.data);
+    } catch (error) {
+      console.error('운행 기록 상세 조회 실패:', error);
+      setError('운행 기록 상세 조회 중 오류가 발생했습니다');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -90,7 +98,7 @@ const HistoryDetailPage: React.FC = () => {
             <CardTitle className="text-base sm:text-lg">주행 경로</CardTitle>
           </CardHeader>
           <CardContent className="p-2 sm:p-4">
-            <HistoryMap gpsDataList={selectedDetail.gpsDataList || []} height="200px" />
+            <HistoryMap gpsDataList={driveDetail.gpsDataList || []} height="200px" />
           </CardContent>
         </Card>
 
@@ -98,112 +106,57 @@ const HistoryDetailPage: React.FC = () => {
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">총 주행 거리</div>
-              <div className="text-base sm:text-xl font-bold mt-1">
-                {(selectedDetail.sum * 0.001).toFixed(2)} km
+              <div className="text-sm text-gray-500">출발</div>
+              <div className="text-base font-medium">{onAddress}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                {formatDateTime(driveDetail.onTime)}
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gray-50 shadow-sm">
             <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-xs sm:text-sm font-medium text-gray-500">운행 시간</div>
-              <div className="text-base sm:text-xl font-bold mt-1">
-                {(() => {
-                  if(selectedDetail.driveOffTime === null) {
-                    return "운행중"
-                  }
-                  const start = new Date(selectedDetail.driveOnTime);
-                  const end = new Date(selectedDetail.driveOffTime);
-                  const diffMs = end.getTime() - start.getTime();
-                  const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-                  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                  const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
-                  return `${diffHrs}시간 ${diffMins}분 ${diffSecs}초`;
-                })()}
+              <div className="text-sm text-gray-500">도착</div>
+              <div className="text-base font-medium">{offAddress}</div>
+              <div className="text-sm text-gray-500 mt-1">
+                {formatDateTime(driveDetail.offTime)}
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* 상세 정보 카드 (하단) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-          <Card className="shadow-sm">
-            <CardHeader className="p-2 sm:p-3 pb-1">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-base sm:text-lg">운행 정보</CardTitle>
-                <div className="text-xs font-medium text-gray-500 truncate">
-                  운행 ID : {selectedDetail.driveId}
+        {/* 상세 정보 카드 */}
+        <Card className="shadow-sm">
+          <CardHeader className="p-2 sm:p-4 sm:pb-0 pb-0">
+            <CardTitle className="text-base sm:text-lg">상세 정보</CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 sm:p-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-sm text-gray-500">차량 번호</div>
+                <div className="text-base font-medium">{driveDetail.carPlate}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-500">운행 상태</div>
+                <div className="mt-1">
+                  <StatusBadge status={driveDetail.status} type="drive" />
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="p-2 sm:p-3 pt-0">
-              <div className="grid grid-cols-1 gap-2 text-xs sm:text-sm">
-                <div>
-                  <div className="text-xs font-medium text-gray-500">출발 시간</div>
-                  <div className="mt-1 truncate">{formatDateTime(selectedDetail.driveOnTime).slice(2, 22)}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">도착 시간</div>
-                  <div className="mt-1 truncate">{selectedDetail.driveOffTime === null ? "운행중" : formatDateTime(selectedDetail.driveOffTime).slice(2, 22)}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">출발 위치</div>
-                  <div className="mt-1 truncate">{onAddress}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">도착 위치</div>
-                  <div className="mt-1 truncate">{offAddress}</div>
+              <div>
+                <div className="text-sm text-gray-500">운행 거리</div>
+                <div className="text-base font-medium">
+                  {driveDetail.driveDistance?.toFixed(1) || 0} km
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-sm">
-            <CardHeader className="p-2 sm:p-3 pb-1">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-base sm:text-lg">예약 정보</CardTitle>
-                  <StatusBadge status={selectedDetail.rentStatus} type="rent" />
-              </div>
-            </CardHeader>
-            <CardContent className="p-2 sm:p-3 pt-0">
-              <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
-                <div>
-                  <div className="text-xs font-medium text-gray-500">예약 번호</div>
-                  <div className="mt-1 truncate">{selectedDetail.rentUuid}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">차량 관리번호</div>
-                  <div className="mt-1 truncate">{selectedDetail.mdn}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">예약자</div>
-                  <div className="mt-1 truncate">{selectedDetail.renterName}</div>
-                </div>
-                <div>
-                  <div className="text-xs font-medium text-gray-500">연락처</div>
-                  <div className="mt-1 truncate">{selectedDetail.renterPhone}</div>
-                </div>
-                <div className="col-span-2">
-                  <div className="text-xs font-medium text-gray-500">대여 시작 시간</div>
-                  <div className="mt-1 truncate">
-                    {formatDateTime(selectedDetail.rentStime).slice(2, 19)}
-                  </div>
-                </div>
-                <div className="col-span-2">
-                  <div className="text-xs font-medium text-gray-500">대여 종료 시간</div>
-                  <div className="mt-1 truncate">
-                    {selectedDetail.rentEtime === null ? "운행중" : formatDateTime(selectedDetail.rentEtime).slice(2, 19)}
-                  </div>
-                </div>
-                <div className="col-span-2">
-                  <div className="text-xs font-medium text-gray-500">사용 목적</div>
-                  <div className="mt-1 truncate">{selectedDetail.purpose}</div>
+              <div>
+                <div className="text-sm text-gray-500">운행 시간</div>
+                <div className="text-base font-medium">
+                  {driveDetail.driveDuration || 0} 분
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
