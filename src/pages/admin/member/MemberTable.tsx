@@ -16,19 +16,8 @@ import signupApiService, { UpdateMemberRequestType } from "@/libs/apis/signupApi
 import Modal from "@/components/custom/Modal";
 import { Member } from "@/constants/types/types";
 import { getStatusStyle, getStatusText } from "@/libs/utils/getClassUtils";
-
-const convertMemberToUpdateRequest = (member: Member): UpdateMemberRequestType => {
-  return {
-    memberId: member.memberId,
-    bizName: member.bizName,
-    bizRegNum: member.bizRegNum,
-    bizAdmin: member.bizAdmin,
-    bizPhoneNum: member.bizPhoneNum,
-    email: member.email,
-    role: member.role,
-    status: member.status,
-  };
-};
+import Pagination from "@/components/custom/Pagination";
+import { convertMemberToUpdateRequest } from "./convert/memberConvert";
 
 export default function MemberTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +27,23 @@ export default function MemberTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // 페이지네이션 상태
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    totalElements: 0,
+  });
+
+  // 검색 및 필터 상태
+  const [searchParams, setSearchParams] = useState({
+    search: searchTerm,
+    status: undefined as string | undefined,
+    carType: undefined as string | undefined,
+    page: 0,
+    size: 10,
+  });
 
   const [isUpdated, setIsUpdated] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -45,14 +51,24 @@ export default function MemberTable() {
 
   // 초기 데이터 로드
   useEffect(() => {
-    searchMembers();
-  }, []);
+    searchMembers(searchParams);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.page]);
 
-  const searchMembers = async () => {
+  const searchMembers = async (params: typeof searchParams) => {
     setIsLoading(true);
     try {
-      const response = await signupApiService.searchMembers(searchTerm);
+      const response = await signupApiService.searchMembers(
+        params.search,
+        params.page,
+        params.size
+      );
       setMembers(response.data);
+      setPagination({
+        currentPage: response.pageResponse.page || 0,
+        totalPages: response.pageResponse.totalPages || 1,
+        totalElements: response.pageResponse.total || response.data.length,
+      });
     } catch (error) {
       console.error('Error fetching members:', error);
     }
@@ -67,7 +83,7 @@ export default function MemberTable() {
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      searchMembers();
+      setSearchParams(prev => ({ ...prev, page: 0, search: searchTerm }));
     }
   };
 
@@ -81,33 +97,38 @@ export default function MemberTable() {
     setIsDelete(true);
   };
 
+  const handleViewDetails = (member: Member) => {
+    setSelectedMemberForDetail(member);
+    setIsDetailModalOpen(true);
+  };
+
   const handleSave = async (memberData: UpdateMemberRequestType) => {
     if (selectedMember) {
-      // 수정 로직 구현
       const response = await signupApiService.updateMember(memberData);
       if (response.status === 200) {
-        searchMembers();
+        searchMembers(searchParams);
         setIsModalOpen(false);
         setIsUpdated(true);
       }
-    } else {
-      // 추가 로직 구현
-      console.log("Add member:", memberData);
     }
   };
 
   const deleteMember = async (memberId: string) => {
     const response = await signupApiService.deleteMember({"memberId" : memberId});
     if (response.status === 200) {
-      searchMembers();
+      searchMembers(searchParams);
       setIsDelete(false);
       setIsDeleted(true);
     }
   }
 
-  const handleViewDetails = (member: Member) => {
-    setSelectedMemberForDetail(member);
-    setIsDetailModalOpen(true);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setSearchParams(prev => ({ ...prev, page }));
+  };
+
+  const handleSearch = () => {
+    setSearchParams(prev => ({ ...prev, page: 0, search: searchTerm }));
   };
 
   return (
@@ -119,7 +140,7 @@ export default function MemberTable() {
       <div className="flex items-center space-x-2">
         <div className="relative flex-1">
           <Input
-            placeholder="회원명, 담당자로 검색"
+            placeholder="업체명, 담당자로 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyPress}
@@ -127,8 +148,8 @@ export default function MemberTable() {
           />
         </div>
         <Button
-          onClick={searchMembers}
-          className="bg-blue-500 text-white hover:bg-blue-600"
+          onClick={handleSearch}
+          className="bg-primary text-white hover:bg-primary/90"
         >
           <Search className="h-4 w-4 mr-2" />
           검색
@@ -139,8 +160,7 @@ export default function MemberTable() {
         <Table>
           <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
             <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="text-gray-600 font-medium">회원명</TableHead>
-              {/* <TableHead className="text-gray-600 font-medium">사업자번호</TableHead> */}
+              <TableHead className="text-gray-600 font-medium">업체명</TableHead>
               <TableHead className="text-gray-600 font-medium">담당자</TableHead>
               <TableHead className="text-gray-600 font-medium">연락처</TableHead>
               <TableHead className="text-gray-600 font-medium">이메일</TableHead>
@@ -168,7 +188,6 @@ export default function MemberTable() {
                   className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
                 >
                   <TableCell className="text-gray-700">{member.bizName}</TableCell>
-                  {/* <TableCell className="text-gray-600">{member.businessNumber}</TableCell> */}
                   <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
                   <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
                   <TableCell className="text-gray-600">{member.email}</TableCell>
@@ -211,6 +230,17 @@ export default function MemberTable() {
           </TableBody>
         </Table>
       </div>
+      {pagination.totalElements > 0 &&  (
+        <div className="w-full flex flex-col justify-between items-center gap-4 mt-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.max(1, pagination.totalPages)}
+            pageSize={searchParams.size}
+            totalElements={pagination.totalElements}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
 
       {selectedMember && (
         <MemberModal

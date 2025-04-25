@@ -6,7 +6,7 @@ export type Approves = {
   memberId: string;
   email: string;
   role: string;
-  status: string;
+  status: "active" | "deactive" | "wait" | "deleted";
   createAt: string;
 }
 

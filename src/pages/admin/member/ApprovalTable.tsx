@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import ApprovalModal from "./ApprovalModal";
 import signupApiService from "@/libs/apis/signupApi";
 import { Approves } from "@/constants/types/types";
+import { getStatusStyle, getStatusText } from "@/libs/utils/getClassUtils";
 
 export default function ApprovalTable() {
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -114,14 +115,10 @@ export default function ApprovalTable() {
                 <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
                 <TableCell className="text-gray-600">{member.email}</TableCell>
                 <TableCell>
-                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                    member.status === "active" 
-                      ? "text-green-600 bg-green-50" 
-                      : "text-red-600 bg-red-50"
-                  }`}>
-                    {member.status === "active" ? "활성" : "비활성"}
-                  </span>
-                </TableCell>
+                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
+                      {getStatusText(member.status)}
+                    </span>
+                  </TableCell>
                 <TableCell className="text-right">
                   <div className="flex gap-2 justify-end">
                     <Button
