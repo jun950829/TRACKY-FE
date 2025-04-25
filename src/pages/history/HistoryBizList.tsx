@@ -26,7 +26,6 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     bizResults,
     searchType,
     selectedBiz,
-    selectedDetail,
     setSelectedBiz,
     setSelectedDetail,
   } = useHistoryStore();

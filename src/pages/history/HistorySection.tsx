@@ -3,30 +3,29 @@ import { useHistoryStore } from '@/stores/useHistoryStore';
 import HistorySearch from './HistorySearch';
 import HistoryBizList from './HistoryBizList';
 import HistorySheet from './HistorySheet';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { driveService } from '@/libs/apis/driveApi';
-import HistoryCarList from './HistoryCarList';
 import { ErrorToast } from '@/components/custom/ErrorToast';
 import { ApiError, createApiError } from '@/types/error';
 import HistoryTable from './HistoryTable';
+import Pagination from '@/components/custom/Pagination';
+import HistoryCarLayer from './HistoryCarLayer';
 
 interface DrawerState {
   [key: string]: boolean;
 }
 
 function HistorySection() {
-
   const { 
     searchType,
     setBizResults,
-    setCarResults
+    setCarResults,
+    isLoading
   } = useHistoryStore();
 
-  // 각 drawer의 열림/닫힘 상태를 개별적으로 관리
   const [sheetStates, setDrawerStates] = useState<DrawerState>({
     search: false,
-    // 다른 drawer가 있다면 여기에 추가
   });
   const [error, setError] = useState<ApiError | null>(null);
 
@@ -34,65 +33,49 @@ function HistorySection() {
     setError(null);
     try {
       let driveList;
-      // 업체 기록 조회
-      // if( searchType === 'biz' ) {
-      //   const response = await driveService.driveHistorybyBizId();
-      //   driveList = response;
-      // }
-
-      // 차량 기록 조회
       if( searchType === 'car' ) {
         const response = await driveService.getCars("");
         driveList = response;
-
         setCarResults(driveList.data);
-        // 여기는 default 정보가 없음
-
       }
-
-      // setBizResults(driveList.data);
     } catch (error) {
       console.error('운행 기록 조회 실패:', error);
       setError(createApiError(error));
     }
   }
 
-  // 초기 데이터 로드
   useEffect(() => {
     getDataList();
   }, []);
 
-
-// drawer 상태 변경 핸들러
   const handleDrawerOpenChange = (id: string, isOpen: boolean) => {
     setDrawerStates(prev => ({ ...prev, [id]: isOpen }));
   };
 
-  // 검색 시트 토글 핸들러
   const toggleSearchSheet = () => {
     setDrawerStates(prev => ({ ...prev, search: true }));
   };
 
-  return <div>
+  return (
+    <div className="h-full flex flex-col">
       {error && <ErrorToast error={error} />}
-    
-      <div className="flex justify-between items-center mb-2 sm:mb-4">
-        
-        {/* 모바일에서 검색 버튼 */}
+      
+      {/* Header Section */}
+      <div className="flex justify-between items-center bg-white rounded-lg shadow-sm">
         <div className="md:hidden">
           <Button 
             onClick={toggleSearchSheet}
             variant="outline"
             size="sm"
-            className="flex items-center"
+            className="flex items-center gap-2"
           >
-            <Search className="h-4 w-4 mr-1" />
+            <Search className="h-4 w-4" />
             검색
           </Button>
         </div>
       </div>
       
-      {/* 모바일 검색 시트 */}
+      {/* Mobile Search Sheet */}
       <HistorySheet
         id="search"
         isOpen={sheetStates.search}
@@ -103,33 +86,42 @@ function HistorySection() {
         title="검색 및 목록"
       />
       
-      <div className="flex flex-col md:flex-row flex-grow h-[calc(100vh-80px)] overflow-hidden">
-        {/* 데스크탑 검색/목록 영역 (모바일에서는 숨김) */}
-        <div className="hidden md:block w-[200px] lg:w-[250px] md:mr-4 bg-white rounded-lg shadow-md overflow-hidden h-full">
+      {/* Main Content */}
+      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[calc(100vh-120px)]">
+        {/* Desktop Search/List Area */}
+        <div className="hidden md:block w-[280px] bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="flex flex-col h-full">
-            <div className="flex-shrink-0">
+            <div className="p-4 border-b">
               <HistorySearch />
             </div>
             <div className="flex-grow overflow-y-auto">
-              {
-                searchType === 'biz' ? (
-                  <HistoryBizList />
-                ) : (
-                  <HistoryCarList />
-                )
-              }
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                </div>
+              ) : searchType === 'biz' ? (
+                <HistoryBizList />
+              ) : (
+                <HistoryCarLayer />
+              )}
             </div>
+
+            <Pagination currentPage={0} totalPages={0} pageSize={0} totalElements={0} onPageChange={function (page: number): void {
+              throw new Error('Function not implemented.');
+            } }            />
+
           </div>
         </div>
         
-        {/* 상세 정보 영역 - 모바일과 데스크탑 모두 표시 */}
-        <div className="flex-1 mt-2 md:mt-0 bg-white rounded-lg shadow-md overflow-hidden h-full" style={{ zIndex: 1 }}>
+        {/* Table Area */}
+        <div className="flex-1 bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="h-full overflow-y-auto">
             <HistoryTable />
           </div>
         </div>
       </div>
-  </div>;
+    </div>
+  );
 }
 
 export default HistorySection;

@@ -9,7 +9,11 @@ export interface GpsData {
 // 운행 기록 타입 정의
 export interface CarRecord {
   carPlate: string;
-  carType?: string;
+  carType: string;
+  mdn?: string;
+  carName?: string;
+  carYear?: string;
+  status: string;
 }
 
 export interface DriveRecord {
