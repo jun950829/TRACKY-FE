@@ -64,7 +64,7 @@ export default function MemberSection() {
   };
 
   return (
-    <section className="w-full h-full p-10">
+    <section className="w-full h-full">
       <MemberTable
         members={members}
         isLoading={isLoading}
