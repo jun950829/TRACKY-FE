@@ -12,6 +12,11 @@ export const realtimeApi = {
     }
     return response.data;
   },
+
+  getRealtimeDetailData: async (id: number) => {
+    const response = await api.get(`${realtimeApiRoot}/${id}`);
+    return response.data;
+  },
 };
 
 export default realtimeApi;
