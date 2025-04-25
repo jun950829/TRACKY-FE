@@ -53,6 +53,18 @@ export const headerMenus = [
     icon: BarChart2
   },
   {
+    name: "기타",
+    path: "/etc",
+    icon: FileText,
+    subMenus: [
+      {
+        name: "공지사항",
+        path: "/etc/notice",
+        icon: UserCog
+      }
+    ]
+  },
+  {
     name: "관리자",
     path: "/admin",
     icon: UserCog,
