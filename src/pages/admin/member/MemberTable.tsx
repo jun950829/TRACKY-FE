@@ -122,78 +122,86 @@ export default function MemberTable({
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="text-gray-600 font-medium">업체명</TableHead>
-              <TableHead className="text-gray-600 font-medium">담당자</TableHead>
-              <TableHead className="text-gray-600 font-medium">연락처</TableHead>
-              <TableHead className="text-gray-600 font-medium">이메일</TableHead>
-              <TableHead className="text-gray-600 font-medium">상태</TableHead>
-              <TableHead className="w-32 text-right text-gray-600 font-medium">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
-                  검색 중...
-                </TableCell>
-              </TableRow>
-            ) : members.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
-                  검색 결과가 없습니다.
-                </TableCell>
-              </TableRow>
-            ) : (
-              members.map((member) => (
-                <TableRow 
-                  key={member.memberId}
-                  className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
-                >
-                  <TableCell className="text-gray-700">{member.bizName}</TableCell>
-                  <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
-                  <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
-                  <TableCell className="text-gray-600">{member.email}</TableCell>
-                  <TableCell>
-                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
-                      {getStatusText(member.status)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-2 justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
-                        onClick={() => handleViewDetails(member)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
-                        onClick={() => handleEdit(member)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
-                        onClick={() => handleDelete(member)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+        <div className="relative">
+          <div className="sticky top-0 z-10 bg-white">
+            <Table>
+              <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                  <TableHead className="text-gray-600 font-medium">업체명</TableHead>
+                  <TableHead className="text-gray-600 font-medium">담당자</TableHead>
+                  <TableHead className="text-gray-600 font-medium">연락처</TableHead>
+                  <TableHead className="text-gray-600 font-medium">이메일</TableHead>
+                  <TableHead className="text-gray-600 font-medium">상태</TableHead>
+                  <TableHead className="w-32 text-right text-gray-600 font-medium">관리</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+            </Table>
+          </div>
+          <div className="max-h-[calc(100vh-32rem)] overflow-y-auto">
+            <Table>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      검색 중...
+                    </TableCell>
+                  </TableRow>
+                ) : members.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      검색 결과가 없습니다.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  members.map((member) => (
+                    <TableRow 
+                      key={member.memberId}
+                      className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+                    >
+                      <TableCell className="text-gray-700">{member.bizName}</TableCell>
+                      <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
+                      <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
+                      <TableCell className="text-gray-600">{member.email}</TableCell>
+                      <TableCell>
+                        <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
+                          {getStatusText(member.status)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
+                            onClick={() => handleViewDetails(member)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
+                            onClick={() => handleEdit(member)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
+                            onClick={() => handleDelete(member)}
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       {selectedMember && (

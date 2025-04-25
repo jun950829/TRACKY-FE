@@ -83,66 +83,74 @@ export default function ApprovalTable() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="text-gray-600 font-medium">업체명</TableHead>
-              <TableHead className="text-gray-600 font-medium">사업자번호</TableHead>
-              <TableHead className="text-gray-600 font-medium">담당자</TableHead>
-              <TableHead className="text-gray-600 font-medium">연락처</TableHead>
-              <TableHead className="text-gray-600 font-medium">이메일</TableHead>
-              <TableHead className="text-gray-600 font-medium">상태</TableHead>
-              <TableHead className="w-24 text-right text-gray-600 font-medium">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {approves.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center">
-                  승인 대기 목록이 없습니다.
-                </TableCell>
-              </TableRow>
-            )}
+        <div className="relative">
+          <div className="sticky top-0 z-10 bg-white">
+            <Table>
+              <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                  <TableHead className="text-gray-600 font-medium">업체명</TableHead>
+                  <TableHead className="text-gray-600 font-medium">사업자번호</TableHead>
+                  <TableHead className="text-gray-600 font-medium">담당자</TableHead>
+                  <TableHead className="text-gray-600 font-medium">연락처</TableHead>
+                  <TableHead className="text-gray-600 font-medium">이메일</TableHead>
+                  <TableHead className="text-gray-600 font-medium">상태</TableHead>
+                  <TableHead className="w-24 text-right text-gray-600 font-medium">관리</TableHead>
+                </TableRow>
+              </TableHeader>
+            </Table>
+          </div>
+          <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+            <Table>
+              <TableBody>
+                {approves.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center">
+                      승인 대기 목록이 없습니다.
+                    </TableCell>
+                  </TableRow>
+                )}
 
-            {approves.map((member) => (
-              <TableRow 
-                key={member.memberId}
-                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
-              >
-                <TableCell className="text-gray-700">{member.bizName}</TableCell>
-                <TableCell className="text-gray-600">{member.bizRegNum}</TableCell>
-                <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
-                <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
-                <TableCell className="text-gray-600">{member.email}</TableCell>
-                <TableCell>
-                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
-                      {getStatusText(member.status)}
-                    </span>
-                  </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
-                      onClick={() => handleApprove(member.memberId)}
-                    >
-                      승인
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
-                      onClick={() => handleDelete(member.memberId)}
-                    >
-                      거절
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                {approves.map((member) => (
+                  <TableRow 
+                    key={member.memberId}
+                    className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+                  >
+                    <TableCell className="text-gray-700">{member.bizName}</TableCell>
+                    <TableCell className="text-gray-600">{member.bizRegNum}</TableCell>
+                    <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
+                    <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
+                    <TableCell className="text-gray-600">{member.email}</TableCell>
+                    <TableCell>
+                      <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
+                        {getStatusText(member.status)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-12 h-8 px-3 border-gray-200 hover:border-blue-500 hover:text-blue-600 transition-colors duration-200"
+                          onClick={() => handleApprove(member.memberId)}
+                        >
+                          승인
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-12 h-8 px-3 border-gray-200 hover:border-red-500 hover:text-red-600 transition-colors duration-200"
+                          onClick={() => handleDelete(member.memberId)}
+                        >
+                          거절
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       <ApprovalModal
