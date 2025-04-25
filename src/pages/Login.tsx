@@ -8,6 +8,9 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { jwtDecode } from "jwt-decode";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
+import adminApiService from "@/libs/apis/noticeApi";
+import { NoticeDetailTypes } from "@/constants/types/noticeTypes";
+import NoticeDetailModal from "@/pages/admin/notice/modal/NoticeDetailModal";
 
 // Shadcn components
 import { Button } from "@/components/ui/button";
@@ -36,40 +39,14 @@ type DecodedToken = {
   bizName: string;
 };
 
-// 공지사항 데이터 타입
-type Notice = {
-  id: number;
-  title: string;
-  date: string;
-  content: string;
-};
-
-// 임시 공지사항 데이터
-const notices: Notice[] = [
-  {
-    id: 1,
-    title: "시스템 점검 예정",
-    date: "2024-03-20",
-    content: "3월 20일 오전 2시부터 4시까지 시스템 점검이 예정되어 있습니다.",
-  },
-  {
-    id: 2,
-    title: "새로운 기능 추가",
-    date: "2024-03-15",
-    content: "차량 위치 추적 기능이 추가되었습니다. 더욱 정확한 위치 정보를 확인하실 수 있습니다.",
-  },
-  {
-    id: 3,
-    title: "이용 안내",
-    date: "2024-03-10",
-    content: "모바일 앱에서도 Tracky 서비스를 이용하실 수 있습니다.",
-  },
-];
-
 export default function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState<ApiError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isNoticeLoading, setIsNoticeLoading] = useState(true);
+  const [notices, setNotices] = useState<NoticeDetailTypes[]>([]);
+  const [selectedNotice, setSelectedNotice] = useState<NoticeDetailTypes | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const setToken = useAuthStore((state) => state.setToken);
   const setMember = useAuthStore((state) => state.setMember);
 
@@ -124,11 +101,49 @@ export default function Login() {
     }
   };
 
+  // 공지사항 데이터 로드
+  const loadNoticeData = async () => {
+    setIsNoticeLoading(true);
+    try {
+      // 모든 중요 공지사항을 가져오도록 변경 (size 파라미터를 제거해 모든 중요 공지사항을 가져옴)
+      const response = await adminApiService.getNotices("", "true", 10, 0);
+      
+      const responseBody = response.data || response;
+      
+      if (responseBody.status === 200 || response.status === 200) {
+        const noticeData = responseBody.data || response.data || [];
+        setNotices(noticeData);
+      } else {
+        console.error("공지사항 로드 실패:", responseBody);
+        setNotices([]);
+      }
+    } catch (error) {
+      console.error("공지사항 데이터 로드 실패:", error);
+      setNotices([]);
+    } finally {
+      setIsNoticeLoading(false);
+    }
+  };
+
+  // 공지사항 상세 모달 표시
+  const handleViewNotice = (notice: NoticeDetailTypes) => {
+    setSelectedNotice(notice);
+    setIsDetailModalOpen(true);
+  };
+
+  // 공지사항 상세 모달 닫기
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       navigate("/dashboard");
     }
+    
+    // 공지사항 로드
+    loadNoticeData();
   }, [navigate]);
 
   return (
@@ -210,37 +225,68 @@ export default function Login() {
           <div className="bg-white rounded-lg shadow-lg p-8 hidden md:block">
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-800">공지사항</h2>
-              <div className="space-y-4">
-                {notices.map((notice) => (
-                  <div key={notice.id} className="border-b pb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-semibold text-lg">{notice.title}</h3>
-                      <span className="text-sm text-gray-500">{notice.date}</span>
+              
+              {isNoticeLoading ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">공지사항을 불러오는 중입니다...</p>
+                </div>
+              ) : notices.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">등록된 공지사항이 없습니다.</p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                  {notices.map((notice) => (
+                    <div 
+                      key={notice.id} 
+                      className="border-b pb-4 cursor-pointer hover:bg-gray-50 p-3 rounded transition-colors"
+                      onClick={() => handleViewNotice(notice)}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block px-2 py-1 text-xs font-medium rounded-full text-red-600 bg-red-50">
+                            중요
+                          </span>
+                          <h3 className="font-semibold text-lg">{notice.title}</h3>
+                        </div>
+                        <span className="text-sm text-gray-500">{notice.createdAt}</span>
+                      </div>
+                      <p className="text-gray-600 line-clamp-2">{notice.content}</p>
                     </div>
-                    <p className="text-gray-600">{notice.content}</p>
-                  </div>
-                ))}
+                  ))}
 
-
-                  <button onClick={() => {
-                      setIsShow(!isShow)
-                    }} className="text-xxs text-white rounded-md px-2 py-1">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      setIsShow(!isShow);
+                    }} 
+                    className="text-xxs text-white rounded-md px-2 py-1"
+                  >
                     ID 보기
-                    </button>
+                  </button>
 
-                      {isShow ? 
-                      <>
-                        <h1>Test 계정</h1>
-                        <p>ID : kernel360</p>
-                        <p>PWD : 121212</p>
-                      </>
-                      : <>
-                      </>}
-              </div>
+                  {isShow && (
+                    <>
+                      <h1>Test 계정</h1>
+                      <p>ID : kernel360</p>
+                      <p>PWD : 121212</p>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+      
+      {/* 공지사항 상세 모달 */}
+      {selectedNotice && isDetailModalOpen && (
+        <NoticeDetailModal
+          open={true}
+          onClose={handleCloseDetailModal}
+          notice={selectedNotice}
+        />
+      )}
     </div>
   );
 }

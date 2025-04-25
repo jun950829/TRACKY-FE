@@ -23,7 +23,7 @@ import StatisticMain from "../../pages/statistic/StatisticMain";
 import CarRegister from "../../pages/car/register/CarRegister";
 import RentRegister from "../../pages/rent/register/RentRegister";
 import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection";
-import AdminNotice from "@/pages/admin/notice/AdminNotice";
+import AdminNotice from "@/pages/admin/notice/NoticeMain";
 import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
 import AdminMemberSection from "@/pages/admin/member/AdminMemberSection";
 
