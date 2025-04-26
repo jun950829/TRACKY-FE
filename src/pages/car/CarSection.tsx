@@ -5,7 +5,7 @@ import carApiService from "@/libs/apis/carApi";
 import { CarDetailTypes } from "@/constants/types/types";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
-import Pagination from "@/components/custom/\bPagination";
+import Pagination from "@/components/custom/Pagination";
 
 // 페이지네이션 응답을 위한 타입 정의
 interface PageResponse<T> {

@@ -5,7 +5,7 @@ import adminApiService from "@/libs/apis/noticeApi";
 import { NoticeDetailTypes } from "@/constants/types/noticeTypes";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
-import Pagination from "@/components/custom/\bPagination";
+import Pagination from "@/components/custom/Pagination";
 import NoticeSearchLayer from "./NoticeSearchLayer";
 
 
