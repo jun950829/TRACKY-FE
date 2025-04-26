@@ -20,7 +20,7 @@ function RentSection() {
             console.log('getRents: ', res.data);
             setRentList(res.data);
         } catch (error) {
-            console.error('렌트 목록 조회 실패:', error);
+            console.error('예약 목록 조회 실패:', error);
             setError(createApiError(error));
         } finally {
             setIsLoading(false);
@@ -39,7 +39,7 @@ function RentSection() {
                 const res = await rentApiService.searchRents(searchText, status, date);
                 setRentList(res.data);
             } catch (error) {
-                console.error('렌트 검색 실패:', error);
+                console.error('예약 검색 실패:', error);
                 setError(createApiError(error));
             } finally {
                 setIsLoading(false);
@@ -50,7 +50,7 @@ function RentSection() {
                 const res = await rentApiService.searchRents(searchObj.searchText, searchObj.status, searchObj.date);
                 setRentList(res.data);
             } catch (error) {
-                console.error('렌트 검색 실패:', error);
+                console.error('예약 검색 실패:', error);
                 setError(createApiError(error));
             } finally {
                 setIsLoading(false);
@@ -63,11 +63,11 @@ function RentSection() {
     }, []);
 
     return (
-        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="w-full max-w-[1920px] mx-auto px-6">
             {error && <ErrorToast error={error} />}
             <div className="flex flex-col gap-4">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">렌트 관리</h1>
-                <p className="text-gray-500 mb-4 text-sm sm:text-base">차량 렌트 정보를 관리하고 조회할 수 있습니다.</p>
+                {/* <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">예약 관리</h1> */}
+                <p className="text-gray-500 text-sm sm:text-base">차량 예약 정보를 관리하고 조회할 수 있습니다.</p>
                 
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                     <RentSearchLayer onSearch={searchRents} />
