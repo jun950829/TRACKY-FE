@@ -1,3 +1,4 @@
+import PageHeader from "@/components/custom/PageHeader";
 import React from "react";
 
 interface DashboardLayoutProps {
@@ -6,16 +7,11 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="p-10 min-h-screen h-screen bg-zinc-50">
       {/* Main Content */}
+      <PageHeader title="대시보드" size="2xl" />
       <main className="container mx-auto">{children}</main>
       
-      {/* Footer */}
-      <footer className="bg-white border-t border-zinc-200 py-4">
-        <div className="container mx-auto px-4 text-center text-zinc-500 text-sm">
-          © {new Date().getFullYear()} 차량 관제 시스템
-        </div>
-      </footer>
     </div>
   );
 } 
