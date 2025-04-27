@@ -57,7 +57,7 @@ function RentRegister() {
 
     const onConfirm = () => {
         setIsSuccess(false);
-        navigate("/rents");
+        navigate("/car/rent");
     }
 
     /**

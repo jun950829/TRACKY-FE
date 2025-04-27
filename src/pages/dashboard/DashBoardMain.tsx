@@ -10,6 +10,7 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 import MonthlyStats from './components/MonthlyStats';
+import PageHeader from "@/components/custom/PageHeader";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -133,13 +134,13 @@ export default function Dashboard() {
     <DashboardLayout>
       {error && <ErrorToast error={error} />}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-[80vh]">
+        <div className="flex flex-col items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
           <p className="text-lg font-medium text-gray-600">대시보드 로딩 중...</p>
         </div>
       ) : (
-        <div className="w-full p-3 sm:p-4 space-y-4">
-          <div className="w-full h-[250px] flex flex-row justify-between items-center gap-4">
+        <div className="w-full flex flex-col justify-center items-center p-10 space-y-4 h-[90vh]">
+          <div className="w-full h-full min-h-[250px] flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
               <VehicleStatusCards statusObj={carStatus} />

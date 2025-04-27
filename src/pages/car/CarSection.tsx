@@ -123,11 +123,11 @@ function CarSection() {
   }, []);
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="w-full max-w-[1920px] mx-auto px-6">
       {error && <ErrorToast error={error} />}
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">차량 관리</h1>
-        <p className="text-gray-500 mb-4 text-sm sm:text-base">
+        {/* <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">차량 관리</h1> */}
+        <p className="text-gray-500 text-sm sm:text-base">
           차량 정보를 관리하고 조회할 수 있습니다.
         </p>
 
