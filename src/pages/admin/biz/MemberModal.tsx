@@ -3,25 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Biz } from "@/constants/mocks/bizMockData";
+import { Member } from "@/constants/mocks/memberMockData";
 import { useState } from "react";
 
-interface BizModalProps {
+interface MemberModalProps {
   open: boolean;
   onClose: () => void;
-  biz?: Biz;
-  onSave: (biz: Omit<Biz, "id">) => void;
+  member?: Member;
+  onSave: (member: Omit<Member, "id">) => void;
 }
 
-export default function BizModal({ open, onClose, biz, onSave }: BizModalProps) {
-  const [formData, setFormData] = useState<Omit<Biz, "id">>({
-    name: biz?.name || "",
-    businessNumber: biz?.businessNumber || "",
-    manager: biz?.manager || "",
-    phone: biz?.phone || "",
-    email: biz?.email || "",
-    address: biz?.address || "",
-    status: biz?.status || "active",
+export default function MemberModal({ open, onClose, member, onSave }: MemberModalProps) {
+  const [formData, setFormData] = useState<Omit<Member, "id">>({
+    name: member?.name || "",
+    businessNumber: member?.businessNumber || "",
+    manager: member?.manager || "",
+    phone: member?.phone || "",
+    email: member?.email || "",
+    address: member?.address || "",
+    status: member?.status || "active",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,12 +34,12 @@ export default function BizModal({ open, onClose, biz, onSave }: BizModalProps) 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>{biz ? "사업장 수정" : "사업장 추가"}</DialogTitle>
+          <DialogTitle>{member ? "회원 수정" : "회원 추가"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">사업장명</Label>
+              <Label htmlFor="name">회원명</Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -108,7 +108,7 @@ export default function BizModal({ open, onClose, biz, onSave }: BizModalProps) 
             <Button type="button" variant="outline" onClick={onClose}>
               취소
             </Button>
-            <Button type="submit">{biz ? "수정" : "추가"}</Button>
+            <Button type="submit">{member ? "수정" : "추가"}</Button>
           </div>
         </form>
       </DialogContent>
