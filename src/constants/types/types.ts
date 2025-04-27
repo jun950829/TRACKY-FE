@@ -73,6 +73,7 @@ export type CarDetailTypes = {
   bizId: number;
   carType: string;
   carPlate: string;
+  carName: string;
   carYear: string;
   purpose: string;
   status: string;
