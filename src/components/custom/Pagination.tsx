@@ -50,7 +50,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageRange = getPageRange();
 
   return (
-    <div className="w-full flex flex-col items-center justify-between space-y-2 py-4 sm:flex-row sm:space-y-0">
+    <div className="flex flex-col items-center justify-between space-y-2 py-4 sm:flex-row sm:space-y-0">
       <div className="text-sm text-gray-500">
         전체 {totalElements}개 중 {start}-{end}개 표시
       </div>
