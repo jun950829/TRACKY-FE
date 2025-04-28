@@ -73,13 +73,13 @@ export const signupApiService = {
         return response.data;
     },
 
-    approve: async (data: {memberId: string}) => {
+    approve: async (data: {memberId: string, status: string}) => {
         const response = await api.post("/approves", data);
         return response.data;
     },
 
-    reject: async (data: {memberId: string}) => {
-        const response = await api.post("/reject", data);
+    reject: async (data: {memberId: string, status: string}) => {
+        const response = await api.post("/approves", data);
         return response.data;
     },
 };

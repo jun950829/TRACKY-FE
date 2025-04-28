@@ -33,7 +33,7 @@ function HistorySection() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col max-h-screen overflow-y-auto">
       {error && <ErrorToast error={error} />}
       
       {/* Header Section */}
@@ -63,9 +63,9 @@ function HistorySection() {
       /> */}
       
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[calc(100vh-120px)]">
+      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[80vh]">
         {/* Desktop Search/List Area */}
-        <div className="hidden md:block w-[280px] bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="hidden md:block w-[20%] min-w-[270px] bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="flex flex-col h-full">
             <div className="p-4 border-b">
               <HistorySearch />
@@ -89,7 +89,7 @@ function HistorySection() {
               <HistoryTable />
             ) : (
               <div className="flex items-center justify-center h-full text-gray-500">
-                차량을 선택해주세요
+                <HistoryTable />
               </div>
             )}
           </div>

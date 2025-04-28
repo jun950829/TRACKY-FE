@@ -1,6 +1,5 @@
 import { useCarListStore } from "@/stores/useCarListStore";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import driveService from "@/libs/apis/driveApi";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
@@ -12,16 +11,17 @@ export default function HistoryCarList() {
     isLoading,
   } = useCarListStore();
 
-  const { setSelectedCar, setDriveResults } = useDriveListStore();
+  const { searchDate, setSelectedCar, fetchDrives, setCurrentPage } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
-    const response = await driveService.getDriveBySearchFilter(car.carPlate);
-    setDriveResults(response.data);
+    setCurrentPage(0); // 첫 페이지로 초기화
     setSelectedCar({
+      carMdn: car.mdn,
       carPlate: car.carPlate,
       carType: car.carType,
       status: car.status
     });
+    await fetchDrives("", car.mdn, searchDate);
   };
 
   if (carResults.length === 0) {
@@ -41,14 +41,14 @@ export default function HistoryCarList() {
   }
 
   return (
-    <div className="flex flex-col h-full max-h-[50vh]">
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex flex-col h-full max-h-[calc(100vh-24rem)] overflow-y-auto">
+      <div className="flex-1">
         <div className="divide-y divide-gray-100">
           {carResults.map((car, index) => (
             <div
               key={index} 
               className={cn(
-                "p-4 cursor-pointer transition-all duration-200",
+                "cursor-pointer transition-all duration-200",
                 "hover:bg-gray-50 active:bg-gray-100"
               )}
               onClick={() => handleCarClick(car)}
@@ -63,7 +63,7 @@ export default function HistoryCarList() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="w-full flex flex-row items-center gap-2">
-                    <div className="font-sm text-gray-900 truncate">
+                    <div className="text-sm text-gray-900 truncate">
                       {car.carPlate}
                     </div>
                     <div className={getStatusBadgeClass(car.status, 'car')}>

@@ -51,7 +51,7 @@ export default function ApprovalTable() {
   };
 
   const handleDelete = async (id: string) => {
-    const result = await signupApiService.reject({memberId: id});
+    const result = await signupApiService.reject({memberId: id, status: "deleted"});
     if(result.status === 200) {
       alert("거절 처리가 완료되었습니다.");
       getApproves();
@@ -62,7 +62,7 @@ export default function ApprovalTable() {
 
   const handleSave = async (memberId: string) => {
     if (selectedMember && memberId !==  "") {
-      const result = await signupApiService.approve({memberId: memberId});
+      const result = await signupApiService.approve({memberId: memberId, status: "active"});
 
       if(result.status === 200) {
         setIsApproveModalOpen(false);

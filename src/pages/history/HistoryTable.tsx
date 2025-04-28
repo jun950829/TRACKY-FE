@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
   Table,
@@ -12,10 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronLeft, ChevronRight, Download, Filter, Search, X, Loader2 } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Download, Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { DateRange } from "react-day-picker";
-import { subDays } from "date-fns";
 import { cn } from "@/libs/utils/utils";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
@@ -23,49 +21,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import driveService from "@/libs/apis/driveApi";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
-import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, isLoading } = useDriveListStore();
+  const { driveResults, isLoading, setDriveResults, selectedCar } = useDriveListStore();
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 90),
-    to: new Date(),
-  });
-  const [filterType, setFilterType] = useState<string>("all");
+  const [startDate, setStartDate] = useState<Date>(subMonths(new Date(), 3));
+  const [endDate, setEndDate] = useState<Date>(new Date());
   const itemsPerPage = 10;
 
-  const filteredData = React.useMemo(() => {
-    if (!driveResults) return [];
-    
-    let filtered = [...driveResults];
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter((drive) => 
-        drive.id.toString().toLowerCase().includes(term) ||
-        (drive.renterName && drive.renterName.toLowerCase().includes(term))
+  const fetchData = async () => {
+    try {
+      const response = await driveService.getDriveBySearchFilter(
+        searchTerm,
+        selectedCar?.carMdn || "",
+        {
+          sDate: startDate,
+          eDate: endDate
+        },
+        currentPage - 1,
+        itemsPerPage
       );
+      setDriveResults(response.data);
+    } catch (error) {
+      console.error('데이터 조회 오류:', error);
     }
+  };
 
-    return filtered;
-  }, [driveResults, date, searchTerm, filterType]);
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const currentData = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  useEffect(() => {
+    fetchData();
+  }, [currentPage, startDate, endDate, searchTerm]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -73,12 +61,9 @@ function HistoryTable() {
   };
 
   const resetFilters = () => {
-    setDate({
-      from: subDays(new Date(), 90),
-      to: new Date(),
-    });
+    setStartDate(subMonths(new Date(), 3));
+    setEndDate(new Date());
     setSearchTerm("");
-    setFilterType("all");
     setCurrentPage(1);
   };
 
@@ -94,63 +79,55 @@ function HistoryTable() {
     );
   }
 
-  if (driveResults.length === 0) {
-    return (
-      <div className="p-6 text-center text-gray-500">
-        운행 기록이 없습니다
-      </div>
-    );
-  }
-
   return (
     <div className="h-full flex flex-col">
       {/* Filters */}
       <div className="p-4 border-b">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn(
-                  "justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}>
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, "yyyy.MM.dd", { locale: ko })} -{" "}
-                        {format(date.to, "yyyy.MM.dd", { locale: ko })}
-                      </>
-                    ) : (
-                      format(date.from, "yyyy.MM.dd", { locale: ko })
-                    )
-                  ) : (
-                    <span>날짜 선택</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-
-            <Select value={filterType} onValueChange={setFilterType}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue placeholder="유형 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">전체</SelectItem>
-                <SelectItem value="business">업무</SelectItem>
-                <SelectItem value="personal">개인</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className={cn(
+                    "justify-start text-left font-normal",
+                    !startDate && "text-muted-foreground"
+                  )}>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    {startDate ? format(startDate, "yyyy.MM.dd", { locale: ko }) : "시작일"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    initialFocus
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => date && setStartDate(date)}
+                    disabled={(date) => date > endDate}
+                  />
+                </PopoverContent>
+              </Popover>
+              <span className="text-gray-500">~</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className={cn(
+                    "justify-start text-left font-normal",
+                    !endDate && "text-muted-foreground"
+                  )}>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    {endDate ? format(endDate, "yyyy.MM.dd", { locale: ko }) : "종료일"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    initialFocus
+                    mode="single"
+                    selected={endDate}
+                    onSelect={(date) => date && setEndDate(date)}
+                    disabled={(date) => date < startDate}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
             <Button variant="outline" size="sm" onClick={resetFilters}>
               <X className="h-4 w-4 mr-2" />
@@ -178,57 +155,65 @@ function HistoryTable() {
 
       {/* Table */}
       <div className="flex-1 overflow-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50">
-              <TableHead className="w-[100px]">운행 ID</TableHead>
-              <TableHead className="w-[120px]">운행일자</TableHead>
-              <TableHead className="w-[120px]">운행목적</TableHead>
-              <TableHead className="w-[150px]">차량번호(MDN)</TableHead>
-              <TableHead className="w-[120px]">사용자</TableHead>
-              <TableHead className="w-[120px]">운행거리(km)</TableHead>
-              <TableHead className="w-[120px]">운행시간</TableHead>
-              <TableHead>도착지</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentData.map((drive) => (
-              <TableRow 
-                key={drive.id} 
-                className="hover:bg-gray-50 cursor-pointer"
-                onClick={() => clickDrive(drive.id)}
-              >
-                <TableCell className="font-medium">{drive.id}</TableCell>
-                <TableCell>
-                  {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
-                </TableCell>
-                <TableCell>{drive.purpose || '기타업무'}</TableCell>
-                <TableCell>{drive.carPlate}({drive.mdn})</TableCell>
-                <TableCell>{drive.renterName}</TableCell>
-                <TableCell>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
-                <TableCell>
-                  {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
-                </TableCell>
-                <TableCell className="truncate max-w-[200px]">
-                  {drive.driveEndLat && drive.driveEndLon ? (
-                    <span className="text-gray-600">
-                      {drive.driveEndLat}, {drive.driveEndLon}
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="relative">
+          <div className="sticky top-0 z-10 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="w-[100px]">운행 ID</TableHead>
+                  <TableHead className="w-[120px]">운행일자</TableHead>
+                  <TableHead className="w-[120px]">운행목적</TableHead>
+                  <TableHead className="w-[150px]">차량번호(MDN)</TableHead>
+                  <TableHead className="w-[120px]">사용자</TableHead>
+                  <TableHead className="w-[120px]">운행거리(km)</TableHead>
+                  <TableHead className="w-[120px]">운행시간</TableHead>
+                  <TableHead>도착지</TableHead>
+                </TableRow>
+              </TableHeader>
+            </Table>
+          </div>
+        </div>
+        <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+          <Table>
+            <TableBody>
+              {driveResults?.map((drive) => (
+                <TableRow 
+                  key={drive.id} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => clickDrive(drive.id)}
+                >
+                  <TableCell className="font-medium">{drive.id}</TableCell>
+                  <TableCell>
+                    {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
+                  </TableCell>
+                  <TableCell>{drive.purpose || '기타업무'}</TableCell>
+                  <TableCell>{drive.carPlate}({drive.mdn})</TableCell>
+                  <TableCell>{drive.renterName}</TableCell>
+                  <TableCell>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
+                  <TableCell>
+                    {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
+                  </TableCell>
+                  <TableCell className="truncate max-w-[200px]">
+                    {drive.driveEndLat && drive.driveEndLon ? (
+                      <span className="text-gray-600">
+                        {drive.driveEndLat}, {drive.driveEndLon}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Pagination */}
       <div className="p-4 border-t flex justify-between items-center">
         <div className="text-sm text-gray-500">
-          총 {filteredData.length}건 중 {(currentPage - 1) * itemsPerPage + 1}-
-          {Math.min(currentPage * itemsPerPage, filteredData.length)}건 표시
+          총 {driveResults?.length || 0}건 중 {(currentPage - 1) * itemsPerPage + 1}-
+          {Math.min(currentPage * itemsPerPage, driveResults?.length || 0)}건 표시
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -240,13 +225,13 @@ function HistoryTable() {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm">
-            {currentPage} / {totalPages}
+            {currentPage} / {Math.ceil((driveResults?.length || 0) / itemsPerPage)}
           </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => Math.min(Math.ceil((driveResults?.length || 0) / itemsPerPage), prev + 1))}
+            disabled={currentPage === Math.ceil((driveResults?.length || 0) / itemsPerPage)}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

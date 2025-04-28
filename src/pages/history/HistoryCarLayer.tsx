@@ -16,6 +16,7 @@ export default function HistoryCarLayer() {
       <HistoryCarList />
       <div className="flex justify-center mt-4">
         <Pagination
+          noText={true}
           currentPage={currentPage}
           totalPages={totalPages}
           totalElements={totalElements}

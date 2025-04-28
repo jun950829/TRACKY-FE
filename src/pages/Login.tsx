@@ -10,7 +10,7 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import adminApiService from "@/libs/apis/noticeApi";
 import { NoticeDetailTypes } from "@/constants/types/noticeTypes";
-import NoticeDetailModal from "@/pages/admin/notice/modal/NoticeDetailModal";
+import NoticeDetailModal from "@/pages/etc/notice/modal/NoticeDetailModal";
 
 // Shadcn components
 import { Button } from "@/components/ui/button";
