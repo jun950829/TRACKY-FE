@@ -17,30 +17,16 @@ export interface CarRecord {
 
 export interface DriveRecord {
   id: number;
-  carPlate: string;
-  carType: string;
-  status: string;
-  onTime: string;
-  offTime: string;
-  onLat: number;
-  onLon: number;
-  offLat: number;
-  offLon: number;
-  driveDistance: number;
-  driveDuration: number;
-  gpsDataList: Array<{
-    lat: number;
-    lon: number;
-    time: string;
-  }>;
   mdn: string;
-  renterName: string;
-  renterPhone: string;
-  purpose: string;
-  rentStatus: string;
+  carPlate: string;
   rentUuid: string;
-  rentStime: string;
-  rentEtime: string | null;
+  renterName: string;
+  purpose: string;
+  driveDistance: number;
+  driveOnTime: string;
+  driveOffTime: string;
+  driveEndLat: number;
+  driveEndLon: number;
 }
 
 // 운행 상세 기록 타입 정의

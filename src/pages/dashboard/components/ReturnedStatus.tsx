@@ -17,8 +17,8 @@ function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: R
   );
   
   return (
-    <Card className="w-full h-full bg-white rounded-lg shadow-sm border border-zinc-100">
-      <CardHeader className="p-4 bg-white border-b border-zinc-100">
+    <Card className="flex-1 min-w-[300px] max-w-[500px] p-0 border rounded-lg overflow-hidden flex flex-col">
+      <CardHeader className="bg-white font-bold border-b p-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
             {/* <Calendar className="h-4 w-4 text-primary" /> */}
@@ -54,7 +54,7 @@ function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: R
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 overflow-y-auto" style={{ height: 'calc(100% - 65px)' }}>
+      <CardContent className="flex-1 overflow-y-auto max-h-[160px]" >
         {isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 6 }).map((_, i) => (
