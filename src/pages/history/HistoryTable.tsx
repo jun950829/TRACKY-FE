@@ -156,51 +156,42 @@ function HistoryTable() {
       {/* Table */}
       <div className="flex-1 overflow-auto">
         <div className="relative">
-          <div className="sticky top-0 z-10 bg-white">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="w-[100px]">운행 ID</TableHead>
-                  <TableHead className="w-[120px]">운행일자</TableHead>
-                  <TableHead className="w-[120px]">운행목적</TableHead>
-                  <TableHead className="w-[150px]">차량번호(MDN)</TableHead>
-                  <TableHead className="w-[120px]">사용자</TableHead>
-                  <TableHead className="w-[120px]">운행거리(km)</TableHead>
-                  <TableHead className="w-[120px]">운행시간</TableHead>
-                  <TableHead>도착지</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
-        </div>
-        <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
           <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead className="w-[70px] text-center">운행 ID</TableHead>
+                <TableHead className="w-[100px] text-center">일자</TableHead>
+                <TableHead className="w-[120px] text-center">목적</TableHead>
+                <TableHead className="w-[160px] text-center">차량번호</TableHead>
+                <TableHead className="w-[140px] text-center">사용자</TableHead>
+                <TableHead className="w-[140px] text-center">운행거리(km)</TableHead>
+                <TableHead className="w-[140px] text-center">운행시간</TableHead>
+                <TableHead className="w-[140px] text-center">도착지</TableHead>
+              </TableRow>
+            </TableHeader>
             <TableBody>
               {driveResults?.map((drive) => (
                 <TableRow 
                   key={drive.id} 
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gray-50 cursor-pointer text-center"
                   onClick={() => clickDrive(drive.id)}
                 >
-                  <TableCell className="font-medium">{drive.id}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-[70px] font-medium">{drive.id}</TableCell>
+                  <TableCell className="w-[100px]">
                     {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
                   </TableCell>
-                  <TableCell>{drive.purpose || '기타업무'}</TableCell>
-                  <TableCell>{drive.carPlate}({drive.mdn})</TableCell>
-                  <TableCell>{drive.renterName}</TableCell>
-                  <TableCell>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-[120px]">{drive.purpose || '기타업무'}</TableCell>
+                  <TableCell className="w-[160px]">
+                    <p>{drive.carPlate}</p>
+                    <p className="text-gray-500 text-sm">{drive.mdn}</p>
+                  </TableCell>
+                  <TableCell className="w-[140px]">{drive.renterName}</TableCell>
+                  <TableCell className="w-[140px]">{(drive.driveDistance || 0).toFixed(1)}</TableCell>
+                  <TableCell className="w-[140px]">
                     {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
                   </TableCell>
-                  <TableCell className="truncate max-w-[200px]">
-                    {drive.driveEndLat && drive.driveEndLon ? (
-                      <span className="text-gray-600">
-                        {drive.driveEndLat}, {drive.driveEndLon}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
+                  <TableCell className="w-[140px] truncate">
+                    <span className="text-gray-400">-</span>
                   </TableCell>
                 </TableRow>
               ))}
