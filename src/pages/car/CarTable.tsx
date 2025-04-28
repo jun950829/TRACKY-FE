@@ -6,13 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+
 import { CarDetailTypes } from "@/constants/types/types";
 import { useState } from "react";
 import CarDetailModal from "./CarDetailModal";
@@ -24,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react";
 import { CustomButton } from "@/components/custom/CustomButton";
 import StatusBadge from "@/components/custom/StatusBadge";
+import { getCarTypeLabel } from "@/libs/utils/getClassUtils";
 
 type CarTableProps = {
   carList: CarDetailTypes[];
@@ -81,99 +76,109 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       {/* PC 화면용 테이블 */}
       <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
-        <Table className="w-full table-fixed">
-          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="w-10 text-gray-600 font-medium">차량 상태</TableHead>
-              <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
-              <TableHead className="w-12 text-gray-600 font-medium">차량 모델</TableHead>
-              <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
-              <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {carList.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                  차량 정보가 없습니다.
-                </TableCell>
-              </TableRow>
-            )}
-            {carList.map((car, idx) => (
-              <TableRow 
-                key={idx} 
-                onClick={() => {
-                  setIsDetail(true);
-                  handleCellClick(car.mdn)
-                }}
-                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
-              >
-                <TableCell className="whitespace-nowrap">
-                  <span onClick={(e) => e.stopPropagation()}>
-                    <StatusBadge status={car.status} type="car" />
-                  </span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.carType}</span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <CustomButton
-                      variant="edit"
-                      size="sm"
-                      className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
-                      icon={<Edit className="h-4 w-4" />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsUpdate(true);
-                        setSelectedCarData(car);
-                      }}
-                    >
-                      수정
-                    </CustomButton>
-                    <CustomButton
-                      variant="destructive"
-                      size="sm"
-                      className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                      icon={<Trash className="h-4 w-4" />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsDelete(true);
-                        setSelectedCarData(car);
-                      }}
-                    >
-                      삭제
-                    </CustomButton>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <div className="relative">
+          <div className="sticky top-0 z-10 bg-white">
+            <Table className="w-full table-fixed">
+              <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                  <TableHead className="w-10 text-gray-600 font-medium">상태</TableHead>
+                  <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
+                  <TableHead className="w-12 text-gray-600 font-medium">종류</TableHead>
+                  <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
+                  <TableHead className="w-16 text-gray-600 font-medium">연식</TableHead>
+                  <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
+                </TableRow>
+              </TableHeader>
+            </Table>
+          </div>
+          <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+            <Table>
+              <TableBody>
+                {carList.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      차량 정보가 없습니다.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {carList.map((car, idx) => (
+                  <TableRow
+                    key={idx}
+                    onClick={() => {
+                      setIsDetail(true);
+                      handleCellClick(car.mdn);
+                    }}
+                    className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+                  >
+                    <TableCell className="whitespace-nowrap">
+                      <span onClick={(e) => e.stopPropagation()}>
+                        <StatusBadge status={car.status} type="car" />
+                      </span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{getCarTypeLabel(car.carType)}</span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{car.carYear}</span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        <CustomButton
+                          variant="edit"
+                          size="sm"
+                          className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
+                          icon={<Edit className="h-4 w-4" />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsUpdate(true);
+                            setSelectedCarData(car);
+                          }}
+                        >
+                          수정
+                        </CustomButton>
+                        <CustomButton
+                          variant="destructive"
+                          size="sm"
+                          className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                          icon={<Trash className="h-4 w-4" />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDelete(true);
+                            setSelectedCarData(car);
+                          }}
+                        >
+                          삭제
+                        </CustomButton>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       {/* 모바일 화면용 카드 */}
       <div className="md:hidden space-y-4">
         {carList.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            차량 정보가 없습니다.
-          </div>
+          <div className="text-center py-8 text-gray-500">차량 정보가 없습니다.</div>
         )}
         {carList.map((car) => (
-          <Card 
-            key={car.mdn} 
+          <Card
+            key={car.mdn}
             className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
-            <CardContent 
+            <CardContent
               onClick={() => {
                 setIsDetail(true);
                 handleCellClick(car.mdn);
@@ -186,7 +191,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                     <StatusBadge status={car.status} type="car" />
                     <h3 className="font-semibold text-gray-800">{car.mdn}</h3>
                   </div>
-                  <p className="text-gray-600 text-sm">{car.carType}</p>
+                  <p className="text-gray-600 text-sm">{getCarTypeLabel(car.carType)}</p>
                 </div>
                 <div className="bg-gray-50 px-3 py-1 rounded-md">
                   <p className="text-sm text-gray-700">{car.purpose}</p>

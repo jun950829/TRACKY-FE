@@ -22,10 +22,10 @@ import HistoryDetailPage from "../../pages/history/detail/HistoryDetailPage";
 import StatisticMain from "../../pages/statistic/StatisticMain";
 import CarRegister from "../../pages/car/register/CarRegister";
 import RentRegister from "../../pages/rent/register/RentRegister";
-import AdminBizSection from "@/pages/admin/biz/AdminBizSection";
 import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection";
-import AdminNotice from "@/pages/admin/notice/AdminNotice";
+import AdminNotice from "@/pages/admin/notice/AdminNoticeMain";
 import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
+import NoticeMain from "@/pages/etc/notice/NoticeMain";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
@@ -49,12 +49,14 @@ const protectedRoutes = [
   { path: "/history/realtime", element: <RealTimeMain /> },
   { path: "/statistic", element: <StatisticMain /> },
   { path: "/quest", element: <QuestMain /> },
+  { path: "/etc", element: <NoticeMain /> },
+  { path: "/etc/notice", element: <NoticeMain /> },
 ];
 
 // 관리자 로그인 후에만 접근 가능한 라우트들
 const adminRoutes = [
   { path: "/admin", element: <AdminMain /> },
-  { path: "/admin/biz", element: <AdminBizSection /> },
+  { path: "/admin/member", element: <AdminMemberSection /> },
   { path: "/admin/statistic", element: <AdminStatisticSection /> },
   { path: "/admin/notice", element: <AdminNotice /> },
   { path: "/emulator", element: <Emulator /> },

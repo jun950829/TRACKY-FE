@@ -58,7 +58,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
       <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
         <div className="flex flex-wrap items-center gap-3 min-h-[40px]">
           <Input
-            placeholder="렌트 정보 검색"
+            placeholder="예약 정보 검색"
             className="w-64"
             value={searchValue}
             onChange={handleInputChange}
@@ -67,7 +67,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
 
           <Select onValueChange={setStatus} value={status}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="렌트 상태" />
+              <SelectValue placeholder="예약 상태" />
             </SelectTrigger>
             <SelectContent>
               {RentStatus.map((status) => (
@@ -115,7 +115,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
 
         <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/car/rent/register')}>
           <Plus className="w-4 h-4 mr-2" />
-          신규 렌트 등록
+          신규 예약 등록
         </Button>
       </div>
 
@@ -123,7 +123,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
       <div className="md:hidden p-4">
         <div className="flex mb-4">
           <Input
-            placeholder="렌트 정보 검색"
+            placeholder="예약 정보 검색"
             className="rounded-r-none"
             value={searchValue}
             onChange={handleInputChange}
@@ -140,7 +140,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
         <div className="flex items-center gap-2 mb-4">
           <Select onValueChange={setStatus} value={status}>
             <SelectTrigger className="flex-1">
-              <SelectValue placeholder="렌트 상태" />
+              <SelectValue placeholder="예약 상태" />
             </SelectTrigger>
             <SelectContent>
               {RentStatus.map((status) => (
@@ -194,7 +194,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
           onClick={() => navigate('/car/rent/register')}
         >
           <Plus className="w-4 h-4 mr-2" />
-          신규 렌트 등록
+          신규 예약 등록
         </Button>
       </div>
     </div>

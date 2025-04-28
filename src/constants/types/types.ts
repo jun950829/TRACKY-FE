@@ -1,3 +1,15 @@
+export type Approves = {
+  bizName: string;
+  bizRegNum: string;
+  bizAdmin: string;
+  bizPhoneNum: string;
+  memberId: string;
+  email: string;
+  role: string;
+  status: "active" | "deactive" | "wait" | "deleted";
+  createAt: string;
+}
+
 export type SseEventPayloadType = {
   event: string;
   method: string;
@@ -61,6 +73,7 @@ export type CarDetailTypes = {
   bizId: number;
   carType: string;
   carPlate: string;
+  carName: string;
   carYear: string;
   purpose: string;
   status: string;
@@ -149,3 +162,16 @@ export type RentDetailTypes = {
     returnLoc: string;      // 반납 위치
     createdAt: string;      // 생성 시간
 }
+
+
+export type Member = {
+  bizName: string;
+  bizRegNum: string;
+  bizAdmin: string;
+  bizPhoneNum: string;
+  memberId: string;
+  email: string;
+  role: string;
+  status: "active" | "deactive" | "wait" | "deleted";
+}
+

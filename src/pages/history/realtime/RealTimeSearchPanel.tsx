@@ -1,6 +1,6 @@
 import { Search, ChevronLeft, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -9,10 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import realtimeApi from '@/libs/apis/realtimeApi';
 
 interface RealTimeSearchPanelProps {
   onToggle: () => void;
-  onSelectCarNumber: (carNumber: string) => void;
+  setSelectedDriveId: (driveId : number) => void;
+  goDetail: () => void;
 }
 
 type SortField = 'status' | 'carNumber' | 'driver' | 'distance' | 'time';
@@ -27,16 +29,36 @@ interface Vehicle {
   time: number;
 }
 
-function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPanelProps) {
+interface RunningCar  {
+  id: number;
+  mdn: string;
+  carPlate: string;
+  renterName: string;
+  distance: number;
+  drivingTime: string;
+  status: string;
+}
+
+function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTimeSearchPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('distance');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   // 예시 데이터
-  const [vehicles] = useState<Vehicle[]>([
-    { id: 1, status: '운행중', carNumber: '15가 1234', driver: '박부장', distance: 48.36, time: 73 },
-    { id: 2, status: '운행중', carNumber: '59나 5959', driver: '데모', distance: 65.11, time: 73 },
-  ]);
+  // const [runningCarList] = useState<Vehicle[]>([
+  //   { id: 1, status: '운행중', carNumber: '15가 1234', driver: '박부장', distance: 48.36, time: 73 },
+  //   { id: 2, status: '운행중', carNumber: '59나 5959', driver: '데모', distance: 65.11, time: 73 },
+  // ]);
+  const [runningCarList, setRunningCarList] = useState<RunningCar[]>([]);
+
+  useEffect(() => {
+    fetchRealtimeData();
+  }, []);
+
+  const fetchRealtimeData = async () => {
+    const response = await realtimeApi.getRealtimeData("");
+    setRunningCarList(response.data);
+  };
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -54,16 +76,17 @@ function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPane
       <ChevronDown className="h-3 w-3 text-blue-600" />;
   };
 
-  const sortedVehicles = [...vehicles].sort((a, b) => {
-    const modifier = sortOrder === 'asc' ? 1 : -1;
-    const aValue = a[sortField];
-    const bValue = b[sortField];
+  // const sortedRunningCarList = [...runningCarList].sort((a, b) => {
+  //   const modifier = sortOrder === 'asc' ? 1 : -1;
+  //   const aValue = a[sortField];
+  //   const bValue = b[sortField];
     
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return aValue.localeCompare(bValue) * modifier;
-    }
-    return ((aValue as number) - (bValue as number)) * modifier;
-  });
+  //   if (typeof aValue === 'string' && typeof bValue === 'string') {
+  //     return aValue.localeCompare(bValue) * modifier;
+  //   }
+  //   return ((aValue as number) - (bValue as number)) * modifier;
+  // });
+  const sortedRunningCarList = runningCarList;
 
   return (
     <div className="flex items-start">
@@ -93,9 +116,9 @@ function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPane
 
         {/* 상태 요약 */}
         <div className="flex gap-2 text-xs text-gray-600 px-0.5">
-          <span className="font-medium">총 {vehicles.length}대</span>
+          <span className="font-medium">총 {runningCarList.length}대</span>
           <span className="text-gray-400">|</span>
-          <span className="text-red-500">운행중 {vehicles.filter(v => v.status === '운행중').length}대</span>
+          {/* <span className="text-red-500">운행중 {runningCarList.filter(v => v.status === '운행중').length}대</span> */}
         </div>
 
         {/* 테이블 */}
@@ -136,26 +159,29 @@ function RealTimeSearchPanel({ onToggle, onSelectCarNumber }: RealTimeSearchPane
               </tr>
             </thead>
             <tbody className="divide-y text-sm">
-              {sortedVehicles.map((vehicle) => (
+              {sortedRunningCarList.map((runningCar, index) => (
                 <tr 
-                  key={vehicle.id}
-                  onClick={() => onSelectCarNumber(vehicle.carNumber)}
+                  key={index}
+                  onClick={() => {
+                    setSelectedDriveId(runningCar.id) 
+                    goDetail()
+                  }}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="px-2 py-1.5">
                     <span className="text-red-500 text-xs font-medium">
-                      {vehicle.status}
+                      {runningCar.status}
                     </span>
                   </td>
                   <td className="px-2 py-1.5">
                     <div>
-                      <div className="font-medium text-sm">{vehicle.carNumber}</div>
-                      <div className="text-xs text-gray-600">{vehicle.driver}</div>
+                      <div className="font-medium text-sm">{runningCar.carPlate}</div>
+                      <div className="text-xs text-gray-600">{runningCar.renterName}</div>
                     </div>
                   </td>
                   <td className="px-2 py-1.5 text-right">
-                    <div className="text-sm font-medium">{vehicle.distance.toFixed(2)}km</div>
-                    <div className="text-xs text-gray-500">{vehicle.time}분 운행</div>
+                    <div className="text-sm font-medium">{runningCar.distance}km</div>
+                    <div className="text-xs text-gray-500">{runningCar.drivingTime}분 운행</div>
                   </td>
                 </tr>
               ))}

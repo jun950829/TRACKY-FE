@@ -12,12 +12,16 @@ import Modal from "@/components/custom/Modal";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Select, SelectTrigger } from "@/components/ui/select";
+import { CarType } from "@/constants/datas/status";
 
 const schema = yup.object({
   mdn: yup.string().min(10).max(11).required("차량 관리번호를 입력해주세요."),
   // 추후 추가 예정
   // bizId: yup.string().required("업체를 선택해주세요."),
-  carType: yup.string().required("차종을 입력해주세요."),
+  carType: yup.string().required("차종을 선택해주세요."),
+  carName: yup.string().required("차량 모델명을 입력해주세요."),
   carPlate: yup.string().required("차량 번호을 입력해주세요."),
   carYear: yup
     .number()
@@ -217,8 +221,22 @@ export default function CarRegister() {
 
           <div className="space-y-2">
             <Label>차종</Label>
-            <Input placeholder="예: 카니발, 아반떼" {...register("carType")} />
-            {errors.carType && <p className="text-sm text-red-500">{errors.carType.message}</p>}
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="차종을 선택해주세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {CarType.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>차량 모델명</Label>
+            <Input placeholder="예: 카니발, 아반떼" {...register("carName")} />
+            {errors.carName && <p className="text-sm text-red-500">{errors.carName.message}</p>}
           </div>
 
           <div className="space-y-2">
