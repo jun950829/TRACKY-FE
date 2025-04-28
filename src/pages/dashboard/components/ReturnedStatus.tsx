@@ -17,7 +17,7 @@ function ReturnedStatus({ reservations, isLoading, getReservationStatusData }: R
   );
   
   return (
-    <Card className="flex-1 min-w-[300px] max-w-[500px] p-0 border rounded-lg overflow-hidden flex flex-col">
+    <Card className="flex-1 min-w-[300px] p-0 border rounded-lg overflow-hidden flex flex-col">
       <CardHeader className="bg-white font-bold border-b p-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
