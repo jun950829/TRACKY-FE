@@ -20,7 +20,7 @@ export const driveService = {
         return response.data;
     },
 
-    getDriveBySearchFilter: async (search: string, mdn: string, searchDate: {sDate: Date, eDate: Date}, page?: number, size?: number) => {
+    getDriveBySearchFilter: async (search: string, mdn: string, searchDate: {sDate: Date, eDate: Date}, page: number, size: number) => {
         const params = new URLSearchParams();
         
         params.append('mdn', mdn);

@@ -21,34 +21,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import driveService from "@/libs/apis/driveApi";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, isLoading, setDriveResults, selectedCar } = useDriveListStore();
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const { driveResults, isLoading, selectedCar, currentPage,setCurrentPage, fetchDrives } = useDriveListStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date>(subMonths(new Date(), 3));
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const itemsPerPage = 10;
+  const itemsPerPage = 1;
 
   const fetchData = async () => {
-    try {
-      const response = await driveService.getDriveBySearchFilter(
-        searchTerm,
-        selectedCar?.carMdn || "",
-        {
-          sDate: startDate,
-          eDate: endDate
-        },
-        currentPage - 1,
-        itemsPerPage
-      );
-      setDriveResults(response.data);
-    } catch (error) {
-      console.error('데이터 조회 오류:', error);
-    }
+    setCurrentPage(0);
+    await fetchDrives(searchTerm, selectedCar?.carMdn || "", { sDate: startDate, eDate: endDate }, currentPage, itemsPerPage);
   };
 
   useEffect(() => {
@@ -57,14 +42,14 @@ function HistoryTable() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    setCurrentPage(0);
   };
 
   const resetFilters = () => {
     setStartDate(subMonths(new Date(), 3));
     setEndDate(new Date());
     setSearchTerm("");
-    setCurrentPage(1);
+    setCurrentPage(0);
   };
 
   const clickDrive = (driveId: number) => {

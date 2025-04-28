@@ -11,7 +11,8 @@ export default function HistoryCarList() {
     isLoading,
   } = useCarListStore();
 
-  const { searchDate, setSelectedCar, fetchDrives, setCurrentPage, selectedCar } = useDriveListStore();
+  const { searchDate, setSelectedCar, 
+    fetchDrives, setCurrentPage, selectedCar, currentPage, pageSize } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
     setCurrentPage(0); // 첫 페이지로 초기화
@@ -21,7 +22,7 @@ export default function HistoryCarList() {
       carType: car.carType,
       status: car.status
     });
-    await fetchDrives("", car.mdn, searchDate);
+    await fetchDrives("", car.mdn, searchDate, currentPage, 1);
   };
 
   if (carResults.length === 0) {
