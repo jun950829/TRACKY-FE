@@ -71,7 +71,7 @@ function RentSection() {
                 
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                     <RentSearchLayer onSearch={searchRents} />
-                    <div className="p-4 sm:p-6">
+                    <div className="px-4">
                         <RentTable 
                             rentList={rentList} 
                             setRentList={setRentList} 

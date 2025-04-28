@@ -1,4 +1,3 @@
-import PageHeader from "@/components/custom/PageHeader";
 import React from "react";
 
 interface DashboardLayoutProps {
@@ -7,11 +6,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="p-10 min-h-screen h-screen bg-zinc-50">
+    <div className="w-full h-full p-10 max-h-screen bg-zinc-50">
       {/* Main Content */}
-      <PageHeader title="대시보드" size="2xl" />
-      <main className="container mx-auto">{children}</main>
-      
+      <main className="w-full h-full container mx-auto overflow-y-auto">{children}</main>
     </div>
   );
 } 

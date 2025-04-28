@@ -38,10 +38,10 @@ export const useCarListStore = create<CarListState>((set, get) => ({
   setPageSize: (size) => set({ pageSize: size }),
   setSearchText: (text) => set({ searchText: text }),
   setIsLoading: (loading) => set({ isLoading: loading }),
-  fetchCars: async (text, page = 0) => {
+  fetchCars: async (text, page = 0, size = 20) => {
     try {
       set({ isLoading: true });
-      const response = await driveService.getCars(text, page);
+      const response = await driveService.getCars(text, page, size);
       set({
         carResults: response.data,
         currentPage: response.pageResponse.number,
