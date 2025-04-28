@@ -80,7 +80,7 @@ function HistoryTable() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col">
       {/* Filters */}
       <div className="p-4 border-b">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -154,23 +154,36 @@ function HistoryTable() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <div className="relative">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="w-[70px] text-center">운행 ID</TableHead>
-                <TableHead className="w-[100px] text-center">일자</TableHead>
-                <TableHead className="w-[120px] text-center">목적</TableHead>
-                <TableHead className="w-[160px] text-center">차량번호</TableHead>
-                <TableHead className="w-[140px] text-center">사용자</TableHead>
-                <TableHead className="w-[140px] text-center">운행거리(km)</TableHead>
-                <TableHead className="w-[140px] text-center">운행시간</TableHead>
-                <TableHead className="w-[140px] text-center">도착지</TableHead>
+      <div className="w-full">
+        <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+          <div className="relative">
+            <div className="sticky top-0 z-10 bg-white">
+              <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="w-[70px] text-center">운행 ID</TableHead>
+                      <TableHead className="w-[100px] text-center">일자</TableHead>
+                      <TableHead className="w-[120px] text-center">목적</TableHead>
+                      <TableHead className="w-[160px] text-center">차량번호</TableHead>
+                      <TableHead className="w-[140px] text-center">사용자</TableHead>
+                      <TableHead className="w-[140px] text-center">운행거리(km)</TableHead>
+                      <TableHead className="w-[140px] text-center">운행시간</TableHead>
+                      <TableHead className="w-[140px] text-center">도착지</TableHead>
+                    </TableRow>
+                  </TableHeader>
+              </Table>
+            </div>
+          </div>
+          <div className="h-[calc(100vh-21rem)] overflow-y-auto">
+            <Table>
+              <TableBody>
+              {driveResults && driveResults.length === 0 ?
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                  조회된 데이터가 없습니다.
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {driveResults?.map((drive) => (
+              : driveResults?.map((drive) => (
                 <TableRow 
                   key={drive.id} 
                   className="hover:bg-gray-50 cursor-pointer text-center"
@@ -195,37 +208,9 @@ function HistoryTable() {
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div className="p-4 border-t flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          총 {driveResults?.length || 0}건 중 {(currentPage - 1) * itemsPerPage + 1}-
-          {Math.min(currentPage * itemsPerPage, driveResults?.length || 0)}건 표시
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm">
-            {currentPage} / {Math.ceil((driveResults?.length || 0) / itemsPerPage)}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(prev => Math.min(Math.ceil((driveResults?.length || 0) / itemsPerPage), prev + 1))}
-            disabled={currentPage === Math.ceil((driveResults?.length || 0) / itemsPerPage)}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </div>

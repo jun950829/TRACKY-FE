@@ -41,7 +41,7 @@ export default function HistoryCarList() {
   }
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-24rem)] overflow-y-auto">
+    <div className="flex flex-col h-full max-h-[calc(100vh-23rem)] overflow-y-auto">
       <div className="flex-1">
         <div className="divide-y divide-gray-100">
           {carResults.map((car, index) => (

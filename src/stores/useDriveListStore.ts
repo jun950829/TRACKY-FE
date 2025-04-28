@@ -48,7 +48,7 @@ export const useDriveListStore = create<DriveListState>((set) => ({
   currentPage: 0,
   totalPages: 0,
   totalElements: 0,
-  pageSize: 10,
+  pageSize: 1,
   searchDate: {
     sDate: subMonths(new Date(), 3),
     eDate: new Date()
