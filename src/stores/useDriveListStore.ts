@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { DriveRecord } from '@/constants/types/historyTypes';
+import { DriveDetailRecord, DriveRecord } from '@/constants/types/historyTypes';
 import driveService from '@/libs/apis/driveApi';
-import { set, subMonths } from 'date-fns';
+import { subMonths } from 'date-fns';
 
 interface DriveListState {
   driveResults: DriveRecord[];
@@ -12,7 +12,7 @@ interface DriveListState {
     status: string;
   } | null;
   selectedDriveId: number | null;
-  driveDetail: DriveRecord | null;
+  driveDetail: DriveDetailRecord | null;
   isLoading: boolean;
   error: string | null;
   currentPage: number;

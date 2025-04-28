@@ -14,6 +14,9 @@ import { Member } from "@/constants/types/types";
  */
 export const getStatusColorClass = (status: string, type: 'car' | 'rent'): string => {
   const colorMap = type === 'car' ? CarStatusColorMap : RentStatusColorMap;
+  if(status == "200") {
+    debugger;
+  }
   return colorMap[status.toLowerCase()] || colorMap.default;
 };
 
@@ -37,7 +40,7 @@ export const getStatusBadgeClass = (
   type: 'car' | 'rent', 
   additionalClasses?: string
 ): string => {
-  return `${getStatusBadgeBaseClass()} ${getStatusColorClass(status.toLowerCase(), type)} ${additionalClasses || ''}`;
+  return `${getStatusBadgeBaseClass()} ${getStatusColorClass(status, type)} ${additionalClasses || ''}`;
 };
 
 /**

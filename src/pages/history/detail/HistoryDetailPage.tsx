@@ -6,6 +6,9 @@ import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
 import StatusBadge from "@/components/custom/StatusBadge";
 import HistoryMap from "./HistoryMap";
 import driveService from "@/libs/apis/driveApi";
+import { calculateDriveDuration } from "@/libs/utils/historyUtils";
+import { getStatusLabel } from "@/libs/utils/getClassUtils";
+import { getStatusBadgeClass } from "@/libs/utils/getClassUtils";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -109,7 +112,7 @@ const HistoryDetailPage: React.FC = () => {
               <div className="text-sm text-gray-500">출발</div>
               <div className="text-base font-medium">{onAddress}</div>
               <div className="text-sm text-gray-500 mt-1">
-                {formatDateTime(driveDetail.onTime)}
+                {formatDateTime(driveDetail.driveOnTime)}
               </div>
             </CardContent>
           </Card>
@@ -119,7 +122,7 @@ const HistoryDetailPage: React.FC = () => {
               <div className="text-sm text-gray-500">도착</div>
               <div className="text-base font-medium">{offAddress}</div>
               <div className="text-sm text-gray-500 mt-1">
-                {formatDateTime(driveDetail.offTime)}
+                {driveDetail.driveOffTime === null ? "운행중" : formatDateTime(driveDetail.driveOffTime)}
               </div>
             </CardContent>
           </Card>
@@ -139,7 +142,9 @@ const HistoryDetailPage: React.FC = () => {
               <div>
                 <div className="text-sm text-gray-500">운행 상태</div>
                 <div className="mt-1">
-                  <StatusBadge status={driveDetail.status} type="drive" />
+                  <div className={`${getStatusBadgeClass(driveDetail.status, 'car')}`}>
+                    {getStatusLabel('car', driveDetail.status)}
+                  </div>
                 </div>
               </div>
               <div>
@@ -151,7 +156,8 @@ const HistoryDetailPage: React.FC = () => {
               <div>
                 <div className="text-sm text-gray-500">운행 시간</div>
                 <div className="text-base font-medium">
-                  {driveDetail.driveDuration || 0} 분
+                  {driveDetail.driveOffTime === null ? "현재 운행: " : "총"}
+                  {driveDetail.driveOffTime === null ? calculateDriveDuration(driveDetail.driveOnTime, new Date().toISOString()) : calculateDriveDuration(driveDetail.driveOnTime, driveDetail.driveOffTime) || 0}
                 </div>
               </div>
             </div>

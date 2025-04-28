@@ -3,6 +3,7 @@ export interface GpsData {
   lat: number;
   lon: number;
   spd: number;
+  ang: number;
   o_time: string;
 }
 
@@ -33,23 +34,23 @@ export interface DriveRecord {
 export interface DriveDetailRecord {
   driveId: number;
   mdn: string;
-  rentUuid: string;
-  driveOnTime: string;
-  driveOffTime: string;
-  rentStime: string;
-  rentEtime: string;
+  carPlate: string;
   onLat: number;
   onLon: number;
   offLat: number;
   offLon: number;
-  sum: number;
-  maxSpeed: number;
-  avgSpeed: number;
-  gpsDataList: GpsData[];
+  driveDistance: number;
+  rentUuid: string;
   renterName: string;
   renterPhone: string;
-  purpose: string;
   rentStatus: string;
+  purpose: string;
+  status: string;
+  driveOnTime: string;
+  driveOffTime: string;
+  rentStime: string;
+  rentEtime: string;
+  gpsDataList: GpsData[];
 }
 
 export interface BizRecord {
