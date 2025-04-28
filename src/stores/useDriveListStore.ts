@@ -39,7 +39,7 @@ interface DriveListState {
   fetchDrives: (text: string, mdn: string, searchDate: { sDate: Date; eDate: Date }, page: number, size: number) => Promise<void>;
 }
 
-export const useDriveListStore = create<DriveListState>((set) => ({
+export const useDriveListStore = create<DriveListState>((set, get) => ({
   driveResults: [],
   selectedCar: null,
   selectedDriveId: null,
@@ -61,11 +61,17 @@ export const useDriveListStore = create<DriveListState>((set) => ({
   setDriveDetail: (detail) => set({ driveDetail: detail }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
-  setCurrentPage: (page) => set({ currentPage: page }),
+  setCurrentPage: (page) => {
+    set({ currentPage: page })
+    get().fetchDrives(get().searchText, get().selectedCar?.carMdn || "", get().searchDate, page, get().pageSize);
+  },
   setTotalPages: (pages) => set({ totalPages: pages }),
   setTotalElements: (elements) => set({ totalElements: elements }),
   setPageSize: (size) => set({ pageSize: size }),
-  setSearchText: (text) => set({ searchText: text }),
+  setSearchText: (text) => {
+    set({ searchText: text })
+    get().fetchDrives(text, get().selectedCar?.carMdn || "", get().searchDate, get().currentPage, get().pageSize);
+  },
   setSearchDate: (date) => set({ searchDate: date }),
   fetchDrives: async (text: string, mdn: string, searchDate: { sDate: Date; eDate: Date }, page: number, size: number) => {
     set({ isLoading: true });
@@ -76,7 +82,7 @@ export const useDriveListStore = create<DriveListState>((set) => ({
         mdn,
         searchDate,
         page,
-        1
+        size
       );
       set({
         driveResults: response.data,

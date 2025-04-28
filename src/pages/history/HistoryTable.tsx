@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronLeft, ChevronRight, Download, Search, X, Loader2 } from "lucide-react";
+import { Calendar, Download, Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/libs/utils/utils";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -25,31 +25,33 @@ import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, isLoading, selectedCar, currentPage,setCurrentPage, fetchDrives } = useDriveListStore();
+  const { driveResults, isLoading, setSearchText,  searchDate, setSearchDate,  setCurrentPage } = useDriveListStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState<Date>(subMonths(new Date(), 3));
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const itemsPerPage = 1;
-
-  const fetchData = async () => {
-    setCurrentPage(0);
-    await fetchDrives(searchTerm, selectedCar?.carMdn || "", { sDate: startDate, eDate: endDate }, currentPage, itemsPerPage);
-  };
+  const [startDate, setStartDate] = useState<Date>(searchDate.sDate);
+  const [endDate, setEndDate] = useState<Date>(new Date(searchDate.eDate));
 
   useEffect(() => {
-    fetchData();
-  }, [currentPage, startDate, endDate, searchTerm]);
+    setSearchDate({
+      sDate: startDate,
+      eDate: endDate
+    })
+    setCurrentPage(0);
+  }, [startDate, endDate]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(0);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchText(searchTerm);
+    }
   };
 
   const resetFilters = () => {
     setStartDate(subMonths(new Date(), 3));
     setEndDate(new Date());
     setSearchTerm("");
-    setCurrentPage(0);
   };
 
   const clickDrive = (driveId: number) => {
@@ -124,12 +126,16 @@ function HistoryTable() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input
-                placeholder="사용자/차량번호 검색"
+                placeholder="사용자 입력"
                 value={searchTerm}
                 onChange={handleSearch}
-                className="pl-9 w-[200px]"
+                onKeyDown={handleKeyDown}
+                className="pl-9 w-[120px]"
               />
             </div>
+            <Button className="bg-black text-white hover:bg-gray-800" onClick={() => setSearchText(searchTerm)}>
+              검색
+            </Button>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
               다운로드

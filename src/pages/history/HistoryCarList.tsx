@@ -22,7 +22,7 @@ export default function HistoryCarList() {
       carType: car.carType,
       status: car.status
     });
-    await fetchDrives("", car.mdn, searchDate, currentPage, 1);
+    await fetchDrives("", car.mdn, searchDate, currentPage, pageSize);
   };
 
   if (carResults.length === 0) {
