@@ -126,7 +126,7 @@ function NoticeSection() {
       {error && <ErrorToast error={error} />}
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">공지사항 관리</h1>
-        <p className="text-gray-500 mb-4 text-sm sm:text-base">
+        <p className="text-gray-500 text-sm sm:text-base">
           공지사항을 관리하고 조회할 수 있습니다.
         </p>
 

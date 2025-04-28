@@ -75,8 +75,8 @@ export const headerMenus = [
         icon: UserCog
       },
       {
-        name: "업체 관리",
-        path: "/admin/biz",
+        name: "계정 관리",
+        path: "/admin/member",
         icon: UserCog
       },
       {

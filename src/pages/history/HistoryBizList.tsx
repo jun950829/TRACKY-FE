@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useHistoryStore } from "@/stores/useHistoryStore";
 import { format } from "date-fns";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { drivehistoryService } from "@/libs/apis/drivehistoryApi";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -27,7 +26,6 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
     bizResults,
     searchType,
     selectedBiz,
-    selectedDetail,
     setSelectedBiz,
     setSelectedDetail,
   } = useHistoryStore();
@@ -68,7 +66,7 @@ const HistoryBizList: React.FC<HistoryListProps> = ({ onItemClick }) => {
       }
 
       // 차량 검색 모드일 때
-      const response = await drivehistoryService.getDriveDetail(driveId);
+      const response = await driveService.getDriveDetail(driveId);
       setSelectedDetail(response.data);
     }
   };
