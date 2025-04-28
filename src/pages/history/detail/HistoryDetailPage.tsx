@@ -142,7 +142,7 @@ const HistoryDetailPage: React.FC = () => {
               <div>
                 <div className="text-sm text-gray-500">운행 상태</div>
                 <div className="mt-1">
-                  <div className={`${getStatusBadgeClass(driveDetail.status, 'car')}`}>
+                  <div className={`w-[60px] text-center ${getStatusBadgeClass(driveDetail.status, 'car')}`}>
                     {getStatusLabel('car', driveDetail.status)}
                   </div>
                 </div>
