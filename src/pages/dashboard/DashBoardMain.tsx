@@ -34,9 +34,9 @@ export default function Dashboard() {
       setError(null);
       try {
         await Promise.all([
-          // getCarStatus(),
+          getCarStatus(),
           getReturnStatusData(),
-          // getStatistics()
+          getStatistics()
         ]);
       } catch (err) {
         console.error('데이터 조회 실패:', err);
@@ -144,7 +144,7 @@ export default function Dashboard() {
           <div className="w-full h-full flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
-              {/* <VehicleStatusCards statusObj={carStatus} /> */}
+              <VehicleStatusCards statusObj={carStatus} />
             </div>
 
             {/* Reservation Status */}
@@ -163,7 +163,7 @@ export default function Dashboard() {
             {/* 지도 컴포넌트 영역 */}
             <div className="w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <div className="w-full h-full relative">
-                {/* <MapLayer isLoading={isLoading} /> */}
+                <MapLayer isLoading={isLoading} />
               </div>
             </div>
           </div>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { ReservationCardProps } from "@/constants/types/reservation";
-import { getFilterDate, formatDate, formatTime, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
+import { formatTime, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
 
-function ReturnedStatus({ reservations, isLoading, getReturnStatusData }: ReservationCardProps) {
+function ReturnedStatus({ reservations, isLoading }: ReservationCardProps) {
   //getReturnStatus
 
   return (
@@ -14,7 +14,7 @@ function ReturnedStatus({ reservations, isLoading, getReturnStatusData }: Reserv
         <div className="flex justify-between items-center">
           <CardTitle className="text-base font-medium flex items-center gap-2">
             {/* <Calendar className="h-4 w-4 text-primary" /> */}
-            <h2 className="text-lg font-semibold">반납 현황</h2>
+            <h2 className="text-lg font-semibold">미반납 현황</h2>
           </CardTitle>
           
           <div className="flex items-center space-x-1 text-xs">
