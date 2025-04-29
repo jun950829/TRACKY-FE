@@ -279,14 +279,15 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
         </div>
 
         <div className="flex items-center gap-3">
-          <CustomButton
-            variant="outline"
-            className="bg-blue-600 text-white hover:bg-blue-800"
+          <Button 
+            variant="outline" 
+            size="sm" 
             onClick={() => openDownloadModal()}
-            >
-            <Download className="h-4 w-4 mr-2" />
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
             다운로드
-          </CustomButton>
+          </Button>
 
           <Button
             className="bg-black text-white hover:bg-gray-800"

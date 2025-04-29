@@ -40,7 +40,7 @@ export default function MemberModal({ open, onClose, member, onSave }: MemberMod
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]" aria-describedby="">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{member ? "회원 수정" : "회원 추가"}</DialogTitle>
         </DialogHeader>

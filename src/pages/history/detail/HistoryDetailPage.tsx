@@ -10,7 +10,9 @@ import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 import { getStatusLabel, getStatusBadgeClass } from "@/libs/utils/getClassUtils";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Clock, MapPin, Car, User, Target } from "lucide-react";
+import { Clock, MapPin, Car, User, Target, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
@@ -23,6 +25,7 @@ const formatDateTime = (dateStr: string) => {
 };
 
 const HistoryDetailPage: React.FC = () => {
+  const navigate = useNavigate();
   const { selectedDriveId, driveDetail, setDriveDetail, setLoading, setError } = useDriveListStore();
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
   const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
@@ -90,14 +93,30 @@ const HistoryDetailPage: React.FC = () => {
         {/* 지도 영역 */}
         <Card className="shadow-sm col-span-2">
           <CardHeader className="p-2">
-            <CardTitle className="text-base flex items-center gap-1">
-              <MapPin className="h-4 w-4" />
-              주행 경로
-            </CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-base flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                주행 경로
+              </CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                뒤로가기
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="p-2">
             {driveDetail?.gpsDataList ? (
-              <HistoryMap gpsDataList={driveDetail.gpsDataList} height="200px" />
+              <HistoryMap 
+                gpsDataList={driveDetail.gpsDataList} 
+                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, o_time: driveDetail.driveOnTime }}
+                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, o_time: driveDetail.driveOffTime }}
+                height="200px" 
+              />
             ) : (
               <div className="h-[200px] flex items-center justify-center bg-gray-50 rounded">
                 <p className="text-gray-500">경로 데이터를 불러오는 중...</p>

@@ -11,8 +11,7 @@ export default function HistoryCarList() {
     isLoading,
   } = useCarListStore();
 
-  const { searchDate, setSelectedCar, 
-    fetchDrives, setCurrentPage, selectedCar, currentPage, pageSize } = useDriveListStore();
+  const {setSelectedCar, setCurrentPage, selectedCar } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
     setSelectedCar({
@@ -73,9 +72,6 @@ export default function HistoryCarList() {
                     <div className="text-xs text-gray-900 truncate">
                       {car.carPlate}
                     </div>
-                    {selectedCar?.carMdn === car.mdn && (
-                      <Check className="h-4 w-4 text-blue-500" />
-                    )}
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
                     {car.mdn} | {car.carName}
