@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RentStatus } from "@/constants/datas/status";
 import { PageSizeOptions } from "@/constants/datas/options";
@@ -22,6 +22,10 @@ function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProp
   const [searchValue, setSearchValue] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    search();
+  }, [pageSize]);
 
   function search() {
     
@@ -73,7 +77,7 @@ function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProp
           />
 
           <Select onValueChange={setStatus} value={status}>
-            <SelectTrigger className="w-[80px]">
+            <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="예약 상태" />
             </SelectTrigger>
             <SelectContent>

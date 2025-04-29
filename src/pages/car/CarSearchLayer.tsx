@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Download, Plus, Search as SearchIcon, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CarStatus } from "@/constants/datas/status";
 import { CustomButton } from "@/components/custom/CustomButton";
@@ -58,6 +58,10 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    search();
+  }, [pageSize]);
 
   function search() {
     // searchRef.current가 아닌 state 값 사용
