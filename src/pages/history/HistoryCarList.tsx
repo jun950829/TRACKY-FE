@@ -15,14 +15,13 @@ export default function HistoryCarList() {
     fetchDrives, setCurrentPage, selectedCar, currentPage, pageSize } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
-    setCurrentPage(0); // 첫 페이지로 초기화
     setSelectedCar({
       carMdn: car.mdn,
       carPlate: car.carPlate,
       carType: car.carType,
       status: car.status
     });
-    await fetchDrives("", car.mdn, searchDate, currentPage, pageSize);
+    setCurrentPage(0); // 첫 페이지로 초기화
   };
 
   if (carResults.length === 0) {

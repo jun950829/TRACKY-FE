@@ -27,7 +27,7 @@ interface DriveListState {
   setDriveResults: (results: DriveRecord[]) => void;
   setSelectedCar: (car: { carMdn: string; carPlate: string; carType: string; status: string } | null) => void;
   setSelectedDriveId: (id: number | null) => void;
-  setDriveDetail: (detail: DriveRecord | null) => void;
+  setDriveDetail: (detail: DriveDetailRecord | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentPage: (page: number) => void;
@@ -76,7 +76,6 @@ export const useDriveListStore = create<DriveListState>((set, get) => ({
   fetchDrives: async (text: string, mdn: string, searchDate: { sDate: Date; eDate: Date }, page: number, size: number) => {
     set({ isLoading: true });
     try {
-      // const state = useDriveListStore.getState();
       const response = await driveService.getDriveBySearchFilter(
         text,
         mdn,
