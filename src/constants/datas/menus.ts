@@ -66,7 +66,7 @@ export const headerMenus = [
   },
   {
     name: "관리자",
-    path: "/admin",
+    path: "/admin/notice",
     icon: UserCog,
     subMenus: [
       {
