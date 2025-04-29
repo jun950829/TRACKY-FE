@@ -111,7 +111,12 @@ const HistoryDetailPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-2">
             {driveDetail?.gpsDataList ? (
-              <HistoryMap gpsDataList={driveDetail.gpsDataList} height="200px" />
+              <HistoryMap 
+                gpsDataList={driveDetail.gpsDataList} 
+                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, o_time: driveDetail.driveOnTime }}
+                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, o_time: driveDetail.driveOffTime }}
+                height="200px" 
+              />
             ) : (
               <div className="h-[200px] flex items-center justify-center bg-gray-50 rounded">
                 <p className="text-gray-500">경로 데이터를 불러오는 중...</p>
