@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useDriveListStore } from "@/stores/useDriveListStore";
 import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
-import StatusBadge from "@/components/custom/StatusBadge";
 import HistoryMap from "./HistoryMap";
 import driveService from "@/libs/apis/driveApi";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
-import { getStatusLabel } from "@/libs/utils/getClassUtils";
-import { getStatusBadgeClass } from "@/libs/utils/getClassUtils";
+import { getStatusLabel, getStatusBadgeClass } from "@/libs/utils/getClassUtils";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Clock, MapPin, Car, User, Target } from "lucide-react";
 
 // 날짜 포맷 헬퍼 함수
 const formatDateTime = (dateStr: string) => {
   try {
     const date = new Date(dateStr);
-    return format(date, "yyyy년 MM월 dd일 HH:mm:ss");
+    return format(date, "yyyy년 MM월 dd일 HH:mm", { locale: ko });
   } catch {
     return dateStr;
   }
@@ -45,7 +47,6 @@ const HistoryDetailPage: React.FC = () => {
       return;
     }
 
-    // 정수형 좌표 → 실수형으로 변환
     const startLat = onLat / 1_000_000;
     const startLon = onLon / 1_000_000;
     const endLat = offLat / 1_000_000;
@@ -59,7 +60,7 @@ const HistoryDetailPage: React.FC = () => {
         ]);
         setOnAddress(on);
         setOffAddress(off);
-      } catch (err) {
+      } catch {
         setOnAddress("주소 불러오기 실패");
         setOffAddress("주소 불러오기 실패");
       }
@@ -68,10 +69,9 @@ const HistoryDetailPage: React.FC = () => {
     fetchAddress();
   }, [driveDetail]);
 
-  // 선택된 데이터가 없는 경우
   if (!driveDetail) {
     return (
-      <div className="h-full flex items-center justify-center bg-white p-6">
+      <div className="h-full flex items-center justify-center bg-white p-4">
         <p className="text-gray-500">좌측 목록에서 운행 기록을 선택하세요</p>
       </div>
     );
@@ -93,73 +93,134 @@ const HistoryDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="p-2 sm:p-4 h-full overflow-y-auto">
-      <div className="space-y-3 sm:space-y-4">
-        {/* 모바일 우선: 지도 컴포넌트 */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-2 sm:p-4 sm:pb-0 pb-0">
-            <CardTitle className="text-base sm:text-lg">주행 경로</CardTitle>
+    <div className="p-2 h-full overflow-y-auto">
+      <div className="grid grid-cols-2 gap-2">
+        {/* 지도 영역 */}
+        <Card className="shadow-sm col-span-2">
+          <CardHeader className="p-2">
+            <CardTitle className="text-base flex items-center gap-1">
+              <MapPin className="h-4 w-4" />
+              주행 경로
+            </CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
+          <CardContent className="p-2">
             <HistoryMap gpsDataList={driveDetail.gpsDataList || []} height="200px" />
           </CardContent>
         </Card>
 
-        {/* 요약 정보 카드 (상단) */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-sm text-gray-500">출발</div>
-              <div className="text-base font-medium">{onAddress}</div>
-              <div className="text-sm text-gray-500 mt-1">
-                {formatDateTime(driveDetail.driveOnTime)}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-50 shadow-sm">
-            <CardContent className="p-2 sm:p-3 text-center">
-              <div className="text-sm text-gray-500">도착</div>
-              <div className="text-base font-medium">{offAddress}</div>
-              <div className="text-sm text-gray-500 mt-1">
-                {driveDetail.driveOffTime === null ? "운행중" : formatDateTime(driveDetail.driveOffTime)}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* 상세 정보 카드 */}
+        {/* 기본 정보 */}
         <Card className="shadow-sm">
-          <CardHeader className="p-2 sm:p-4 sm:pb-0 pb-0">
-            <CardTitle className="text-base sm:text-lg">상세 정보</CardTitle>
+          <CardHeader className="p-2">
+            <CardTitle className="text-base flex items-center gap-1">
+              <Car className="h-4 w-4" />
+              차량 정보
+            </CardTitle>
           </CardHeader>
-          <CardContent className="p-2 sm:p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm text-gray-500">차량 번호</div>
-                <div className="text-base font-medium">{driveDetail.carPlate}</div>
+          <CardContent className="p-2 space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">차량 번호</div>
+                <div className="text-sm font-medium">{driveDetail.carPlate}</div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500">운행 상태</div>
-                <div className="mt-1">
-                  <div className={`${getStatusBadgeClass(driveDetail.status, 'car')}`}>
-                    {getStatusLabel('car', driveDetail.status)}
-                  </div>
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">운행 상태</div>
+                <Badge className={getStatusBadgeClass(driveDetail.status, 'car')}>
+                  {getStatusLabel('car', driveDetail.status)}
+                </Badge>
+              </div>
+            </div>
+            <Separator className="my-1" />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">운행 거리</div>
+                <div className="text-sm font-medium">{driveDetail.driveDistance?.toFixed(1) || 0} km</div>
+              </div>
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">운행 시간</div>
+                <div className="text-sm font-medium">
+                  {driveDetail.driveOffTime === null 
+                    ? calculateDriveDuration(driveDetail.driveOnTime, new Date().toISOString())
+                    : calculateDriveDuration(driveDetail.driveOnTime, driveDetail.driveOffTime)}
                 </div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500">운행 거리</div>
-                <div className="text-base font-medium">
-                  {driveDetail.driveDistance?.toFixed(1) || 0} km
-                </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 사용자 정보 */}
+        <Card className="shadow-sm">
+          <CardHeader className="p-2">
+            <CardTitle className="text-base flex items-center gap-1">
+              <User className="h-4 w-4" />
+              사용자 정보
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">이름</div>
+                <div className="text-sm font-medium">{driveDetail.renterName}</div>
               </div>
-              <div>
-                <div className="text-sm text-gray-500">운행 시간</div>
-                <div className="text-base font-medium">
-                  {driveDetail.driveOffTime === null ? "현재 운행: " : "총"}
-                  {driveDetail.driveOffTime === null ? calculateDriveDuration(driveDetail.driveOnTime, new Date().toISOString()) : calculateDriveDuration(driveDetail.driveOnTime, driveDetail.driveOffTime) || 0}
-                </div>
+              <div className="space-y-0.5">
+                <div className="text-xs text-gray-500">연락처</div>
+                <div className="text-sm font-medium">{driveDetail.renterPhone}</div>
               </div>
+            </div>
+            <Separator className="my-1" />
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">목적</div>
+              <div className="text-sm font-medium">{driveDetail.purpose || '기타업무'}</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 시간 정보 */}
+        <Card className="shadow-sm">
+          <CardHeader className="p-2">
+            <CardTitle className="text-base flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              시간 정보
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 space-y-2">
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">출발 시간</div>
+              <div className="text-sm font-medium">{formatDateTime(driveDetail.driveOnTime)}</div>
+            </div>
+            <Separator className="my-1" />
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">도착 시간</div>
+              <div className="text-sm font-medium">
+                {driveDetail.driveOffTime ? formatDateTime(driveDetail.driveOffTime) : "운행중"}
+              </div>
+            </div>
+            <Separator className="my-1" />
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">예약 기간</div>
+              <div className="text-sm font-medium">
+                {formatDateTime(driveDetail.rentStime)} ~ {formatDateTime(driveDetail.rentEtime)}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 위치 정보 */}
+        <Card className="shadow-sm">
+          <CardHeader className="p-2">
+            <CardTitle className="text-base flex items-center gap-1">
+              <Target className="h-4 w-4" />
+              위치 정보
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 space-y-2">
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">출발지</div>
+              <div className="text-sm font-medium">{onAddress}</div>
+            </div>
+            <Separator className="my-1" />
+            <div className="space-y-0.5">
+              <div className="text-xs text-gray-500">도착지</div>
+              <div className="text-sm font-medium">{offAddress}</div>
             </div>
           </CardContent>
         </Card>

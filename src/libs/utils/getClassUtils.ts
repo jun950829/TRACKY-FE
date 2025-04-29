@@ -14,9 +14,6 @@ import { Member } from "@/constants/types/types";
  */
 export const getStatusColorClass = (status: string, type: 'car' | 'rent'): string => {
   const colorMap = type === 'car' ? CarStatusColorMap : RentStatusColorMap;
-  if(status == "200") {
-    debugger;
-  }
   return colorMap[status.toLowerCase()] || colorMap.default;
 };
 
