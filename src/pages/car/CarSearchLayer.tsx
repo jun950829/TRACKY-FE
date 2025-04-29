@@ -23,6 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import * as XLSX from 'xlsx';
+import { PageSizeOptions } from "@/constants/datas/options";
 
 // 차량 종류 상수 - DB enum 값과 사용자에게 표시될 레이블 매핑
 const CarTypes = [
