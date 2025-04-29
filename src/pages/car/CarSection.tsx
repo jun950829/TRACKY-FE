@@ -142,6 +142,7 @@ function CarSection() {
               onPageChange={handlePageChange}
             />
           )}
+          </div>
         </div>
       </div>
     </div>
