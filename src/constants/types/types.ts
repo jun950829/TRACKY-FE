@@ -115,7 +115,7 @@ export type CycleInfoRequest = {
 }
 
 
-export type ReservationStatus = {
+export type ReturnStatus = {
   rentUuid: string;
   renterName: string;
   mdn: string;
