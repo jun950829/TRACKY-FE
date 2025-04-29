@@ -1,4 +1,4 @@
-import { CarCreateTypes, CarUpdateTypes } from "@/constants/types/types";
+import { CarCreateTypes, CarDetailTypes, CarUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
@@ -71,6 +71,18 @@ export const carApiService = {
     const response = await api.delete(`${carApiRoot}`, { data });
     return response.data;
   },
+
+  extractExcel: async () => {
+    const response = await api.get(`${carApiRoot}/excel`, {
+      responseType: 'blob', // 중요! 바이너리 데이터를 받기 위한 설정
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+
+    return response.data;
+  }
 };
 
 export default carApiService;
