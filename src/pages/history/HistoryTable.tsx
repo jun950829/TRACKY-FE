@@ -22,10 +22,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
+import driveService from "@/libs/apis/driveApi";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, isLoading, setSearchText,  searchDate, setSearchDate,  setCurrentPage } = useDriveListStore();
+  const { driveResults, isLoading, setSearchText,  searchDate, setSearchDate,  setCurrentPage, setSelectedDriveId, setDriveDetail } = useDriveListStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date>(searchDate.sDate);
   const [endDate, setEndDate] = useState<Date>(new Date(searchDate.eDate));
@@ -54,8 +55,16 @@ function HistoryTable() {
     setSearchTerm("");
   };
 
-  const clickDrive = (driveId: number) => {
-    navigate(`/history/${driveId}`);
+  const clickDrive = async (driveId: number) => {
+    setSelectedDriveId(driveId);
+
+    try {
+      const response = await driveService.getDriveById(driveId);
+      setDriveDetail(response);
+      navigate(`/history/${driveId}`);
+    } catch (error) {
+      console.error("Error fetching drive details:", error);
+    }
   };
 
   if (isLoading) {
