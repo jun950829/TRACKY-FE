@@ -71,7 +71,7 @@ function HistorySection() {
       /> */}
       
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[80vh]">
+      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[85vh]">
         {/* Desktop Search/List Area */}
         <div className="hidden md:block w-[20%] min-w-[270px] bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="flex flex-col h-full">
