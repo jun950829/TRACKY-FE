@@ -31,6 +31,7 @@ type RentTableProps = {
   rentList: RentDetailTypes[];
   setRentList: (rentList: RentDetailTypes[]) => void;
   isLoading?: boolean;
+  reload: () => void;
 };
 
 function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps) {
