@@ -11,24 +11,23 @@ import { useNavigate } from "react-router-dom";
 import { RentStatus } from "@/constants/datas/status";
 
 type RentSearchLayerProps = {
-  onSearch: (isReload:boolean, searchText?: string, status?: string, date?: string ) => void;
+  onSearch: (isReload:boolean, searchText?: string, status?: string, date?: string, size?: number ) => void;
+  defaultPageSize?: number;
 }
 
-function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
+function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProps) {
   const [date, setDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<string | undefined>();
   const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
 
   function search() {
-    // 검색 파라미터 구성
+    
     const searchText = searchValue;
-
-    // "all" 옵션이 선택되면 해당 필터는 undefined로 처리
     const statusFilter = status === 'all' ? undefined : status;
     const dateFilter = date ? format(date, "yyyy-MM-dd") : undefined;
 
-    onSearch(false, searchText, statusFilter, dateFilter);
+    onSearch(false, searchText, statusFilter, dateFilter, defaultPageSize);
   }
 
   // 필터 초기화
@@ -37,7 +36,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
     setStatus(undefined);
     setDate(undefined);
     
-    onSearch(false, undefined, undefined, undefined);
+    onSearch(false, undefined, undefined, undefined, defaultPageSize);
   }
 
   // Enter 키 이벤트 핸들러
@@ -55,11 +54,11 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
   return (
     <div className="bg-white border-b">
       {/* PC 뷰 */}
-      <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
+      <div className="hidden md:flex items-center justify-between p-4">
         <div className="flex flex-wrap items-center gap-3 min-h-[40px]">
           <Input
             placeholder="예약 정보 검색"
-            className="w-64"
+            className="w-48"
             value={searchValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -94,6 +93,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
                 selected={date}
                 onSelect={setDate}
                 locale={ko}
+                defaultMonth={date || undefined}
                 initialFocus
               />
             </PopoverContent>
