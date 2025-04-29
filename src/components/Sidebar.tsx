@@ -49,7 +49,7 @@ function Sidebar() {
 
   if(!isMobile) {
     return (
-      <aside className="h-screen w-1/10 border-r border-foreground/10 bg-background">
+      <aside className="h-screen w-1/5 border-r border-foreground/10 bg-background">
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={() => navigate("/dashboard")}>

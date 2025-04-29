@@ -37,7 +37,7 @@ export const getStatusBadgeClass = (
   type: 'car' | 'rent', 
   additionalClasses?: string
 ): string => {
-  return `${getStatusBadgeBaseClass()} ${getStatusColorClass(status, type)} ${additionalClasses || ''}`;
+  return `${getStatusBadgeBaseClass()} ${getStatusColorClass(status.toLowerCase(), type)} ${additionalClasses || ''}`;
 };
 
 /**

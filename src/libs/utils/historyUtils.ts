@@ -43,16 +43,9 @@ export const getPathColor = (speed: number) => {
   return '#ff3300';                 // 매우 빠름 - 빨간색
 };
 
-// 경로 세그먼트 타입 정의
-export interface PathSegment {
-  positions: [number, number][];
-  color: string;
-  points: GpsData[];
-}
-
 // 경로 세그먼트 생성
 export const createPathSegments = (gpsDataList: GpsData[]) => {
-  const segments: PathSegment[] = [];
+  const segments = [];
   for (let i = 0; i < gpsDataList.length - 1; i++) {
     const avgSpeed = (gpsDataList[i].spd + gpsDataList[i+1].spd) / 2;
     segments.push({
@@ -60,8 +53,7 @@ export const createPathSegments = (gpsDataList: GpsData[]) => {
         [gpsDataList[i].lat / 1_000_000, gpsDataList[i].lon / 1_000_000] as [number, number],
         [gpsDataList[i + 1].lat / 1_000_000, gpsDataList[i + 1].lon / 1_000_000] as [number, number]
       ],
-      color: getPathColor(avgSpeed),
-      points: [gpsDataList[i], gpsDataList[i + 1]]
+      color: getPathColor(avgSpeed)
     });
   }
   return segments;
