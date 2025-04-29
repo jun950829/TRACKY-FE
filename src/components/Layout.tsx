@@ -12,7 +12,7 @@ function Layout() {
   return (
     <div className="flex">
       {!shouldHideSidebar && <Sidebar />}
-      <main className="flex-1 w-full h-full overflow-y-auto max-h-screen">
+      <main className="flex-1">
         <Outlet />
       </main>
     </div>

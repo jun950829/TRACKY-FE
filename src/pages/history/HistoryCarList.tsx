@@ -1,6 +1,7 @@
 import { useCarListStore } from "@/stores/useCarListStore";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import { Loader2, Check } from "lucide-react";
+import driveService from "@/libs/apis/driveApi";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 import { CarRecord } from "@/constants/types/historyTypes";
@@ -11,18 +12,16 @@ export default function HistoryCarList() {
     isLoading,
   } = useCarListStore();
 
-  const { searchDate, setSelectedCar, 
-    fetchDrives, setCurrentPage, selectedCar, currentPage, pageSize } = useDriveListStore();
+  const { setSelectedCar, setDriveResults } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
-    setCurrentPage(0); // 첫 페이지로 초기화
+    const response = await driveService.getDriveBySearchFilter(car.carPlate);
+    setDriveResults(response.data);
     setSelectedCar({
-      carMdn: car.mdn,
       carPlate: car.carPlate,
       carType: car.carType,
       status: car.status
     });
-    await fetchDrives("", car.mdn, searchDate, currentPage, pageSize);
   };
 
   if (carResults.length === 0) {
@@ -42,23 +41,19 @@ export default function HistoryCarList() {
   }
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-23rem)] overflow-y-auto">
-      <div className="flex-1">
+    <div className="flex flex-col h-full max-h-[50vh]">
+      <div className="flex-1 overflow-y-auto">
         <div className="divide-y divide-gray-100">
           {carResults.map((car, index) => (
             <div
               key={index} 
               className={cn(
-                "cursor-pointer transition-all duration-200 relative",
-                "hover:bg-gray-50 active:bg-gray-100",
-                selectedCar?.carMdn === car.mdn && "bg-blue-50"
+                "p-4 cursor-pointer transition-all duration-200",
+                "hover:bg-gray-50 active:bg-gray-100"
               )}
               onClick={() => handleCarClick(car)}
             >
-              {selectedCar?.carMdn === car.mdn && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-md" />
-              )}
-              <div className="flex items-center gap-4 pl-4">
+              <div className="flex items-center gap-4">
                 <div className="w-16 h-16 flex-shrink-0">
                   <img
                     src={`/png/cars/${car.carType?.toLowerCase() || 'sedan'}.png`}
@@ -67,16 +62,13 @@ export default function HistoryCarList() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="w-full flex flex-row justify-start items-center gap-2">
-                    <div className={`${getStatusBadgeClass(car.status, 'car')}`}>
-                      {getStatusLabel('car', car.status)}
-                    </div>
-                    <div className="text-xs text-gray-900 truncate">
+                  <div className="w-full flex flex-row items-center gap-2">
+                    <div className="font-sm text-gray-900 truncate">
                       {car.carPlate}
                     </div>
-                    {selectedCar?.carMdn === car.mdn && (
-                      <Check className="h-4 w-4 text-blue-500" />
-                    )}
+                    <div className={getStatusBadgeClass(car.status, 'car')}>
+                      {getStatusLabel('car', car.status)}
+                    </div>
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
                     {car.mdn} | {car.carName}

@@ -11,7 +11,7 @@ import { Plus, Search as SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CarStatus } from "@/constants/datas/status";
-import { PageSizeOptions } from "@/constants/datas/options";
+
 // 차량 종류 상수 - DB enum 값과 사용자에게 표시될 레이블 매핑
 const CarTypes = [
   { value: "all", label: "전체" },
@@ -23,6 +23,14 @@ const CarTypes = [
   { value: "bus", label: "버스" },
   { value: "sports", label: "스포츠카" },
   { value: "etc", label: "기타" },
+];
+
+// 페이지 사이즈 옵션
+const PageSizeOptions = [
+  { value: "5", label: "5개씩" },
+  { value: "10", label: "10개씩" },
+  { value: "15", label: "15개씩" },
+  { value: "20", label: "20개씩" },
 ];
 
 type CarSearchLayer = {

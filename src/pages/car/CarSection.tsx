@@ -133,7 +133,7 @@ function CarSection() {
 
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <CarSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
-          <div className="px-4">
+          <div className="p-4 sm:p-6">
             <CarTable
               carList={carList}
               setCarList={setCarList}
