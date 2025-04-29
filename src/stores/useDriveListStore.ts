@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { DriveRecord } from '@/constants/types/historyTypes';
 import driveService from '@/libs/apis/driveApi';
-import { subMonths } from 'date-fns';
+import { set, subMonths } from 'date-fns';
 
 interface DriveListState {
   driveResults: DriveRecord[];
@@ -30,15 +30,16 @@ interface DriveListState {
   setDriveDetail: (detail: DriveRecord | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  fetchDrives: (text: string, mdn: string, date: {sDate: Date, eDate: Date}, page?: number, size?: number) => Promise<void>;
   setCurrentPage: (page: number) => void;
   setTotalPages: (pages: number) => void;
   setTotalElements: (elements: number) => void;
   setPageSize: (size: number) => void;
   setSearchText: (text: string) => void;
+  setSearchDate: (date: { sDate: Date; eDate: Date }) => void;
+  fetchDrives: (text: string, mdn: string, searchDate: { sDate: Date; eDate: Date }, page: number, size: number) => Promise<void>;
 }
 
-export const useDriveListStore = create<DriveListState>((set) => ({
+export const useDriveListStore = create<DriveListState>((set, get) => ({
   driveResults: [],
   selectedCar: null,
   selectedDriveId: null,
@@ -60,14 +61,29 @@ export const useDriveListStore = create<DriveListState>((set) => ({
   setDriveDetail: (detail) => set({ driveDetail: detail }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
-  setCurrentPage: (page) => set({ currentPage: page }),
+  setCurrentPage: (page) => {
+    set({ currentPage: page })
+    get().fetchDrives(get().searchText, get().selectedCar?.carMdn || "", get().searchDate, page, get().pageSize);
+  },
   setTotalPages: (pages) => set({ totalPages: pages }),
   setTotalElements: (elements) => set({ totalElements: elements }),
   setPageSize: (size) => set({ pageSize: size }),
-  fetchDrives: async (text: string, mdn: string, date: {sDate: Date, eDate: Date}, page?: number, size?: number) => {
+  setSearchText: (text) => {
+    set({ searchText: text })
+    get().fetchDrives(text, get().selectedCar?.carMdn || "", get().searchDate, get().currentPage, get().pageSize);
+  },
+  setSearchDate: (date) => set({ searchDate: date }),
+  fetchDrives: async (text: string, mdn: string, searchDate: { sDate: Date; eDate: Date }, page: number, size: number) => {
     set({ isLoading: true });
     try {
-      const response = await driveService.getDriveBySearchFilter(text, mdn, date, page, size);
+      // const state = useDriveListStore.getState();
+      const response = await driveService.getDriveBySearchFilter(
+        text,
+        mdn,
+        searchDate,
+        page,
+        size
+      );
       set({
         driveResults: response.data,
         currentPage: response.pageResponse.number,
@@ -81,5 +97,4 @@ export const useDriveListStore = create<DriveListState>((set) => ({
       set({ isLoading: false });
     }
   },
-  setSearchText: (text) => set({ searchText: text })
 })); 

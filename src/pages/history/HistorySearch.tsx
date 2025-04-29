@@ -5,7 +5,7 @@ import { Search as SearchIcon, Loader2 } from 'lucide-react';
 import { useCarListStore } from '@/stores/useCarListStore';
 import { cn } from '@/libs/utils/utils';
 
-const HistorySearch = () => {
+function HistorySearch() {
   const {
     isLoading,
     setCurrentPage,
@@ -55,14 +55,14 @@ const HistorySearch = () => {
           className={cn(
             "flex-1 transition-all duration-200",
             searchType === 'car' 
-              ? 'bg-blue-600 text-white hover:bg-blue-700' 
-              : 'border-gray-200 hover:border-blue-500 hover:text-blue-600'
+              ? 'bg-primary text-white hover:bg-primary' 
+              : 'border-gray-200 text-gray-500 hover:border-white hover:text-white'
           )}
           onClick={() => handleTypeChange('car')}
         >
           차량 별
         </Button>
-        <Button
+        {/* <Button
           variant={searchType === 'biz' ? 'default' : 'outline'}
           size="sm"
           className={cn(
@@ -74,11 +74,11 @@ const HistorySearch = () => {
           onClick={() => handleTypeChange('biz')}
         >
           업체 별
-        </Button>
+        </Button> */}
       </div>
       
       {/* Search Input */}
-      <div className="relative">
+      <div className="relative mt-1">
         <Input
           placeholder={`${searchType === 'biz' ? '업체 ID' : '차량 관리번호'}로 검색`}
           value={searchValue}
@@ -102,7 +102,7 @@ const HistorySearch = () => {
       </div>
       
       {/* Search Hint */}
-      <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-md">
+      <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded-md mt-1">
         {searchType === 'biz' 
           ? '업체 ID로 검색하여 해당 업체의 모든 운행 기록을 확인할 수 있습니다' 
           : '차량 관리번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'

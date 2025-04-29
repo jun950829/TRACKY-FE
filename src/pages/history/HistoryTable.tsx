@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChevronLeft, ChevronRight, Download, Search, X, Loader2 } from "lucide-react";
+import { Calendar, Download, Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/libs/utils/utils";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -21,50 +21,37 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import driveService from "@/libs/apis/driveApi";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 
 function HistoryTable() {
   const navigate = useNavigate();
-  const { driveResults, isLoading, setDriveResults, selectedCar } = useDriveListStore();
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const { driveResults, isLoading, setSearchText,  searchDate, setSearchDate,  setCurrentPage } = useDriveListStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [startDate, setStartDate] = useState<Date>(subMonths(new Date(), 3));
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const itemsPerPage = 10;
-
-  const fetchData = async () => {
-    try {
-      const response = await driveService.getDriveBySearchFilter(
-        searchTerm,
-        selectedCar?.carMdn || "",
-        {
-          sDate: startDate,
-          eDate: endDate
-        },
-        currentPage - 1,
-        itemsPerPage
-      );
-      setDriveResults(response.data);
-    } catch (error) {
-      console.error('데이터 조회 오류:', error);
-    }
-  };
+  const [startDate, setStartDate] = useState<Date>(searchDate.sDate);
+  const [endDate, setEndDate] = useState<Date>(new Date(searchDate.eDate));
 
   useEffect(() => {
-    fetchData();
-  }, [currentPage, startDate, endDate, searchTerm]);
+    setSearchDate({
+      sDate: startDate,
+      eDate: endDate
+    })
+    setCurrentPage(0);
+  }, [startDate, endDate]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchText(searchTerm);
+    }
   };
 
   const resetFilters = () => {
     setStartDate(subMonths(new Date(), 3));
     setEndDate(new Date());
     setSearchTerm("");
-    setCurrentPage(1);
   };
 
   const clickDrive = (driveId: number) => {
@@ -80,7 +67,7 @@ function HistoryTable() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex flex-col">
       {/* Filters */}
       <div className="p-4 border-b">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -139,12 +126,16 @@ function HistoryTable() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input
-                placeholder="사용자/차량번호 검색"
+                placeholder="사용자 입력"
                 value={searchTerm}
                 onChange={handleSearch}
-                className="pl-9 w-[200px]"
+                onKeyDown={handleKeyDown}
+                className="pl-9 w-[120px]"
               />
             </div>
+            <Button className="bg-black text-white hover:bg-gray-800" onClick={() => setSearchText(searchTerm)}>
+              검색
+            </Button>
             <Button variant="outline" size="sm">
               <Download className="h-4 w-4 mr-2" />
               다운로드
@@ -154,87 +145,63 @@ function HistoryTable() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <div className="relative">
-          <div className="sticky top-0 z-10 bg-white">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="w-[100px]">운행 ID</TableHead>
-                  <TableHead className="w-[120px]">운행일자</TableHead>
-                  <TableHead className="w-[120px]">운행목적</TableHead>
-                  <TableHead className="w-[150px]">차량번호(MDN)</TableHead>
-                  <TableHead className="w-[120px]">사용자</TableHead>
-                  <TableHead className="w-[120px]">운행거리(km)</TableHead>
-                  <TableHead className="w-[120px]">운행시간</TableHead>
-                  <TableHead>도착지</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
+      <div className="w-full">
+        <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+          <div className="relative">
+            <div className="sticky top-0 z-10 bg-white">
+              <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="w-[70px] text-center">운행 ID</TableHead>
+                      <TableHead className="w-[100px] text-center">일자</TableHead>
+                      <TableHead className="w-[120px] text-center">목적</TableHead>
+                      <TableHead className="w-[160px] text-center">차량번호</TableHead>
+                      <TableHead className="w-[140px] text-center">사용자</TableHead>
+                      <TableHead className="w-[140px] text-center">운행거리(km)</TableHead>
+                      <TableHead className="w-[140px] text-center">운행시간</TableHead>
+                      <TableHead className="w-[140px] text-center">도착지</TableHead>
+                    </TableRow>
+                  </TableHeader>
+              </Table>
+            </div>
           </div>
-        </div>
-        <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
-          <Table>
-            <TableBody>
-              {driveResults?.map((drive) => (
+          <div className="h-[calc(100vh-21rem)] overflow-y-auto">
+            <Table>
+              <TableBody>
+              {driveResults && driveResults.length === 0 ?
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                  조회된 데이터가 없습니다.
+                </TableCell>
+              </TableRow>
+              : driveResults?.map((drive) => (
                 <TableRow 
                   key={drive.id} 
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-gray-50 cursor-pointer text-center"
                   onClick={() => clickDrive(drive.id)}
                 >
-                  <TableCell className="font-medium">{drive.id}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-[70px] font-medium">{drive.id}</TableCell>
+                  <TableCell className="w-[100px]">
                     {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
                   </TableCell>
-                  <TableCell>{drive.purpose || '기타업무'}</TableCell>
-                  <TableCell>{drive.carPlate}({drive.mdn})</TableCell>
-                  <TableCell>{drive.renterName}</TableCell>
-                  <TableCell>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
-                  <TableCell>
+                  <TableCell className="w-[120px]">{drive.purpose || '기타업무'}</TableCell>
+                  <TableCell className="w-[160px]">
+                    <p>{drive.carPlate}</p>
+                    <p className="text-gray-500 text-sm">{drive.mdn}</p>
+                  </TableCell>
+                  <TableCell className="w-[140px]">{drive.renterName}</TableCell>
+                  <TableCell className="w-[140px]">{(drive.driveDistance || 0).toFixed(1)}</TableCell>
+                  <TableCell className="w-[140px]">
                     {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
                   </TableCell>
-                  <TableCell className="truncate max-w-[200px]">
-                    {drive.driveEndLat && drive.driveEndLon ? (
-                      <span className="text-gray-600">
-                        {drive.driveEndLat}, {drive.driveEndLon}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
+                  <TableCell className="w-[140px] truncate">
+                    <span className="text-gray-400">-</span>
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div className="p-4 border-t flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          총 {driveResults?.length || 0}건 중 {(currentPage - 1) * itemsPerPage + 1}-
-          {Math.min(currentPage * itemsPerPage, driveResults?.length || 0)}건 표시
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm">
-            {currentPage} / {Math.ceil((driveResults?.length || 0) / itemsPerPage)}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(prev => Math.min(Math.ceil((driveResults?.length || 0) / itemsPerPage), prev + 1))}
-            disabled={currentPage === Math.ceil((driveResults?.length || 0) / itemsPerPage)}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </div>
