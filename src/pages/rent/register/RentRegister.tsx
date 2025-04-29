@@ -12,6 +12,9 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { AddressSearch } from '@/components/address/AddressSearch';
+import { AddressResult } from '@/libs/apis/addressApi';
+import { formatCoordinate } from "@/libs/utils/utils";
 
 const schema = yup.object({
     mdn: yup.string().required("차량 관리번호를 선택해주세요."),
@@ -29,6 +32,8 @@ function RentRegister() {
     const [isError, setIsError] = useState(false);
     const [mdnList, setMdnList] = useState<string[]>([]);
     const navigate = useNavigate();
+    const [rentLocation, setRentLocation] = useState<AddressResult | null>(null);
+    const [returnLocation, setReturnLocation] = useState<AddressResult | null>(null);
 
     const {
         register,
@@ -38,6 +43,19 @@ function RentRegister() {
     } = useForm({
         resolver: yupResolver(schema)
     })
+
+    // 주소 선택 시 폼 값 업데이트
+    useEffect(() => {
+        if (rentLocation) {
+            setValue('rentLoc', rentLocation.address_name + " " + rentLocation.place_name);
+        }
+    }, [rentLocation, setValue]);
+
+    useEffect(() => {
+        if (returnLocation) {
+            setValue('returnLoc', returnLocation.address_name + " " + returnLocation.place_name);
+        }
+    }, [returnLocation, setValue]);
 
     useEffect(() => {
         const fetchMdns = async () => {
@@ -65,20 +83,29 @@ function RentRegister() {
      * @param data
      */
     const onSubmit = async (data: RentCreateTypes) => {
-        //console.log(data);
+        if (!rentLocation || !returnLocation) {
+            setIsError(true);
+            return;
+        }
 
         const requestData = {
-            ...data
+            ...data,
+            rentLat: formatCoordinate(Number(rentLocation.y)),
+            rentLon: formatCoordinate(Number(rentLocation.x)),
+            returnLat: formatCoordinate(Number(returnLocation.y)),
+            returnLon: formatCoordinate(Number(returnLocation.x)),
+            rentLoc: rentLocation.address_name + " " + rentLocation.place_name,
+            returnLoc: returnLocation.address_name + " " + returnLocation.place_name
         }
 
         const rentData = await rentApiService.createRent(requestData);
 
         if(rentData.status === 200) {
             setIsSuccess(true);
+            console.log("차량 등록 성공 데이터: ", rentData.data);
         } else {
             setIsError(true);
         }
-        console.log("차량 등록 성공 데이터: ", rentData.data);
     }
 
     return (
@@ -131,13 +158,19 @@ function RentRegister() {
 
                     <div className="space-y-2">
                         <Label>대여 위치</Label>
-                        <Input placeholder="예: 미왕빌딩" {...register("rentLoc")} />
+                        <AddressSearch
+                            onSelect={setRentLocation}
+                            placeholder="대여 위치를 검색하세요"
+                        />
                         {errors.rentLoc && <p className="text-sm text-red-500">{errors.rentLoc.message}</p>}
                     </div>
 
                     <div className="space-y-2">
                         <Label>반납 위치</Label>
-                        <Input placeholder="예: 미왕빌딩" {...register("returnLoc")} />
+                        <AddressSearch
+                            onSelect={setReturnLocation}
+                            placeholder="반납 위치를 검색하세요"
+                        />
                         {errors.returnLoc && <p className="text-sm text-red-500">{errors.returnLoc.message}</p>}
                     </div>
 
