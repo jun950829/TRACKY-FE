@@ -70,7 +70,7 @@ export type CarUpdateTypes = {
 
 export type CarDetailTypes = {
   mdn: string;
-  bizId: number;
+  bizInfo: BizInfo;
   carType: string;
   carPlate: string;
   carName: string;
@@ -92,6 +92,14 @@ export type Devices = {
   mid: string;
   did: string;
   pv: string;
+}
+
+export type BizInfo = {
+  id: number;
+  bizName: string;
+  bizRegNum: string;
+  bizAdminName: string;
+  bizPhoneNum: string;
 }
 
 export type CycleGpsRequest = {

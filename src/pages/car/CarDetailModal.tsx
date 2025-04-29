@@ -20,11 +20,6 @@ interface CarDetailModalProps {
 const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carData }) => {
   if (!isOpen) return null;
 
-  const getStatusLabel = (value: string) => {
-    const status = CarStatus.find((s) => s.value === value);
-    return status ? status.label : value; // 매칭이 안되면 value 그대로 보여줌
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
@@ -85,28 +80,28 @@ const CarDetailModal: React.FC<CarDetailModalProps> = ({ isOpen, onClose, carDat
                     <Building2 className="h-4 w-4" />
                     업체명
                   </div>
-                  <div className="font-medium">{'-'}</div>
+                  <div className="font-medium">{carData.bizInfo.bizName}</div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-zinc-500">
                     <Phone className="h-4 w-4" />
                     전화번호
                   </div>
-                  <div className="font-medium">{'-'}</div>
+                  <div className="font-medium">{carData.bizInfo.bizPhoneNum}</div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-zinc-500">
                     <FileText className="h-4 w-4" />
                     사업자 번호
                   </div>
-                  <div className="font-medium">{'-'}</div>
+                  <div className="font-medium">{carData.bizInfo.bizRegNum}</div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-zinc-500">
                     <User className="h-4 w-4" />
                     관리자
                   </div>
-                  <div className="font-medium">{'-'}</div>
+                  <div className="font-medium">{carData.bizInfo.bizAdmin}</div>
                 </div>
               </div>
             </CardContent>
