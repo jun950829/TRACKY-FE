@@ -35,7 +35,7 @@ function NoticeSearchLayer({ onSearch, defaultPageSize = 10 }: NoticeSearchLayer
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="pl-10 border-gray-200 focus:border-primary focus:ring-1 focus:ring-blue-500"
+            className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
         </div>
 

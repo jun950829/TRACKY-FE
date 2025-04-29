@@ -51,7 +51,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
         <div className="hidden md:block overflow-auto shadow-sm bg-white">
           <div className="relative">
             <div className="sticky top-0 z-10 bg-white">
-              <Table className="w-full table-fixed">
+              <Table className="w-full">
                 <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
                     <TableHead className="w-24 text-gray-600 font-medium">중요도</TableHead>
@@ -62,7 +62,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
               </Table>
             </div>
             <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
-              <Table>
+              <Table className="w-full">
                 <TableBody>
                 {noticeList.length === 0 && (
                   <TableRow>
@@ -77,7 +77,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                     onClick={() => handleView(notice)}
                     className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100 cursor-pointer"
                   >
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell className="w-24 whitespace-nowrap">
                       <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
                         notice.isImportant 
                           ? "text-red-600 bg-red-50" 
@@ -87,7 +87,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                       </span>
                     </TableCell>
                     <TableCell className="text-gray-700 truncate">{notice.title}</TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
+                    <TableCell className="w-36 whitespace-nowrap text-gray-700">
                       {notice.createdAt}
                     </TableCell>
                   </TableRow>
