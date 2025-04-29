@@ -1,14 +1,27 @@
 import RealTimeMap from "./RealTimeMap";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RealTimeSearchPanel from "./RealTimeSearchPanel";
 import RealTimeDetailPanel from "./RealTimeDetailPanel";
 import { Search } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
+import { useSseEvents } from "@/hooks/useSseEvents";
 
 function RealTimeMain() {
   const [isMainOpen, setIsMainOpen] = useState(true);
   const [currentPanel, setCurrentPanel] = useState<'search' | 'detail'>('search');
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
+  const { connect, disconnect } = useSseEvents();
+
+  // SSE 연결 관리
+  useEffect(() => {
+    // 페이지 진입 시 연결
+    connect();
+
+    // 페이지 퇴출 시 연결 해제
+    return () => {
+      disconnect();
+    };
+  }, []);
 
   // 목 데이터 (지도용 차량 정보)
   const vehicles = [

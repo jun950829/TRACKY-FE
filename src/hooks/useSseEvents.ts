@@ -1,11 +1,15 @@
 import { useSseStore } from "@/stores/useSseStore";
-import { useEffect } from "react";
-
+import { useState } from "react";
 
 export const useSseEvents = () => {
-  useEffect(() => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [eventSource, setEventSource] = useState<EventSource | null>(null);
+
+  const connect = () => {
+    if (isConnected) return;
+
     const clientId = Date.now().toString();
-    const eventSource = new EventSource(`${import.meta.env.VITE_EVENTS_API_HOST}/subscribe?clientId=${clientId}`);
+    const newEventSource = new EventSource(`${import.meta.env.VITE_EVENTS_API_HOST}/subscribe?clientId=${clientId}`);
 
     const handleEvent = (eventType: string) => (event: MessageEvent) => {
       const payload = JSON.parse(event.data);
@@ -17,12 +21,24 @@ export const useSseEvents = () => {
       });
     };
 
-    eventSource.addEventListener("car_event", handleEvent("car-event"));
-    eventSource.addEventListener("rent_event", handleEvent("rent-event"));
+    newEventSource.addEventListener("gps_data", handleEvent("gps_data"));
 
-    return () => {
+    setEventSource(newEventSource);
+    setIsConnected(true);
+  };
+
+  const disconnect = () => {
+    if (eventSource) {
       eventSource.close();
+      setEventSource(null);
+      setIsConnected(false);
       console.log("SSE 연결 종료");
-    };
-  }, []);
+    }
+  };
+
+  return {
+    isConnected,
+    connect,
+    disconnect
+  };
 };

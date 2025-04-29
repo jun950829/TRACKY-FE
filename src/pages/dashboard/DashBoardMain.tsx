@@ -4,7 +4,6 @@ import { CarStatusTypes, ReturnStatus, Statistics, StatisticsItem } from "@/cons
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
 import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
-import { useSseEvents } from "@/hooks/useSseEvents";
 import MapLayer from "./MapLayer";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
@@ -25,8 +24,6 @@ export default function Dashboard() {
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
   
-  useSseEvents();
-
   // 데이터 로드
   useEffect(() => {
     const fetchData = async () => {
