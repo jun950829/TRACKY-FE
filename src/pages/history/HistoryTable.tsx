@@ -153,7 +153,7 @@ function HistoryTable() {
 
       {/* Table */}
       <div className="w-full">
-        <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+        <div className="hidden md:block overflow-auto shadow-sm bg-white">
           <div className="relative">
             <div className="sticky top-0 z-10 bg-white">
               <Table>

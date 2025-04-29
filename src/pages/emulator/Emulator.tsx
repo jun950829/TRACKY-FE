@@ -257,17 +257,17 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
               (error) => {
                 // 에러가 발생해도 타이머는 계속 유지
                 handlePositionError(error);
-                console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 위치 정보 요청 실패. 다음 요청 계속 진행...`);
+                console.warn(`[${new Date().toLocaleTimeString()}] 위치 정보 요청 실패. 다음 요청 계속 진행...`);
               },
               GEOLOCATION_OPTIONS
             );
           } catch (error) {
-            console.error(`❌ [${new Date().toLocaleTimeString()}] getCurrentPosition 호출 실패:`, error);
+            console.error(`[${new Date().toLocaleTimeString()}] getCurrentPosition 호출 실패:`, error);
             // 에러가 발생해도 타이머는 계속 유지
           }
         }, POLLING_INTERVAL);
         
-        console.log(`🔄 [${new Date().toLocaleTimeString()}] 실시간 위치 추적 시작 (간격: ${POLLING_INTERVAL}ms)`);
+        console.log(` [${new Date().toLocaleTimeString()}] 실시간 위치 추적 시작 (간격: ${POLLING_INTERVAL}ms)`);
       } catch (error) {
         setTrackingState(prev => ({
           ...prev,
@@ -322,12 +322,12 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
-      console.log(`⏹️ [${new Date().toLocaleTimeString()}] 위치 추적 타이머 중지됨`);
+      console.log(`[${new Date().toLocaleTimeString()}] 위치 추적 타이머 중지됨`);
     }
     
     // 마지막으로 버퍼에 남아있는 데이터 전송
     if (gpsBuffer.getBufferSize() > 0) {
-      console.log(`📤 [${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
       
       // 비동기 함수이지만 UI 업데이트를 위해 동기적으로 처리
       gpsBuffer.sendData()
@@ -394,7 +394,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       const avgSpeed = calculateAverageSpeed();
       
       // 새 위치 정보 로깅 - 초당 수집 확인용
-      console.log(`🛣️ 위치 데이터 수집: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 버퍼=${gpsBuffer.getBufferSize()}`);
+      console.log(`위치 데이터 수집: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 버퍼=${gpsBuffer.getBufferSize()}`);
       
       return {
         ...prev,
@@ -522,7 +522,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     }
     
     try {
-      console.log(`🔄 [${new Date().toLocaleTimeString()}] 시동 OFF 요청 시작 - 버퍼에 남은 GPS 데이터 전송 중...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 시작 - 버퍼에 남은 GPS 데이터 전송 중...`);
       
       // 버퍼에 남아있는 모든 GPS 데이터 즉시 전송
       if (gpsBuffer.getBufferSize() > 0) {

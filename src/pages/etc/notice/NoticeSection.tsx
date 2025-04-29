@@ -57,7 +57,6 @@ function NoticeSection() {
         // 성공 응답 처리
         const noticeData = responseBody.data || response.data || [];
         const pageData = responseBody.pageResponse || {};
-        console.log("페이지네이션 데이터 ", pageData);
 
         setNoticeList(noticeData);
         setPagination({

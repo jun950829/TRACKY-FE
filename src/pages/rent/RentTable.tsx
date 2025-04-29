@@ -65,7 +65,6 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
 
   async function deleteRentData(rentUuid: string) {
     const res = await rentApiService.deleteRent(rentUuid);
-    console.log("deleterentData : ", res.data);
     if (res.status === 200) {
       rentList = rentList.filter((rent) => rent.rent_uuid != rentUuid);
       setRentList(rentList);
@@ -85,7 +84,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
-      <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+      <div className="hidden md:block overflow-auto shadow-sm bg-white">
         <div className="relative">
           <div className="sticky top-0 z-10 bg-white">
             <Table className="w-full table-fixed">
@@ -158,19 +157,21 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                         >
                           수정
                         </CustomButton>
-                        <CustomButton
-                          variant="destructive"
-                          size="sm"
-                          className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                          icon={<Trash className="h-4 w-4" />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsDelete(true);
-                            setSelectedRentData(rent);
-                          }}
-                        >
-                          삭제
-                        </CustomButton>
+                        {rent.rentStatus.toLowerCase() !== "deleted" && (
+                          <CustomButton
+                            variant="destructive"
+                            size="sm"
+                            className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                            icon={<Trash className="h-4 w-4" />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDelete(true);
+                              setSelectedRentData(rent);
+                            }}
+                          >
+                            삭제
+                          </CustomButton>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -233,9 +234,10 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                 >
                   수정
                 </CustomButton>
-                <CustomButton
-                  variant="destructive"
-                  size="sm"
+                {rent.rentStatus.toLowerCase() !== "deleted" && (
+                  <CustomButton
+                    variant="destructive"
+                    size="sm"
                   className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                   icon={<Trash className="h-4 w-4" />}
                   onClick={() => {
@@ -245,6 +247,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                 >
                   삭제
                 </CustomButton>
+                )}
               </div>
             </CardContent>
           </Card>

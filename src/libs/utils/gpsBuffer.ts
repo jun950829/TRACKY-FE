@@ -30,14 +30,14 @@ class GpsBuffer {
     try {
       // 위치 데이터 유효성 검사
       if (!position || !position.coords) {
-        console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 유효하지 않은 위치 데이터 수신됨. 스킵합니다.`);
+        console.warn(`[${new Date().toLocaleTimeString()}] 유효하지 않은 위치 데이터 수신됨. 스킵합니다.`);
         return;
       }
 
       // NaN 또는 null 좌표 확인
       if (isNaN(position.coords.latitude) || isNaN(position.coords.longitude) || 
           position.coords.latitude === null || position.coords.longitude === null) {
-        console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 잘못된 좌표 데이터 (lat: ${position.coords.latitude}, lng: ${position.coords.longitude}). 스킵합니다.`);
+        console.warn(`[${new Date().toLocaleTimeString()}] 잘못된 좌표 데이터 (lat: ${position.coords.latitude}, lng: ${position.coords.longitude}). 스킵합니다.`);
         return;
       }
 
@@ -47,13 +47,13 @@ class GpsBuffer {
       // 새 데이터 추가
       this.buffer.push(position);
       
-      console.log(`🔵 [${new Date().toLocaleTimeString()}] GPS 데이터 추가: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 현재 버퍼=${this.buffer.length}개`);
+      console.log(`[${new Date().toLocaleTimeString()}] GPS 데이터 추가: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 현재 버퍼=${this.buffer.length}개`);
       
       if (!this.isActive) {
         this.startTimer();
       }
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] GPS 데이터 추가 중 오류 발생: ${error}. 이 데이터는 스킵됩니다.`);
+      console.error(`[${new Date().toLocaleTimeString()}] GPS 데이터 추가 중 오류 발생: ${error}. 이 데이터는 스킵됩니다.`);
     }
   }
 
