@@ -123,13 +123,14 @@ function CarSection() {
         </p>
 
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <CarSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
-          <CarTable
-            carList={carList}
-            setCarList={setCarList}
-            isLoading={isLoading}
-            reload={() => handleSearch(true)}
-          />
+          <CarSearchLayer carList={carList} onSearch={handleSearch} defaultPageSize={searchParams.size} />
+          <div className="p-4 sm:p-6">
+            <CarTable
+              carList={carList}
+              setCarList={setCarList}
+              isLoading={isLoading}
+              reload={() => handleSearch(true)}
+            />
 
           {/* 페이지네이션 컴포넌트 */}
           {pagination.totalElements > 0 && (

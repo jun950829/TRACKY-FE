@@ -7,11 +7,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search as SearchIcon } from "lucide-react";
+import { Download, Plus, Search as SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CarStatus } from "@/constants/datas/status";
-import { PageSizeOptions } from "@/constants/datas/options";
+import { CustomButton } from "@/components/custom/CustomButton";
+import { CarDetailTypes } from "@/constants/types/types";
+import carApiService from "@/libs/apis/carApi";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+// import { PageSizeOptions } from "@/constants/datas/options";
 // 차량 종류 상수 - DB enum 값과 사용자에게 표시될 레이블 매핑
 const CarTypes = [
   { value: "all", label: "전체" },
@@ -26,6 +35,7 @@ const CarTypes = [
 ];
 
 type CarSearchLayer = {
+  carList: CarDetailTypes[];
   onSearch: (
     isReload: boolean,
     searchText?: string,
@@ -36,11 +46,12 @@ type CarSearchLayer = {
   defaultPageSize?: number;
 };
 
-function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
+function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLayer) {
   const [status, setStatus] = useState<string | undefined>("all");
   const [carType, setCarType] = useState<string | undefined>("all");
   const [searchValue, setSearchValue] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const navigate = useNavigate();
 
   function search() {
@@ -60,6 +71,103 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
 
     // status와 carType 모두 검색 요청에 포함
     onSearch(false, searchText, statusFilter, carTypeFilter, pageSize);
+  }
+
+  // 엑셀 다운로드 모달 열기
+  function openDownloadModal() {
+    setIsDownloadModalOpen(true);
+  }
+
+  // 전체 데이터 엑셀 다운로드 (기존 기능)
+  async function downloadAllData() {
+    await extractExcel();
+    setIsDownloadModalOpen(false);
+  }
+
+  // 현재 페이지 데이터만 CSV로 다운로드
+  function downloadCurrentPageData() {
+    // 현재 날짜와 시간을 포함한 파일명 생성
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    
+    // 날짜 형식 YYYY-MM-DD로 포맷팅
+    const formattedDate = `${year}-${month}-${day}`;
+    
+    // 최종 파일명 생성
+    const filename = `차량 리스트_현재페이지_${formattedDate}.csv`;
+    
+    // 헤더 행 생성
+    const headers = ['관리번호', '차량번호', '차량명', '차종', '상태', '등록일'];
+    
+    // 데이터 행 생성
+    const rows = carList.map(car => [
+      car.mdn || '',
+      car.carPlate || '',
+      car.carName || '',
+      car.carType || '',
+      car.status || '',
+      car.createdAt || ''
+    ]);
+    
+    // CSV 문자열 생성
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    // Blob 생성 및 다운로드
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    
+    // 메모리 정리
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+    setIsDownloadModalOpen(false);
+  }
+
+  async function extractExcel() {
+
+    const response = await carApiService.extractExcel();
+
+    // 현재 날짜와 시간을 포함한 파일명 생성
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    
+    // 날짜 형식 YYYY-MM-DD로 포맷팅
+    const formattedDate = `${year}-${month}-${day}`;
+    
+    // 최종 파일명 생성
+    const filename = `차량 리스트_${formattedDate}.xlsx`;
+    
+    const excelData = response.data;
+
+    const blob = new Blob([excelData], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+
+    // 다운로드용 URL 생성
+    const url = window.URL.createObjectURL(blob);
+    
+    // 다운로드 링크 생성 및 클릭
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename); // 파일명 설정
+    document.body.appendChild(link);
+    link.click();
+    
+    // 메모리 정리
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
   }
 
   // Enter 키 이벤트 핸들러
@@ -138,13 +246,24 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
           </Button>
         </div>
 
-        <Button
-          className="bg-black text-white hover:bg-gray-800"
-          onClick={() => navigate("/car/register")}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          신규 차량 등록
-        </Button>
+        <div className="flex items-center gap-3">
+          <CustomButton
+            variant="outline"
+            className="bg-blue-600 text-white hover:bg-blue-800"
+            onClick={() => openDownloadModal()}
+            >
+            <Download className="h-4 w-4 mr-2" />
+            다운로드
+          </CustomButton>
+
+          <Button
+            className="bg-black text-white hover:bg-gray-800"
+            onClick={() => navigate("/car/register")}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            신규 차량 등록
+          </Button>
+        </div>
       </div>
 
       {/* 모바일 뷰 */}
@@ -216,6 +335,32 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
           신규 차량 등록
         </Button>
       </div>
+
+      {/* 다운로드 모달 */}
+      <Dialog open={isDownloadModalOpen} onOpenChange={setIsDownloadModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>데이터 다운로드</DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p className="mb-4">다운로드할 데이터를 선택하세요:</p>
+            <div className="flex justify-between">
+              <Button
+                className="bg-blue-600 text-white hover:bg-blue-800"
+                onClick={downloadAllData}
+              >
+                전체 데이터 다운로드
+              </Button>
+              <Button
+                className="bg-green-600 text-white hover:bg-green-800"
+                onClick={downloadCurrentPageData}
+              >
+                현재 페이지 데이터 다운로드
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
