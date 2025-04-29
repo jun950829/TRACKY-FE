@@ -59,8 +59,6 @@ function HistoryTable() {
     setSelectedDriveId(driveId);
 
     try {
-      const response = await driveService.getDriveById(driveId);
-      setDriveDetail(response.data);
       navigate(`/history/${driveId}`);
     } catch (error) {
       console.error("Error fetching drive details:", error);
