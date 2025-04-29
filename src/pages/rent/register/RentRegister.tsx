@@ -181,7 +181,7 @@ function RentRegister() {
                     </div>
 
                     <div className="flex justify-end gap-2 pt-4">
-                        <Button variant="outline" type="button" onClick={() => navigate("/rents")}>취소</Button>
+                        <Button variant="outline" type="button" onClick={() => navigate("/car/rent")}>취소</Button>
                         <Button type="submit" onClick={handleSubmit(onSubmit)}>등록하기</Button>
                     </div>
                 </CardContent>
