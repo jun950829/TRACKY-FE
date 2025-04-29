@@ -1,4 +1,4 @@
-import { Line, Bar } from 'react-chartjs-2';
+import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,12 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import {
-  monthlyOperationData,
-  monthlyDistanceData,
-  chartOptions,
-} from '@/constants/mocks/statisticMockData';
+} from "chart.js";
+import { MonthlyStatisticResponse } from "@/libs/apis/statisticApi";
 
 ChartJS.register(
   CategoryScale,
@@ -27,7 +23,67 @@ ChartJS.register(
   Legend
 );
 
-function MonthlyCharts() {
+interface MonthlyChartsProps {
+  monthlyData: MonthlyStatisticResponse | null;
+}
+
+function MonthlyCharts({ monthlyData }: MonthlyChartsProps) {
+  const monthlyStat = monthlyData?.monthlyStat;
+  if (!monthlyStat) {
+    return <div className="p-4 text-center">데이터를 불러올 수 없습니다.</div>;
+  }
+
+  const getMonthlyOperationData = () => {
+    const sortedStat = [...monthlyStat].sort((a, b) => a.month - b.month);
+    const labels = sortedStat.map((item) => `${item.month}월`);
+    const data = sortedStat.map((item) => item.driveCount);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "월별 운행량 (회)",
+          data,
+          fill: false,
+          borderColor: "rgb(75, 192, 192)",
+          tension: 0.4,
+        },
+      ],
+    };
+  };
+
+  const getMonthlyDistanceData = () => {
+    const sortedStat = [...monthlyStat].sort((a, b) => a.month - b.month);
+    const labels = sortedStat.map((item) => `${item.month}월`);
+    const data = sortedStat.map((item) => item.driveDistance);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "월별 운행 거리 (km)",
+          data,
+          backgroundColor: "rgba(53, 162, 235, 0.5)",
+        },
+      ],
+    };
+  };
+
+  // 차트 공통 옵션
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
@@ -36,7 +92,7 @@ function MonthlyCharts() {
         </div>
         <div className="p-5">
           <div className="h-[300px]">
-            <Line data={monthlyOperationData} options={chartOptions} />
+            <Line data={getMonthlyOperationData()} options={chartOptions} />
           </div>
         </div>
       </div>
@@ -47,7 +103,7 @@ function MonthlyCharts() {
         </div>
         <div className="p-5">
           <div className="h-[300px]">
-            <Bar data={monthlyDistanceData} options={chartOptions} />
+            <Bar data={getMonthlyDistanceData()} options={chartOptions} />
           </div>
         </div>
       </div>
@@ -55,4 +111,4 @@ function MonthlyCharts() {
   );
 }
 
-export default MonthlyCharts; 
+export default MonthlyCharts;
