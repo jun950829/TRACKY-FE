@@ -110,24 +110,30 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
       <div className="w-full">
         {/* PC 화면용 테이블 */}
         <div className="hidden md:block overflow-auto shadow-sm bg-white">
-          <Table className="w-full table-fixed">
-            <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-              <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-                <TableHead className="w-24 text-gray-600 font-medium">중요도</TableHead>
-                <TableHead className="text-gray-600 font-medium">제목</TableHead>
-                <TableHead className="w-32 text-gray-600 font-medium">작성일</TableHead>
-                <TableHead className="w-48 text-right text-gray-600 font-medium">관리</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {noticeList.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8 text-gray-500">
-                    등록된 공지사항이 없습니다.
-                  </TableCell>
-                </TableRow>
-              )}
-              {noticeList.map((notice) => (
+          <div className="relative">
+            <div className="sticky top-0 z-10 bg-white">
+              <Table className="w-full table-fixed">
+                <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                    <TableHead className="w-24 text-gray-600 font-medium">중요도</TableHead>
+                    <TableHead className="text-gray-600 font-medium">제목</TableHead>
+                    <TableHead className="w-32 text-gray-600 font-medium">작성일</TableHead>
+                    <TableHead className="w-48 text-right text-gray-600 font-medium">관리</TableHead>
+                  </TableRow>
+                </TableHeader>
+              </Table>
+            </div>
+            <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+              <Table>
+                <TableBody>
+                {noticeList.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      등록된 공지사항이 없습니다.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {noticeList.map((notice) => (
                 <TableRow
                   key={notice.id}
                   onClick={() => handleView(notice)}
@@ -176,9 +182,11 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
 
         {/* 모바일 화면용 카드 */}

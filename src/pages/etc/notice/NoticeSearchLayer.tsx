@@ -26,7 +26,7 @@ function NoticeSearchLayer({ onSearch, defaultPageSize = 10 }: NoticeSearchLayer
   };
 
   return (
-    <div className="p-4 sm:p-6 border-b border-gray-100">
+    <div className="p-2 border-b border-gray-100">
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -35,7 +35,7 @@ function NoticeSearchLayer({ onSearch, defaultPageSize = 10 }: NoticeSearchLayer
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="pl-10 border-gray-200 focus:border-primary focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
