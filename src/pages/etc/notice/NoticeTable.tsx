@@ -48,7 +48,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
     
       <div className="w-full">
         {/* PC 화면용 테이블 */}
-        <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+        <div className="hidden md:block overflow-auto shadow-sm bg-white">
           <Table className="w-full table-fixed">
             <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
               <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">

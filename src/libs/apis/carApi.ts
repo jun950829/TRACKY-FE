@@ -62,13 +62,13 @@ export const carApiService = {
     return response.data;
   },
 
-  updateCar: async (mdn: string, data: CarUpdateTypes) => {
-    const response = await api.patch(`${carApiRoot}/${mdn}`, data);
+  updateCar: async (data: CarUpdateTypes) => {
+    const response = await api.patch(`${carApiRoot}`, data);
     return response.data;
   },
 
-  deleteCar: async (mdn: string) => {
-    const response = await api.delete(`${carApiRoot}/${mdn}`);
+  deleteCar: async (data: { mdn: string }) => {
+    const response = await api.delete(`${carApiRoot}`, { data });
     return response.data;
   },
 };

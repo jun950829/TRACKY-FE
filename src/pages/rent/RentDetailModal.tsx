@@ -18,8 +18,6 @@ interface RentDetailModalProps {
 const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rentData}) => {
   if (!isOpen) return null;
 
-  console.log(rentData);
-
   //렌트 상태 한글로 매칭
   const getStatusLabel = (value: string) => {
     const status = RentStatus.find((s) => s.value === value);
