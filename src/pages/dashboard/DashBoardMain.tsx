@@ -25,7 +25,7 @@ export default function Dashboard() {
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
   
-  useSseEvents();
+  // useSseEvents();
 
   // 데이터 로드
   const fetchCarStatus = async () => {
