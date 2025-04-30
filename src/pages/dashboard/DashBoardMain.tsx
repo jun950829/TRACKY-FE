@@ -136,9 +136,8 @@ export default function Dashboard() {
           <p className="text-lg font-medium text-gray-600">대시보드 로딩 중...</p>
         </div>
       ) : (
-        <div className="w-full h-full flex flex-col justify-center items-center p-2 space-y-4 h-[90vh]">
-          {/* <PageHeader title="대시보드" size="2xl" /> */}
-          <div className="w-full h-full flex flex-row justify-between items-center gap-4">
+        <div className="w-full flex flex-col justify-center items-center p-10 space-y-4 h-[90vh]">
+          <div className="w-full h-full min-h-[250px] flex flex-row justify-between items-center gap-4">
             {/* Vehicle Status Cards */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
               <VehicleStatusCards statusObj={carStatus} />

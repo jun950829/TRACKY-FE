@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
-  noText?: boolean;
   currentPage: number;
   totalPages: number;
   pageSize: number;
@@ -12,7 +11,6 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({
-  noText = false,
   currentPage,
   totalPages,
   pageSize,
@@ -52,12 +50,10 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageRange = getPageRange();
 
   return (
-    <div className={`w-full flex flex-col items-center ${noText ? "justify-center" : "justify-between"} space-y-2 py-4 sm:flex-row sm:space-y-0`}>
-      {!noText && (
-        <div className="text-sm text-gray-500">
-          총 {totalElements} 중 {start}-{end}개
-        </div>
-      )}
+    <div className="flex flex-col items-center justify-between space-y-2 py-4 sm:flex-row sm:space-y-0">
+      <div className="text-sm text-gray-500">
+        전체 {totalElements}개 중 {start}-{end}개 표시
+      </div>
 
       <div className="flex space-x-1">
         <Button

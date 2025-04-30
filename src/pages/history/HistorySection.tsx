@@ -10,22 +10,14 @@ import HistoryTable from './HistoryTable';
 import HistoryCarLayer from './HistoryCarLayer';
 import { useCarListStore } from "@/stores/useCarListStore";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import Pagination from '@/components/custom/Pagination';
 
 interface DrawerState {
   [key: string]: boolean;
 }
 
 function HistorySection() {
+  const { selectedCar } = useDriveListStore();
   const { isLoading } = useCarListStore();
-
-  const { 
-    currentPage, 
-    totalPages, 
-    totalElements, 
-    pageSize,
-    setCurrentPage 
-  } = useDriveListStore();
 
   const [sheetStates, setDrawerStates] = useState<DrawerState>({
     search: false,
@@ -41,7 +33,7 @@ function HistorySection() {
   };
 
   return (
-    <div className="h-full flex flex-col max-h-screen overflow-y-auto">
+    <div className="h-full flex flex-col">
       {error && <ErrorToast error={error} />}
       
       {/* Header Section */}
@@ -71,11 +63,11 @@ function HistorySection() {
       /> */}
       
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[85vh]">
+      <div className="flex flex-col md:flex-row flex-grow gap-4 h-[calc(100vh-120px)]">
         {/* Desktop Search/List Area */}
-        <div className="hidden md:block w-[20%] min-w-[270px] bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="hidden md:block w-[280px] bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="flex flex-col h-full">
-            <div className="p-2 border-b">
+            <div className="p-4 border-b">
               <HistorySearch />
             </div>
             <div className="flex-grow overflow-y-auto">
@@ -93,17 +85,13 @@ function HistorySection() {
         {/* Table Area */}
         <div className="flex-1 bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="h-full overflow-y-auto">
-            <HistoryTable />
-            <div className="flex justify-center mt-4">
-              <Pagination
-                noText={false}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalElements={totalElements}
-                pageSize={pageSize}
-                onPageChange={setCurrentPage}
-              />
-            </div>
+            {selectedCar ? (
+              <HistoryTable />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                차량을 선택해주세요
+              </div>
+            )}
           </div>
         </div>
       </div>

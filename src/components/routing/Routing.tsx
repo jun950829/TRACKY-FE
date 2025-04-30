@@ -26,7 +26,6 @@ import AdminStatisticSection from "@/pages/admin/statistic/AdminStatisticSection
 import AdminNotice from "@/pages/admin/notice/AdminNoticeMain";
 import RealTimeMain from "../../pages/history/realtime/RealTimeMain";
 import NoticeMain from "@/pages/etc/notice/NoticeMain";
-import AdminMemberSection from "@/pages/admin/member/AdminMemberSection";
 
 // 로그인 없이 접근 가능한 라우트들
 const publicRoutes = [
