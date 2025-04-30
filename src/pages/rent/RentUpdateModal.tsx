@@ -180,7 +180,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             <div>
               <label className="block text-sm font-medium">대여 상태</label>
               <Select
-                defaultValue={initialData.rentStatus?.toLowerCase()}
+                defaultValue={initialData.rentStatus}
                 onValueChange={(val) => setValue('rentStatus', val)}
               >
                 <SelectTrigger>

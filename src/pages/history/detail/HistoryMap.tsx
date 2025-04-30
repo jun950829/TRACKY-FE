@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 
 // Leaflet 마커 아이콘 오류 수정
@@ -15,8 +15,7 @@ import {
   GpsData, 
   calculateBounds, 
   createMapBounds, 
-  createPathSegments,
-  PathSegment
+  createPathSegments 
 } from '@/libs/utils/historyUtils';
 
 // Leaflet 기본 아이콘 설정
@@ -93,20 +92,6 @@ const HistoryMap: React.FC<HistoryMapProps> = ({
   
   // 경로 세그먼트 생성
   const pathSegments = createPathSegments(gpsDataList);
-
-  // 시간 포맷팅 함수
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
-  // 속도 포맷팅 함수 (km/h)
-  const formatSpeed = (speed: number) => {
-    return `${(speed / 1000).toFixed(1)} km/h`;
-  };
   
   return (
     <>
@@ -157,29 +142,13 @@ const HistoryMap: React.FC<HistoryMapProps> = ({
             </Marker>
             
             {/* 속도 별 경로 세그먼트 */}
-            {pathSegments.map((segment: PathSegment, i: number) => (
+            {pathSegments.map((segment, i) => (
               <Polyline 
                 key={i}
                 positions={segment.positions}
                 color={segment.color}
                 weight={4}
-              >
-                {segment.points.map((point: GpsData, j: number) => (
-                  <Tooltip
-                    key={`${i}-${j}`}
-                    position={[point.lat / 1_000_000, point.lon / 1_000_000]}
-                    direction="top"
-                    offset={[0, -10]}
-                    permanent={false}
-                    className="custom-tooltip"
-                  >
-                    <div className="text-xs">
-                      <div>시간: {formatTime(point.o_time)}</div>
-                      <div>속도: {formatSpeed(point.spd)}</div>
-                    </div>
-                  </Tooltip>
-                ))}
-              </Polyline>
+              />
             ))}
             
             {/* 지도 뷰 설정 */}
