@@ -58,7 +58,6 @@ export type CarCreateTypes = {
 
 export type CarUpdateTypes = {
   mdn: string;
-  bizId: number;
   carType: string;
   carPlate: string;
   carYear: string;
