@@ -18,7 +18,6 @@ import { CarStatus, CarType } from '@/constants/datas/status';
 import carApiService from '@/libs/apis/carApi';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';
-import { getCarTypeLabel } from '@/libs/utils/getClassUtils';
 
 
 const schema = yup.object().shape({
@@ -74,7 +73,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
   const sendUpdate = async (mdn: string, data: FormValues) => {
     const updateCarObj = {
       mdn: initialData.mdn,
-      bizId: initialData.bizId,
+      bizId: initialData.bizInfo.id,
       carType: data.carType,
       carName: data.carName,
       carPlate: data.carPlate,

@@ -1,6 +1,5 @@
 import { CarDetailTypes } from '@/constants/types/types';
 import React from 'react';
-import { CarStatus } from "@/constants/datas/status";
 import { Car, Phone, Building2, User, Calendar, FileText, CarFront } from "lucide-react";
 
 import {

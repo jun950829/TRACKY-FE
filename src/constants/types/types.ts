@@ -98,7 +98,7 @@ export type BizInfo = {
   id: number;
   bizName: string;
   bizRegNum: string;
-  bizAdminName: string;
+  bizAdmin: string;
   bizPhoneNum: string;
 }
 

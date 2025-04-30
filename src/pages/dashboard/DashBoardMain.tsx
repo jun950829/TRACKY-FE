@@ -15,10 +15,10 @@ import PageHeader from "@/components/custom/PageHeader";
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [carStatus, setCarStatus] = useState<CarStatusTypes>({
-    running: 0,
-    waiting: 0,
-    fixing: 0,
-    closed: 0
+    RUNNING: 0,
+    WAITING: 0,
+    FIXING: 0,
+    CLOSED: 0
   });
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
