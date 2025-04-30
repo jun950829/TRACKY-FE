@@ -5,22 +5,26 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Search } from 'lucide-react';
 
-interface AddressSearchProps {
+type AddressSearchProps = {
   onSelect: (address: AddressResult) => void;
   placeholder?: string;
+  defaultValue?: string;
   className?: string;
-}
+};
 
-export const AddressSearch: React.FC<AddressSearchProps> = ({
-  onSelect,
-  placeholder = '주소를 검색하세요',
-  className = '',
-}) => {
-  const [query, setQuery] = useState('');
+export function AddressSearch({ onSelect, placeholder = "주소를 검색하세요", defaultValue, className = '' }: AddressSearchProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const { searchResults, isLoading, error, searchAddress, clearResults } = useAddressSearch();
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setSearchQuery(defaultValue);
+      setIsOpen(false);
+    }
+  }, [defaultValue]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,8 +43,8 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
     }
 
     searchTimeoutRef.current = setTimeout(() => {
-      if (query.trim()) {
-        searchAddress(query);
+      if (searchQuery.trim() && searchQuery !== defaultValue) {
+        searchAddress(searchQuery);
         setIsOpen(true);
       } else {
         clearResults();
@@ -53,11 +57,11 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
         clearTimeout(searchTimeoutRef.current);
       }
     };
-  }, [query, searchAddress, clearResults]);
+  }, [searchQuery, searchAddress, clearResults, defaultValue]);
 
   const handleSelect = (address: AddressResult) => {
     onSelect(address);
-    setQuery(address.address_name + " " + address.place_name);
+    setSearchQuery(address.address_name + " " + address.place_name);
     setIsOpen(false);
   };
 
@@ -65,8 +69,8 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
     <div ref={containerRef} className={`relative ${className}`}>
       <div className="relative">
         <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={placeholder}
           className="pr-10"
         />
@@ -107,4 +111,4 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
       )}
     </div>
   );
-}; 
+} 
