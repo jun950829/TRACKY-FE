@@ -73,7 +73,6 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
   const sendUpdate = async (mdn: string, data: FormValues) => {
     const updateCarObj = {
       mdn: initialData.mdn,
-      bizId: initialData.bizInfo.id,
       carType: data.carType,
       carName: data.carName,
       carPlate: data.carPlate,
