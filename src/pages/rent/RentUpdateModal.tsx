@@ -102,11 +102,25 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
       returnLoc: data.returnLoc,
     };
 
-    const updatedRentRes = await rentApiService.updateRent(rent_uuid, updateRentObj);
-    if (updatedRentRes.status === 200) {
-      setIsSuccess(true);
-    } else {
-      setIsError(true);
+    try {
+      const updatedRentRes = await rentApiService.updateRent(rent_uuid, updateRentObj);
+      
+      if (updatedRentRes.status === 200) {
+        setIsSuccess(true);
+      } else {
+        setIsError(true);
+      }
+    } catch (error: any) {
+      console.error('대여 수정 실패', error);
+    
+      const detailMessage = error?.response?.data?.detailMessage;
+      const message = error?.response?.data?.message;
+    
+      if (detailMessage) {
+        alert(`${detailMessage}`);
+      } else {
+        alert(message || "대여 수정에 실패했습니다.");
+      }
     }
   };
 

@@ -97,17 +97,27 @@ function RentRegister() {
             rentLoc: rentLocation.address_name + " " + rentLocation.place_name,
             returnLoc: returnLocation.address_name + " " + returnLocation.place_name
         }
-
-        const rentData = await rentApiService.createRent(requestData);
-
-        if(rentData.status === 200) {
-            setIsSuccess(true);
-            console.log("차량 등록 성공 데이터: ", rentData.data);
-        } else {
-            setIsError(true);
+        try {
+            const rentData = await rentApiService.createRent(requestData);
+        
+            if (rentData.status === 200) {
+                setIsSuccess(true);
+                console.log("차량 등록 성공 데이터: ", rentData.data);
+            } else {
+                alert("대여 등록에 실패했습니다.");
+            }
+        } catch (error: any) {
+            console.error('대여 등록 실패', error);
+        
+            const errorResponse = error?.response?.data;
+            const baseMessage = errorResponse?.message || "대여 등록에 실패했습니다.";
+            const detailMessage = errorResponse?.detailMessage;
+        
+            const fullMessage = detailMessage ? `${detailMessage}` : baseMessage;
+        
+            alert(fullMessage);
         }
     }
-
     return (
         <div className="max-w-xl mx-auto py-10">
             <Card>
