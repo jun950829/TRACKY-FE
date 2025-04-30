@@ -53,12 +53,12 @@ export const getStatusLabel = (type: 'car' | 'rent', value: string): string => {
 };
 
 /**
- * 차량 타입 value에 해당하는 label 값을 반환합니다.
- * @param value 차량 타입 value 문자열
+ * 차량 타입 value에 해당하는 label 값을 반환합니다. d
+ * @param value 차량 타입 value 문자열 Gb
  * @returns 해당 value에 맞는 label 문자열
  */
 export const getCarTypeLabel = (value: string): string => {
-  const option = CarType.find(opt => opt.value === value.toLowerCase());
+  const option = CarType.find(opt => opt.value == value.toLowerCase());
   return option ? option.label : value.toLowerCase();
 };
 

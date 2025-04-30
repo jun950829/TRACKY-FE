@@ -30,6 +30,20 @@ export const driveService = {
         const response = await api.get(`${driveApiRoot}/${id}`);
         return response.data;
     },
+
+    // 특정 차량의 운행 이력을 엑셀로 다운로드하는 함수
+    extractDriveExcel: async (mdn: string) => {
+        const url = `${driveApiRoot}/excel?mdn=${mdn}`;
+        const response = await api.get(url, {
+            responseType: 'blob', // 중요! 바이너리 데이터를 받기 위한 설정
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        });
+
+        return response;
+    }
 };
 
 export default driveService;

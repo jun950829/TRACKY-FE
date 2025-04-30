@@ -1,4 +1,4 @@
-export interface ReservationStatus {
+export interface ReturnStatus {
   rentUuid: string;
   carPlate: string;
   renterName: string;
@@ -9,16 +9,16 @@ export interface ReservationStatus {
 }
 
 export interface ReservationCardProps {
-  reservations: ReservationStatus[];
+  reservations: ReturnStatus[];
   isLoading: boolean;
-  getReservationStatusData: (datefilter: number) => void;
+  getReturnStatusData: (datefilter: number) => void;
 }
 
-export enum DateFilter {
-  YESTERDAY = -1,
-  TODAY = 0,
-  TOMORROW = 1
-}
+// export enum DateFilter {
+//   YESTERDAY = -1,
+//   TODAY = 0,
+//   TOMORROW = 1
+// }
 
 export interface CarModelInfo {
   carModel: string;

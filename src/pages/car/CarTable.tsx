@@ -46,7 +46,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
   const handleCloseUpdateModal = () => {
     setSelectedCarData(null);
     setIsUpdate(false);
-    navigate("/cars");
+    navigate("/car");
   };
 
   async function searchCarDataByMdn(mdn: string) {
@@ -56,8 +56,8 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
   }
 
   async function deleteCarData(mdn: string) {
-    const res = await carApiService.deleteCar(mdn);
-    console.log("deleteCarData :", res.data);
+    const res = await carApiService.deleteCar({ mdn });
+
     if (res.status === 200) {
       carList = carList.filter((car) => car.mdn !== mdn);
       setCarList(carList);
@@ -78,7 +78,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
   return (
     <div className="w-full h-full">
       {/* PC 화면용 테이블 */}
-      <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
+      <div className="hidden md:block overflow-auto shadow-sm bg-white">
         <div className="relative">
           <div className="sticky top-0 z-10 bg-white">
             <Table className="w-full table-fixed">
@@ -145,11 +145,12 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                         >
                           수정
                         </CustomButton>
-                        <CustomButton
-                          variant="destructive"
-                          size="sm"
-                          className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                          icon={<Trash className="h-4 w-4" />}
+                        {car.status.toLowerCase() !== "deleted" && (
+                          <CustomButton
+                            variant="destructive"
+                            size="sm"
+                            className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                            icon={<Trash className="h-4 w-4" />}
                           onClick={(e) => {
                             e.stopPropagation();
                             setIsDelete(true);
@@ -158,6 +159,7 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                         >
                           삭제
                         </CustomButton>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -217,19 +219,21 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                 >
                   수정
                 </CustomButton>
-                <CustomButton
-                  variant="destructive"
-                  size="sm"
-                  className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                  icon={<Trash className="h-4 w-4" />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsDelete(true);
-                    setSelectedCarData(car);
-                  }}
-                >
-                  삭제
-                </CustomButton>
+                {car.status.toLowerCase() !== "deleted" && (
+                  <CustomButton
+                    variant="destructive"
+                    size="sm"
+                    className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                    icon={<Trash className="h-4 w-4" />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDelete(true);
+                      setSelectedCarData(car);
+                    }}
+                  >
+                    삭제
+                  </CustomButton>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -128,7 +128,7 @@ export default function CarRegister() {
 
   const onConfirm = () => {
     setIsSuccess(false);
-    navigate("/cars");
+    navigate("/car");
   };
 
   /**
@@ -136,12 +136,10 @@ export default function CarRegister() {
    */
   const onSubmit = async (data: CarCreateTypes) => {
     // MDN 체크를 하지 않았거나, 중복된 MDN인 경우 등록 불가
-    console.log(mdnCheckResult, data);
     if (!mdnCheckResult.checked) {
       setIsError(true);
       return;
     }
-    console.log("2 :", mdnCheckResult);
 
     if (mdnCheckResult.exists) {
       setIsError(true);

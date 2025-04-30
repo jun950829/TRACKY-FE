@@ -22,7 +22,7 @@ export const useSseEvents = () => {
 
     return () => {
       eventSource.close();
-      console.log("🔌 SSE 연결 종료");
+      console.log("SSE 연결 종료");
     };
   }, []);
 };

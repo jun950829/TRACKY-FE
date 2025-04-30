@@ -7,10 +7,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search as SearchIcon } from "lucide-react";
+import { Download, Plus, Search as SearchIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CarStatus } from "@/constants/datas/status";
+import { CustomButton } from "@/components/custom/CustomButton";
+import { CarDetailTypes } from "@/constants/types/types";
+import carApiService from "@/libs/apis/carApi";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import * as XLSX from 'xlsx';
+import { PageSizeOptions } from "@/constants/datas/options";
 
 // 차량 종류 상수 - DB enum 값과 사용자에게 표시될 레이블 매핑
 const CarTypes = [
@@ -34,6 +47,7 @@ const PageSizeOptions = [
 ];
 
 type CarSearchLayer = {
+  carList: CarDetailTypes[];
   onSearch: (
     isReload: boolean,
     searchText?: string,
@@ -44,11 +58,13 @@ type CarSearchLayer = {
   defaultPageSize?: number;
 };
 
-function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
+function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLayer) {
   const [status, setStatus] = useState<string | undefined>("all");
   const [carType, setCarType] = useState<string | undefined>("all");
   const [searchValue, setSearchValue] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   function search() {
@@ -68,6 +84,130 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
 
     // status와 carType 모두 검색 요청에 포함
     onSearch(false, searchText, statusFilter, carTypeFilter, pageSize);
+  }
+
+  // 엑셀 다운로드 모달 열기
+  function openDownloadModal() {
+    setIsDownloadModalOpen(true);
+  }
+
+  // 전체 데이터 엑셀 다운로드 (기존 기능)
+  async function downloadAllData() {
+    try {
+      setIsDownloading(true);
+      await extractExcel();
+    } catch (error) {
+      console.error('다운로드 중 오류가 발생했습니다:', error);
+      alert('다운로드 중 오류가 발생했습니다.');
+    } finally {
+      setIsDownloading(false);
+      setIsDownloadModalOpen(false);
+    }
+  }
+
+  // 현재 페이지 데이터만 CSV로 다운로드
+  function downloadCurrentPageData() {
+    try {
+      setIsDownloading(true);
+      
+      // 현재 표시되는 데이터만 사용
+      if (!carList || carList.length === 0) {
+        alert('다운로드할 데이터가 없습니다.');
+        return;
+      }
+      
+      // 현재 날짜와 시간을 포함한 파일명 생성
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      
+      // 날짜 형식 YYYY-MM-DD로 포맷팅
+      const formattedDate = `${year}-${month}-${day}`;
+      
+      // 최종 파일명 생성
+      const filename = `차량 리스트_현재페이지_${formattedDate}.xlsx`;
+      
+      // 헤더 행 생성
+      const headers = ['관리번호', '차량번호', '차량명', '차종', '상태', '등록일'];
+      
+      // 데이터 행 생성
+      const rows = carList.map(car => [
+        car.mdn || '',
+        car.carPlate || '',
+        car.carName || '',
+        car.carType || '',
+        car.status || '',
+        car.createdAt || ''
+      ]);
+
+      // 엑셀 데이터 준비 (헤더 + 데이터 행)
+      const excelData = [headers, ...rows];
+      
+      // 워크시트 생성
+      const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+      
+      // 열 너비 설정
+      const colWidths = [
+        { wch: 15 }, // 관리번호
+        { wch: 15 }, // 차량번호
+        { wch: 20 }, // 차량명
+        { wch: 12 }, // 차종
+        { wch: 12 }, // 상태
+        { wch: 20 }  // 등록일
+      ];
+      worksheet['!cols'] = colWidths;
+      
+      // 워크북 생성 및 워크시트 추가
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, '차량목록');
+      
+      // 엑셀 파일 다운로드
+      XLSX.writeFile(workbook, filename);
+    } catch (error) {
+      console.error('다운로드 중 오류가 발생했습니다:', error);
+      alert('다운로드 중 오류가 발생했습니다.');
+    } finally {
+      setIsDownloading(false);
+      setIsDownloadModalOpen(false);
+    }
+  }
+
+  async function extractExcel() {
+
+    const response = await carApiService.extractExcel();
+
+    // 현재 날짜와 시간을 포함한 파일명 생성
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    
+    // 날짜 형식 YYYY-MM-DD로 포맷팅
+    const formattedDate = `${year}-${month}-${day}`;
+    
+    // 최종 파일명 생성
+    const filename = `차량 리스트_${formattedDate}.xlsx`;
+    
+    const excelData = response;
+
+    const blob = new Blob([excelData], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+
+    // 다운로드용 URL 생성
+    const url = window.URL.createObjectURL(blob);
+    
+    // 다운로드 링크 생성 및 클릭
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename); // 파일명 설정
+    document.body.appendChild(link);
+    link.click();
+    
+    // 메모리 정리
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
   }
 
   // Enter 키 이벤트 핸들러
@@ -146,13 +286,25 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
           </Button>
         </div>
 
-        <Button
-          className="bg-black text-white hover:bg-gray-800"
-          onClick={() => navigate("/car/register")}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          신규 차량 등록
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => openDownloadModal()}
+            disabled={isDownloading}
+          >
+            {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+            다운로드
+          </Button>
+
+          <Button
+            className="bg-black text-white hover:bg-gray-800"
+            onClick={() => navigate("/car/register")}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            신규 차량 등록
+          </Button>
+        </div>
       </div>
 
       {/* 모바일 뷰 */}
@@ -224,6 +376,36 @@ function CarSearchLayer({ onSearch, defaultPageSize = 10 }: CarSearchLayer) {
           신규 차량 등록
         </Button>
       </div>
+
+        
+      {/* 다운로드 모달 */}
+      <Dialog open={isDownloadModalOpen} onOpenChange={setIsDownloadModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>엑셀 다운로드</DialogTitle>
+            <DialogDescription>
+              어떤 데이터를 다운로드하시겠습니까?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 justify-end">
+            <Button 
+              variant="outline" 
+              onClick={downloadCurrentPageData}
+              disabled={isDownloading}
+            >
+              {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+              현재 페이지만
+            </Button>
+            <Button 
+              onClick={downloadAllData}
+              disabled={isDownloading}
+            >
+              {isDownloading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+              전체 데이터
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,15 +7,6 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import Pagination from "@/components/custom/Pagination";
 
-// 페이지네이션 응답을 위한 타입 정의
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-}
-
 function CarSection() {
   const [carList, setCarList] = useState<CarDetailTypes[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -132,7 +123,7 @@ function CarSection() {
         </p>
 
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <CarSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
+          <CarSearchLayer carList={carList} onSearch={handleSearch} defaultPageSize={searchParams.size} />
           <div className="p-4 sm:p-6">
             <CarTable
               carList={carList}
@@ -141,16 +132,16 @@ function CarSection() {
               reload={() => handleSearch(true)}
             />
 
-            {/* 페이지네이션 컴포넌트 */}
-            {pagination.totalElements > 0 && (
-              <Pagination
-                currentPage={pagination.currentPage}
-                totalPages={Math.max(1, pagination.totalPages)}
-                pageSize={searchParams.size}
-                totalElements={pagination.totalElements}
-                onPageChange={handlePageChange}
-              />
-            )}
+          {/* 페이지네이션 컴포넌트 */}
+          {pagination.totalElements > 0 && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={Math.max(1, pagination.totalPages)}
+              pageSize={searchParams.size}
+              totalElements={pagination.totalElements}
+              onPageChange={handlePageChange}
+            />
+          )}
           </div>
         </div>
       </div>

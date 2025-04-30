@@ -38,9 +38,26 @@ interface HistoryMapProps {
   gpsDataList: GpsData[];
   height?: string;
   driveId?: string;
+  startPoint: {  
+    lat: number;
+    lon: number;
+    spd: number;
+    o_time: string;
+  };
+  endPoint: {
+    lat: number;
+    lon: number;
+    spd: number;
+    o_time: string;
+  };
 }
-
-const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', driveId = '' }) => {
+const HistoryMap: React.FC<HistoryMapProps> = ({ 
+  gpsDataList, 
+  startPoint, 
+  endPoint, 
+  height = '400px', 
+  driveId = '' 
+}) => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [isPathRendering, setIsPathRendering] = useState(true);
   
@@ -50,7 +67,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
   }, []);
   
   // 경로가 없는 경우 처리
-  if (!gpsDataList || gpsDataList.length === 0) {
+  if (!gpsDataList) {
     return (
       <div 
         className="flex items-center justify-center bg-gray-100 rounded" 
@@ -60,17 +77,17 @@ const HistoryMap: React.FC<HistoryMapProps> = ({ gpsDataList, height = '400px', 
       </div>
     );
   }
-  
+
   // 지도 중심점 계산 (첫 번째와 마지막 포인트의 중간점)
-  const firstPoint = gpsDataList[0];
-  const lastPoint = gpsDataList[gpsDataList.length - 1];
+  const firstPoint = gpsDataList[0] || startPoint;
+  const lastPoint = gpsDataList[gpsDataList.length - 1] || endPoint;
   const center: [number, number] = [
     (firstPoint.lat + lastPoint.lat) / 2 / 1_000_000,
     (firstPoint.lon + lastPoint.lon) / 2 / 1_000_000
   ];
 
   // 경로의 전체 범위 계산 및 bounds 생성
-  const bounds = calculateBounds(gpsDataList);
+  const bounds = calculateBounds(gpsDataList.length > 0 ? gpsDataList : [startPoint, endPoint]);
   const mapBounds = createMapBounds(bounds);
   
   // 경로 세그먼트 생성

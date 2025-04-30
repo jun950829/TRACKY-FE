@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
-import { CarStatusTypes, ReservationStatus, Statistics, StatisticsItem } from "@/constants/types/types";
+import { CarStatusTypes, ReturnStatus, Statistics, StatisticsItem } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
 import { makeStatisticsItems } from "@/libs/utils/dashboardUtils";
@@ -20,7 +20,7 @@ export default function Dashboard() {
     fixing: 0,
     closed: 0
   });
-  const [reservationStatus, setReservationStatus] = useState<ReservationStatus[]>([]);
+  const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
@@ -35,7 +35,7 @@ export default function Dashboard() {
       try {
         await Promise.all([
           getCarStatus(),
-          getReservationStatusData(),
+          getReturnStatusData(),
           getStatistics()
         ]);
       } catch (err) {
@@ -67,13 +67,13 @@ export default function Dashboard() {
     }
   };
   
-  const getReservationStatusData = async (datefilter : number = 0) => {
+  const getReturnStatusData = async () => {
     try {
-      const response = await dashboardApi.getReservationStatus(datefilter);
-      console.log("getReservationStatus: ", response);
-      setReservationStatus(response.data);
+      const response = await dashboardApi.getReturnStatus();
+      console.log("getReturnStatus: ", response);
+      setReturnStatus(response.data);
     } catch (error) {
-      console.error('예약 현황 조회 실패:', error);
+      console.error('반납 현황 조회 실패:', error);
       setError(createApiError(error));
       throw error;
     }
@@ -148,7 +148,7 @@ export default function Dashboard() {
 
             {/* Reservation Status */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
-              <ReturnedStatus reservations={reservationStatus} isLoading={isLoading} getReservationStatusData={getReservationStatusData} />
+              <ReturnedStatus reservations={ReturnStatus} isLoading={isLoading} getReturnStatusData={getReturnStatusData} />
             </div>
           </div>
           

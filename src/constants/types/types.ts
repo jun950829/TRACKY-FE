@@ -70,7 +70,7 @@ export type CarUpdateTypes = {
 
 export type CarDetailTypes = {
   mdn: string;
-  bizId: number;
+  bizInfo: BizInfo;
   carType: string;
   carPlate: string;
   carName: string;
@@ -82,7 +82,7 @@ export type CarDetailTypes = {
   createdAt: string;
 }
 
-export type CarStatusEnum = 'running' | 'waiting' | 'fixing' | 'closed';
+export type CarStatusEnum = 'RUNNING' | 'WAITING' | 'FIXING' | 'CLOSED';
 
 export type CarStatusTypes = Record<CarStatusEnum, number>;
 
@@ -92,6 +92,14 @@ export type Devices = {
   mid: string;
   did: string;
   pv: string;
+}
+
+export type BizInfo = {
+  id: number;
+  bizName: string;
+  bizRegNum: string;
+  bizAdminName: string;
+  bizPhoneNum: string;
 }
 
 export type CycleGpsRequest = {
@@ -115,7 +123,7 @@ export type CycleInfoRequest = {
 }
 
 
-export type ReservationStatus = {
+export type ReturnStatus = {
   rentUuid: string;
   renterName: string;
   mdn: string;

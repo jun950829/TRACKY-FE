@@ -12,16 +12,15 @@ export default function HistoryCarList() {
     isLoading,
   } = useCarListStore();
 
-  const { setSelectedCar, setDriveResults } = useDriveListStore();
+  const {setSelectedCar, setCurrentPage, selectedCar } = useDriveListStore();
 
   const handleCarClick = async (car: CarRecord) => {
-    const response = await driveService.getDriveBySearchFilter(car.carPlate);
-    setDriveResults(response.data);
     setSelectedCar({
       carPlate: car.carPlate,
       carType: car.carType,
       status: car.status
     });
+    setCurrentPage(0); // 첫 페이지로 초기화
   };
 
   if (carResults.length === 0) {
@@ -65,9 +64,6 @@ export default function HistoryCarList() {
                   <div className="w-full flex flex-row items-center gap-2">
                     <div className="font-sm text-gray-900 truncate">
                       {car.carPlate}
-                    </div>
-                    <div className={getStatusBadgeClass(car.status, 'car')}>
-                      {getStatusLabel('car', car.status)}
                     </div>
                   </div>
                   <div className="text-xs text-gray-500 mt-1">

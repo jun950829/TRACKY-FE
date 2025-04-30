@@ -7,17 +7,6 @@ import Pagination from "@/components/custom/Pagination";
 import NoticeSearchLayer from "./NoticeSearchLayer";
 import NoticeTable from "./NoticeTable";
 
-
-
-// 페이지네이션 응답을 위한 타입 정의
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-}
-
 function NoticeSection() {
   const [noticeList, setNoticeList] = useState<NoticeDetailTypes[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -57,7 +46,6 @@ function NoticeSection() {
         // 성공 응답 처리
         const noticeData = responseBody.data || response.data || [];
         const pageData = responseBody.pageResponse || {};
-        console.log("페이지네이션 데이터 ", pageData);
 
         setNoticeList(noticeData);
         setPagination({
@@ -124,11 +112,11 @@ function NoticeSection() {
   return (
     <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {error && <ErrorToast error={error} />}
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">공지사항</h1>
+      <div className="flex flex-col gap-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">공지사항</h1>
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <NoticeSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
-          <div className="p-4 sm:p-6">
+          <div className="p-2">
             <NoticeTable
               noticeList={noticeList}
               setNoticeList={setNoticeList}

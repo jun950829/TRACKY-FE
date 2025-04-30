@@ -12,9 +12,9 @@ interface VehicleStatusCardsProps {
 
 export default function VehicleStatusCards({ statusObj, accidentFreeDays = 365 }: VehicleStatusCardsProps) {
   // 차량 상태별 개수 계산
-  const activeCount = statusObj?.running || 0;
-  const inactiveCount = statusObj?.waiting || 0;
-  const maintenanceCount = statusObj?.fixing || 0;
+  const activeCount = statusObj?.RUNNING || 0;
+  const inactiveCount = statusObj?.WAITING || 0;
+  const maintenanceCount = statusObj?.FIXING || 0;
   const totalCount = Object.values(statusObj).reduce((acc, curr) => acc + curr, 0);
 
   // 가동률 계산 (운행 중인 차량 비율)

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Search as SearchIcon, Loader2 } from 'lucide-react';
 import { useCarListStore } from '@/stores/useCarListStore';
 import { cn } from '@/libs/utils/utils';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const HistorySearch = () => {
   const {
@@ -15,6 +16,7 @@ const HistorySearch = () => {
 
   const [searchText, setSearchText] = useState('');
   const [searchType, setSearchType] = React.useState<'biz' | 'car'>('car');
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   // 초기 데이터 로딩
   useEffect(() => {
@@ -58,6 +60,7 @@ const HistorySearch = () => {
               : 'border-gray-200 hover:border-blue-500 hover:text-blue-600'
           )}
           onClick={() => handleTypeChange('car')}
+          disabled={!isAdmin}
         >
           차량 별
         </Button>

@@ -143,7 +143,7 @@ function Home() {
                   최근 주행 기록이 있는 차량 목록
                 </CardDescription>
               </div>
-              <CustomButton variant="outline" size="sm" onClick={() => navigate("/cars")}>
+              <CustomButton variant="outline" size="sm" onClick={() => navigate("/car")}>
                 모두 보기
               </CustomButton>
             </div>

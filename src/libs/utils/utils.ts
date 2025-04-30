@@ -47,3 +47,12 @@ export function formatRentPeriod(startTimeString: string, endTimeString: string)
 
   return `${startYear}/${startMonth}/${startDay} ${startHours}:${startMinutes} ~ ${endYear}/${endMonth}/${endDay} ${endHours}:${endMinutes}`;
 }
+
+/**
+ * 좌표를 1,000,000을 곱한 정수값으로 변환
+ * @param coordinate 변환할 좌표 (위도 또는 경도)
+ */
+export const formatCoordinate = (coordinate: number): number => {
+  // 소수점 6자리까지 자르고 1,000,000을 곱함
+  return Math.round(parseFloat(coordinate.toFixed(6)) * 1000000);
+};

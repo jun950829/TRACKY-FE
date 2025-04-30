@@ -25,6 +25,11 @@ function Sidebar() {
     if (menu.path === "/admin" || menu.path === "/emulator") {
       return isAdmin;
     }
+
+    if (menu.path === "/etc") {
+      return !isAdmin;
+    }
+
     return true;
   });
 

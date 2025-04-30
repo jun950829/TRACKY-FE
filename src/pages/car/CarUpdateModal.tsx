@@ -18,6 +18,7 @@ import { CarStatus, CarType } from '@/constants/datas/status';
 import carApiService from '@/libs/apis/carApi';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';
+import { getCarTypeLabel } from '@/libs/utils/getClassUtils';
 
 
 const schema = yup.object().shape({
@@ -84,7 +85,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
       deviceInfo: initialData.deviceInfo,
     };
 
-    const updatedCarRes = await carApiService.updateCar(mdn, updateCarObj);
+    const updatedCarRes = await carApiService.updateCar(updateCarObj);
     if(updatedCarRes.status === 200) {
       setIsSuccess(true);
     } else {
@@ -120,8 +121,8 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
             <div>
               <label className="block text-sm font-medium">차종</label>
               <Select
-                defaultValue={initialData.carType}
-                onValueChange={(val) => setValue('status', val)}
+                defaultValue={initialData.carType.toLowerCase()}
+                onValueChange={(val) => setValue('carType', val)}
               >
                 <SelectTrigger>
                   <SelectValue  />
@@ -157,7 +158,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
             <div>
               <label className="block text-sm font-medium">차량 상태</label>
               <Select
-                defaultValue={initialData.status}
+                defaultValue={initialData.status.toLowerCase()}
                 onValueChange={(val) => setValue('status', val)}
               >
                 <SelectTrigger>
