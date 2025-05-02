@@ -16,13 +16,14 @@ function NoticeSearchLayer({ onSearch, defaultPageSize = 10 }: NoticeSearchLayer
 
   const handleSearch = () => {
     // 현재 컴포넌트의 onSearch 프롭은 부모 컴포넌트(NoticeSection)의 handleSearch를 호출
-    onSearch(false, search, isImportant, pageSize);
+    onSearch(false, search, isImportant || undefined, pageSize);
   };
 
   const handleReset = () => {
     setSearch("");
-    setIsImportant(undefined);
-    onSearch(false, "", undefined, pageSize);
+    setIsImportant("");
+    setPageSize(10)
+    onSearch(false, "", undefined, 10);
   };
 
   return (
