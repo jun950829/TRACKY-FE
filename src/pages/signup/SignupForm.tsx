@@ -11,13 +11,15 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { Check, X } from 'lucide-react';
-
+import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 
 const schema = yup.object().shape({
   bizName: yup.string().required('업체명을 입력해주세요.'),
   bizRegNum: yup.string().required('사업자 등록 번호를 입력해주세요.'),
   bizAdmin: yup.string().required('담당자를 입력해주세요.'),
-  bizPhoneNum: yup.string().required('전화번호를 입력해주세요.'),
+  bizPhoneNum: yup.string()
+  .matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-1234-5678이어야 합니다.")
+  .required('전화번호를 입력해주세요.'),
   memberId: yup.string()
   .min(4, "아이디는 최소 4자 이상이어야 합니다")
   .matches(/^[a-zA-Z0-9]+$/, "영문자와 숫자만 사용 가능합니다")
@@ -51,11 +53,13 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<SignupRequestType>({
     resolver: yupResolver(schema),
   });
 
   const memberId = watch('memberId');
+  const bizPhone = watch('bizPhoneNum');
 
   // 아이디 중복 체크
   const checkIdDuplication = async () => {
@@ -120,8 +124,15 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
             <Input
               id="bizPhoneNum"
               placeholder="전화번호를 입력하세요"
+              value={bizPhone}
               {...register("bizPhoneNum")}
+              onChange={(e) => setValue("bizPhoneNum", formatPhoneNumber(e.target.value))}
+              inputMode="numeric"
+              maxLength={13}
             />
+            {errors.bizPhoneNum && (
+              <p className="text-sm text-destructive">{errors.bizPhoneNum.message}</p>
+            )}
           </div>
         </div>
 
