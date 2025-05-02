@@ -1,4 +1,5 @@
 import { CycleGpsRequest, CycleInfoRequest } from "@/constants/types/types";
+import { getKoreanTimeFormattedWithSeconds } from "./emulatorUtils";
 
 // 지구 반지름 (단위: km)
 const EARTH_RADIUS_KM = 6371;
@@ -81,6 +82,7 @@ export function buildCycleGpsList(
       ang: Math.round(angle),                             // 방향: 정수
       spd: Math.round(speed),                             // 속도: 정수
       sum: parseFloat(totalDistance.toFixed(1)),          // 누적 거리: 소수점 1자리
+      oTime: getKoreanTimeFormattedWithSeconds(),
     });
   }
 

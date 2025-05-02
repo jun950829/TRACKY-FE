@@ -658,7 +658,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       {error && <ErrorToast error={error} />}
       <div className="relative">
         <Card className="overflow-hidden bg-gradient-to-br from-background to-background/50 border-none shadow-xl">
-          <CardHeader className="border-b bg-card/20 backdrop-blur-sm">
+          <CardHeader className="border-b bg-card/20 backdrop-blur-sm sticky top-0 z-10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
               <div>
                 <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
@@ -668,11 +668,11 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
                   {useMockData ? MOCK_LOCATION_TEXT : REAL_LOCATION_TEXT}
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <div className="space-y-2 w-full sm:w-auto">
                   <div className="flex flex-row items-center gap-2">
                     <Select onValueChange={(val) => setSelectedMdn(val)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full sm:w-[200px]">
                         <SelectValue placeholder="차량 조회 후 선택하세요" />
                       </SelectTrigger>
                       <SelectContent>
@@ -741,8 +741,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
               </div>
             </div>
           </CardHeader>
+          <div className="relative md:grid md:grid-cols-12 md:gap-6">
           {!selectedMdn && (
-            <div className="absolute inset-0 top-[73px] bg-background/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-50">
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-background/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-50">
               <div className="text-center p-6 bg-card border border-border/30 rounded-lg shadow-lg">
                 <div className="flex flex-col items-center gap-4">
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground">
@@ -756,7 +757,6 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
               </div>
             </div>
           )}
-          <div className="md:grid md:grid-cols-12 md:gap-6">
             {/* 왼쪽 패널: 컨트롤 및 데이터 */}
             <div className="md:col-span-5 lg:col-span-4">
               <CardContent className="p-4 md:p-6">

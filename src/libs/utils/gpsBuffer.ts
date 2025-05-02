@@ -11,7 +11,7 @@ class GpsBuffer {
   private currentPosition: GeolocationPosition | null = null; // 현재 위치 저장
   private totalPacketsCount: number = 0; // 총 전송된 cList 항목 개수
   private totalSentPackets: number = 0; // 총 전송 패킷 수
-
+  
   /**
    * GPS 버퍼를 초기화합니다.
    * @param interval 전송 주기 (초)
@@ -146,7 +146,7 @@ class GpsBuffer {
    * @param dataArray 전송할 위치 데이터 배열
    * @returns 전송 성공 여부
    */
-  private async sendDataArray(mdn: string, dataArray: GeolocationPosition[]): Promise<boolean> {
+  private async sendDataArray(dataArray: GeolocationPosition[]): Promise<boolean> {
     if (dataArray.length === 0) {
       console.log(`[${new Date().toLocaleTimeString()}] 전송할 데이터가 없습니다. 전송을 건너뜁니다.`);
       return false;
@@ -161,7 +161,6 @@ class GpsBuffer {
       
       // API 요청 객체 생성
       const request = {
-        mdn: mdn,
         tid: "A001",
         mid: "6",
         pv: "5",
