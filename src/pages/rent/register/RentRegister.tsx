@@ -29,10 +29,15 @@ const schema = yup.object({
     purpose: yup.string().required("사용목적 입력해주세요.")
 })
 
+interface MdnStatus {
+    mdn: string;
+    status: string;
+}
+
 function RentRegister() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
-    const [mdnList, setMdnList] = useState<string[]>([]);
+    const [mdnList, setMdnList] = useState<MdnStatus[]>([]);
     const navigate = useNavigate();
     const [rentLocation, setRentLocation] = useState<AddressResult | null>(null);
     const [returnLocation, setReturnLocation] = useState<AddressResult | null>(null);
@@ -140,8 +145,8 @@ function RentRegister() {
                                 <SelectValue placeholder="차량 관리번호 선택하세요" />
                             </SelectTrigger>
                             <SelectContent>
-                                {mdnList.map((mdn: string, idx: number) => (
-                                    <SelectItem key={idx} value={mdn}>{mdn}</SelectItem>
+                                {mdnList.map((mdnStatus: MdnStatus, idx: number) => (
+                                    <SelectItem key={idx} value={mdnStatus.mdn}>{mdnStatus.mdn} {mdnStatus.status}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
