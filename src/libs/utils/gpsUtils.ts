@@ -1,5 +1,4 @@
-import { CycleGpsRequest, CycleInfoRequest } from "@/constants/types/types";
-import { getKoreanTimeFormattedWithSeconds } from "./emulatorUtils";
+import { CycleGpsRequest } from "@/constants/types/types";
 
 // 지구 반지름 (단위: km)
 const EARTH_RADIUS_KM = 6371;
@@ -75,6 +74,16 @@ export function buildCycleGpsList(
 
     totalDistance += distance;
 
+    // 현재 위치의 timestamp를 사용하여 정확한 시간 생성
+    const date = new Date(curr.timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    const oTime = `${year}${month}${day}${hours}${minutes}${seconds}`;
+
     gpsList.push({
       gcd: "A", // 예: 정상 상태
       lat: Math.round(curr.coords.latitude * 1_000_000),  // 위도: 6자리 정밀도 후 정수
@@ -82,86 +91,9 @@ export function buildCycleGpsList(
       ang: Math.round(angle),                             // 방향: 정수
       spd: Math.round(speed),                             // 속도: 정수
       sum: parseFloat(totalDistance.toFixed(1)),          // 누적 거리: 소수점 1자리
-      oTime: getKoreanTimeFormattedWithSeconds(),
+      oTime: oTime,                                       // 각 GPS 데이터의 생성 시간
     });
   }
 
   return gpsList;
-}
-
-/**
- * 현재 한국 시간을 'yyyyMMddHHmm' 형식으로 변환
- */
-function getKoreanTimeFormatted(): string {
-  // 현재 시간을 가져옴
-  const now = new Date();
-  
-  // 한국 시간(UTC+9)으로 변환
-  const koreanTime = new Date(now.getTime());
-  
-  // 'yyyyMMddHHmm' 형식으로 변환
-  const year = koreanTime.getFullYear();
-  const month = String(koreanTime.getMonth() + 1).padStart(2, '0');
-  const day = String(koreanTime.getDate()).padStart(2, '0');
-  const hours = String(koreanTime.getHours()).padStart(2, '0');
-  const minutes = String(koreanTime.getMinutes()).padStart(2, '0');
-  
-  return `${year}${month}${day}${hours}${minutes}`;
-}
-
-/**
- * 전체 CycleInfoRequest 생성
- * 두 가지 방식으로 호출 가능:
- * 1. gpsList와 options 객체 사용
- * 2. cycleId와 단일 position 사용
- */
-export function toCycleInfoRequest(
-  arg1: CycleGpsRequest[] | string,
-  arg2: 
-    | {
-        mdn: string;
-        tid: string;
-        mid: string;
-        pv: string;
-        did: string;
-      }
-    | GeolocationPosition
-): CycleInfoRequest {
-  // 단일 위치 데이터를 받은 경우 (cycleId, position)
-  if (typeof arg1 === 'string' && 'coords' in arg2) {
-    const cycleId = arg1;
-    const position = arg2 as GeolocationPosition;
-    
-    // 단일 위치를 CycleGpsRequest 배열로 변환
-    const gpsList = buildCycleGpsList([position]);
-    
-    return {
-      mdn: "01234567890",
-      tid: "A001",
-      mid: "6",
-      pv: "5",
-      did: cycleId,
-      cCnt: gpsList.length,
-      oTime: getKoreanTimeFormatted(),
-      cList: gpsList,
-    };
-  } 
-  // 원래 방식대로 CycleGpsRequest 배열과 옵션을 받은 경우
-  else {
-    const gpsList = arg1 as CycleGpsRequest[];
-    const options = arg2 as {
-      mdn: string;
-      tid: string;
-      mid: string;
-      pv: string;
-      did: string;
-    };
-    
-    return {
-      ...options,
-      cCnt: gpsList.length,
-      oTime: getKoreanTimeFormatted(),
-      cList: gpsList,
-    };
-  }
 }

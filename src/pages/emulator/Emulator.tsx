@@ -33,7 +33,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Custom components
 import EmulatorSettings from "@/pages/emulator/EmulatorSettings";
 import GpsMap from "@/components/GpsMap";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import carApiService from "@/libs/apis/carApi";
 
@@ -203,7 +202,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     // 통계, 패킷 기록, 버퍼 초기화
     totalDistanceRef.current = 0;
     packetsCountRef.current = 0;
-    gpsBuffer.reset(selectedMdn);
+    gpsBuffer.reset();
 
     // 추적 상태 업데이트
     setTrackingState(prev => ({
@@ -263,6 +262,8 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
 
   // 실제 위치 추적 시작
   const startRealTracking = () => {
+    console.log("startRealTracking");
+    gpsBuffer.setMdn(selectedMdn);
     if ("geolocation" in navigator) {
       try {
         // watchPosition 대신 1초마다 직접 위치 확인 로직 구현
@@ -346,7 +347,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
       
       // 비동기 함수이지만 UI 업데이트를 위해 동기적으로 처리
-      gpsBuffer.sendData(selectedMdn)
+      gpsBuffer.sendData()
         .then(success => {
           if (success) {
             console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 성공`);
@@ -446,6 +447,18 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     return () => clearInterval(bufferTimer);
   }, [trackingState.isTracking]);
 
+  useEffect(() => {
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    // 꼭 호출해야 할 동작
+    handleEngineOff();
+
+    event.preventDefault();
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+}, []);
+
   // 위치 에러 핸들러
   const handlePositionError = (error: GeolocationPositionError) => {
     // 오류 코드에 따른 상세 메시지
@@ -482,13 +495,6 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     setPacketInterval(value);
     gpsBuffer.setInterval(value);
   };
-
-  // Clean up on component unmount
-  useEffect(() => {
-    return () => {
-      stopTracking();
-    };
-  }, []);
 
   // 데이터 소스 토글
   const toggleDataSource = () => {
@@ -543,7 +549,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       // 버퍼에 남아있는 모든 GPS 데이터 즉시 전송
       if (gpsBuffer.getBufferSize() > 0) {
         // reset 함수의 첫 번째 인자를 true로 설정하여 남은 데이터 모두 전송
-        await gpsBuffer.reset(selectedMdn, true);
+        await gpsBuffer.reset(true);
         
         // 버퍼와 패킷 카운트 정보 업데이트
         setTrackingState(prev => ({
@@ -605,7 +611,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     // 모든 상태 초기화
     totalDistanceRef.current = 0;
     packetsCountRef.current = 0;
-    gpsBuffer.reset(selectedMdn);
+    gpsBuffer.reset();
     
     setTrackingState({
       isTracking: false,
@@ -622,8 +628,6 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         bufferSize: 0,
       }
     });
-
-    setSelectedMdn("");
 
     // 모의 데이터 초기화
     if (useMockData) {
