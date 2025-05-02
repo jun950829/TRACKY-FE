@@ -17,7 +17,10 @@ import { Select, SelectTrigger } from "@/components/ui/select";
 import { CarType } from "@/constants/datas/status";
 
 const schema = yup.object({
-  mdn: yup.string().min(10).max(11).required("차량 관리번호를 입력해주세요."),
+  mdn: yup.string()
+  .matches(/^\d+$/, "숫자만 입력해주세요.")
+  .max(11, "숫자 11자리만 입력이 가능합니다!")
+  .required("11자리의 차량 관리번호를 입력해주세요."),
   carType: yup.string().required("차종을 선택해주세요."),
   carName: yup.string().required("차량 모델명을 입력해주세요."),
   carPlate: yup.string().required("차량 번호를 입력해주세요."),
@@ -57,6 +60,7 @@ export default function CarRegister() {
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -76,11 +80,14 @@ export default function CarRegister() {
   }, [mdnValue, mdnCheckResult.checked, mdnCheckResult.lastCheckedMdn]);
 
   const checkMdnExists = async () => {
-    if (!mdnValue || mdnValue.length < 10) {
+
+    const isValid = await trigger("mdn");
+
+    if (!isValid) {
       setMdnCheckResult({
         checked: false,
         exists: false,
-        message: "MDN은 최소 10자 이상이어야 합니다.",
+        message: "",
         lastCheckedMdn: undefined,
       });
       return;
@@ -149,13 +156,13 @@ export default function CarRegister() {
             <div className="space-y-2">
               <Label>차량 관리번호</Label>
               <div className="flex items-center gap-2">
-                <Input placeholder="최소 10자 이상 (예: 0123456789)" {...register("mdn")} />
+                <Input placeholder="숫자 11자리 (예: 01234567890)" {...register("mdn")} />
                 <Button
                   type="button"
                   onClick={checkMdnExists}
                   variant="outline"
                   size="sm"
-                  disabled={checkingMdn || !mdnValue || mdnValue.length < 10}
+                  disabled={checkingMdn || !mdnValue || mdnValue.length != 11 }
                   className="whitespace-nowrap px-3 h-10"
                 >
                   {checkingMdn ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : "중복 확인"}
