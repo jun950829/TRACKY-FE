@@ -86,7 +86,7 @@ class GpsBuffer {
    * 버퍼에 있는 GPS 데이터를 서버로 전송합니다.
    * @returns 전송 성공 여부
    */
-  public async sendData(): Promise<boolean> {
+  public async sendData(mdn: string): Promise<boolean> {
     // 전송할 데이터가 없으면 중단
     if (this.buffer.length === 0) {
       console.log(`⚠️ [${new Date().toLocaleTimeString()}] 버퍼가 비어 있어 전송을 건너뜁니다. 새 주기를 시작합니다.`);
@@ -105,7 +105,7 @@ class GpsBuffer {
       
       // API 요청 객체 생성
       const request = {
-        mdn: "9999999999",
+        mdn: mdn,
         tid: "A001",
         mid: "6",
         pv: "5",
@@ -146,7 +146,7 @@ class GpsBuffer {
    * @param dataArray 전송할 위치 데이터 배열
    * @returns 전송 성공 여부
    */
-  private async sendDataArray(dataArray: GeolocationPosition[]): Promise<boolean> {
+  private async sendDataArray(mdn: string, dataArray: GeolocationPosition[]): Promise<boolean> {
     if (dataArray.length === 0) {
       console.log(`[${new Date().toLocaleTimeString()}] 전송할 데이터가 없습니다. 전송을 건너뜁니다.`);
       return false;
@@ -161,7 +161,7 @@ class GpsBuffer {
       
       // API 요청 객체 생성
       const request = {
-        mdn: "9999999999",
+        mdn: mdn,
         tid: "A001",
         mid: "6",
         pv: "5",
@@ -285,7 +285,7 @@ class GpsBuffer {
    * 버퍼를 초기화하고 타이머를 중지합니다.
    * @param sendRemainingData 버퍼에 남은 데이터를 전송할지 여부
    */
-  public async reset(sendRemainingData: boolean = false): Promise<void> {
+  public async reset(mdn: string, sendRemainingData: boolean = false): Promise<void> {
     console.log(`[${new Date().toLocaleTimeString()}] GPS 버퍼 초기화 시작 (남은 데이터 전송: ${sendRemainingData ? '예' : '아니오'}, 버퍼 크기: ${this.buffer.length}개)`);
     
     // 남은 데이터 전송 옵션이 켜져 있고, 버퍼에 데이터가 있으면 전송
@@ -301,7 +301,7 @@ class GpsBuffer {
         
         // API 요청 객체 생성
         const request = {
-          mdn: "9999999999",
+          mdn: mdn,
           tid: "A001",
           mid: "6",
           pv: "5",

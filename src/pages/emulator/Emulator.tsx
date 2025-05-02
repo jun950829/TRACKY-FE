@@ -33,6 +33,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Custom components
 import EmulatorSettings from "@/pages/emulator/EmulatorSettings";
 import GpsMap from "@/components/GpsMap";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import carApiService from "@/libs/apis/carApi";
 
 // Car SVG icon
 const CarIcon = () => (
@@ -75,6 +78,11 @@ interface IGpsTrackingProps {
   cycleId?: string;
 }
 
+interface IEmulateCar {
+  mdn: string;
+  bizId: number;
+}
+
 export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   const [trackingState, setTrackingState] = useState<IGpsTrackingState>({
     isTracking: false,
@@ -99,6 +107,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const totalDistanceRef = useRef<number>(0);
   const packetsCountRef = useRef<number>(0);
+
+  const [mdnList, setMdnList] = useState<IEmulateCar[]>([]);
+  const [selectedMdn, setSelectedMdn] = useState<string>("");
   
   // Mock data related state
   const [useMockData, setUseMockData] = useState(false);
@@ -144,6 +155,11 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     }));
   };
 
+  const fetchMdnList = async () => {
+    const response = await carApiService.getEmulateCars();
+    setMdnList(response.data);
+  };
+
   // 위치 초기화 함수
   const initializeLocation = () => {
     initLocation(
@@ -187,7 +203,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     // 통계, 패킷 기록, 버퍼 초기화
     totalDistanceRef.current = 0;
     packetsCountRef.current = 0;
-    gpsBuffer.reset();
+    gpsBuffer.reset(selectedMdn);
 
     // 추적 상태 업데이트
     setTrackingState(prev => ({
@@ -330,7 +346,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
       
       // 비동기 함수이지만 UI 업데이트를 위해 동기적으로 처리
-      gpsBuffer.sendData()
+      gpsBuffer.sendData(selectedMdn)
         .then(success => {
           if (success) {
             console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 성공`);
@@ -350,7 +366,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
           }));
         })
         .catch(error => {
-          console.error(`❌ [${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 중 오류:`, error);
+          console.error(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 중 오류:`, error);
           
           // 오류가 발생해도 UI는 업데이트
           setTrackingState(prev => ({
@@ -488,7 +504,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     
     try {
       // emulatorUtils에서 제공하는 함수를 사용하여 요청 객체 생성
-      const engineRequest = createEngineOnRequest(trackingState.currentPosition);
+      const engineRequest = createEngineOnRequest(selectedMdn, trackingState.currentPosition);
       
       // 시동 ON 시간 상태 저장
       setOnTime(engineRequest.onTime);
@@ -527,7 +543,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       // 버퍼에 남아있는 모든 GPS 데이터 즉시 전송
       if (gpsBuffer.getBufferSize() > 0) {
         // reset 함수의 첫 번째 인자를 true로 설정하여 남은 데이터 모두 전송
-        await gpsBuffer.reset(true);
+        await gpsBuffer.reset(selectedMdn, true);
         
         // 버퍼와 패킷 카운트 정보 업데이트
         setTrackingState(prev => ({
@@ -549,6 +565,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       
       // emulatorUtils에서 제공하는 함수를 사용하여 요청 객체 생성
       const engineRequest = createEngineOffRequest(
+        selectedMdn,
         trackingState.currentPosition,
         onTime,
         trackingState.stats.totalDistance
@@ -564,7 +581,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       resetEmulatorState();
       
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
+      console.error(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
       setError(createApiError(error));
       showToast("시동 OFF 요청에 실패했습니다.");
       
@@ -588,7 +605,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     // 모든 상태 초기화
     totalDistanceRef.current = 0;
     packetsCountRef.current = 0;
-    gpsBuffer.reset();
+    gpsBuffer.reset(selectedMdn);
     
     setTrackingState({
       isTracking: false,
@@ -605,6 +622,8 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
         bufferSize: 0,
       }
     });
+
+    setSelectedMdn("");
 
     // 모의 데이터 초기화
     if (useMockData) {
@@ -649,6 +668,23 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
+              <div className="space-y-2">
+                <div className="flex flex-row items-center gap-2">
+                  <Select onValueChange={(val) => setSelectedMdn(val)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="차량 조회 후 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mdnList.map((mdn: IEmulateCar, idx: number) => (
+                          <SelectItem key={idx} value={mdn.mdn}>{mdn.mdn}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" size="sm" onClick={fetchMdnList}>조회</Button>
+                </div>
+              </div>
+              
+
               <Badge 
                 variant={trackingState.isTracking ? "default" : "secondary"} 
                 className="px-3 py-1.5 text-sm font-medium shadow-sm"

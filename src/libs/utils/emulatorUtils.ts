@@ -52,9 +52,9 @@ export const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPo
  * 시동 ON 요청 객체 생성
  * @param position 현재 위치
  */
-export const createEngineOnRequest = (position: GeolocationPosition): EngineRequestType => {
+export const createEngineOnRequest = (mdn:string, position: GeolocationPosition): EngineRequestType => {
   return {
-    mdn: "9999999999",
+    mdn: mdn,
     tid: "A001",
     mid: "6",
     pv: "5",
@@ -77,12 +77,13 @@ export const createEngineOnRequest = (position: GeolocationPosition): EngineRequ
  * @param totalDistance 누적 거리
  */
 export const createEngineOffRequest = (
+  mdn:string,
   position: GeolocationPosition, 
   onTime: string, 
   totalDistance: number
 ): EngineRequestType => {
   return {
-    mdn: "9999999999",
+    mdn: mdn,
     tid: "A001",
     mid: "6",
     pv: "5",
