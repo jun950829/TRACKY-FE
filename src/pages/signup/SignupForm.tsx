@@ -18,7 +18,7 @@ const schema = yup.object().shape({
   bizRegNum: yup.string().required('사업자 등록 번호를 입력해주세요.'),
   bizAdmin: yup.string().required('담당자를 입력해주세요.'),
   bizPhoneNum: yup.string()
-  .matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-1234-5678이어야 합니다.")
+  .matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-****-****이어야 합니다.")
   .required('전화번호를 입력해주세요.'),
   memberId: yup.string()
   .min(4, "아이디는 최소 4자 이상이어야 합니다")

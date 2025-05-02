@@ -170,7 +170,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
             </div>    
             <div>
               <label className="block text-sm font-medium">대여자 전화번호</label>
-              <Input placeholder="예: 010-1234-5678" value={phoneValue}
+              <Input placeholder="예: 010-****-****" value={phoneValue}
                 onChange={(e) => {
                   const formatted = formatPhoneNumber(e.target.value);
                   setPhoneValue(formatted);
