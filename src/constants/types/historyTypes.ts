@@ -3,6 +3,7 @@ export interface GpsData {
   lat: number;
   lon: number;
   spd: number;
+  ang: number;
   o_time: string;
 }
 
@@ -17,53 +18,39 @@ export interface CarRecord {
 
 export interface DriveRecord {
   id: number;
-  carPlate: string;
-  carType: string;
-  status: string;
-  onTime: string;
-  offTime: string;
-  onLat: number;
-  onLon: number;
-  offLat: number;
-  offLon: number;
-  driveDistance: number;
-  driveDuration: number;
-  gpsDataList: Array<{
-    lat: number;
-    lon: number;
-    time: string;
-  }>;
   mdn: string;
-  renterName: string;
-  renterPhone: string;
-  purpose: string;
-  rentStatus: string;
+  carPlate: string;
   rentUuid: string;
-  rentStime: string;
-  rentEtime: string | null;
+  renterName: string;
+  purpose: string;
+  driveDistance: number;
+  driveOnTime: string;
+  driveOffTime: string;
+  driveEndLat: number;
+  driveEndLon: number;
 }
 
 // 운행 상세 기록 타입 정의
 export interface DriveDetailRecord {
   driveId: number;
   mdn: string;
-  rentUuid: string;
-  driveOnTime: string;
-  driveOffTime: string;
-  rentStime: string;
-  rentEtime: string;
+  carPlate: string;
   onLat: number;
   onLon: number;
   offLat: number;
   offLon: number;
-  sum: number;
-  maxSpeed: number;
-  avgSpeed: number;
-  gpsDataList: GpsData[];
+  driveDistance: number;
+  rentUuid: string;
   renterName: string;
   renterPhone: string;
-  purpose: string;
   rentStatus: string;
+  purpose: string;
+  status: string;
+  driveOnTime: string;
+  driveOffTime: string;
+  rentStime: string;
+  rentEtime: string;
+  gpsDataList: GpsData[];
 }
 
 export interface BizRecord {

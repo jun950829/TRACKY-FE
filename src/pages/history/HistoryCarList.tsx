@@ -1,7 +1,6 @@
 import { useCarListStore } from "@/stores/useCarListStore";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import driveService from "@/libs/apis/driveApi";
-import { Loader2 } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 import { CarRecord } from "@/constants/types/historyTypes";
@@ -16,6 +15,7 @@ export default function HistoryCarList() {
 
   const handleCarClick = async (car: CarRecord) => {
     setSelectedCar({
+      carMdn: car.mdn,
       carPlate: car.carPlate,
       carType: car.carType,
       status: car.status
@@ -40,19 +40,23 @@ export default function HistoryCarList() {
   }
 
   return (
-    <div className="flex flex-col h-full max-h-[50vh]">
-      <div className="flex-1 overflow-y-auto">
+    <div className="flex flex-col h-full max-h-[calc(100vh-23rem)] overflow-y-auto">
+      <div className="flex-1">
         <div className="divide-y divide-gray-100">
           {carResults.map((car, index) => (
             <div
               key={index} 
               className={cn(
-                "p-4 cursor-pointer transition-all duration-200",
-                "hover:bg-gray-50 active:bg-gray-100"
+                "cursor-pointer transition-all duration-200 relative",
+                "hover:bg-gray-50 active:bg-gray-100",
+                selectedCar?.carMdn === car.mdn && "bg-blue-50"
               )}
               onClick={() => handleCarClick(car)}
             >
-              <div className="flex items-center gap-4">
+              {selectedCar?.carMdn === car.mdn && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-md" />
+              )}
+              <div className="flex items-center gap-4 pl-4">
                 <div className="w-16 h-16 flex-shrink-0">
                   <img
                     src={`/png/cars/${car.carType?.toLowerCase() || 'sedan'}.png`}
@@ -61,8 +65,11 @@ export default function HistoryCarList() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="w-full flex flex-row items-center gap-2">
-                    <div className="font-sm text-gray-900 truncate">
+                  <div className="w-full flex flex-row justify-start items-center gap-2">
+                    <div className={`${getStatusBadgeClass(car.status, 'car')}`}>
+                      {getStatusLabel('car', car.status)}
+                    </div>
+                    <div className="text-xs text-gray-900 truncate">
                       {car.carPlate}
                     </div>
                   </div>
