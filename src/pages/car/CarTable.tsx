@@ -80,26 +80,29 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
       {/* PC 화면용 테이블 */}
       <div className="hidden md:block overflow-auto shadow-sm bg-white">
         <div className="relative">
+          {/* 테이블 전체에 table-layout: fixed 적용 */}
           <div className="sticky top-0 z-10 bg-white">
-            <Table className="w-full table-fixed">
-              <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-                <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-                  <TableHead className="w-10 text-gray-600 font-medium">상태</TableHead>
-                  <TableHead className="w-16 text-gray-600 font-medium">차량 번호</TableHead>
-                  <TableHead className="w-12 text-gray-600 font-medium">종류</TableHead>
-                  <TableHead className="w-16 text-gray-600 font-medium">차량 관리번호</TableHead>
-                  <TableHead className="w-16 text-gray-600 font-medium">연식</TableHead>
-                  <TableHead className="text-right w-40 text-gray-600 font-medium">관리</TableHead>
-                </TableRow>
-              </TableHeader>
-            </Table>
+            <div className="w-full" style={{ tableLayout: 'fixed' }}>
+              <Table className="w-full" style={{ tableLayout: 'fixed' }}>
+                <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '40px' }}>상태</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '64px' }}>차량 번호</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '48px' }}>종류</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '64px' }}>차량 관리번호</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '64px' }}>연식</TableHead>
+                    <TableHead className="text-right text-gray-600 font-medium" style={{ width: '160px' }}>관리</TableHead>
+                  </TableRow>
+                </TableHeader>
+              </Table>
+            </div>
           </div>
           <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
-            <Table>
+            <Table className="w-full" style={{ tableLayout: 'fixed' }}>
               <TableBody>
                 {carList.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                       차량 정보가 없습니다.
                     </TableCell>
                   </TableRow>
@@ -113,24 +116,24 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                     }}
                     className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
                   >
-                    <TableCell className="whitespace-nowrap">
+                    <TableCell style={{ width: '40px' }}>
                       <span onClick={(e) => e.stopPropagation()}>
                         <StatusBadge status={car.status} type="car" />
                       </span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
+                    <TableCell style={{ width: '64px' }} className="text-gray-700">
                       <span onClick={(e) => e.stopPropagation()}>{car.carPlate}</span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
+                    <TableCell style={{ width: '48px' }} className="text-gray-700">
                       <span onClick={(e) => e.stopPropagation()}>{getCarTypeLabel(car.carType)}</span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
+                    <TableCell style={{ width: '64px' }} className="text-gray-700">
                       <span onClick={(e) => e.stopPropagation()}>{car.mdn}</span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-gray-700">
+                    <TableCell style={{ width: '64px' }} className="text-gray-700">
                       <span onClick={(e) => e.stopPropagation()}>{car.carYear}</span>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" style={{ width: '160px' }}>
                       <div className="flex gap-2 justify-end">
                         <CustomButton
                           variant="edit"
@@ -150,15 +153,14 @@ function CarTable({ carList, setCarList, isLoading = false, reload }: CarTablePr
                             variant="destructive"
                             size="sm"
                             className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                            icon={<Trash className="h-4 w-4" />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsDelete(true);
-                            setSelectedCarData(car);
-                          }}
-                        >
-                          삭제
-                        </CustomButton>
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDelete(true);
+                              setSelectedCarData(car);
+                            }}
+                          >
+                            삭제
+                          </CustomButton>
                         )}
                       </div>
                     </TableCell>

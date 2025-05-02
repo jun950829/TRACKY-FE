@@ -97,22 +97,22 @@ export default function ApprovalTable() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="relative">
           <div className="sticky top-0 z-10 bg-white">
-            <Table>
+            <Table className="w-full" style={{ tableLayout: 'fixed' }}>
               <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-                  <TableHead className="text-gray-600 font-medium">업체명</TableHead>
-                  <TableHead className="text-gray-600 font-medium">사업자번호</TableHead>
-                  <TableHead className="text-gray-600 font-medium">담당자</TableHead>
-                  <TableHead className="text-gray-600 font-medium">연락처</TableHead>
-                  <TableHead className="text-gray-600 font-medium">이메일</TableHead>
-                  <TableHead className="text-gray-600 font-medium">상태</TableHead>
-                  <TableHead className="w-24 text-right text-gray-600 font-medium">관리</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '140px' }}>업체명</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '140px' }}>사업자번호</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '100px' }}>담당자</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '120px' }}>연락처</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '180px' }}>이메일</TableHead>
+                  <TableHead className="text-gray-600 font-medium" style={{ width: '80px' }}>상태</TableHead>
+                  <TableHead className="text-right text-gray-600 font-medium" style={{ width: '100px' }}>관리</TableHead>
                 </TableRow>
               </TableHeader>
             </Table>
           </div>
           <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
-            <Table>
+            <Table className="w-full" style={{ tableLayout: 'fixed' }}>
               <TableBody>
                 {filteredApproves.length === 0 && (
                   <TableRow>
@@ -127,17 +127,17 @@ export default function ApprovalTable() {
                     key={member.memberId}
                     className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
                   >
-                    <TableCell className="text-gray-700">{member.bizName}</TableCell>
-                    <TableCell className="text-gray-600">{member.bizRegNum}</TableCell>
-                    <TableCell className="text-gray-600">{member.bizAdmin}</TableCell>
-                    <TableCell className="text-gray-600">{member.bizPhoneNum}</TableCell>
-                    <TableCell className="text-gray-600">{member.email}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-gray-700" style={{ width: '140px' }}>{member.bizName}</TableCell>
+                    <TableCell className="text-gray-600" style={{ width: '140px' }}>{member.bizRegNum}</TableCell>
+                    <TableCell className="text-gray-600" style={{ width: '100px' }}>{member.bizAdmin}</TableCell>
+                    <TableCell className="text-gray-600" style={{ width: '120px' }}>{member.bizPhoneNum}</TableCell>
+                    <TableCell className="text-gray-600" style={{ width: '180px' }}>{member.email}</TableCell>
+                    <TableCell style={{ width: '80px' }}>
                       <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusStyle(member.status)}`}>
                         {getStatusText(member.status)}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" style={{ width: '100px' }}>
                       <div className="flex gap-2 justify-end">
                         <Button
                           variant="outline"
@@ -172,4 +172,4 @@ export default function ApprovalTable() {
       />
     </div>
   );
-} 
+}

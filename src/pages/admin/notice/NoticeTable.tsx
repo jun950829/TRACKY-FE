@@ -111,20 +111,23 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
         {/* PC 화면용 테이블 */}
         <div className="hidden md:block overflow-auto shadow-sm bg-white">
           <div className="relative">
+            {/* 헤더 테이블 - 고정 위치 */}
             <div className="sticky top-0 z-10 bg-white">
-              <Table className="w-full">
+              <Table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-                    <TableHead className="w-24 text-gray-600 font-medium">중요도</TableHead>
-                    <TableHead className="text-gray-600 font-medium">제목</TableHead>
-                    <TableHead className="w-36 text-gray-600 font-medium ">작성일</TableHead>
-                    <TableHead className="w-48 text-right text-gray-600 font-medium">관리</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '120px' }}>중요도</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: 'auto' }}>제목</TableHead>
+                    <TableHead className="text-gray-600 font-medium" style={{ width: '160px' }}>작성일</TableHead>
+                    <TableHead className="text-right text-gray-600 font-medium" style={{ width: '180px' }}>관리</TableHead>
                   </TableRow>
                 </TableHeader>
               </Table>
             </div>
+            
+            {/* 본문 테이블 - 스크롤 가능 */}
             <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
-              <Table className="w-full">
+              <Table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <TableBody>
                 {noticeList.length === 0 && (
                   <TableRow>
@@ -139,7 +142,7 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                   onClick={() => handleView(notice)}
                   className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100 cursor-pointer"
                 >
-                  <TableCell className="w-24 whitespace-nowrap">
+                  <TableCell style={{ width: '120px' }} className="whitespace-nowrap">
                     <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
                       notice.isImportant 
                         ? "text-red-600 bg-red-50" 
@@ -148,11 +151,11 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                       {notice.isImportant ? "중요" : "일반"}
                     </span>
                   </TableCell>
-                  <TableCell className="text-gray-700 truncate">{notice.title}</TableCell>
-                  <TableCell className="w-32 whitespace-nowrap text-gray-700">
+                  <TableCell style={{ width: 'auto' }} className="text-gray-700 truncate">{notice.title}</TableCell>
+                  <TableCell style={{ width: '160px' }} className="whitespace-nowrap text-gray-700">
                     {notice.createdAt}
                   </TableCell>
-                  <TableCell className="w-48 text-right">
+                  <TableCell style={{ width: '180px' }} className="text-right">
                     <div className="flex gap-2 justify-end">
                       <CustomButton
                         variant="edit"
