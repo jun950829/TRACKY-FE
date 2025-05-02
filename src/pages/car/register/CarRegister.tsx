@@ -154,7 +154,7 @@ export default function CarRegister() {
 
             {/* 차량 관리번호 */}
             <div className="space-y-2">
-              <Label>차량 관리번호</Label>
+              <Label>차량 관리번호 ( 숫자만 11자리 입력해주세요. )</Label>
               <div className="flex items-center gap-2">
                 <Input placeholder="숫자 11자리 (예: 01234567890)" {...register("mdn")} />
                 <Button
