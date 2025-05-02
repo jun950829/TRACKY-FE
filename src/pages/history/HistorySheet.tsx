@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { motion, AnimatePresence } from "framer-motion";
 import HistorySearch from "./HistorySearch";
 import HistoryCarList from "./HistoryCarList";
-import { useHistoryStore } from "@/stores/useHistoryStore";
+// import { useHistoryStore } from "@/stores/useHistoryStore";
 import HistoryBizList from "./HistoryBizList";
 
 interface HistorySheetProps {
@@ -23,7 +23,7 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
 }) => {
   const [isListVisible, setIsListVisible] = useState(false);
 
-  const { searchType } = useHistoryStore();
+  // const { searchType } = useHistoryStore();
 
   // drawer가 열릴 때 리스트를 보이게 함
   useEffect(() => {
@@ -77,11 +77,11 @@ const HistorySheet: React.FC<HistorySheetProps> = ({
                 {id === "search" ? (
                   <div className="h-full">
                     <HistorySearch />
-                    {searchType === "biz" ? (
+                    {/* {searchType === "biz" ? (
                       <HistoryBizList onItemClick={onItemSelected} />
                     ) : (
                       <HistoryCarList />
-                    )}
+                    )} */}
                   </div>
                 ) : id === "biz" ? (
                   <HistoryBizList onItemClick={onItemSelected} />

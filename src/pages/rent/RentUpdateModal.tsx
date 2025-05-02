@@ -141,7 +141,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
       <Dialog open={isOpen} onOpenChange={closeModal}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>차량 정보 수정</DialogTitle>
+            <DialogTitle>렌트 정보 수정</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
             <div>
@@ -236,8 +236,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
           </form>
         </DialogContent>
       </Dialog>
-      <Modal open={isSuccess} onClose={onConfirm} title="안내" description="차량 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
-      <Modal open={isError} onClose={onClose} title="에러" description="차량 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
+      <Modal open={isSuccess} onClose={onConfirm} title="안내" description="렌트 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
+      <Modal open={isError} onClose={onClose} title="에러" description="렌트 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
       <Modal open={isTimeError} onClose={onClose} title="에러" description="반납 시간은 대여 시간 이후여야 합니다!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
     </>
   );

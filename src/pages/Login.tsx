@@ -269,7 +269,7 @@ export default function Login() {
                     <>
                       <h1>Test 계정</h1>
                       <p>ID : kernel360</p>
-                      <p>PWD : 121212</p>
+                      <p>PWD : k121212!</p>
                     </>
                   )}
                 </div>
@@ -288,6 +288,7 @@ export default function Login() {
         />
       )}
     </div>
+    
   );
 }
 

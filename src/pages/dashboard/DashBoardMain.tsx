@@ -9,31 +9,67 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 import MonthlyStats from './components/MonthlyStats';
-import PageHeader from "@/components/custom/PageHeader";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [carStatus, setCarStatus] = useState<CarStatusTypes>({
-    running: 0,
-    waiting: 0,
-    fixing: 0,
-    closed: 0
+    RUNNING: 0,
+    WAITING: 0,
+    FIXING: 0,
+    CLOSED: 0
   });
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
   
+  // useSseEvents();
+
   // 데이터 로드
+  const fetchCarStatus = async () => {
+    try {
+      const response = await dashboardApi.getCarStatus();
+      setCarStatus(response.data);
+    } catch (error) {
+      console.error('차량 상태 조회 실패:', error);
+      setError(createApiError(error));
+      throw error;
+    }
+  };
+
+  const fetchReturnStatus = async () => {
+    try {
+      const response = await dashboardApi.getReturnStatus();
+      console.log("getReturnStatus: ", response);
+      setReturnStatus(response.data);
+    } catch (error) {
+      console.error('반납 현황 조회 실패:', error);
+      setError(createApiError(error));
+      throw error;
+    }
+  };
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await dashboardApi.getStatistics();
+      console.log("getStatistics: ", response);
+      setStatistics(response.data);
+    } catch (error) {
+      console.error('통계 조회 실패:', error);
+      setError(createApiError(error));
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
         await Promise.all([
-          getCarStatus(),
-          getReturnStatusData(),
-          getStatistics()
+          fetchCarStatus(),
+          fetchReturnStatus(),
+          fetchStatistics()
         ]);
       } catch (err) {
         console.error('데이터 조회 실패:', err);
@@ -52,41 +88,6 @@ export default function Dashboard() {
       setStatisticsItems(makeStatisticsItems(statistics));
     }
   }, [statistics]);
-
-  const getCarStatus = async () => {
-    try {
-      const response = await dashboardApi.getCarStatus();
-      setCarStatus(response.data);
-    } catch (error) {
-      console.error('차량 상태 조회 실패:', error);
-      setError(createApiError(error));
-      throw error;
-    }
-  };
-  
-  const getReturnStatusData = async () => {
-    try {
-      const response = await dashboardApi.getReturnStatus();
-      console.log("getReturnStatus: ", response);
-      setReturnStatus(response.data);
-    } catch (error) {
-      console.error('반납 현황 조회 실패:', error);
-      setError(createApiError(error));
-      throw error;
-    }
-  };
-
-  const getStatistics = async () => {
-    try {
-      const response = await dashboardApi.getStatistics();
-      console.log("getStatistics: ", response);
-      setStatistics(response.data);
-    } catch (error) {
-      console.error('통계 조회 실패:', error);
-      setError(createApiError(error));
-      throw error;
-    }
-  };
 
   // 샘플 데이터
   const monthlyStatsData = {
@@ -145,7 +146,7 @@ export default function Dashboard() {
 
             {/* Reservation Status */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
-              <ReturnedStatus reservations={ReturnStatus} isLoading={isLoading} getReturnStatusData={getReturnStatusData} />
+              <ReturnedStatus reservations={ReturnStatus} isLoading={isLoading} getReturnStatusData={fetchReturnStatus} />
             </div>
           </div>
           
