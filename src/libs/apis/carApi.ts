@@ -82,7 +82,12 @@ export const carApiService = {
     });
 
     return response.data;
-  }
+  },
+
+  getEmulateCars: async () => {
+    const response = await api.get(`${carApiRoot}/emulator/mdns`);
+    return response.data;
+  },
 };
 
 export default carApiService;

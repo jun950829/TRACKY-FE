@@ -15,11 +15,13 @@ import * as yup from "yup";
 import { AddressSearch } from '@/components/address/AddressSearch';
 import { AddressResult } from '@/libs/apis/addressApi';
 import { formatCoordinate } from "@/libs/utils/utils";
+import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 
 const schema = yup.object({
     mdn: yup.string().required("차량 관리번호를 선택해주세요."),
     renterName: yup.string().required("사용자 이름을 입력해주세요."),
-    renterPhone: yup.string().required("사용자 전화번호를 입력해주세요.").matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-0000-0000이어야 합니다."),
+    renterPhone: yup.string().required("사용자 전화번호를 입력해주세요.")
+    .matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-****-****이어야 합니다."),
     rentStime: yup.string().required("대여 시간 입력해주세요."),
     rentEtime: yup.string().required("반납 시간 입력해주세요."),
     rentLoc: yup.string().required("대여 할 위치를 입력해주세요."),
@@ -39,10 +41,14 @@ function RentRegister() {
         register,
         handleSubmit,
         setValue,
+        watch,
         formState: { errors }
     } = useForm({
         resolver: yupResolver(schema)
     })
+
+    const phoneValue = watch("renterPhone");
+    const { onChange, ...rest } = register("renterPhone");
 
     // 주소 선택 시 폼 값 업데이트
     useEffect(() => {
@@ -150,7 +156,14 @@ function RentRegister() {
 
                     <div className="space-y-2">
                         <Label>사용자 전화번호</Label>
-                        <Input placeholder="예: 010-1234-5678" {...register("renterPhone")} />
+                        <Input placeholder="예: 010-1234-5678" value={phoneValue}
+                            onChange={(e) => {
+                                const formatted = formatPhoneNumber(e.target.value);
+                                setValue("renterPhone", formatted);
+                                onChange(e); }}
+                            inputMode="numeric"
+                            maxLength={13}
+                            {...rest}   />
                         {errors.renterPhone && <p className="text-sm text-red-500">{errors.renterPhone.message}</p>}
                     </div>
 

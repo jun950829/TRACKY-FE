@@ -108,6 +108,7 @@ export type CycleGpsRequest = {
   ang: number;  // 방향
   spd: number;  // 속도
   sum: number;  // 누적 주행거리
+  oTime: string;  // 발생시간
 }
 
 export type CycleInfoRequest = {

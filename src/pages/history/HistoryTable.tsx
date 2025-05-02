@@ -304,27 +304,28 @@ function HistoryTable() {
 
       {/* Table */}
       <div className="w-full">
+        {/* PC 화면용 테이블 */}
         <div className="hidden md:block overflow-auto shadow-sm bg-white">
           <div className="relative">
             <div className="sticky top-0 z-10 bg-white">
-              <Table>
-                  <TableHeader>
-                    <TableRow className="bg-gray-50">
-                      <TableHead className="w-[70px] text-center">운행 ID</TableHead>
-                      <TableHead className="w-[100px] text-center">일자</TableHead>
-                      <TableHead className="w-[120px] text-center">목적</TableHead>
-                      <TableHead className="w-[160px] text-center">차량번호</TableHead>
-                      <TableHead className="w-[140px] text-center">사용자</TableHead>
-                      <TableHead className="w-[140px] text-center">운행거리(km)</TableHead>
-                      <TableHead className="w-[140px] text-center">운행시간</TableHead>
-                      <TableHead className="w-[140px] text-center">도착지</TableHead>
-                    </TableRow>
-                  </TableHeader>
+              <Table className="w-full" style={{ tableLayout: 'fixed' }}>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="text-center" style={{ width: '70px' }}>운행 ID</TableHead>
+                    <TableHead className="text-center" style={{ width: '100px' }}>일자</TableHead>
+                    <TableHead className="text-center" style={{ width: '120px' }}>목적</TableHead>
+                    <TableHead className="text-center" style={{ width: '160px' }}>차량번호</TableHead>
+                    <TableHead className="text-center" style={{ width: '140px' }}>사용자</TableHead>
+                    <TableHead className="text-center" style={{ width: '140px' }}>운행거리(km)</TableHead>
+                    <TableHead className="text-center" style={{ width: '140px' }}>운행시간</TableHead>
+                    <TableHead className="text-center" style={{ width: '140px' }}>도착지</TableHead>
+                  </TableRow>
+                </TableHeader>
               </Table>
             </div>
           </div>
           <div className="h-[calc(100vh-21rem)] overflow-y-auto">
-            <Table>
+            <Table className="w-full" style={{ tableLayout: 'fixed' }}>
               <TableBody>
               {driveResults && driveResults.length === 0 ?
               <TableRow>
@@ -338,21 +339,21 @@ function HistoryTable() {
                   className="hover:bg-gray-50 cursor-pointer text-center"
                   onClick={() => clickDrive(drive.id)}
                 >
-                  <TableCell className="w-[70px] font-medium">{drive.id}</TableCell>
-                  <TableCell className="w-[100px]">
+                  <TableCell style={{ width: '70px' }} className="font-medium">{drive.id}</TableCell>
+                  <TableCell style={{ width: '100px' }}>
                     {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
                   </TableCell>
-                  <TableCell className="w-[120px]">{drive.purpose || '기타업무'}</TableCell>
-                  <TableCell className="w-[160px]">
+                  <TableCell style={{ width: '120px' }}>{drive.purpose || '기타업무'}</TableCell>
+                  <TableCell style={{ width: '160px' }}>
                     <p>{drive.carPlate}</p>
                     <p className="text-gray-500 text-sm">{drive.mdn}</p>
                   </TableCell>
-                  <TableCell className="w-[140px]">{drive.renterName}</TableCell>
-                  <TableCell className="w-[140px]">{(drive.driveDistance || 0).toFixed(1)}</TableCell>
-                  <TableCell className="w-[140px]">
+                  <TableCell style={{ width: '140px' }}>{drive.renterName}</TableCell>
+                  <TableCell style={{ width: '140px' }}>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
+                  <TableCell style={{ width: '140px' }}>
                     {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
                   </TableCell>
-                  <TableCell className="w-[140px] truncate">
+                  <TableCell style={{ width: '140px' }} className="truncate">
                     <span className="text-gray-400">-</span>
                   </TableCell>
                 </TableRow>

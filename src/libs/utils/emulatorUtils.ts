@@ -19,6 +19,23 @@ export const getKoreanTimeFormatted = (): string => {
   return `${year}${month}${day}${hours}${minutes}`;
 };
 
+export const getKoreanTimeFormattedWithSeconds = (): string => {
+    // 현재 시간을 가져옴
+    const now = new Date();
+  
+    const koreanTime = new Date(now.getTime());
+    
+    // 'yyyyMMddHHmm' 형식으로 변환
+    const year = koreanTime.getFullYear();
+    const month = String(koreanTime.getMonth() + 1).padStart(2, '0');
+    const day = String(koreanTime.getDate()).padStart(2, '0');
+    const hours = String(koreanTime.getHours()).padStart(2, '0');
+    const minutes = String(koreanTime.getMinutes()).padStart(2, '0');
+    const seconds = String(koreanTime.getSeconds()).padStart(2, '0');
+    
+    return `${year}${month}${day}${hours}${minutes}${seconds}`;
+};
+
 /**
  * 위도 경도를 소수점 6자리까지 자르고 1,000,000을 곱한 정수값으로 변환
  * @param coordinate 변환할 좌표 (위도 또는 경도)
@@ -52,14 +69,14 @@ export const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPo
  * 시동 ON 요청 객체 생성
  * @param position 현재 위치
  */
-export const createEngineOnRequest = (position: GeolocationPosition): EngineRequestType => {
+export const createEngineOnRequest = (mdn:string, position: GeolocationPosition): EngineRequestType => {
   return {
-    mdn: "9999999999",
+    mdn: mdn,
     tid: "A001",
     mid: "6",
     pv: "5",
     did: "1",
-    onTime: getKoreanTimeFormatted(),
+    onTime: getKoreanTimeFormattedWithSeconds(),
     offTime: null,
     gcd: "A",
     lat: formatCoordinate(position.coords.latitude),
@@ -77,18 +94,19 @@ export const createEngineOnRequest = (position: GeolocationPosition): EngineRequ
  * @param totalDistance 누적 거리
  */
 export const createEngineOffRequest = (
+  mdn:string,
   position: GeolocationPosition, 
   onTime: string, 
   totalDistance: number
 ): EngineRequestType => {
   return {
-    mdn: "9999999999",
+    mdn: mdn,
     tid: "A001",
     mid: "6",
     pv: "5",
     did: "1",
     onTime: onTime,
-    offTime: getKoreanTimeFormatted(),
+    offTime: getKoreanTimeFormattedWithSeconds(),
     gcd: "A",
     lat: formatCoordinate(position.coords.latitude),
     lon: formatCoordinate(position.coords.longitude),
