@@ -12,6 +12,7 @@ export interface ReservationCardProps {
   reservations: ReturnStatus[];
   isLoading: boolean;
   getReturnStatusData: (datefilter: number) => void;
+  updateStatus: (rentUuid: string) => Promise<void>;
 }
 
 // export enum DateFilter {

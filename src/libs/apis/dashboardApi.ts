@@ -43,4 +43,9 @@ export const dashboardApi = {
     const response = await api.post("/quests/create", data);
     return response.data;
   },
+
+  updateRentStatusToReturn: async (rentUuid: string) => {
+    const response = await api.patch(`${dashboardApiRoot}/return/status/${rentUuid}`, rentUuid);
+    return response.data;
+  }
 };

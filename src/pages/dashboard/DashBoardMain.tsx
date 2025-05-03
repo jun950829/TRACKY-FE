@@ -11,6 +11,7 @@ import { ApiError, createApiError } from "@/types/error";
 import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 import MonthlyStats from './components/MonthlyStats';
 import PageHeader from "@/components/custom/PageHeader";
+import { RentStatus } from "@/constants/datas/status";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,6 +63,17 @@ export default function Dashboard() {
       throw error;
     }
   };
+
+  const handleUpdateStatus = async (rentUuid: string) => {
+    try {
+      await dashboardApi.updateRentStatusToReturn(rentUuid);
+      await fetchReturnStatus();
+      alert("반납 처리 성공!");
+    } catch(err) {
+        console.error("반납 처리 실패:", err);
+        setError(createApiError(err));
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,7 +161,7 @@ export default function Dashboard() {
 
             {/* Reservation Status */}
             <div className="w-1/2 h-full bg-white rounded-lg border border-zinc-100 shadow-sm">
-              <ReturnedStatus reservations={ReturnStatus} isLoading={isLoading} getReturnStatusData={fetchReturnStatus} />
+              <ReturnedStatus reservations={ReturnStatus} isLoading={isLoading} updateStatus={handleUpdateStatus} getReturnStatusData={fetchReturnStatus} />
             </div>
           </div>
           
