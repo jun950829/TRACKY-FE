@@ -16,27 +16,25 @@ import { AddressSearch } from '@/components/address/AddressSearch';
 import { AddressResult } from '@/libs/apis/addressApi';
 import { formatCoordinate } from "@/libs/utils/utils";
 import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
+import { MdnStatus } from "@/constants/types/rentTypes"
+import { validateFormValues } from "../rentValidator";
 
 const schema = yup.object({
     mdn: yup.string().required("차량 관리번호를 선택해주세요."),
     renterName: yup.string().required("사용자 이름을 입력해주세요."),
     renterPhone: yup.string().required("사용자 전화번호를 입력해주세요.")
     .matches(/^010-\d{4}-\d{4}$/, "전화번호 형식은 010-****-****이어야 합니다."),
-    rentStime: yup.string().required("대여 시간 입력해주세요."),
-    rentEtime: yup.string().required("반납 시간 입력해주세요."),
+    rentStime: yup.string().required("대여 시간을 입력해주세요."),
+    rentEtime: yup.string().required("반납 시간을 입력해주세요."),
     rentLoc: yup.string().required("대여 할 위치를 입력해주세요."),
     returnLoc: yup.string().required("반납 할 위치를 입력해주세요."),
     purpose: yup.string().required("사용목적 입력해주세요.")
 })
 
-interface MdnStatus {
-    mdn: string;
-    status: string;
-}
-
 function RentRegister() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string>("");
     const [mdnList, setMdnList] = useState<MdnStatus[]>([]);
     const navigate = useNavigate();
     const [rentLocation, setRentLocation] = useState<AddressResult | null>(null);
@@ -81,6 +79,7 @@ function RentRegister() {
     }, []);
 
     const onClose = () => {
+        setErrorMessage("");
         setIsError(false);
     }
 
@@ -94,7 +93,12 @@ function RentRegister() {
      * @param data
      */
     const onSubmit = async (data: RentCreateTypes) => {
-        if (!rentLocation || !returnLocation) {
+        const stime = watch("rentStime");
+        const etime = watch("rentEtime");
+        const msg = validateFormValues(stime, etime, rentLocation+"", returnLocation+"");
+
+        if(msg) {
+            setErrorMessage(msg);
             setIsError(true);
             return;
         }
@@ -174,13 +178,13 @@ function RentRegister() {
 
                     <div className="space-y-2">
                         <Label>대여 시작 시간</Label>
-                        <Input type="datetime-local" {...register("rentStime")} />
+                        <Input type="datetime-local" step={300} {...register("rentStime")} />
                         {errors.rentStime && <p className="text-sm text-red-500">{errors.rentStime.message}</p>}
                     </div>
 
                     <div className="space-y-2">
                         <Label>대여 종료 시간</Label>
-                        <Input type="datetime-local" {...register("rentEtime")} />
+                        <Input type="datetime-local" step={300} {...register("rentEtime")} />
                         {errors.rentEtime && <p className="text-sm text-red-500">{errors.rentEtime.message}</p>}
                     </div>
 
@@ -228,8 +232,8 @@ function RentRegister() {
             <Modal
                 open={isError}
                 onClose={onClose}
-                title="에러"
-                description="대여 등록에 실패했습니다!"
+                title="대여 실패"
+                description={errorMessage}
                 confirmText="확인"
                 onConfirm={onClose}
                 showCancel={false}
