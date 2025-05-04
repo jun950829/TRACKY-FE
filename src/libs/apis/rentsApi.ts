@@ -1,7 +1,24 @@
 import { RentCreateTypes, RentUpdateTypes } from "@/constants/types/types";
 import api from "./api";
+import axios from "axios";
 
 const rentApiRoot = "/rents";
+
+interface AvailabilityCheckRequest {
+  mdn: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface TimeSlot {
+  start: string;
+  end: string;
+  isAvailable: boolean;
+}
+
+interface AvailabilityResponse {
+  data: TimeSlot[];
+}
 
 export const rentApiService = {
   getRents: async () => {
@@ -59,6 +76,11 @@ export const rentApiService = {
 
   deleteRent: async (rentUuid: string) => {
     const response = await api.delete(`${rentApiRoot}/${rentUuid}`);
+    return response.data;
+  },
+
+  checkAvailability: async (data: AvailabilityCheckRequest): Promise<AvailabilityResponse> => {
+    const response = await axios.post('/api/rents/availability', data);
     return response.data;
   },
 };
