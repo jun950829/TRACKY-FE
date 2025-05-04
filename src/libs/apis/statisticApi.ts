@@ -8,7 +8,7 @@ export interface DailyStatisticSummary {
   averageOperationRate: number;
   totalDrivingSeconds: number;
   totalDriveCount: number;
-  totalDrivingDistanceKm: number;
+  totalDrivingDistance: number;
 }
 
 export interface HourlyStats {
@@ -27,10 +27,11 @@ export interface MonthlyStatisticSummary {
   averageOperationRate: number;
   totalDrivingSeconds: number;
   totalDriveCount: number;
-  totalDrivingDistanceKm: number;
+  totalDrivingDistance: number;
 }
 
-export interface MonthlyStat {
+export interface MonthlyStats {
+  year: number;
   month: number;
   driveCount: number;
   driveDistance: number;
@@ -38,7 +39,7 @@ export interface MonthlyStat {
 
 export interface MonthlyStatisticResponse {
   summary: MonthlyStatisticSummary;
-  monthlyStat: MonthlyStat[];
+  monthlyStats: MonthlyStats[];
 }
 
 // 목데이터
@@ -49,7 +50,7 @@ const createMockDailyStatistic = (): DailyStatisticResponse => {
     averageOperationRate: 85.3,
     totalDrivingSeconds: 604800, // 일주일(7일) 초 단위
     totalDriveCount: dailyCardData.todayTrips.value,
-    totalDrivingDistanceKm: dailyCardData.totalDistance.value,
+    totalDrivingDistance: dailyCardData.totalDistance.value,
   };
 
   const mockHourlyStats: HourlyStats[] = dailyHourlyOperationData.datasets[0].data.map(
@@ -73,11 +74,12 @@ const createMockMonthlyStatistic = (): MonthlyStatisticResponse => {
     averageOperationRate: 63,
     totalDrivingSeconds: 987654,
     totalDriveCount: 321,
-    totalDrivingDistanceKm: 4567.89,
+    totalDrivingDistance: 4567.89,
   };
 
   // 1월부터 12월까지의 데이터 생성
-  const mockMonthlyStat: MonthlyStat[] = Array.from({ length: 12 }, (_, i) => ({
+  const mockMonthlyStats: MonthlyStats[] = Array.from({ length: 12 }, (_, i) => ({
+    year: 2025,
     month: i + 1,
     driveCount: 50 + Math.floor(Math.random() * 50), // 50~99 사이 임의의 값
     driveDistance: 1000 + Math.floor(Math.random() * 3000), // 1000~3999 사이 임의의 값
@@ -85,7 +87,7 @@ const createMockMonthlyStatistic = (): MonthlyStatisticResponse => {
 
   return {
     summary: mockSummary,
-    monthlyStat: mockMonthlyStat,
+    monthlyStats: mockMonthlyStats,
   };
 };
 

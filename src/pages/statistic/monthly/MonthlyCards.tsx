@@ -82,7 +82,7 @@ function MonthlyCards({ monthlyData }: MonthlyCardsProps) {
           <h3 className="text-sm font-medium text-gray-500 mb-4">월 총 운행거리</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-cyan-600">
-              {summary.totalDrivingDistanceKm.toFixed(0)}
+              {summary.totalDrivingDistance.toFixed(0)}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">km</span>
           </div>
