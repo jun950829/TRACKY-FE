@@ -1,6 +1,5 @@
 import { RentDetailTypes } from "@/constants/types/types";
 import { formatDateTime } from "@/libs/utils/utils";
-import { RentStatus } from "@/constants/datas/status";
 import {
   Dialog,
   DialogContent,

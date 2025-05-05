@@ -18,7 +18,10 @@ import { useEffect, useState } from 'react';
 import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';
 import { RentStatus } from '@/constants/datas/status';
+import { MdnStatus } from "@/constants/types/rentTypes";
 import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
+import { validateFormValues } from "./rentValidator";
+
 
 const schema = yup.object().shape({
   mdn: yup.string().required("차량 관리번호를 입력하세요"),
@@ -45,10 +48,10 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   // 상태 관련
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [isTimeError, setIsTimeError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [phoneValue, setPhoneValue] = useState(initialData.renterPhone);
 
-  const [mdnList, setMdnList] = useState<string[]>([]);
+  const [mdnList, setMdnList] = useState<MdnStatus[]>([]);
 
   const {
     register,
@@ -84,8 +87,10 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
 
   const submitHandler = (data: FormValues) => {
 
-    if(new Date(data.rentStime) >= new Date(data.rentEtime)) {
-      setIsTimeError(true);
+    const message = validateFormValues(data.rentStime, data.rentEtime, data.rentLoc, data.returnLoc);
+    if(message) {
+      setErrorMessage(message);
+      setIsError(true);
       return;
     }
 
@@ -135,8 +140,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   };
 
   const onClose = () => {
+    setErrorMessage("");
     setIsError(false);
-    setIsTimeError(false);
   }
 
   return (
@@ -154,8 +159,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
                   <SelectValue placeholder="차량 관리번호를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mdnList.map((mdn: string, idx: number) => (
-                    <SelectItem key={idx} value={mdn}>{mdn}</SelectItem>
+                  {mdnList.map((mdnStatus: MdnStatus, idx: number) => (
+                    <SelectItem key={idx} value={mdnStatus.mdn}>{mdnStatus.mdn} {mdnStatus.status}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -247,8 +252,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
         </DialogContent>
       </Dialog>
       <Modal open={isSuccess} onClose={onConfirm} title="안내" description="렌트 수정 완료!" confirmText="확인" onConfirm={onConfirm} showCancel={false}/>
-      <Modal open={isError} onClose={onClose} title="에러" description="렌트 수정 실패!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
-      <Modal open={isTimeError} onClose={onClose} title="에러" description="반납 시간은 대여 시간 이후여야 합니다!" confirmText="확인" onConfirm={onClose} showCancel={false}/>
+      <Modal open={isError} onClose={onClose} title="에러" description={errorMessage} confirmText="확인" onConfirm={onClose} showCancel={false}/>
     </>
   );
 }
