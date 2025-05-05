@@ -16,11 +16,11 @@ export const adminApiService = {
   },
 
   // 공지사항 목록 조회 함수 추가
-  getNotices: async (search?: string, isImportant?: string, size: number = 10, page: number = 0) => {
+  getNotices: async (search?: string, type?: string, size: number = 10, page: number = 0) => {
     const params: any = { size, page };
     
     if (search) params.search = search;
-    if (isImportant && isImportant !== 'all') params.isImportant = isImportant;
+    if (type && type !== 'all') params.type = type;
     
     const response = await api.get(`${noticeApiRoot}`, { params });
     return response;

@@ -1,8 +1,10 @@
+import { ImportanceLevel } from "../enums/noticeEnums";
+
 // 공지사항 타입
 export type NoticeTypes = {
     title: string;
     content: string;
-    isImportant: boolean;// 중요 공지 여부
+    type?: ImportanceLevel;// 중요 공지 여부
 }
 
 // 첨부파일 타입 정의
@@ -19,6 +21,6 @@ export type NoticeDetailTypes = {
     title: string;
     content: string;
     createdAt: string;// 작성일
-    isImportant: boolean;// 중요 공지 여부
+    type: ImportanceLevel;// 중요 공지 여부
     attachments?: AttachmentType[]; // 첨부파일 목록
 }

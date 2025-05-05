@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -6,19 +7,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Search } from "lucide-react";
-import { useState, useEffect } from "react";
-import NoticeModal from "./NoticeModal";
-import NoticeDetailModal from "./modal/NoticeDetailModal";
 import { NoticeDetailTypes, NoticeTypes } from "@/constants/types/noticeTypes";
 import adminApiService from "@/libs/apis/noticeApi";
+import { Edit, Plus, Trash } from "lucide-react";
+import { useState } from "react";
+import NoticeDetailModal from "./modal/NoticeDetailModal";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { CustomButton } from "@/components/custom/CustomButton";
 import Modal from "@/components/custom/Modal";
-import NoticeUpdateModal from "./modal/NoticeUpdateModal";
+import { Card, CardContent } from "@/components/ui/card";
+import NoticePatchModal from "./modal/NoticePatchModal";
+import { ImportanceLevel } from "@/constants/enums/noticeEnums";
 
 type NoticeTableProps = {
   noticeList: NoticeDetailTypes[];
@@ -144,11 +143,11 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                 >
                   <TableCell style={{ width: '120px' }} className="whitespace-nowrap">
                     <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                      notice.isImportant 
+                      notice.type === ImportanceLevel.IMPORTANT
                         ? "text-red-600 bg-red-50" 
                         : "text-gray-600 bg-gray-50"
                     }`}>
-                      {notice.isImportant ? "중요" : "일반"}
+                      {notice.type === ImportanceLevel.IMPORTANT ? "중요" : "일반"}
                     </span>
                   </TableCell>
                   <TableCell style={{ width: 'auto' }} className="text-gray-700 truncate">{notice.title}</TableCell>
@@ -210,11 +209,11 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
                       <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                        notice.isImportant 
+                        notice.type === ImportanceLevel.IMPORTANT
                           ? "text-red-600 bg-red-50" 
                           : "text-gray-600 bg-gray-50"
                       }`}>
-                        {notice.isImportant ? "중요" : "일반"}
+                        {notice.type === ImportanceLevel.IMPORTANT? "중요" : "일반"}
                       </span>
                       <h3 className="font-semibold text-gray-800">{notice.title}</h3>
                     </div>
@@ -265,19 +264,22 @@ function NoticeTable({ noticeList, setNoticeList, isLoading = false, reload }: N
 
       {/* 공지사항 수정 모달 */}
       {selectedNotice && isUpdateModalOpen && (
-        <NoticeUpdateModal
+        <NoticePatchModal
           open={true}
           onClose={handleCloseUpdateModal}
           notice={selectedNotice}
-        />
+          type={"update"}   
+          reload={reload}   
+          />
       )}
 
       {/* 공지사항 작성 모달 */}
       {isCreateModalOpen && (
-        <NoticeModal
+        <NoticePatchModal
           open={true}
           onClose={() => setIsCreateModalOpen(false)}
-          onSave={handleSave}
+          type={"create"}
+          reload={reload}
         />
       )}
 

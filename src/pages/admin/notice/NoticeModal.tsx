@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import adminApiService from "@/libs/apis/noticeApi";
+import { ImportanceLevel } from "@/constants/enums/noticeEnums";
 
 interface NoticeModalProps {
   open: boolean;
@@ -21,11 +22,11 @@ const NoticeModal = ({ open, onClose, onSave }: NoticeModalProps) => {
     defaultValues: {
       title: "",
       content: "",
-      isImportant: false,
+      type : ImportanceLevel.NORMAL,
     }
   });
 
-  const watchIsImportant = watch("isImportant");
+  const watchIsImportant = watch("type");
 
   const onSubmit = async (data: NoticeTypes) => {
     setIsLoading(true);
@@ -91,9 +92,9 @@ const NoticeModal = ({ open, onClose, onSave }: NoticeModalProps) => {
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="isImportant" 
-                checked={watchIsImportant}
+                checked={watchIsImportant === ImportanceLevel.IMPORTANT}
                 onCheckedChange={(checked) => {
-                  setValue("isImportant", checked === true);
+                  setValue("type", checked === true ? ImportanceLevel.IMPORTANT : ImportanceLevel.NORMAL);
                 }}
               />
               <Label htmlFor="isImportant" className="cursor-pointer">중요 공지사항으로 표시</Label>

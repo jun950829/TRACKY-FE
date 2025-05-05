@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { ImportanceLevel } from "@/constants/enums/noticeEnums";
 
 // 유효성 검사용 스키마
 const schema = yup.object().shape({
@@ -106,7 +107,7 @@ export default function Login() {
     setIsNoticeLoading(true);
     try {
       // 모든 중요 공지사항을 가져오도록 변경 (size 파라미터를 제거해 모든 중요 공지사항을 가져옴)
-      const response = await adminApiService.getNotices("", "true", 10, 0);
+      const response = await adminApiService.getNotices("", ImportanceLevel.IMPORTANT, 10, 0);
       
       const responseBody = response.data || response;
       
