@@ -105,12 +105,12 @@ function RentRegister() {
 
         const requestData = {
             ...data,
-            rentLat: formatCoordinate(Number(rentLocation.y)),
-            rentLon: formatCoordinate(Number(rentLocation.x)),
-            returnLat: formatCoordinate(Number(returnLocation.y)),
-            returnLon: formatCoordinate(Number(returnLocation.x)),
-            rentLoc: rentLocation.address_name + " " + rentLocation.place_name,
-            returnLoc: returnLocation.address_name + " " + returnLocation.place_name
+            rentLat: formatCoordinate(Number(rentLocation?.y)),
+            rentLon: formatCoordinate(Number(rentLocation?.x)),
+            returnLat: formatCoordinate(Number(returnLocation?.y)),
+            returnLon: formatCoordinate(Number(returnLocation?.x)),
+            rentLoc: rentLocation?.address_name + " " + rentLocation?.place_name,
+            returnLoc: returnLocation?.address_name + " " + returnLocation?.place_name
         }
         try {
             const rentData = await rentApiService.createRent(requestData);
