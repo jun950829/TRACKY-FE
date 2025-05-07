@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/libs/utils/utils";
+import { cn, formatDateTime, formatTime } from "@/libs/utils/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { ko } from "date-fns/locale";
@@ -77,16 +77,18 @@ export function Step2Form() {
     setIsLoading(true);
     try {
       // Mock 데이터 사용
-      const mockTimeSlots = generateMockTimeSlots(startDate, endDate);
-      setTimeSlots(mockTimeSlots);
+      // const mockTimeSlots = generateMockTimeSlots(startDate, endDate);
+      // setTimeSlots(mockTimeSlots);
       
       // 실제 API 호출은 주석 처리
-      // const response = await rentApiService.checkAvailability({
-      //   mdn: selectedVehicle,
-      //   startDate: startDate.toISOString(),
-      //   endDate: endDate.toISOString(),
-      // });
-      // setTimeSlots(response.data);
+      const response = await rentApiService.checkAvailability({
+        mdn: selectedVehicle,
+        startDate: formatTime(startDate.toString()),
+        endDate: formatTime(endDate.toString()),
+      });
+      console.log(response);
+      setTimeSlots(response.data);
+
     } catch (error) {
       console.error("가용성 확인 중 오류 발생:", error);
     } finally {

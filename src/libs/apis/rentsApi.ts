@@ -79,8 +79,8 @@ export const rentApiService = {
     return response.data;
   },
 
-  checkAvailability: async (data: AvailabilityCheckRequest): Promise<AvailabilityResponse> => {
-    const response = await axios.post('/api/rents/availability', data);
+  checkAvailability: async (data: AvailabilityCheckRequest) => {
+    const response = await api.post(`${rentApiRoot}/availability`, data);
     return response.data;
   },
 };
