@@ -1,48 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRentStore } from "@/stores/rentStore";
 import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn, formatDateTime, formatTime } from "@/libs/utils/utils";
+import { cn, formatTime } from "@/libs/utils/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { ko } from "date-fns/locale";
 import rentApiService from "@/libs/apis/rentsApi";
 
 interface TimeSlot {
-  start: string;
-  end: string;
-  isAvailable: boolean;
+  rentStime: string;
+  rentEtime: string;
 }
-
-// Mock 데이터 생성 함수
-const generateMockTimeSlots = (startDate: Date, endDate: Date): TimeSlot[] => {
-  const slots: TimeSlot[] = [];
-  const currentDate = new Date(startDate);
-  
-  // 시작 날짜부터 종료 날짜까지 1시간 간격으로 슬롯 생성
-  while (currentDate < endDate) {
-    const slotStart = new Date(currentDate);
-    const slotEnd = new Date(currentDate);
-    slotEnd.setHours(slotEnd.getHours() + 1);
-    
-    // 현재 시간보다 이전 시간대는 모두 불가능으로 설정
-    const isAvailable = slotStart > new Date();
-    
-    slots.push({
-      start: slotStart.toISOString(),
-      end: slotEnd.toISOString(),
-      isAvailable
-    });
-    
-    currentDate.setHours(currentDate.getHours() + 1);
-  }
-  
-  return slots;
-};
 
 // 10분 간격의 시간 옵션 생성
 const generateTimeOptions = () => {
@@ -58,37 +30,24 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export function Step2Form() {
+export default function Step2Form() {
   const { setStep2Data, setCurrentStep, rentStime, rentEtime, selectedVehicle } = useRentStore();
   const [startDate, setStartDate] = useState<Date | undefined>(rentStime ? new Date(rentStime) : undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(rentEtime ? new Date(rentEtime) : undefined);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (startDate && endDate) {
-      checkAvailability();
-    }
-  }, [startDate, endDate]);
-
   const checkAvailability = async () => {
-    if (!selectedVehicle || !startDate || !endDate) return;
+    if (!startDate || !endDate || !selectedVehicle) return;
 
     setIsLoading(true);
     try {
-      // Mock 데이터 사용
-      // const mockTimeSlots = generateMockTimeSlots(startDate, endDate);
-      // setTimeSlots(mockTimeSlots);
-      
-      // 실제 API 호출은 주석 처리
       const response = await rentApiService.checkAvailability({
         mdn: selectedVehicle,
         startDate: formatTime(startDate.toString()),
         endDate: formatTime(endDate.toString()),
       });
-      console.log(response);
       setTimeSlots(response.data);
-
     } catch (error) {
       console.error("가용성 확인 중 오류 발생:", error);
     } finally {
@@ -96,33 +55,25 @@ export function Step2Form() {
     }
   };
 
-  const handleTimeChange = (time: string, isStart: boolean) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const date = isStart ? startDate : endDate;
-    if (date) {
-      const newDate = new Date(date);
-      newDate.setHours(hours, minutes);
-      if (isStart) {
-        setStartDate(newDate);
-      } else {
-        setEndDate(newDate);
-      }
+  useEffect(() => {
+    if (startDate && endDate) {
+      checkAvailability();
     }
-  };
+  }, [startDate, endDate]);
 
   const handleNext = () => {
     if (!startDate || !endDate) {
-      alert("대여 시작 및 종료 시간을 선택해주세요.");
+      alert("날짜와 시간을 선택해주세요.");
       return;
     }
 
     const selectedSlot = timeSlots.find(
-      (slot) => slot.start === startDate.toISOString() && slot.end === endDate.toISOString()
+      (slot) => slot.rentStime === startDate.toISOString() && slot.rentEtime === endDate.toISOString()
     );
 
-    if (!selectedSlot?.isAvailable) {
-    //   alert("선택하신 시간대는 예약이 불가능합니다.");
-    //   return;
+    if (selectedSlot) {
+      alert("선택하신 시간대는 예약이 불가능합니다.");
+      return;
     }
 
     setStep2Data({
@@ -132,16 +83,12 @@ export function Step2Form() {
     setCurrentStep(3);
   };
 
-  const handleBack = () => {
-    setCurrentStep(1);
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label>대여 시작 시간</Label>
-          <div className="flex gap-2">
+          <Label>대여 시작</Label>
+          <div className="grid gap-2">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -161,14 +108,22 @@ export function Step2Form() {
                   selected={startDate}
                   onSelect={setStartDate}
                   initialFocus
+                  locale={ko}
                 />
               </PopoverContent>
             </Popover>
             <Select
-              value={startDate ? format(startDate, "HH:mm") : ""}
-              onValueChange={(value) => handleTimeChange(value, true)}
+              value={startDate ? format(startDate, "HH:mm") : undefined}
+              onValueChange={(value) => {
+                if (startDate) {
+                  const [hours, minutes] = value.split(":").map(Number);
+                  const newDate = new Date(startDate);
+                  newDate.setHours(hours, minutes);
+                  setStartDate(newDate);
+                }
+              }}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger>
                 <SelectValue placeholder="시간 선택" />
               </SelectTrigger>
               <SelectContent>
@@ -183,8 +138,8 @@ export function Step2Form() {
         </div>
 
         <div className="space-y-2">
-          <Label>대여 종료 시간</Label>
-          <div className="flex gap-2">
+          <Label>대여 종료</Label>
+          <div className="grid gap-2">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -204,14 +159,22 @@ export function Step2Form() {
                   selected={endDate}
                   onSelect={setEndDate}
                   initialFocus
+                  locale={ko}
                 />
               </PopoverContent>
             </Popover>
             <Select
-              value={endDate ? format(endDate, "HH:mm") : ""}
-              onValueChange={(value) => handleTimeChange(value, false)}
+              value={endDate ? format(endDate, "HH:mm") : undefined}
+              onValueChange={(value) => {
+                if (endDate) {
+                  const [hours, minutes] = value.split(":").map(Number);
+                  const newDate = new Date(endDate);
+                  newDate.setHours(hours, minutes);
+                  setEndDate(newDate);
+                }
+              }}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger>
                 <SelectValue placeholder="시간 선택" />
               </SelectTrigger>
               <SelectContent>
@@ -232,59 +195,56 @@ export function Step2Form() {
         <div className="space-y-4">
           <Label>예약 불가능 시간대</Label>
           <div className="space-y-3">
-            {timeSlots
-              .filter(slot => !slot.isAvailable)
-              .map((slot, index) => {
-                const startDate = new Date(slot.start);
-                const endDate = new Date(slot.end);
-                const isSameDay = startDate.toDateString() === endDate.toDateString();
-                
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-red-100 rounded-full">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-red-600"
-                      >
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                        <path d="m15 9-6 6" />
-                        <path d="m9 9 6 6" />
-                      </svg>
+            {timeSlots.map((slot, index) => {
+              const startDate = new Date(slot.rentStime);
+              const endDate = new Date(slot.rentEtime);
+              
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-red-100 rounded-full">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-red-600"
+                    >
+                      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                      <path d="m15 9-6 6" />
+                      <path d="m9 9 6 6" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-red-900">
+                      {format(startDate, "yyyy년 MM월 dd일", { locale: ko })}
                     </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-red-900">
-                        {format(startDate, "yyyy년 MM월 dd일", { locale: ko })}
-                      </div>
-                      <div className="text-sm text-red-700">
-                        {format(startDate, "HH:mm", { locale: ko })} - {format(endDate, "HH:mm", { locale: ko })}
-                      </div>
+                    <div className="text-sm text-red-700">
+                      {format(startDate, "HH:mm", { locale: ko })} - {format(endDate, "HH:mm", { locale: ko })}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
           </div>
           
-          {timeSlots.every(slot => !slot.isAvailable) && (
+          {timeSlots.length > 0 && (
             <div className="text-center py-4 text-sm text-muted-foreground">
-              선택하신 기간 내 예약 가능한 시간대가 없습니다.
+              선택하신 기간에 이미 예약된 시간이 있습니다.
             </div>
           )}
         </div>
       ) : null}
 
-      <div className="flex justify-between pt-4">
-        <Button variant="outline" onClick={handleBack}>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={() => setCurrentStep(1)}>
           이전
         </Button>
         <Button onClick={handleNext}>다음</Button>
