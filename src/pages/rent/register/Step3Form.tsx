@@ -29,8 +29,8 @@ export function Step3Form() {
         renterName: formData.renterName,
         renterPhone: formData.renterPhone,
         purpose: formData.purpose,
-        rentStime: formData.rentStime,
-        rentEtime: formData.rentEtime,
+        rentStime: formData.rentStime || "",
+        rentEtime: formData.rentEtime || "",
         rentLat: formatCoordinate(Number(rentLocation.y)),
         rentLon: formatCoordinate(Number(rentLocation.x)),
         returnLat: formatCoordinate(Number(returnLocation.y)),
@@ -62,7 +62,7 @@ export function Step3Form() {
       <div className="space-y-2">
         <Label>대여 위치</Label>
         <AddressSearch
-          onSelect={(location) => setStep3Data({ rentLocation: location, returnLocation })}
+          onSelect={(location) => setStep3Data({ rentLocation: location, returnLocation: location })}
           placeholder="대여 위치를 검색하세요"
         />
       </div>
@@ -70,7 +70,7 @@ export function Step3Form() {
       <div className="space-y-2">
         <Label>반납 위치</Label>
         <AddressSearch
-          onSelect={(location) => setStep3Data({ rentLocation, returnLocation: location })}
+          onSelect={(location) => setStep3Data({ rentLocation: location, returnLocation: location })}
           placeholder="반납 위치를 검색하세요"
         />
       </div>

@@ -138,11 +138,15 @@ export type RentCreateTypes = {
   mdn: string;           // 차량 번호판
   renterName: string;    // 사용자 이름
   renterPhone: string;   // 사용자 전화번호
+  purpose: string;       // 사용 목적
   rentStime: string;     // 대여 시작 시간
   rentEtime: string;     // 대여 종료 시간
+  rentLat: number;       // 대여 위도
+  rentLon: number;       // 대여 경도
+  returnLat: number;     // 반납 위도
+  returnLon: number;     // 반납 경도
   rentLoc: string;       // 대여 위치
   returnLoc: string;     // 반납 위치
-  purpose: string;       // 사용 목적
 }
 
 export type RentUpdateTypes = {

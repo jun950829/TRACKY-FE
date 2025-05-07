@@ -30,7 +30,7 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
-export default function Step2Form() {
+export function Step2Form() {
   const { setStep2Data, setCurrentStep, rentStime, rentEtime, selectedVehicle } = useRentStore();
   const [startDate, setStartDate] = useState<Date | undefined>(rentStime ? new Date(rentStime) : undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(rentEtime ? new Date(rentEtime) : undefined);
@@ -224,7 +224,7 @@ export default function Step2Form() {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-red-900">
-                      {format(startDate, "yyyy년 MM월 dd일", { locale: ko })}
+                      {format(startDate, "yyyy년 MM월 dd일", { locale: ko })} - {format(endDate, "yyyy년 MM월 dd일", { locale: ko })}
                     </div>
                     <div className="text-sm text-red-700">
                       {format(startDate, "HH:mm", { locale: ko })} - {format(endDate, "HH:mm", { locale: ko })}
@@ -241,6 +241,34 @@ export default function Step2Form() {
             </div>
           )}
         </div>
+      ) : startDate && endDate ? (
+        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-green-100 rounded-full">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-green-600"
+            >
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <div className="font-medium text-green-900">
+              예약 가능한 시간입니다
+            </div>
+            <div className="text-sm text-green-700">
+              선택하신 시간대에 예약이 가능합니다.
+            </div>
+          </div>
+        </div>
       ) : null}
 
       <div className="flex justify-end gap-2">
@@ -252,3 +280,5 @@ export default function Step2Form() {
     </div>
   );
 } 
+
+export default Step2Form;
