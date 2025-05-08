@@ -20,12 +20,11 @@ export default function Dashboard() {
     FIXING: 0,
     CLOSED: 0
   });
+
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<Statistics>();
   const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
-  
-  useDriveSse({ driveId: 99 });
 
   // 데이터 로드
   const fetchCarStatus = async () => {
