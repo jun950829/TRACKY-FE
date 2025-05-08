@@ -34,6 +34,7 @@ export default function RentRegister() {
         return <Step3Form />;
       default:
         return null;
+
     }
   };
 
