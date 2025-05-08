@@ -7,7 +7,7 @@ export interface CarStatistic {
   maxSpeed: string;
 }
 
-export const carStatisticData: CarStatistic[] = [
+export const carStatisticMockData: CarStatistic[] = [
   {
     carNumber: '서울 12가 3456',
     carType: 'SUV',

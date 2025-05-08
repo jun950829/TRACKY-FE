@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import api from "./api";
 import { dailyCardData, dailyHourlyOperationData } from "@/constants/mocks/statisticMockData";
+import { CarTypeEnum } from "@/constants/types/types";
+import { CarStatisticRequest } from "@/pages/statistic/car/StatisticCarTable";
 
 export interface DailyStatisticSummary {
   totalCarCount: number;
@@ -11,14 +13,14 @@ export interface DailyStatisticSummary {
   totalDrivingDistance: number;
 }
 
-export interface HourlyStats {
+export interface HourlyStat {
   hour: number;
   driveCount: number;
 }
 
 export interface DailyStatisticResponse {
   summary: DailyStatisticSummary;
-  hourlyStats: HourlyStats[];
+  hourlyStats: HourlyStat[];
 }
 
 export interface MonthlyStatisticSummary {
@@ -30,7 +32,7 @@ export interface MonthlyStatisticSummary {
   totalDrivingDistance: number;
 }
 
-export interface MonthlyStats {
+export interface MonthlyStat {
   year: number;
   month: number;
   driveCount: number;
@@ -39,7 +41,16 @@ export interface MonthlyStats {
 
 export interface MonthlyStatisticResponse {
   summary: MonthlyStatisticSummary;
-  monthlyStats: MonthlyStats[];
+  monthlyStats: MonthlyStat[];
+}
+
+export interface CarStatisticResponse {
+  mdn: string;
+  carPlate: string;
+  carType: CarTypeEnum;
+  driveSec: number;
+  driveDistance: number;
+  avgSpeed: number;
 }
 
 // 목데이터
@@ -53,7 +64,7 @@ const createMockDailyStatistic = (): DailyStatisticResponse => {
     totalDrivingDistance: dailyCardData.totalDistance.value,
   };
 
-  const mockHourlyStats: HourlyStats[] = dailyHourlyOperationData.datasets[0].data.map(
+  const mockHourlyStats: HourlyStat[] = dailyHourlyOperationData.datasets[0].data.map(
     (count, index) => ({
       hour: index,
       driveCount: typeof count === "number" ? count : 0,
@@ -78,7 +89,7 @@ const createMockMonthlyStatistic = (): MonthlyStatisticResponse => {
   };
 
   // 1월부터 12월까지의 데이터 생성
-  const mockMonthlyStats: MonthlyStats[] = Array.from({ length: 12 }, (_, i) => ({
+  const mockMonthlyStats: MonthlyStat[] = Array.from({ length: 12 }, (_, i) => ({
     year: 2025,
     month: i + 1,
     driveCount: 50 + Math.floor(Math.random() * 50), // 50~99 사이 임의의 값
@@ -113,6 +124,17 @@ export const statisticApiService = {
       return createMockMonthlyStatistic();
     }
   },
+
+  getCarStatistic: async (request: CarStatisticRequest) => {
+    try {
+      const response = await api.get(`/statistic/cars?search=${request.searchTerm}&page=${request.currentPage - 1}&size=${request.pageSize}`);
+      console.log('차량 통계 API 요청 성공', response.data);
+      return response.data;
+    } catch(error) {
+      console.warn("차량 통계 API 요청 실패", error);
+      return null;
+    }
+  }
 };
 
 export default statisticApiService;

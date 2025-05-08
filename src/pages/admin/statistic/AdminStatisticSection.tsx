@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
@@ -9,10 +9,35 @@ import BizStatisticTable from "./BizStatisticTable";
 import StatisticCharts from "./StatisticCharts";
 import VehicleStatisticTable from "./VehicleStatisticTable";
 import { bizRatingDistribution, bizStatistics, dailyActiveUsersData, monthlyRentalData, overallStatistics, vehicleStatistics, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
+import adminStatisticApiService from "@/libs/apis/adminStatisticApi";
 
-function AdminStatisticSection() {
+interface AdminStatisticSectionProps {
+  selectedDate: Date;
+}
+
+function AdminStatisticSection({selectedDate}: AdminStatisticSectionProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statisticData, setStatisticData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
+  
+
+  useEffect(() => {
+    const fetchAdminStatistic = async () => {
+      setIsLoading(true);
+      try {
+        const data = await adminStatisticApiService.getAdminStatistic();
+        setStatisticData(data);
+      } catch(error) {
+        console.error("관리자 통계 데이터 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAdminStatistic();
+  }, [selectedDate]);
+  
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">

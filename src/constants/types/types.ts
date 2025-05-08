@@ -85,6 +85,19 @@ export type CarStatusEnum = 'RUNNING' | 'WAITING' | 'FIXING' | 'CLOSED';
 
 export type CarStatusTypes = Record<CarStatusEnum, number>;
 
+export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
+
+export const CarTypeLabel: Record<CarTypeEnum, string> = {
+  MINI: "경차",
+  SEDAN: "세단",
+  VAN: "벤",
+  SUV: "SUV",
+  TRUCK: "트럭",
+  BUS: "버스",
+  SPORTS: "스포츠카",
+  ETC: "기타",
+};
+
 export type Devices = {
   id: number;
   tid: string;
