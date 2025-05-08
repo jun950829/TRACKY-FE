@@ -1,14 +1,70 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import { carStatisticData, ITEMS_PER_PAGE, TOTAL_ITEMS } from '@/constants/mocks/carStatisticMockData';
+import statisticApiService from '@/libs/apis/statisticApi';
+import { CarTypeEnum } from '@/constants/types/types';
+
+export interface CarStatisticRequest {
+  searchTerm: string;
+  currentPage: number;
+  pageSize: number;
+}
+
+export interface CarStatisticResponse {
+  mdn: string;
+  carPlate: string;
+  carType: CarTypeEnum;
+  driveSec: number;
+  driveDistance: number;
+  avgSpeed: number;
+}
+
+export interface Pagination {
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+const defaultPage: Pagination = {
+  totalElements: 0,
+  totalPages: 1,
+  number: 1,
+  size: 1
+}
 
 function StatisticCarTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [carStatisticData, setCarStatisticData] = useState<CarStatisticResponse[]>([]);
+  const [pagination, setPagination] = useState<Pagination>(defaultPage);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pageSize = 5;
 
   // 페이지네이션 계산
-  const totalPages = Math.ceil(TOTAL_ITEMS / ITEMS_PER_PAGE);
-  const pages = Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1);
+  const totalPages = pagination?.totalPages;
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  useEffect(() => {
+    const carStatisticRequest: CarStatisticRequest = { searchTerm, currentPage, pageSize }
+
+    const fetchCarStatistic = async () => {
+      setIsLoading(true);
+      try {
+        const response = await statisticApiService.getCarStatistic(carStatisticRequest);
+        setCarStatisticData(response.data);
+        setPagination(response.pageResponse);
+        console.log('carStatisticData', carStatisticData);
+
+      } catch(error) {
+          console.error('차량 통계 불러오기 실패', error);
+          setCarStatisticData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCarStatistic();
+  }, [searchTerm, currentPage])
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -48,12 +104,12 @@ function StatisticCarTable() {
           <tbody className="divide-y divide-gray-100">
             {carStatisticData.map((car, index) => (
               <tr key={index} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 text-sm text-gray-600">{car.carNumber}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.carPlate}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.carType}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.operationTime}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.operationDistance}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.averageSpeed}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.maxSpeed}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.driveSec}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.driveDistance}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.avgSpeed}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">0</td>
                 <td className="px-6 py-4">
                   <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                     상세보기
@@ -69,7 +125,7 @@ function StatisticCarTable() {
       <div className="px-6 py-4 border-t border-gray-100">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
-            전체 {TOTAL_ITEMS} 개 중 1에서 5까지 표시
+            전체 {pagination?.totalElements} 개 중 1에서 5까지 표시
           </div>
           <div className="flex items-center space-x-2">
             <button
@@ -93,8 +149,8 @@ function StatisticCarTable() {
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+              disabled={currentPage === pagination?.totalPages}
               className="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
             >
               &gt;
