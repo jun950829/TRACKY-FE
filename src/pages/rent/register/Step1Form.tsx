@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useRentStore } from "@/stores/rentStore";
 import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 import { useState, useEffect } from "react";
-import { MdnStatus } from "@/constants/types/rentTypes";
 import rentApiService from "@/libs/apis/rentsApi";
 
 export function Step1Form() {
@@ -51,7 +50,7 @@ export function Step1Form() {
         <Input
           placeholder="예: 홍길동"
           value={renterName}
-          onChange={(e) => setStep1Data({ renterName: e.target.value, renterPhone, purpose, selectedVehicle })}
+          onChange={(e) => setStep1Data({ renterName: e.target.value, renterPhone, purpose, selectedVehicle: selectedVehicle || "" })}
         />
       </div>
 
@@ -71,7 +70,7 @@ export function Step1Form() {
         <Input
           placeholder="예: 출장, 업무용"
           value={purpose}
-          onChange={(e) => setStep1Data({ renterName, renterPhone, purpose: e.target.value, selectedVehicle })}
+          onChange={(e) => setStep1Data({ renterName, renterPhone, purpose: e.target.value, selectedVehicle: selectedVehicle || "" })}
         />
       </div>
 
@@ -79,7 +78,7 @@ export function Step1Form() {
         <Label>차량 선택</Label>
         <Select
           value={selectedVehicle || ""}
-          onValueChange={(value) => setStep1Data({ renterName, renterPhone, purpose, selectedVehicle: value })}
+          onValueChange={(value) => setStep1Data({ renterName, renterPhone, purpose, selectedVehicle: value || "" })}
         >
           <SelectTrigger>
             <SelectValue placeholder="차량을 선택하세요" />
