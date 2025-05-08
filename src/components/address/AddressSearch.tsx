@@ -4,6 +4,7 @@ import { AddressResult } from '@/libs/apis/addressApi';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface AddressSearchProps {
   onSelect: (address: AddressResult) => void;
@@ -19,7 +20,6 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const { searchResults, isLoading, error, searchAddress, clearResults } = useAddressSearch();
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,27 +33,21 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
+  const handleSearch = () => {
+    if (query.trim()) {
+      searchAddress(query);
+      setIsOpen(true);
+    } else {
+      clearResults();
+      setIsOpen(false);
     }
+  };
 
-    searchTimeoutRef.current = setTimeout(() => {
-      if (query.trim()) {
-        searchAddress(query);
-        setIsOpen(true);
-      } else {
-        clearResults();
-        setIsOpen(false);
-      }
-    }, 300);
-
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, [query, searchAddress, clearResults]);
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   const handleSelect = (address: AddressResult) => {
     onSelect(address);
@@ -63,20 +57,25 @@ export const AddressSearch: React.FC<AddressSearchProps> = ({
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
-      <div className="relative">
+      <div className="relative flex gap-2">
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder={placeholder}
           className="pr-10"
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+        <Button 
+          onClick={handleSearch}
+          disabled={isLoading}
+          className="shrink-0"
+        >
           {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Search className="h-4 w-4 text-gray-500" />
+            <Search className="h-4 w-4" />
           )}
-        </div>
+        </Button>
       </div>
 
       {isOpen && (searchResults.length > 0 || error) && (
