@@ -29,7 +29,7 @@ const schema = yup.object({
     purpose: yup.string().required("사용목적 입력해주세요.")
 })
 
-interface MdnStatus {
+export interface MdnStatus {
     mdn: string;
     status: string;
 }

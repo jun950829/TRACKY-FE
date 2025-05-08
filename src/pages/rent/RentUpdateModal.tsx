@@ -19,6 +19,7 @@ import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';
 import { RentStatus } from '@/constants/datas/status';
 import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
+import { MdnStatus } from "./register/RentRegister";
 
 const schema = yup.object().shape({
   mdn: yup.string().required("차량 관리번호를 입력하세요"),
@@ -48,7 +49,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   const [isTimeError, setIsTimeError] = useState(false);
   const [phoneValue, setPhoneValue] = useState(initialData.renterPhone);
 
-  const [mdnList, setMdnList] = useState<string[]>([]);
+  const [mdnList, setMdnList] = useState<MdnStatus[]>([]);
 
   const {
     register,
@@ -154,8 +155,8 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
                   <SelectValue placeholder="차량 관리번호를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mdnList.map((mdn: string, idx: number) => (
-                    <SelectItem key={idx} value={mdn}>{mdn}</SelectItem>
+                  {mdnList.map((mdnStatus: MdnStatus, idx: number) => (
+                    <SelectItem key={idx} value={mdnStatus.mdn}>{mdnStatus.mdn} {mdnStatus.status}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
