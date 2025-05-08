@@ -23,7 +23,6 @@ import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 import { validateFormValues } from "./rentValidator";
 import StatusBadge from "@/components/custom/StatusBadge";
 
-
 const schema = yup.object().shape({
   mdn: yup.string().required("차량 관리번호를 입력하세요"),
   renterName: yup.string().required("대여자을 입력하세요"),
