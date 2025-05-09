@@ -3,12 +3,19 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BizStatistic } from "@/constants/mocks/adminStaticsMockData";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 interface BizStatisticTableProps {
   data: BizStatistic[];
+  setSelectedBiz: (selectedBiz: string) => void;
 }
 
-function BizStatisticTable({ data }: BizStatisticTableProps) {
+function BizStatisticTable({ data, setSelectedBiz }: BizStatisticTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -21,6 +28,7 @@ function BizStatisticTable({ data }: BizStatisticTableProps) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = filteredData.slice(startIndex, endIndex);
+  const [date, setDate] = useState<Date | undefined>();
 
   return (
     <div className="space-y-4">
@@ -34,6 +42,24 @@ function BizStatisticTable({ data }: BizStatisticTableProps) {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "yyyy-MM-dd") : "날짜 선택"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              locale={ko}
+              defaultMonth={date || undefined}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="rounded-md border">
@@ -52,7 +78,15 @@ function BizStatisticTable({ data }: BizStatisticTableProps) {
           <tbody>
             {currentData.map((item) => (
               <tr key={item.id} className="border-b">
-                <td className="p-4">{item.name}</td>
+                <td
+                  className="p-4"
+                  onClick={() => {
+                    //승택님 여기서부터 하시면 됩니다..
+                    // setSelectedBiz(item.bizName);
+                  }}
+                >
+                  {item.name}
+                </td>
                 <td className="p-4">{item.totalVehicles}</td>
                 <td className="p-4">{item.activeVehicles}</td>
                 <td className="p-4">{item.totalRentals}</td>
@@ -94,6 +128,6 @@ function BizStatisticTable({ data }: BizStatisticTableProps) {
       </div>
     </div>
   );
-} 
+}
 
 export default BizStatisticTable;

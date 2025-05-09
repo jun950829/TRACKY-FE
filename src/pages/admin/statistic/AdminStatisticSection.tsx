@@ -1,73 +1,99 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-import StatisticCards from "./StatisticCards";
+import DailyStatisticCharts from "./DailyStatisticCharts";
+import BizMonthlyCardStatistic from "./BizMonthlyCardStatistic";
 import BizStatisticTable from "./BizStatisticTable";
 import StatisticCharts from "./StatisticCharts";
 import VehicleStatisticTable from "./VehicleStatisticTable";
-import { bizRatingDistribution, bizStatistics, dailyActiveUsersData, monthlyRentalData, overallStatistics, vehicleStatistics, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
+import MonthlyDriveCountChart from "./MonthlyDriveCountChart";
+
+import {
+  bizRatingDistribution,
+  bizStatistics,
+  dailyActiveUsersData,
+  monthlyRentalData,
+  overallStatistics,
+  vehicleStatistics,
+  vehicleTypeDistribution,
+} from "@/constants/mocks/adminStaticsMockData";
+
+import { DailyStatisticResponse, statisticApiService } from "@/libs/apis/statisticApi";
 
 function AdminStatisticSection() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dailyData, setDailyData] = useState<DailyStatisticResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedBiz, setSelectedBiz] = useState("");
+
+  console.log(selectedBiz);
+  // 임시 summary 데이터 (API 연동 가능)
+  const monthlySummary = {
+    totalDriveCount: 1423,
+    totalDrivingSeconds: 58320,
+    totalDrivingDistanceKm: 2191.3,
+  };
+
+  const formatSeconds = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}시간 ${minutes}분`;
+  };
+  const monthlyData = {
+    labels: ["1월", "2월", "3월", "4월", "5월", "6월"],
+    values: [32, 45, 38, 52, 49, 60],
+  };
+
+  useEffect(() => {
+    const fetchDailyData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await statisticApiService.getDailyStatistic(selectedDate);
+        setDailyData(data);
+      } catch (error) {
+        console.error("일간 통계 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDailyData();
+  }, [selectedDate]);
 
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">통계 대시보드</h1>
-        <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+        <h1 className="text-3xl font-bold">업체별 통계 대시보드</h1>
       </div>
 
-      <StatisticCards data={overallStatistics} />
+      <BizStatisticTable data={bizStatistics} setSelectedBiz={setSelectedBiz} />
+      <BizMonthlyCardStatistic summary={monthlySummary} formatSeconds={formatSeconds} />
+      <MonthlyDriveCountChart data={monthlyData} />
 
-      <Tabs defaultValue="vehicle" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="vehicle">차량 통계</TabsTrigger>
-          <TabsTrigger value="biz">업체 통계</TabsTrigger>
-          <TabsTrigger value="overall">통합 통계</TabsTrigger>
-        </TabsList>
+      <h1 className="text-3xl font-bold">총 업체 통계</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>전일 시간별 운행량</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center text-sm text-gray-500">로딩 중...</div>
+          ) : (
+            <DailyStatisticCharts selectedDate={selectedDate} dailyData={dailyData} />
+          )}
+        </CardContent>
+      </Card>
 
-        <TabsContent value="vehicle" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>차량 운영 통계</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <VehicleStatisticTable data={vehicleStatistics} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="biz" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>업체별 통계</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BizStatisticTable data={bizStatistics} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="overall" className="space-y-4">
-          <StatisticCharts
-            monthlyRentalData={monthlyRentalData}
-            dailyActiveUsersData={dailyActiveUsersData}
-            vehicleTypeDistribution={vehicleTypeDistribution}
-            bizRatingDistribution={bizRatingDistribution}
-          />
-        </TabsContent>
-      </Tabs>
+      <StatisticCharts
+        monthlyRentalData={monthlyRentalData}
+        dailyActiveUsersData={dailyActiveUsersData}
+        vehicleTypeDistribution={vehicleTypeDistribution}
+        bizRatingDistribution={bizRatingDistribution}
+      />
     </div>
   );
 }

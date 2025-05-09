@@ -45,7 +45,7 @@ function StatisticCharts({
       },
       title: {
         display: true,
-        text: "월별 렌트 현황",
+        text: "당월 평균 운행률",
       },
     },
   };
@@ -58,7 +58,7 @@ function StatisticCharts({
       },
       title: {
         display: true,
-        text: "일일 활성 사용자",
+        text: "당월 미운행 차량수",
       },
     },
   };
@@ -71,7 +71,7 @@ function StatisticCharts({
       },
       title: {
         display: true,
-        text: "차종별 분포",
+        text: "당월 총 운행량",
       },
     },
   };
@@ -84,7 +84,7 @@ function StatisticCharts({
       },
       title: {
         display: true,
-        text: "업체 평점 분포",
+        text: "일별 운행수",
       },
     },
   };
@@ -93,7 +93,7 @@ function StatisticCharts({
     labels: monthlyRentalData.map((item) => item.date),
     datasets: [
       {
-        label: "렌트 수",
+        label: "운행 횟수",
         data: monthlyRentalData.map((item) => item.value),
         borderColor: "rgb(136, 132, 216)",
         backgroundColor: "rgba(136, 132, 216, 0.5)",
@@ -105,7 +105,7 @@ function StatisticCharts({
     labels: dailyActiveUsersData.map((item) => item.date),
     datasets: [
       {
-        label: "활성 사용자 수",
+        label: "차량 수",
         data: dailyActiveUsersData.map((item) => item.value),
         borderColor: "rgb(130, 202, 157)",
         backgroundColor: "rgba(130, 202, 157, 0.5)",
@@ -117,7 +117,7 @@ function StatisticCharts({
     labels: vehicleTypeDistribution.map((item) => item.type),
     datasets: [
       {
-        label: "차량 수",
+        label: "운행 수",
         data: vehicleTypeDistribution.map((item) => item.count),
         backgroundColor: "rgba(136, 132, 216, 0.5)",
       },
@@ -128,7 +128,7 @@ function StatisticCharts({
     labels: bizRatingDistribution.map((item) => item.rating),
     datasets: [
       {
-        label: "업체 수",
+        label: "운행 수",
         data: bizRatingDistribution.map((item) => item.count),
         backgroundColor: "rgba(130, 202, 157, 0.5)",
       },
@@ -162,6 +162,6 @@ function StatisticCharts({
       </Card>
     </div>
   );
-} 
+}
 
 export default StatisticCharts;
