@@ -1,7 +1,7 @@
 // kill-port.js
 import { exec } from 'child_process';
 
-const port = 5173;
+const port = 8080;
 
 exec(`lsof -i :${port} -t`, (err, stdout, stderr) => {
   if (err || !stdout) {

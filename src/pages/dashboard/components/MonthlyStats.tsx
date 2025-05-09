@@ -67,7 +67,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
 
   return (
     <Card className="w-full bg-white">
-      <CardHeader p-4 bg-white border-b border-zinc-100 flex-row items-center justify-between>
+      <CardHeader className="p-4 bg-white border-b border-zinc-100 flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">월별 통계 리포트</CardTitle>
       </CardHeader>
       <CardContent>
