@@ -17,6 +17,11 @@ export const realtimeApi = {
     const response = await api.get(`${realtimeApiRoot}/${id}`);
     return response.data;
   },
+
+  getRealtimeBeforePath: async (driveId: number, nowTime: string) => {
+    const response = await api.get(`${realtimeApiRoot}/gps/beforepath/${driveId}?nowTime=${nowTime}`);
+    return response.data;
+  },
 };
 
 export default realtimeApi;

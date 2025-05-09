@@ -1,4 +1,5 @@
 import realtimeApi from '@/libs/apis/realtimeApi';
+import { useSseStore } from '@/stores/useSseStore';
 import { ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -30,6 +31,14 @@ function RealTimeDetailPanel({ driveId, goSearch }: RealTimeDetailPanelProps) {
       try {
         const result = await realtimeApi.getRealtimeDetailData(driveId);
         setDriveDetail(result.data);
+
+        const nowTime = new Date().toISOString().split('.')[0];
+        const gpsHistory = await realtimeApi.getRealtimeBeforePath(driveId, nowTime);
+        
+        const store = useSseStore.getState();
+        store.clearGpsList();
+        store.setGpsList(() => gpsHistory.data);
+
       } catch (error) {
         console.error("차량 상세 조회 실패:", error);
       }

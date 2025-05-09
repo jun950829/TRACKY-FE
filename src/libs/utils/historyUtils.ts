@@ -5,7 +5,7 @@ export interface GpsData {
   lat: number;
   lon: number;
   spd: number;
-  o_time: string;
+  oTime: string;
 }
 
 // 경로의 전체 범위 계산

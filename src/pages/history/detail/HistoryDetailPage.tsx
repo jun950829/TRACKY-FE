@@ -113,8 +113,8 @@ const HistoryDetailPage: React.FC = () => {
             {driveDetail?.gpsDataList ? (
               <HistoryMap 
                 gpsDataList={driveDetail.gpsDataList} 
-                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, o_time: driveDetail.driveOnTime }}
-                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, o_time: driveDetail.driveOffTime }}
+                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, oTime: driveDetail.driveOnTime }}
+                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, oTime: driveDetail.driveOffTime }}
                 height="200px" 
               />
             ) : (

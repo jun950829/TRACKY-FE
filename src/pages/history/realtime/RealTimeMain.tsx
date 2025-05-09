@@ -10,16 +10,10 @@ function RealTimeMain() {
   const [currentPanel, setCurrentPanel] = useState<'search' | 'detail'>('search');
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
 
-  // 목 데이터 (지도용 차량 정보)
-  const vehicles = [
-    { id: 1, name: '차량 1', lat: 37.5665, lng: 126.9780 },
-    { id: 2, name: '차량 2', lat: 37.5666, lng: 126.9781 },
-  ];
-
   return (
     <div className="w-full h-[calc(100vh-4rem)] relative">
       {/* 지도 */}
-      <RealTimeMap vehicles={vehicles} />
+      <RealTimeMap selectedDriveId={selectedDriveId} />
 
       {/* 돋보기 버튼 (검색창이 닫혀있을 때만 보임) */}
       {!isMainOpen && (

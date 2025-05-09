@@ -20,15 +20,6 @@ interface RealTimeSearchPanelProps {
 type SortField = 'status' | 'carNumber' | 'driver' | 'distance' | 'time';
 type SortOrder = 'asc' | 'desc';
 
-interface Vehicle {
-  id: number;
-  status: '운행중' | '정차중';
-  carNumber: string;
-  driver: string;
-  distance: number;
-  time: number;
-}
-
 interface RunningCar  {
   id: number;
   mdn: string;
@@ -44,11 +35,6 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
   const [sortField, setSortField] = useState<SortField>('distance');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
-  // 예시 데이터
-  // const [runningCarList] = useState<Vehicle[]>([
-  //   { id: 1, status: '운행중', carNumber: '15가 1234', driver: '박부장', distance: 48.36, time: 73 },
-  //   { id: 2, status: '운행중', carNumber: '59나 5959', driver: '데모', distance: 65.11, time: 73 },
-  // ]);
   const [runningCarList, setRunningCarList] = useState<RunningCar[]>([]);
 
   useEffect(() => {
