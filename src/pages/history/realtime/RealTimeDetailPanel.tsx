@@ -6,6 +6,14 @@ import { useState, useEffect } from 'react';
 interface RealTimeDetailPanelProps {
   driveId: number;
   goSearch: () => void;
+  setIsRefresh: (isRefresh: boolean) => void;
+}
+
+type GpsPoint = {
+  lat: number;
+  lon: number;
+  spd: number;
+  oTime: string;
 }
 
 interface DriveDetail {
@@ -19,25 +27,27 @@ interface DriveDetail {
   drivingTime: string;
   status: string;
   driveOnTime: string;
-}
+} 
 
-function RealTimeDetailPanel({ driveId, goSearch }: RealTimeDetailPanelProps) {
+function RealTimeDetailPanel({ driveId, goSearch, setIsRefresh }: RealTimeDetailPanelProps) {
   const [driveDetail, setDriveDetail] = useState<DriveDetail | null >(null);
 
-
-
-	useEffect(() => {
+  useEffect(() => {
     const fetchDetail = async () => {
       try {
         const result = await realtimeApi.getRealtimeDetailData(driveId);
         setDriveDetail(result.data);
 
-        const nowTime = new Date().toISOString().split('.')[0];
-        const gpsHistory = await realtimeApi.getRealtimeBeforePath(driveId, nowTime);
+        // 초기 GPS 히스토리 데이터 로드
+        const now = new Date();
+        const koreaTime = new Date(now.getTime() + 9 * 60 * 60 * 1000); // UTC + 9시간
+        const nowTimeKST = koreaTime.toISOString().split('.')[0];
+        const response = await realtimeApi.getRealtimeBeforePath(driveId, nowTimeKST);
         
+        // 스토어 초기화 후 히스토리 데이터 설정
         const store = useSseStore.getState();
         store.clearGpsList();
-        store.setGpsList(() => gpsHistory.data);
+        store.setGpsList(() => response.data);
 
       } catch (error) {
         console.error("차량 상세 조회 실패:", error);
@@ -47,12 +57,15 @@ function RealTimeDetailPanel({ driveId, goSearch }: RealTimeDetailPanelProps) {
     fetchDetail();
   }, [driveId]);
 
-
   if (!driveDetail) {
     return <div className="flex items-center justify-between h-full w-full">
       <div className="p-4 text-gray-500">운행 정보가 없습니다.</div>
       <button
-        onClick={goSearch}
+        onClick={() => {
+          goSearch();
+          setIsRefresh(true);
+          console.log("setIsRefresh(true)");
+        }}
         className="flex items-center justify-center w-6 h-6 bg-white border border-gray-200 rounded-full shadow-md ml-2 hover:bg-gray-50"
       >
         <ChevronLeft className="h-3 w-3 text-gray-600" />
@@ -95,7 +108,13 @@ function RealTimeDetailPanel({ driveId, goSearch }: RealTimeDetailPanelProps) {
 
       {/* 닫기 버튼 */}
       <button
-        onClick={goSearch}
+        onClick={() => {
+          useSseStore.getState().resetSse();
+          setIsRefresh(true);
+          goSearch();
+          console.log("setIsRefresh(true)");
+          
+        }}
         className="flex items-center justify-center w-6 h-6 bg-white border border-gray-200 rounded-full shadow-md ml-2 hover:bg-gray-50"
       >
         <ChevronLeft className="h-3 w-3 text-gray-600" />

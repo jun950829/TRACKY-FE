@@ -1,12 +1,5 @@
+import { GpsData } from '@/constants/types/historyTypes';
 import L from 'leaflet';
-
-// GPS 데이터 타입 정의
-export interface GpsData {
-  lat: number;
-  lon: number;
-  spd: number;
-  oTime: string;
-}
 
 // 경로의 전체 범위 계산
 export const calculateBounds = (gpsDataList: GpsData[]) => {
@@ -53,7 +46,9 @@ export interface PathSegment {
 // 경로 세그먼트 생성
 export const createPathSegments = (gpsDataList: GpsData[]) => {
   const segments: PathSegment[] = [];
-  for (let i = 0; i < gpsDataList.length - 1; i++) {
+  
+  // 마지막 60개를 제외한 데이터로 세그먼트 생성
+  for (let i = 0; i < gpsDataList.length-1; i++) {
     const avgSpeed = (gpsDataList[i].spd + gpsDataList[i+1].spd) / 2;
     segments.push({
       positions: [
@@ -66,7 +61,6 @@ export const createPathSegments = (gpsDataList: GpsData[]) => {
   }
   return segments;
 };
-
 
 export const calculateDriveDuration = (driveOnTimeStr: string, driveOffTimeStr: string) => {
   const driveOnTime = new Date(driveOnTimeStr).getTime();

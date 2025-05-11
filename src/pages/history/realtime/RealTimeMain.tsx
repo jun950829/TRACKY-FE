@@ -1,19 +1,32 @@
 import RealTimeMap from "./RealTimeMap";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RealTimeSearchPanel from "./RealTimeSearchPanel";
 import RealTimeDetailPanel from "./RealTimeDetailPanel";
 import { Search } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
+import { useDriveSse } from "@/hooks/useDriveSse";
+import { useSseStore } from "@/stores/useSseStore";
 
 function RealTimeMain() {
   const [isMainOpen, setIsMainOpen] = useState(true);
   const [currentPanel, setCurrentPanel] = useState<'search' | 'detail'>('search');
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
+  const [isRefresh, setIsRefresh] = useState(false);
+
+  // SSE 연결 관리
+  useDriveSse({ driveId: selectedDriveId || 0 });
+
+  // 패널이 변경될 때 SSE 스토어 초기화
+  useEffect(() => {
+    if (currentPanel === 'search') {
+      useSseStore.getState().clearGpsList();
+    }
+  }, [currentPanel]);
 
   return (
     <div className="w-full h-[calc(100vh-4rem)] relative">
       {/* 지도 */}
-      <RealTimeMap selectedDriveId={selectedDriveId} />
+      <RealTimeMap selectedDriveId={selectedDriveId} isRefresh={isRefresh} setIsRefresh={setIsRefresh} />
 
       {/* 돋보기 버튼 (검색창이 닫혀있을 때만 보임) */}
       {!isMainOpen && (
@@ -37,6 +50,7 @@ function RealTimeMain() {
               <RealTimeDetailPanel
                 driveId={selectedDriveId}
                 goSearch={() => setCurrentPanel('search')} // 뒤로가기 시 검색창으로
+                setIsRefresh={setIsRefresh}
               />
           ) : (
             <RealTimeSearchPanel
