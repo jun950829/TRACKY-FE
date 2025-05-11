@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
-import { TimeSeriesData } from "@/constants/mocks/adminStaticsMockData";
+import { GraphStats, TimeSeriesData } from "@/constants/mocks/adminStaticsMockData";
 
 ChartJS.register(
   CategoryScale,
@@ -25,18 +25,15 @@ ChartJS.register(
 );
 
 interface StatisticChartsProps {
-  monthlyRentalData: TimeSeriesData[];
-  dailyActiveUsersData: TimeSeriesData[];
-  vehicleTypeDistribution: { type: string; count: number }[];
-  bizRatingDistribution: { rating: string; count: number }[];
+  // monthlyRentalData: TimeSeriesData[];
+  // dailyActiveUsersData: TimeSeriesData[];
+  // vehicleTypeDistribution: { type: string; count: number }[];
+  // bizRatingDistribution: { rating: string; count: number }[];
+  graphStats: GraphStats;
 }
 
-function StatisticCharts({
-  monthlyRentalData,
-  dailyActiveUsersData,
-  vehicleTypeDistribution,
-  bizRatingDistribution,
-}: StatisticChartsProps) {
+function StatisticCharts({graphStats}: StatisticChartsProps) {
+
   const monthlyRentalOptions = {
     responsive: true,
     plugins: {
@@ -90,11 +87,11 @@ function StatisticCharts({
   };
 
   const monthlyRentalChartData = {
-    labels: monthlyRentalData.map((item) => item.date),
+    labels: graphStats.carCountWithBizName.map((item) => item.bizName),
     datasets: [
       {
         label: "운행 횟수",
-        data: monthlyRentalData.map((item) => item.value),
+        data: graphStats.carCountWithBizName.map((item) => item.carCount),
         borderColor: "rgb(136, 132, 216)",
         backgroundColor: "rgba(136, 132, 216, 0.5)",
       },
@@ -102,11 +99,11 @@ function StatisticCharts({
   };
 
   const dailyActiveUsersChartData = {
-    labels: dailyActiveUsersData.map((item) => item.date),
+    labels: graphStats.operationRateWithBizName.map((item) => item.bizName),
     datasets: [
       {
         label: "차량 수",
-        data: dailyActiveUsersData.map((item) => item.value),
+        data: graphStats.operationRateWithBizName.map((item) => item.rate),
         borderColor: "rgb(130, 202, 157)",
         backgroundColor: "rgba(130, 202, 157, 0.5)",
       },
@@ -114,26 +111,26 @@ function StatisticCharts({
   };
 
   const vehicleTypeChartData = {
-    labels: vehicleTypeDistribution.map((item) => item.type),
+    labels: graphStats.nonOperatedCarWithBizName.map((item) => item.bizName),
     datasets: [
       {
         label: "운행 수",
-        data: vehicleTypeDistribution.map((item) => item.count),
+        data: graphStats.nonOperatedCarWithBizName.map((item) => item.nonOperatedCarCount),
         backgroundColor: "rgba(136, 132, 216, 0.5)",
       },
     ],
   };
 
-  const bizRatingChartData = {
-    labels: bizRatingDistribution.map((item) => item.rating),
-    datasets: [
-      {
-        label: "운행 수",
-        data: bizRatingDistribution.map((item) => item.count),
-        backgroundColor: "rgba(130, 202, 157, 0.5)",
-      },
-    ],
-  };
+  // const bizRatingChartData = {
+  //   labels: bizRatingDistribution.map((item) => item.rating),
+  //   datasets: [
+  //     {
+  //       label: "운행 수",
+  //       data: bizRatingDistribution.map((item) => item.count),
+  //       backgroundColor: "rgba(130, 202, 157, 0.5)",
+  //     },
+  //   ],
+  // };
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -155,11 +152,11 @@ function StatisticCharts({
         </CardContent>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardContent className="pt-6">
           <Bar options={bizRatingOptions} data={bizRatingChartData} />
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

@@ -28,6 +28,32 @@ export interface MonthlyDriveCounts {
   driveCount: number;
 }
 
+export interface HourlyDriveCounts {
+  hour: number;
+  driveCount: number;
+}
+
+export interface CarCount {
+  bizName: string;
+  carCount: number;
+}
+
+export interface OperationRate {
+  bizName: string;
+  rate: number;
+}
+
+export interface NonOperatedCar {
+  bizName: string;
+  nonOperatedCarCount: number;
+}
+
+export interface GraphStats {
+  carCountWithBizName: CarCount[];
+  operationRateWithBizName: OperationRate[];
+  nonOperatedCarWithBizName: NonOperatedCar[];
+}
+
 export interface OverallStatistic {
   totalVehicles: number;
   activeVehicles: number;
@@ -105,10 +131,74 @@ export const bizStatisticMock: BizStatistic = {
 
 export const monthlyDriveCountsMock: MonthlyDriveCounts[] = [
   {
-    date: new Date(),
-    driveCount: 0
+    year: 2025,
+    month: 1,
+    driveCount: 30
+  },
+  {
+    year: 2025,
+    month: 2,
+    driveCount: 40
+  },
+  {
+    year: 2025,
+    month: 3,
+    driveCount: 50
+  },
+  {
+    year: 2025,
+    month: 4,
+    driveCount: 40
+  },
+  {
+    year: 2025,
+    month: 5,
+    driveCount: 60
   },
 ];
+
+export const hourlyDriveCountsMock: HourlyDriveCounts[] = [
+  { hour: 0, driveCount: 10 },
+  { hour: 1, driveCount: 20 },
+  { hour: 2, driveCount: 30 },
+  { hour: 3, driveCount: 60 },
+  { hour: 4, driveCount: 50 },
+  { hour: 5, driveCount: 70 },
+  { hour: 6, driveCount: 30 },
+  { hour: 7, driveCount: 40 },
+  { hour: 8, driveCount: 20 },
+  { hour: 9, driveCount: 10 },
+  { hour: 10, driveCount: 0 },
+  { hour: 11, driveCount: 50 },
+];
+
+export const graphStatsMock: GraphStats = {
+  carCountWithBizName : [
+    { bizName: '지원컴퍼니', carCount: 50}, 
+    { bizName: '지니카', carCount: 30}, 
+    { bizName: '부릉세상', carCount: 20}, 
+    { bizName: '토자렌트', carCount: 40},
+    { bizName: '준시스템', carCount: 70},
+    { bizName: '김치진주', carCount: 40},
+  ],
+  operationRateWithBizName : [
+    { bizName: '지원컴퍼니', rate: 82 },
+    { bizName: '지니카',     rate: 75 },
+    { bizName: '부릉세상',   rate: 68 },
+    { bizName: '토자렌트',   rate: 90 },
+    { bizName: '준시스템',   rate: 55 },
+    { bizName: '김치진주',   rate: 60 },
+  ],
+  
+  nonOperatedCarWithBizName : [
+    { bizName: '지원컴퍼니', nonOperatedCarCount: 9 },
+    { bizName: '지니카',     nonOperatedCarCount: 7 },
+    { bizName: '부릉세상',   nonOperatedCarCount: 6 },
+    { bizName: '토자렌트',   nonOperatedCarCount: 4 },
+    { bizName: '준시스템',   nonOperatedCarCount: 31 },
+    { bizName: '김치진주',   nonOperatedCarCount: 16 },
+  ],
+}
 
 export const overallStatistics: OverallStatistic = {
   totalVehicles: 58,

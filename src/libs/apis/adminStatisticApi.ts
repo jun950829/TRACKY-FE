@@ -51,6 +51,7 @@ export const adminStatisticApiService = {
       console.warn("관리자 - 업체 목록 API 요청 실패", error);
     }
   },
+
   getAdminBizStatistic: async (bizName: string, selectedDate: Date | undefined) => {
     if(selectedDate == undefined) selectedDate = new Date();
     try {
@@ -61,6 +62,7 @@ export const adminStatisticApiService = {
         console.warn('관리자 - 업체별 운행량 통계 API 요청 실패', error);
     }   
   },
+
   getMonthlyDriveCounts: async (bizName: string, selectedDate: Date | undefined) => {
     if(selectedDate == undefined) selectedDate = new Date();
     try {
@@ -70,7 +72,29 @@ export const adminStatisticApiService = {
     } catch (error) {
         console.warn('관리자 - 월별 운행량 통계 API 요청 실패', error);
     }
-  }
+  },
+
+  getHourlyDriveCounts: async (bizName: string, selectedDate: Date | undefined) => {
+    if(selectedDate == undefined) selectedDate = new Date();
+    try {
+        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+        const response = await api.get(`${adminStatisticApiRoot}/hourly?bizName=${bizName}&selectedDate=${formattedDate}`);
+        console.log('관리자 - 시간별 운행량 통계 API 요청 성공', response.data);
+        return response.data.data;
+    } catch (error) {
+        console.warn('관리자 - 시간별 운행량 통계 API 요청 실패', error);
+    }
+  },
+
+  getGraphStats: async () => {
+    try {
+        const response = await api.get(`${adminStatisticApiRoot}/graphs`);
+        console.log('관리자 - 그래프 통계 API 요청 성공', response.data.data);
+        return response.data.data;
+    } catch (error) {
+        console.warn('관리자 - 그래프 통계 API 요청 실패', error);
+    }
+  },
 };
 
 export default adminStatisticApiService;

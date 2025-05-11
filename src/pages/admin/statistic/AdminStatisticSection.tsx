@@ -9,31 +9,23 @@ import BizStatisticTable from "./BizStatisticTable";
 import StatisticCharts from "./StatisticCharts";
 import MonthlyDriveCountChart from "./MonthlyDriveCountChart";
 
-// import {
-//   BizList,
-//   bizListMock,
-//   bizRatingDistribution,
-//   BizStatistic,
-//   bizStatistics,
-//   dailyActiveUsersData,
-//   monthlyRentalData,
-//   overallStatistics,
-//   vehicleStatistics,
-//   vehicleTypeDistribution,
-// } from "@/constants/mocks/adminStaticsMockData";
-
 import adminStatisticApiService from "@/libs/apis/adminStatisticApi";
-import { BizList, bizListMock, bizRatingDistribution, BizStatistic, bizStatisticMock, dailyActiveUsersData, MonthlyDriveCounts, monthlyDriveCountsMock, monthlyRentalData, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
+import { BizList, bizListMock, bizRatingDistribution, BizStatistic, bizStatisticMock, dailyActiveUsersData, GraphStats, graphStatsMock, HourlyDriveCounts, hourlyDriveCountsMock, MonthlyDriveCounts, monthlyDriveCountsMock, monthlyRentalData, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
+import DailyStatisticCharts from "./DailyStatisticCharts";
 
 function AdminStatisticSection() {
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBiz, setSelectedBiz] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+
   const [bizList, setBizList] = useState<BizList[]>(bizListMock);
   const [bizStatistic, setBizStatistic] = useState<BizStatistic>(bizStatisticMock);
   const [monthlyDriveCounts, setMonthlyDriveCounts] = useState<MonthlyDriveCounts[]>(monthlyDriveCountsMock);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedBiz, setSelectedBiz] = useState("");
-
+  const [hourlyDriveCounts, setHourlyDriveCounts] = useState<HourlyDriveCounts[]>(hourlyDriveCountsMock);
+  const [graphStats, setGraphStats] = useState<GraphStats>(graphStatsMock);
+  
   const formatSeconds = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -49,11 +41,16 @@ function AdminStatisticSection() {
 
         const bizStatistic = await adminStatisticApiService.getAdminBizStatistic(selectedBiz, selectedDate);
         setBizStatistic(bizStatistic);
-
+        
         const monthlyDriveCounts = await adminStatisticApiService.getMonthlyDriveCounts(selectedBiz, selectedDate);
         setMonthlyDriveCounts(monthlyDriveCounts);
-        console.log('monthlyDriveCounts', monthlyDriveCounts);
 
+        const hourlyDriveCounts = await adminStatisticApiService.getHourlyDriveCounts(selectedBiz, selectedDate);
+        setHourlyDriveCounts(hourlyDriveCounts);
+
+        const graphStats = await adminStatisticApiService.getGraphStats();
+        setGraphStats(graphStats);
+        
       } catch (error) {
         console.error("업체 목록 불러오기 실패", error);
       } finally {
@@ -69,8 +66,8 @@ function AdminStatisticSection() {
         <h1 className="text-3xl font-bold">업체별 통계 대시보드</h1>
       </div>
 
-      <BizStatisticTable 
-        data={bizList} 
+      <BizStatisticTable
+        data={bizList}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm} 
         selectedBiz={selectedBiz}
@@ -79,7 +76,12 @@ function AdminStatisticSection() {
         setSelectedDate={setSelectedDate} 
       />
       <BizMonthlyCardStatistic summary={bizStatistic} formatSeconds={formatSeconds} />
-      <MonthlyDriveCountChart data={monthlyDriveCounts} />
+      <MonthlyDriveCountChart 
+        monthlyData={monthlyDriveCounts}
+        hourlyData={hourlyDriveCounts}
+        selectedBiz={selectedBiz}
+        selectedDate={selectedDate}
+      />
 
       <h1 className="text-3xl font-bold">총 업체 통계</h1>
       {/* <Card>
@@ -96,10 +98,11 @@ function AdminStatisticSection() {
       </Card> */}
 
       <StatisticCharts
-        monthlyRentalData={monthlyRentalData}
-        dailyActiveUsersData={dailyActiveUsersData}
-        vehicleTypeDistribution={vehicleTypeDistribution}
-        bizRatingDistribution={bizRatingDistribution}
+        // monthlyRentalData={monthlyRentalData}
+        // dailyActiveUsersData={dailyActiveUsersData}
+        // vehicleTypeDistribution={vehicleTypeDistribution}
+        // bizRatingDistribution={bizRatingDistribution}
+        graphStats={graphStats}
       />
     </div>
   );
