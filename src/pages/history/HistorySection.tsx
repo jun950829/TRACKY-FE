@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import HistorySearch from './HistorySearch';
 import HistoryBizList from './HistoryBizList';
-import HistorySheet from './HistorySheet';
 import { Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ErrorToast } from '@/components/custom/ErrorToast';
-import { ApiError, createApiError } from '@/types/error';
+import { ApiError } from '@/types/error';
 import HistoryTable from './HistoryTable';
 import HistoryCarLayer from './HistoryCarLayer';
 import { useCarListStore } from "@/stores/useCarListStore";

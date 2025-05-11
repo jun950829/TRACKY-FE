@@ -37,8 +37,7 @@ function RealTimeMain() {
             ? 'opacity-100 visible scale-100'
             : 'opacity-0 invisible scale-95'
         }`}>
-        <div className="relative w-[360px] p-3">
-
+        <div className="relative w-[400px] p-3">
           {currentPanel === 'detail' && selectedDriveId ? (
               <RealTimeDetailPanel
                 driveId={selectedDriveId}
