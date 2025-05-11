@@ -2,33 +2,36 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BizStatistic } from "@/constants/mocks/adminStaticsMockData";
+import { BizList, BizStatistic } from "@/constants/mocks/adminStaticsMockData";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 
 import { format } from "date-fns";
-import { ko } from "date-fns/locale";
+import { is, ko } from "date-fns/locale";
 
 interface BizStatisticTableProps {
-  data: BizStatistic[];
+  data: BizList[];
+  searchTerm: string;
+  setSearchTerm: (searchTerm: string) => void;
+  selectedBiz: string;
   setSelectedBiz: (selectedBiz: string) => void;
+  selectedDate: Date | undefined;
+  setSelectedDate: (selectedDate: Date | undefined) => void;
 }
 
-function BizStatisticTable({ data, setSelectedBiz }: BizStatisticTableProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSelectedBiz, selectedDate, setSelectedDate }: BizStatisticTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const filteredData = data.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.bizName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = filteredData.slice(startIndex, endIndex);
-  const [date, setDate] = useState<Date | undefined>();
 
   return (
     <div className="space-y-4">
@@ -46,16 +49,16 @@ function BizStatisticTable({ data, setSelectedBiz }: BizStatisticTableProps) {
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "yyyy-MM-dd") : "날짜 선택"}
+              {selectedDate ? format(selectedDate, "yyyy-MM-dd") : "날짜 선택"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
-              selected={date}
-              onSelect={setDate}
+              selected={selectedDate}
+              onSelect={setSelectedDate}
               locale={ko}
-              defaultMonth={date || undefined}
+              defaultMonth={selectedDate || undefined}
               initialFocus
             />
           </PopoverContent>
@@ -69,36 +72,47 @@ function BizStatisticTable({ data, setSelectedBiz }: BizStatisticTableProps) {
               <th className="p-4 text-left font-medium">업체명</th>
               <th className="p-4 text-left font-medium">전체 차량</th>
               <th className="p-4 text-left font-medium">운행 중</th>
-              <th className="p-4 text-left font-medium">총 렌트</th>
-              <th className="p-4 text-left font-medium">총 운행거리</th>
-              <th className="p-4 text-left font-medium">평균 평점</th>
+              <th className="p-4 text-left font-medium">오류</th>
               <th className="p-4 text-left font-medium">상세</th>
             </tr>
           </thead>
           <tbody>
-            {currentData.map((item) => (
-              <tr key={item.id} className="border-b">
-                <td
-                  className="p-4"
+            {currentData.map((item, idx) => {
+              let isSelected = false;
+              if(idx == 0 && selectedBiz == '') isSelected = true;
+              else isSelected = selectedBiz === item.bizName;
+
+              return (
+                <tr
+                  key={idx}
+                  className={`
+                    border-b
+                    hover:cursor-pointer
+                    hover:bg-gray-100
+                    ${isSelected ? "bg-gray-100" : ""}
+                  `}
                   onClick={() => {
-                    //승택님 여기서부터 하시면 됩니다..
-                    // setSelectedBiz(item.bizName);
-                  }}
+                      if(idx === 0) setSelectedBiz('');
+                      else setSelectedBiz(item.bizName);
+                    }
+                  }
                 >
-                  {item.name}
-                </td>
-                <td className="p-4">{item.totalVehicles}</td>
-                <td className="p-4">{item.activeVehicles}</td>
-                <td className="p-4">{item.totalRentals}</td>
-                <td className="p-4">{item.totalDistance}</td>
-                <td className="p-4">{item.averageRating}/5.0</td>
-                <td className="p-4">
-                  <Button variant="outline" size="sm">
-                    보기
-                  </Button>
-                </td>
-              </tr>
-            ))}
+                  <td className="p-4">{item.bizName}</td>
+                  <td className="p-4">{item.totalCarCount}</td>
+                  <td className="p-4">{item.drivingCarCount}</td>
+                  <td className="p-4">{item.skipCount}</td>
+                  <td className="p-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedBiz(item.bizName)}
+                    >
+                      보기
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

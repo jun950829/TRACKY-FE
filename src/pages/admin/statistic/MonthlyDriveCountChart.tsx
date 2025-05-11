@@ -11,12 +11,14 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
+import { formatDate } from "date-fns";
+import { MonthlyDriveCounts } from "@/constants/mocks/adminStaticsMockData";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface MonthlyDriveCountChartProps {
   title?: string;
-  data: { labels: string[]; values: number[] };
+  data: MonthlyDriveCounts[];
 }
 
 const chartOptions: ChartOptions<"line"> = {
@@ -56,11 +58,11 @@ const chartOptions: ChartOptions<"line"> = {
 
 function MonthlyDriveCountChart({ title = "월별 운행량", data }: MonthlyDriveCountChartProps) {
   const chartData = {
-    labels: data.labels,
+    labels: data.map(item => item.year + '-' + item.month),
     datasets: [
       {
         label: "운행량",
-        data: data.values,
+        data: data.map(item => item.driveCount),
         borderColor: "rgb(75, 192, 192)",
         fill: false,
         tension: 0.3,

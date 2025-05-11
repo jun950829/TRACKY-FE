@@ -1,12 +1,7 @@
-// components/BizMonthlyCardStatistic.tsx
-interface MonthlySummary {
-  totalDriveCount: number;
-  totalDrivingSeconds: number;
-  totalDrivingDistanceKm: number;
-}
+import { BizStatistic } from "@/constants/mocks/adminStaticsMockData";
 
 interface Props {
-  summary: MonthlySummary;
+  summary: BizStatistic;
   formatSeconds: (seconds: number) => string;
 }
 
@@ -17,7 +12,7 @@ const BizMonthlyCardStatistic = ({ summary, formatSeconds }: Props) => {
         <div className="p-5">
           <h3 className="text-sm font-medium text-gray-500 mb-4">월 총 운행량</h3>
           <div className="flex items-baseline">
-            <span className="text-3xl font-bold text-purple-600">{summary.totalDriveCount}</span>
+            <span className="text-3xl font-bold text-purple-600">{summary.dailyDriveCount}</span>
             <span className="ml-2 text-sm font-medium text-gray-500">회</span>
           </div>
         </div>
@@ -28,7 +23,7 @@ const BizMonthlyCardStatistic = ({ summary, formatSeconds }: Props) => {
           <h3 className="text-sm font-medium text-gray-500 mb-4">월 총 운행 시간</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-orange-600">
-              {formatSeconds(summary.totalDrivingSeconds)}
+              {formatSeconds(summary.dailyDriveSec)}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">시간</span>
           </div>
@@ -40,7 +35,7 @@ const BizMonthlyCardStatistic = ({ summary, formatSeconds }: Props) => {
           <h3 className="text-sm font-medium text-gray-500 mb-4">월 총 운행거리</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-cyan-600">
-              {summary.totalDrivingDistanceKm.toFixed(0)}
+              {(summary.dailyDriveDistance / 1000).toFixed(2)}
             </span>
             <span className="ml-2 text-sm font-medium text-gray-500">km</span>
           </div>

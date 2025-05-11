@@ -8,14 +8,24 @@ export interface VehicleStatistic {
   maxSpeed: string;
 }
 
-export interface BizStatistic {
+export interface BizList {
   id: string;
-  name: string;
-  totalVehicles: number;
-  activeVehicles: number;
-  totalRentals: number;
-  totalDistance: string;
-  averageRating: number;
+  bizName: string;
+  totalCarCount: number;
+  drivingCarCount: number;
+  skipCount: number;
+}
+
+export interface BizStatistic {
+  dailyDriveCount: number;
+  dailyDriveDistance: number;
+  dailyDriveSec: number;
+}
+
+export interface MonthlyDriveCounts {
+  year: number;
+  month: number;
+  driveCount: number;
 }
 
 export interface OverallStatistic {
@@ -63,33 +73,40 @@ export const vehicleStatistics: VehicleStatistic[] = [
   },
 ];
 
-export const bizStatistics: BizStatistic[] = [
+export const bizListMock: BizList[] = [
   {
     id: "1",
-    name: "서울렌트카",
-    totalVehicles: 25,
-    activeVehicles: 20,
-    totalRentals: 156,
-    totalDistance: "12,456km",
-    averageRating: 4.8,
+    bizName: "서울렌트카",
+    totalCarCount: 25,
+    drivingCarCount: 20,
+    skipCount: 4,
   },
   {
     id: "2",
-    name: "부산렌트카",
-    totalVehicles: 18,
-    activeVehicles: 15,
-    totalRentals: 98,
-    totalDistance: "8,745km",
-    averageRating: 4.6,
+    bizName: "부산렌트카",
+    totalCarCount: 18,
+    drivingCarCount: 15,
+    skipCount: 6,
   },
   {
     id: "3",
-    name: "대구렌트카",
-    totalVehicles: 15,
-    activeVehicles: 12,
-    totalRentals: 87,
-    totalDistance: "7,123km",
-    averageRating: 4.7,
+    bizName: "대구렌트카",
+    totalCarCount: 15,
+    drivingCarCount: 12,
+    skipCount: 5,
+  },
+];
+
+export const bizStatisticMock: BizStatistic = {
+    dailyDriveCount: 1,
+    dailyDriveDistance: 5252.1,
+    dailyDriveSec: 304
+  };
+
+export const monthlyDriveCountsMock: MonthlyDriveCounts[] = [
+  {
+    date: new Date(),
+    driveCount: 0
   },
 ];
 
