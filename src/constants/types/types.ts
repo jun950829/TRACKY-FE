@@ -81,7 +81,16 @@ export type CarDetailTypes = {
   createdAt: string;
 };
 
-export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED";
+
+export type CarStatusEnum = 'RUNNING' | 'WAITING' | 'FIXING' | 'CLOSED' | 'DELETED';
+
+export const CarStatusLabels: Record<CarStatusEnum, string> = {
+  RUNNING: '운행중',
+  WAITING:  '대기중',
+  FIXING: '정비중',
+  CLOSED: '폐차',
+  DELETED:  '삭제됨',
+};
 
 export type CarStatusTypes = Record<CarStatusEnum, number>;
 
