@@ -1,8 +1,27 @@
 import api from "./api";
 
 const realtimeApiRoot = "/realtime";
+const realtimeAdminApiRoot = "/admin/realtime";
 
 export const realtimeApi = {
+  getRealtimeAdminData: async (bizSearch: string, search: string) => {
+    // 검색 파라미터 구성
+    const params = new URLSearchParams();
+
+    // 검색어가 있을 경우 추가
+    if (bizSearch && bizSearch.trim() !== "") {
+      params.append("bizSearch", bizSearch.trim());
+    }
+    
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    const response = await api.get(`${realtimeAdminApiRoot}?${params.toString()}`);
+
+    return response.data;
+  },
+
   getRealtimeData: async (search: string) => {
     let response;
     if (search == "") {

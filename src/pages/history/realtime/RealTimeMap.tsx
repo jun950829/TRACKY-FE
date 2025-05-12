@@ -457,7 +457,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             icon={createCarIcon(markerRotation)}
           >
             <Tooltip sticky>
-              {currentSegment?.points[0] && formatTime(currentSegment.points[0].oTime)}
+              {currentSegment?.points[0] && (
+                <div>
+                  <div>{formatTime(currentSegment.points[0].oTime)}</div>
+                  <div>속력: {currentSegment.points[0].spd} km/h</div>
+                </div>
+              )}
             </Tooltip>
           </Marker>
         )}

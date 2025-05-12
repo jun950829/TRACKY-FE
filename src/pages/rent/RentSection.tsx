@@ -6,21 +6,20 @@ import { RentDetailTypes } from "@/constants/types/types";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import Pagination from "@/components/custom/Pagination";
+import { useAuthStore } from "@/stores/useAuthStore";
+import RentAdminSearchLayer from "./admin/RentAdminSearchLayer";
+import RentAdminTable from "./admin/RentAdminTable";
 
-interface PageResponse<T> {
-    content: T[];
-    totalElements: number;
-    totalPages: number;
-    number: number;
-    size: number;
-  }
 
 function RentSection() {
     const [rentList, setRentList] = useState<RentDetailTypes[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<ApiError | null>(null);
+    const isAdmin = useAuthStore((state) => state.isAdmin);
+
 
     const [searchParams, setSearchParams] = useState({
+        searchBizText: "",
         search: "",
         status: undefined as string | undefined,
         date: undefined as string | undefined,
@@ -39,18 +38,30 @@ function RentSection() {
       const loadRentData = async (params: typeof searchParams) => {
         setIsLoading(true);
         setError(null);
+        let response = null;
     
         try {
-          const response = await rentApiService.searchRents(
-            params.search,
-            params.status,
-            params.date,
-            params.size,
-            params.page
-          );
-    
+          if (isAdmin) {
+            response = await rentApiService.searchRentsAdmin(
+              params.searchBizText,
+              params.search,
+              params.status,
+              params.date,
+              params.size,
+              params.page
+              );
+          } else {
+            response = await rentApiService.searchRents(
+              params.search,
+              params.status,
+              params.date,
+              params.size,
+              params.page
+            );
+          }
+
           const responseBody = response.data;
-    
+
           if (responseBody.status === 200) {
             const rentData = responseBody.data || [];
             const pageData = responseBody.pageResponse || {};
@@ -87,6 +98,7 @@ function RentSection() {
       // 검색 및 필터 변경 핸들러
       const handleSearch = (
         isReload: boolean,
+        searchBizText: string = "",
         search: string = "",
         status?: string,
         date?: string,
@@ -95,6 +107,7 @@ function RentSection() {
         const newParams = isReload
           ? { ...searchParams }
           : {
+              searchBizText,
               search,
               status,
               date,
@@ -125,15 +138,27 @@ function RentSection() {
             <p className="text-gray-500 text-sm sm:text-base">차량 예약 정보를 관리하고 조회할 수 있습니다.</p>
     
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <RentSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
+              {isAdmin ? (
+                <RentAdminSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
+              ) : (
+                <RentSearchLayer onSearch={handleSearch} defaultPageSize={searchParams.size} />
+              )}
               <div className="p-4 sm:p-6">
-                <RentTable
-                  rentList={rentList}
-                  setRentList={setRentList}
-                  isLoading={isLoading}
-                  reload={() => handleSearch(true)}
-                />
-    
+                {isAdmin ? (
+                  <RentAdminTable
+                    rentList={rentList}
+                    setRentList={setRentList}
+                    isLoading={isLoading}
+                    reload={() => handleSearch(true)}
+                    />
+                ) : (
+                  <RentTable
+                    rentList={rentList}
+                    setRentList={setRentList}
+                    isLoading={isLoading}
+                    reload={() => handleSearch(true)}
+                  />
+                )}
                 {/* 페이지네이션 컴포넌트 */}
                 {pagination.totalElements > 0 && (
                   <Pagination

@@ -14,6 +14,7 @@ export interface CarRecord {
   status: string;
   mdn: string;
   carName: string;
+  bizName: string;
 }
 
 export interface DriveRecord {

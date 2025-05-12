@@ -47,6 +47,7 @@ export default function Login() {
   const [notices, setNotices] = useState<NoticeDetailTypes[]>([]);
   const [selectedNotice, setSelectedNotice] = useState<NoticeDetailTypes | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
   const setToken = useAuthStore((state) => state.setToken);
   const setMember = useAuthStore((state) => state.setMember);
 
@@ -86,7 +87,11 @@ export default function Login() {
         localStorage.setItem("memberInfo", JSON.stringify(member));
         localStorage.setItem("accessToken", token);
 
-        navigate("/dashboard");
+        if (decoded.role === "ADMIN") {
+          navigate("/admin/statistic");
+        } else {
+          navigate("/dashboard");
+        }
 
       } else {
         setError(createApiError(response));
@@ -139,7 +144,12 @@ export default function Login() {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      navigate("/dashboard");
+
+      if (isAdmin) {
+        navigate("/admin/statistic");
+      } else {
+        navigate("/dashboard");
+      }
     }
     
     // 공지사항 로드

@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
-import { use } from "chai";
 
 interface RegionData {
   [key: string]: number;
@@ -27,8 +26,6 @@ export default function KoreaMap() {
     .then((res) => {
       const regionMap: RegionData = {};
       const data = res.data || {};
-
-      console.log("data : ", data);
 
       Object.entries(data).forEach(([province, count]) => {
         regionMap[province] = count as number;
