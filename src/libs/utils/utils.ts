@@ -74,3 +74,19 @@ export const formatCoordinate = (coordinate: number): number => {
   // 소수점 6자리까지 자르고 1,000,000을 곱함
   return Math.round(parseFloat(coordinate.toFixed(6)) * 1000000);
 };
+
+export function formatDrivingTimeSmart(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}시간`);
+  if (minutes > 0) parts.push(`${minutes}분`);
+  if (secs > 0) parts.push(`${secs}초`);
+
+  // 모두 0이면 0초만 출력
+  if (parts.length === 0) return '0초';
+
+  return parts.join(' ');
+}

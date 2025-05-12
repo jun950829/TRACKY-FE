@@ -1,8 +1,8 @@
 import { RentCreateTypes, RentUpdateTypes } from "@/constants/types/types";
 import api from "./api";
-import axios from "axios";
 
 const rentApiRoot = "/rents";
+const rentAdminApiRoot = "/admin/rents";
 
 interface AvailabilityCheckRequest {
   mdn: string;
@@ -29,6 +29,38 @@ export const rentApiService = {
   getMdns: async () => {
     const response = await api.get(`${rentApiRoot}/mdns`);
     return response.data;
+  },
+
+  searchRentsAdmin: async (
+    searchBizText: string = "",
+    search: string = "",
+    status?: string,
+    date?: string,
+    size: number = 10,
+    page: number = 0
+  ) => {
+    const params = new URLSearchParams();
+
+    if (searchBizText.trim() !== "") {
+      params.append("bizSearch", searchBizText.trim());
+    }
+    if (search.trim() !== "") {
+      params.append("rentUuid", search.trim());
+    }
+    if (status && status !== "all") {
+      params.append("status", status);
+    }
+    if (date) {
+      params.append("rentDate", date);
+    }
+    params.append("size", String(size));
+    params.append("page", String(page));
+
+    const url = `${rentAdminApiRoot}${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("렌트 검색 요청 URL:", url);
+
+    const response = await api.get(url);
+    return response;
   },
 
   searchRents: async (

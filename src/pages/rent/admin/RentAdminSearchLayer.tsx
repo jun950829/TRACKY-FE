@@ -16,15 +16,16 @@ type RentSearchLayerProps = {
   defaultPageSize?: number;
 }
 
-function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProps) {
+function RentAdminSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProps) {
   const [date, setDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<string | undefined>("all");
   const [searchValue, setSearchValue] = useState<string>('');
+  const [searchBizName, setSearchBizName] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const navigate = useNavigate();
-  const searchBizText = "";
 
   function search() {
+    const searchBizText = searchBizName;
     const searchText = searchValue;
     const statusFilter = status === 'all' ? undefined : status;
     const dateFilter = date ? format(date, "yyyy-MM-dd") : undefined;
@@ -53,6 +54,10 @@ function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProp
     setSearchValue(e.target.value);
   };
 
+  const handleBizInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchBizName(e.target.value);
+  };
+
   // 페이지 사이즈 변경 핸들러
   const handlePageSizeChange = (value: string) => {
     const newPageSize = Number(value);
@@ -64,6 +69,14 @@ function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProp
       {/* PC 뷰 */}
       <div className="hidden md:flex items-center justify-between p-4">
         <div className="flex flex-wrap items-center gap-2 min-h-[40px]">
+          <Input
+            placeholder="업체명 검색"
+            className="w-36"
+            value={searchBizName}
+            onChange={handleBizInputChange}
+            onKeyDown={handleKeyDown}
+          />
+
           <Input
             placeholder="예약 ID 검색"
             className="w-36"
@@ -235,4 +248,4 @@ function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProp
   );
 }
 
-export default RentSearchLayer;
+export default RentAdminSearchLayer;
