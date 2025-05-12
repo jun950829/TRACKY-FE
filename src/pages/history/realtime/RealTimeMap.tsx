@@ -56,6 +56,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
   const mapRef = useRef<any>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationRef = useRef<number | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastProcessedIndexRef = useRef<number>(-1);
   const startTimeRef = useRef<number>(0);
   const isInitialLoadRef = useRef<boolean>(true);
@@ -91,10 +92,10 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
     }
   };
 
-  // 뒤로가기 시 경로 삭제
+  // 뒤로가기 시 모든 상태 초기화
   useEffect(() => {
-    if(isRefresh == true) {
-
+    if (isRefresh) {
+      // 모든 타이머와 애니메이션 정리
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -105,15 +106,52 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
         animationRef.current = null;
       }
 
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+
+      // SSE 구독 해제
+      useSseStore.getState().resetSse();
+
+      // 모든 상태 초기화
       setPathSegments([]);
       setReplaySegments([]);
       setCurrentPosition(null);
       setCurrentSegment(null);
+      setMarkerRotation(0);
+
+      // ref 값들 초기화
       isInitialLoadRef.current = true;
       lastProcessedIndexRef.current = -1;
-      setIsRefresh(false); 
+      startTimeRef.current = 0;
+
+      // 지도 뷰 초기화
+      if (mapRef.current) {
+        mapRef.current.setView([37.5665, 126.9780], 13, {
+          animate: true,
+          duration: 1
+        });
+      }
+
+      setIsRefresh(false);
     }
-  },[ isRefresh ])
+  }, [isRefresh, setIsRefresh]);
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // GPS 데이터 변경 감지 및 처리
   useEffect(() => {
@@ -129,15 +167,18 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       // 기존 경로 path segment 
       setPathSegments(createPathSegments(fixedData));
       lastProcessedIndexRef.current = gpsList.length - 61;
-      console.log("before interval : ", lastProcessedIndexRef.current );
       
       // 마지막 60개 데이터를 실시간처럼 애니메이션
       if (recentData.length > 0) {
+        // 기존 타이머와 애니메이션 정리
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
         }
         if (animationRef.current) {
           cancelAnimationFrame(animationRef.current);
+        }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
         }
 
         let currentIndex = 0;
@@ -162,7 +203,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             updateAnimation(currentPoint, nextPoint, startTimeRef.current);
 
             // 애니메이션이 끝나면 세그먼트를 replaySegments에 추가
-            setTimeout(() => {
+            timeoutRef.current = setTimeout(() => {
               setReplaySegments(prev => [...prev, newSegment]);
               setCurrentSegment(null);
               currentIndex++;
@@ -171,61 +212,41 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
               if (currentIndex < recentData.length - 1) {
                 animateNextSegment();
               } else {
-
                 lastProcessedIndexRef.current += 60;
-                console.log("after 60 interval : ", lastProcessedIndexRef.current );
-
                 // do Sse Cycle
                 doSseCycle();
               }
-
             }, 1000);
           }
         };
 
-        console.log("초기 인터벌 시작");
         animateNextSegment();
-        isInitialLoadRef.current = false;
       }
     }
-      
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
   }, [gpsList]);
 
   const doSseCycle = () => {
-    console.log("lastProcessedIndexRef.current: ", lastProcessedIndexRef.current);
-  
     const updatedGpsList = useSseStore.getState().gpsList;
-
-    console.log("updatedGpsList: ", updatedGpsList);
-
     const newData = updatedGpsList.slice(lastProcessedIndexRef.current);
-
-    console.log("newData : " ,newData );
       
     if (newData.length > 0) {
+      // 기존 타이머와 애니메이션 정리
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
       let currentIndex = 0;
       const animateNextSegment = () => {
-
         if (currentIndex < newData.length - 1) {
           const currentPoint = newData[currentIndex];
           const nextPoint = newData[currentIndex + 1];
           
-          // 새로운 세그먼트 추가 (속도에 따른 색상 적용)
           const avgSpeed = (currentPoint.spd + nextPoint.spd) / 2;
           const newSegment: PathSegment = {
             positions: [
@@ -240,18 +261,14 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           startTimeRef.current = performance.now();
           updateAnimation(currentPoint, nextPoint, startTimeRef.current);
 
-          // 애니메이션이 끝나면 세그먼트를 replaySegments에 추가
-          setTimeout(() => {
+          timeoutRef.current = setTimeout(() => {
             setReplaySegments(prev => [...prev, newSegment]);
             setCurrentSegment(null);
             currentIndex++;
-            lastProcessedIndexRef.current++;
             
-            // 다음 세그먼트 애니메이션 시작
             if (currentIndex < newData.length - 1) {
               animateNextSegment();
             } else {
-              console.log("다음 sse cycle")
               doSseCycle();
             }
           }, 1000);
@@ -260,7 +277,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
 
       animateNextSegment();
     }
-  }
+  };
 
   // 시간 포맷 함수 수정
   const formatTime = (oTime: string) => {
