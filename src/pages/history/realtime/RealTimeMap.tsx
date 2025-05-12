@@ -29,34 +29,21 @@ interface RealTimeMapProps {
   setIsRefresh: (isRefresh: boolean) => void;
 }
 
-// MapController component to handle map view adjustments
-// function MapController({ pathSegments }: { pathSegments: PathSegment[] }) {
-//   const map = useMap();
+// Add MapController component
+function MapController({ currentPosition }: { currentPosition: [number, number] | null }) {
+  const map = useMap();
 
-//   useEffect(() => {
-//     if (pathSegments.length > 0) {
-//       // 모든 경로 세그먼트의 좌표를 수집
-//       const allPositions = pathSegments.flatMap(segment => segment.positions);
-      
-//       // 경로의 경계 계산
-//       const bounds = allPositions.reduce(
-//         (bounds, pos) => bounds.extend(pos),
-//         map.getBounds()
-//       );
+  useEffect(() => {
+    if (currentPosition) {
+      map.setView(currentPosition, 16, {
+        animate: true,
+        duration: 1
+      });
+    }
+  }, [currentPosition, map]);
 
-//       // 경로가 모두 보이도록 지도 조정 (약간의 여백 추가)
-//       map.fitBounds(bounds, {
-//         padding: [50, 50],
-//         animate: true,
-//         duration: 1
-//       });
-//     }
-
-//     console.log("MapController")
-//   }, [pathSegments, map]);
-
-//   return null;
-// }
+  return null;
+}
 
 function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapProps) {
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
@@ -306,8 +293,8 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         
-        {/* MapController 추가 */}
-        {/* <MapController pathSegments={pathSegments} /> */}
+        {/* Add MapController */}
+        <MapController currentPosition={currentPosition} />
         
         {/* 고정 경로 */}
         {pathSegments.map((segment, index) => (
