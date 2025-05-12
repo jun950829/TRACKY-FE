@@ -230,8 +230,9 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       isInitialLoadRef.current = false;
 
       // 마지막 60개를 제외한 데이터로 고정 경로 생성
-      const fixedData = gpsList.slice(0, -59);
+      const fixedData = gpsList.slice(0, -60);
       const recentData = getLastSixtyPoints(gpsList);
+      
       // 기존 경로 path segment 
       setPathSegments(createPathSegments(fixedData));
       lastProcessedIndexRef.current = gpsList.length - 61;
