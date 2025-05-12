@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl, Polyline, useMap, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Icon, LatLngExpression } from 'leaflet';
+import { Icon } from 'leaflet';
 import { useSseStore } from '@/stores/useSseStore';
 
 import {  
@@ -10,7 +10,7 @@ import {
   PathSegment,
   getPathColor,
 } from '@/libs/utils/historyUtils';
-import { getLastSixtyPoints } from './RealTimeTemp';
+import { createCarIcon, getLastSixtyPoints } from './RealTimeTemp';
 
 import { useEffect, useRef, useState } from 'react';
 import { interpolatePosition } from './RealTimeTemp';
@@ -63,6 +63,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
   const [replaySegments, setReplaySegments] = useState<PathSegment[]>([]);
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
   const [currentSegment, setCurrentSegment] = useState<PathSegment | null>(null);
+  const [markerRotation, setMarkerRotation] = useState<number>(0);
 
   const gpsList = useSseStore((state) => state.gpsList);
   const mapRef = useRef<any>(null);
@@ -90,6 +91,13 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
 
     const currentPos = interpolatePosition(startPos, endPos, progress);
     setCurrentPosition(currentPos);
+
+    // Calculate rotation angle based on movement direction
+    const angle = Math.atan2(
+      endPos[1] - startPos[1],
+      endPos[0] - startPos[0]
+    ) * (180 / Math.PI);
+    setMarkerRotation(angle);
 
     if (progress < 1) {
       animationRef.current = requestAnimationFrame(() => updateAnimation(startPoint, endPoint, startTime));
@@ -344,7 +352,10 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
 
         {/* 현재 위치 마커 */}
         {currentPosition && (
-          <Marker position={currentPosition}>
+          <Marker 
+            position={currentPosition}
+            icon={createCarIcon(markerRotation)}
+          >
             <Tooltip sticky>
               {currentSegment?.points[0] && formatTime(currentSegment.points[0].oTime)}
             </Tooltip>
