@@ -230,9 +230,8 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       isInitialLoadRef.current = false;
 
       // 마지막 60개를 제외한 데이터로 고정 경로 생성
-      const fixedData = gpsList.slice(0, -60);
+      const fixedData = gpsList.slice(0, -59);
       const recentData = getLastSixtyPoints(gpsList);
-      
       // 기존 경로 path segment 
       setPathSegments(createPathSegments(fixedData));
       lastProcessedIndexRef.current = gpsList.length - 61;
@@ -276,12 +275,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
               setReplaySegments(prev => [...prev, newSegment]);
               setCurrentSegment(null);
               currentIndex++;
+              lastProcessedIndexRef.current++;
               
               // 다음 세그먼트 애니메이션 시작
               if (currentIndex < recentData.length - 1) {
                 animateNextSegment();
               } else {
-                lastProcessedIndexRef.current += 60;
                 // do Sse Cycle
                 doSseCycle();
               }
@@ -404,7 +403,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             weight={4}
           >
             <Tooltip sticky>
-              {segment.points[0] && formatTime(segment.points[0].oTime)}
+              {segment.points[0] && (
+                <div>
+                  <div>{formatTime(segment.points[0].oTime)}</div>
+                  <div>속력: {segment.points[0].spd} km/h</div>
+                </div>
+              )}
             </Tooltip>
           </Polyline>
         ))}
@@ -418,7 +422,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             weight={4}
           >
             <Tooltip sticky>
-              {segment.points[0] && formatTime(segment.points[0].oTime)}
+              {segment.points[0] && (
+                <div>
+                  <div>{formatTime(segment.points[0].oTime)}</div>
+                  <div>속력: {segment.points[0].spd} km/h</div>
+                </div>
+              )}
             </Tooltip>
           </Polyline>
         ))}
@@ -431,7 +440,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             weight={4}
           >
             <Tooltip sticky>
-              {currentSegment.points[0] && formatTime(currentSegment.points[0].oTime)}
+              {currentSegment.points[0] && (
+                <div>
+                  <div>{formatTime(currentSegment.points[0].oTime)}</div>
+                  <div>속력: {currentSegment.points[0].spd} km/h</div>
+                </div>
+              )}
             </Tooltip>
           </Polyline>
         )}

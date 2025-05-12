@@ -22,22 +22,24 @@ export default function KoreaMap() {
       .then((data) => setGeoData(data));
   }, []);
 
-  // useEffect(() => {
-  //   dashboardApi.getGeo()
-  //   .then((res) => {
-  //     const regionMap: RegionData = {};
-  //     const data = res.data || {};
+  useEffect(() => {
+    dashboardApi.getGeo()
+    .then((res) => {
+      const regionMap: RegionData = {};
+      const data = res.data || {};
 
-  //     Object.entries(data).forEach(([province, count]) => {
-  //       regionMap[province] = count as number;
-  //     });
+      console.log("data : ", data);
 
-  //     setRegionData(regionMap);
-  //   })
-  //   .catch((err) => {
-  //     console.log("지도 데이터 로드 실패: ", err);
-  //   });
-  // }, []);
+      Object.entries(data).forEach(([province, count]) => {
+        regionMap[province] = count as number;
+      });
+
+      setRegionData(regionMap);
+    })
+    .catch((err) => {
+      console.log("지도 데이터 로드 실패: ", err);
+    });
+  }, []);
 
   // 도 경계 스타일
   const getRegionStyle = (feature: any) => {
