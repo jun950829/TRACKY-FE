@@ -46,12 +46,11 @@ function MapController({ currentPosition, isTracking }: { currentPosition: [numb
 }
 
 // Add car icon creation function
-const createCarIcon = (rotation: number) => {
+const createCarIcon = () => {
   return divIcon({
     className: 'custom-car-icon',
     html: `
       <div style="
-        transform: rotate(${rotation + 90}deg);
         width: 32px;
         height: 32px;
         filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
@@ -230,12 +229,16 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       isInitialLoadRef.current = false;
 
       // 마지막 60개를 제외한 데이터로 고정 경로 생성
-      const fixedData = gpsList.slice(0, -60);
+      const fixedData = gpsList.slice(0, -59);
+
+      console.log("1분전 데이터 : ", fixedData[fixedData.length - 1]);
       const recentData = getLastSixtyPoints(gpsList);
       
+      console.log("60개 데이터의 마지막 : ", recentData[recentData.length - 1]);
+
       // 기존 경로 path segment 
       setPathSegments(createPathSegments(fixedData));
-      lastProcessedIndexRef.current = gpsList.length - 61;
+      lastProcessedIndexRef.current = gpsList.length - 60;
       
       // 마지막 60개 데이터를 실시간처럼 애니메이션
       if (recentData.length > 0) {
@@ -300,12 +303,14 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
     console.log("lastProcessedIndexRef.current: ", lastProcessedIndexRef.current);
   
     const updatedGpsList = useSseStore.getState().gpsList;
+    console.log("새로운 리스트의 시작 위치 : ", updatedGpsList[lastProcessedIndexRef.current]);
 
-    console.log("updatedGpsList: ", updatedGpsList);
+    console.log("새로운 리스트의 마지막 : ", updatedGpsList[updatedGpsList.length - 1]);
 
     const newData = updatedGpsList.slice(lastProcessedIndexRef.current);
+    console.log("newData 개수  : ", newData.length);
 
-    console.log("newData : " ,newData );
+    console.log("newData 의 마지막 :  " ,newData[newData.length - 1]);
       
     if (newData.length > 0) {
       if (intervalRef.current) {
@@ -455,7 +460,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
         {currentPosition && (
           <Marker 
             position={currentPosition}
-            icon={createCarIcon(markerRotation)}
+            icon={createCarIcon()}
           >
             <Tooltip sticky>
               {currentSegment?.points[0] && (
