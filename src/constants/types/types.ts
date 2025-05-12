@@ -80,6 +80,7 @@ export type CarDetailTypes = {
   deviceInfo: Devices;
   createdAt: string;
 };
+export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
 
 export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED";
 

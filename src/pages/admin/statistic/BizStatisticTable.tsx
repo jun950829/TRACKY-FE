@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BizList, BizStatistic } from "@/constants/mocks/adminStaticsMockData";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-
-import { format } from "date-fns";
-import { is, ko } from "date-fns/locale";
+import { BizList } from "@/constants/mocks/adminStaticsMockData";
 
 interface BizStatisticTableProps {
   data: BizList[];
@@ -16,13 +10,11 @@ interface BizStatisticTableProps {
   setSearchTerm: (searchTerm: string) => void;
   selectedBiz: string;
   setSelectedBiz: (selectedBiz: string) => void;
-  selectedDate: Date | undefined;
-  setSelectedDate: (selectedDate: Date | undefined) => void;
 }
 
-function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSelectedBiz, selectedDate, setSelectedDate }: BizStatisticTableProps) {
+function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSelectedBiz}: BizStatisticTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
 
   const filteredData = data.filter((item) =>
     item.bizName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,7 +37,7 @@ function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSe
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Popover>
+        {/* <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -62,18 +54,18 @@ function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSe
               initialFocus
             />
           </PopoverContent>
-        </Popover>
+        </Popover> */}
       </div>
 
       <div className="rounded-md border">
         <table className="w-full">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="p-4 text-left font-medium">업체명</th>
-              <th className="p-4 text-left font-medium">전체 차량</th>
-              <th className="p-4 text-left font-medium">운행 중</th>
-              <th className="p-4 text-left font-medium">오류</th>
-              <th className="p-4 text-left font-medium">상세</th>
+              <th className="px-4 py-2 text-left font-medium">업체명</th>
+              <th className="px-4 py-2 text-left font-medium">전체 차량</th>
+              <th className="px-4 py-2 text-left font-medium">현재 운행 중</th>
+              <th className="px-4 py-2 text-left font-medium">오류</th>
+              <th className="px-4 py-2 text-left font-medium">상세</th>
             </tr>
           </thead>
           <tbody>
@@ -92,16 +84,16 @@ function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSe
                     ${isSelected ? "bg-gray-100" : ""}
                   `}
                   onClick={() => {
-                      if(idx === 0) setSelectedBiz('');
+                      if(idx === 0 && item.bizName === '전체') setSelectedBiz('');
                       else setSelectedBiz(item.bizName);
                     }
                   }
                 >
-                  <td className="p-4">{item.bizName}</td>
-                  <td className="p-4">{item.totalCarCount}</td>
-                  <td className="p-4">{item.drivingCarCount}</td>
-                  <td className="p-4">{item.skipCount}</td>
-                  <td className="p-4">
+                  <td className="px-4 py-2">{item.bizName}</td>
+                  <td className="px-4 py-2">{item.totalCarCount}</td>
+                  <td className="px-4 py-2">{item.drivingCarCount}</td>
+                  <td className="px-4 py-2">{item.skipCount}</td>
+                  <td className="px-4 py-2">
                     <Button
                       variant="outline"
                       size="sm"

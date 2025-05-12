@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
 import { GraphStats, TimeSeriesData } from "@/constants/mocks/adminStaticsMockData";
 
 ChartJS.register(
@@ -25,16 +25,42 @@ ChartJS.register(
 );
 
 interface StatisticChartsProps {
-  // monthlyRentalData: TimeSeriesData[];
-  // dailyActiveUsersData: TimeSeriesData[];
-  // vehicleTypeDistribution: { type: string; count: number }[];
-  // bizRatingDistribution: { rating: string; count: number }[];
   graphStats: GraphStats;
 }
 
 function StatisticCharts({graphStats}: StatisticChartsProps) {
 
-  const monthlyRentalOptions = {
+  const carCountOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "전체 차량 수",
+      },
+    },
+  };
+
+  const carTypeOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "전체 차종 분포",
+      },
+    },
+  };
+
+  const operationRateOptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -42,12 +68,12 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
       },
       title: {
         display: true,
-        text: "당월 평균 운행률",
+        text: "월 가동률 순위",
       },
     },
   };
 
-  const dailyActiveUsersOptions = {
+  const nonOperatedCarOptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -55,54 +81,52 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
       },
       title: {
         display: true,
-        text: "당월 미운행 차량수",
+        text: "월 미운행 차량 수",
       },
     },
   };
 
-  const vehicleTypeOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: "당월 총 운행량",
-      },
-    },
-  };
-
-  const bizRatingOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: "일별 운행수",
-      },
-    },
-  };
-
-  const monthlyRentalChartData = {
+  const carCountChartData = {
     labels: graphStats.carCountWithBizName.map((item) => item.bizName),
     datasets: [
       {
-        label: "운행 횟수",
+        label: "차량 수",
         data: graphStats.carCountWithBizName.map((item) => item.carCount),
-        borderColor: "rgb(136, 132, 216)",
-        backgroundColor: "rgba(136, 132, 216, 0.5)",
+        backgroundColor: [
+          "#E57373", // 소프트 레드
+          "#FFB74D", // 머스터드 오렌지
+          "#FFF176", // 라이트 옐로우
+          "#AED581", // 소프트 그린
+          "#64B5F6", // 스카이 블루
+          "#BA68C8", // 라벤더 퍼플
+        ],
       },
     ],
   };
 
-  const dailyActiveUsersChartData = {
+  const carTypeChartData = {
+    labels: graphStats.carTypeCounts.map((item) => item.carType),
+    datasets: [
+      {
+        label: "",
+        data: graphStats.carTypeCounts.map((item) => item.carTypeCount),
+        backgroundColor: [
+          "#E57373", // 소프트 레드
+          "#FFB74D", // 머스터드 오렌지
+          "#FFF176", // 라이트 옐로우
+          "#AED581", // 소프트 그린
+          "#64B5F6", // 스카이 블루
+          "#BA68C8", // 라벤더 퍼플
+        ],
+      },
+    ],
+  };
+
+  const operationRateChartData = {
     labels: graphStats.operationRateWithBizName.map((item) => item.bizName),
     datasets: [
       {
-        label: "차량 수",
+        label: "가동률",
         data: graphStats.operationRateWithBizName.map((item) => item.rate),
         borderColor: "rgb(130, 202, 157)",
         backgroundColor: "rgba(130, 202, 157, 0.5)",
@@ -110,53 +134,46 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
     ],
   };
 
-  const vehicleTypeChartData = {
+  const nonOperatedCarChartData = {
     labels: graphStats.nonOperatedCarWithBizName.map((item) => item.bizName),
     datasets: [
       {
-        label: "운행 수",
+        label: "차량 수",
         data: graphStats.nonOperatedCarWithBizName.map((item) => item.nonOperatedCarCount),
         backgroundColor: "rgba(136, 132, 216, 0.5)",
       },
     ],
   };
 
-  // const bizRatingChartData = {
-  //   labels: bizRatingDistribution.map((item) => item.rating),
-  //   datasets: [
-  //     {
-  //       label: "운행 수",
-  //       data: bizRatingDistribution.map((item) => item.count),
-  //       backgroundColor: "rgba(130, 202, 157, 0.5)",
-  //     },
-  //   ],
-  // };
-
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card>
-        <CardContent className="pt-6">
-          <Line options={monthlyRentalOptions} data={monthlyRentalChartData} />
+        <CardContent className="pt-6 flex justify-center items-center">
+          <div className="w-[280px] h-[280px]">
+            <Doughnut options={carCountOptions} data={carCountChartData} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6 flex justify-center items-center">
+          <div className="w-[280px] h-[280px]">
+            <Doughnut options={carTypeOptions} data={carTypeChartData} />
+          </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="pt-6">
-          <Line options={dailyActiveUsersOptions} data={dailyActiveUsersChartData} />
+          <Bar options={operationRateOptions} data={operationRateChartData} />
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="pt-6">
-          <Bar options={vehicleTypeOptions} data={vehicleTypeChartData} />
+          <Bar options={nonOperatedCarOptions} data={nonOperatedCarChartData} />
         </CardContent>
       </Card>
-
-      {/* <Card>
-        <CardContent className="pt-6">
-          <Bar options={bizRatingOptions} data={bizRatingChartData} />
-        </CardContent>
-      </Card> */}
     </div>
   );
 }

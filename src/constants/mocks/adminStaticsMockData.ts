@@ -1,3 +1,5 @@
+import { CarTypeEnum, CarTypes } from "../types/types";
+
 export interface VehicleStatistic {
   id: string;
   carNumber: string;
@@ -38,6 +40,11 @@ export interface CarCount {
   carCount: number;
 }
 
+export interface CarTypeCount {
+  carType: CarTypeEnum;
+  carTypeCount: number;
+}
+
 export interface OperationRate {
   bizName: string;
   rate: number;
@@ -50,6 +57,7 @@ export interface NonOperatedCar {
 
 export interface GraphStats {
   carCountWithBizName: CarCount[];
+  carTypeCounts: CarTypeCount[];
   operationRateWithBizName: OperationRate[];
   nonOperatedCarWithBizName: NonOperatedCar[];
 }
@@ -180,6 +188,13 @@ export const graphStatsMock: GraphStats = {
     { bizName: '토자렌트', carCount: 40},
     { bizName: '준시스템', carCount: 70},
     { bizName: '김치진주', carCount: 40},
+  ],
+  carTypeCounts : [
+    { carType: 'MINI', carTypeCount: 10 },
+    { carType: 'SEDAN', carTypeCount: 20 },
+    { carType: 'SUV', carTypeCount: 5 },
+    { carType: 'BUS', carTypeCount: 3 },
+    { carType: 'ETC', carTypeCount: 15 },
   ],
   operationRateWithBizName : [
     { bizName: '지원컴퍼니', rate: 82 },

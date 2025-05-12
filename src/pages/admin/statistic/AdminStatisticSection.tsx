@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
 import BizMonthlyCardStatistic from "./BizMonthlyCardStatistic";
 import BizStatisticTable from "./BizStatisticTable";
 import StatisticCharts from "./StatisticCharts";
 import MonthlyDriveCountChart from "./MonthlyDriveCountChart";
 
 import adminStatisticApiService from "@/libs/apis/adminStatisticApi";
-import { BizList, bizListMock, bizRatingDistribution, BizStatistic, bizStatisticMock, dailyActiveUsersData, GraphStats, graphStatsMock, HourlyDriveCounts, hourlyDriveCountsMock, MonthlyDriveCounts, monthlyDriveCountsMock, monthlyRentalData, vehicleTypeDistribution } from "@/constants/mocks/adminStaticsMockData";
-import DailyStatisticCharts from "./DailyStatisticCharts";
+import { BizList, bizListMock, BizStatistic, bizStatisticMock, GraphStats, graphStatsMock, HourlyDriveCounts, hourlyDriveCountsMock, MonthlyDriveCounts, monthlyDriveCountsMock} from "@/constants/mocks/adminStaticsMockData";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 function AdminStatisticSection() {
   
@@ -63,18 +63,36 @@ function AdminStatisticSection() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">업체별 통계 대시보드</h1>
+        <h1 className="text-3xl font-bold">업체별 통계</h1>
       </div>
-
-      <BizStatisticTable
-        data={bizList}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm} 
-        selectedBiz={selectedBiz}
-        setSelectedBiz={setSelectedBiz}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate} 
-      />
+        <BizStatisticTable
+          data={bizList}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedBiz={selectedBiz}
+          setSelectedBiz={setSelectedBiz}
+        />
+      <div className="flex justify-between items-center">
+        <h3 className="text-xl font-bold">{selectedBiz == '' ? '전체' : selectedBiz} 업체의 월별 통계</h3>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {selectedDate ? format(selectedDate, "yyyy-MM-dd") : "날짜 선택"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              locale={ko}
+              defaultMonth={selectedDate || undefined}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
       <BizMonthlyCardStatistic summary={bizStatistic} formatSeconds={formatSeconds} />
       <MonthlyDriveCountChart 
         monthlyData={monthlyDriveCounts}
@@ -83,26 +101,8 @@ function AdminStatisticSection() {
         selectedDate={selectedDate}
       />
 
-      <h1 className="text-3xl font-bold">총 업체 통계</h1>
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>전일 시간별 운행량</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-center text-sm text-gray-500">로딩 중...</div>
-          ) : (
-            <DailyStatisticCharts selectedDate={selectedDate} dailyData={bizList} />
-          )}
-        </CardContent>
-      </Card> */}
-
-      <StatisticCharts
-        // monthlyRentalData={monthlyRentalData}
-        // dailyActiveUsersData={dailyActiveUsersData}
-        // vehicleTypeDistribution={vehicleTypeDistribution}
-        // bizRatingDistribution={bizRatingDistribution}
-        graphStats={graphStats}
+      <h1 className="text-3xl font-bold">종합 통계</h1>
+      <StatisticCharts graphStats={graphStats}
       />
     </div>
   );
