@@ -75,7 +75,7 @@ function RealTimeDetailPanel({ driveId, goSearch, setIsRefresh }: RealTimeDetail
 
   return (
     <div className="flex items-start">
-      <div className="w-[360px] bg-white border rounded-lg shadow-sm text-sm">
+      <div className="w-[380px] bg-white border rounded-lg shadow-sm text-sm">
         <table className="w-full">
           <tbody className="divide-y">
             <tr>

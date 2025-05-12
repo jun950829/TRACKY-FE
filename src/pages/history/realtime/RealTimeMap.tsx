@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl, Polyline, useMap, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Icon } from 'leaflet';
+import { Icon, divIcon } from 'leaflet';
 import { useSseStore } from '@/stores/useSseStore';
 
 import {  
@@ -10,7 +10,7 @@ import {
   PathSegment,
   getPathColor,
 } from '@/libs/utils/historyUtils';
-import { createCarIcon, getLastSixtyPoints } from './RealTimeTemp';
+import { getLastSixtyPoints } from './RealTimeTemp';
 
 import { useEffect, useRef, useState } from 'react';
 import { interpolatePosition } from './RealTimeTemp';
@@ -30,20 +30,88 @@ interface RealTimeMapProps {
 }
 
 // Add MapController component
-function MapController({ currentPosition }: { currentPosition: [number, number] | null }) {
+function MapController({ currentPosition, isTracking }: { currentPosition: [number, number] | null; isTracking: boolean }) {
   const map = useMap();
 
   useEffect(() => {
-    if (currentPosition) {
+    if (currentPosition && isTracking) {
       map.setView(currentPosition, 16, {
         animate: true,
         duration: 1
       });
     }
-  }, [currentPosition, map]);
+  }, [currentPosition, map, isTracking]);
 
   return null;
 }
+
+// Add car icon creation function
+const createCarIcon = (rotation: number) => {
+  return divIcon({
+    className: 'custom-car-icon',
+    html: `
+      <div style="
+        transform: rotate(${rotation + 90}deg);
+        width: 32px;
+        height: 32px;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+      ">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 차체 -->
+          <path d="M4 12H20C21.1046 12 22 12.8954 22 14V16C22 17.1046 21.1046 18 20 18H4C2.89543 18 2 17.1046 2 16V14C2 12.8954 2.89543 12 4 12Z" 
+            fill="#4A90E2" 
+            stroke="white" 
+            stroke-width="1.5"
+          />
+          <!-- 지붕 -->
+          <path d="M6 12L7.5 8H16.5L18 12" 
+            fill="#4A90E2" 
+            stroke="white" 
+            stroke-width="1.5"
+          />
+          <!-- 앞유리 -->
+          <path d="M7.5 8L9 12" 
+            stroke="white" 
+            stroke-width="1.5"
+            fill="none"
+          />
+          <!-- 뒷유리 -->
+          <path d="M16.5 8L15 12" 
+            stroke="white" 
+            stroke-width="1.5"
+            fill="none"
+          />
+          <!-- 앞바퀴 -->
+          <circle cx="7" cy="16" r="2" 
+            fill="#2C3E50" 
+            stroke="white" 
+            stroke-width="1"
+          />
+          <!-- 뒷바퀴 -->
+          <circle cx="17" cy="16" r="2" 
+            fill="#2C3E50" 
+            stroke="white" 
+            stroke-width="1"
+          />
+          <!-- 헤드라이트 -->
+          <path d="M4 14H6" 
+            stroke="white" 
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+          <!-- 후미등 -->
+          <path d="M18 14H20" 
+            stroke="white" 
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+    `,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+  });
+};
 
 function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapProps) {
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
@@ -51,6 +119,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
   const [currentSegment, setCurrentSegment] = useState<PathSegment | null>(null);
   const [markerRotation, setMarkerRotation] = useState<number>(0);
+  const [isTracking, setIsTracking] = useState(true);
 
   const gpsList = useSseStore((state) => state.gpsList);
   const mapRef = useRef<any>(null);
@@ -220,17 +289,25 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           }
         };
 
+        console.log("초기 인터벌 시작");
         animateNextSegment();
+        isInitialLoadRef.current = false;
       }
     }
   }, [gpsList]);
 
   const doSseCycle = () => {
+    console.log("lastProcessedIndexRef.current: ", lastProcessedIndexRef.current);
+  
     const updatedGpsList = useSseStore.getState().gpsList;
+
+    console.log("updatedGpsList: ", updatedGpsList);
+
     const newData = updatedGpsList.slice(lastProcessedIndexRef.current);
+
+    console.log("newData : " ,newData );
       
     if (newData.length > 0) {
-      // 기존 타이머와 애니메이션 정리
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
@@ -243,10 +320,12 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
 
       let currentIndex = 0;
       const animateNextSegment = () => {
+
         if (currentIndex < newData.length - 1) {
           const currentPoint = newData[currentIndex];
           const nextPoint = newData[currentIndex + 1];
           
+          // 새로운 세그먼트 추가 (속도에 따른 색상 적용)
           const avgSpeed = (currentPoint.spd + nextPoint.spd) / 2;
           const newSegment: PathSegment = {
             positions: [
@@ -265,10 +344,13 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             setReplaySegments(prev => [...prev, newSegment]);
             setCurrentSegment(null);
             currentIndex++;
+            lastProcessedIndexRef.current++;
             
+            // 다음 세그먼트 애니메이션 시작
             if (currentIndex < newData.length - 1) {
               animateNextSegment();
             } else {
+              console.log("다음 sse cycle")
               doSseCycle();
             }
           }, 1000);
@@ -310,8 +392,8 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         
-        {/* Add MapController */}
-        <MapController currentPosition={currentPosition} />
+        {/* Add MapController with isTracking prop */}
+        <MapController currentPosition={currentPosition} isTracking={isTracking} />
         
         {/* 고정 경로 */}
         {pathSegments.map((segment, index) => (
@@ -366,6 +448,24 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           </Marker>
         )}
       </MapContainer>
+
+      {/* Add tracking toggle button */}
+      <button
+        onClick={() => setIsTracking(!isTracking)}
+        className="absolute bottom-4 left-4 z-[1000] bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+        title={isTracking ? "화면 추적 중지" : "화면 추적 시작"}
+      >
+        {isTracking ? (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        )}
+      </button>
     </div>
   );
 }

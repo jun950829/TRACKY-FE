@@ -108,7 +108,7 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
         </div>
 
         {/* 테이블 */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden max-h-[50vh] overflow-y-auto">
           <table className="w-full">
             <thead className="bg-gray-50 text-xs">
               <tr>
@@ -144,7 +144,7 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y text-sm">
+            <tbody className="max-h-[300px] overflow-y-auto divide-y text-sm">
               {sortedRunningCarList.map((runningCar, index) => (
                 <tr 
                   key={index}
