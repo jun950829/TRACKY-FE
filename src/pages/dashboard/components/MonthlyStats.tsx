@@ -20,35 +20,35 @@ interface MonthlyStatsProps {
 }
 
 function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
-  // const chartData = {
-  //   labels: monthlyData?.dailyDriveCount.map((_, index) => `${index + 1}일`),
-  //   datasets: [
-  //     {
-  //       label: "일별 운행 건수",
-  //       data: monthlyData?.dailyDriveCount.map((data) => data),
-  //       borderColor: "rgb(59, 130, 246)",
-  //       backgroundColor: "rgba(59, 130, 246, 0.5)",
-  //       tension: 0.4,
-  //     },
-  //   ],
-  // };
+  const chartData = {
+    labels: monthlyData?.dailyDriveCount.map((_, index) => `${index + 1}일`),
+    datasets: [
+      {
+        label: "일별 운행 건수",
+        data: monthlyData?.dailyDriveCount.map((data) => data),
+        borderColor: "rgb(59, 130, 246)",
+        backgroundColor: "rgba(59, 130, 246, 0.5)",
+        tension: 0.4,
+      },
+    ],
+  };
 
-  // const chartOptions = {
-  //   responsive: true,
-  //   plugins: {
-  //     legend: {
-  //       position: "top" as const,
-  //     },
-  //   },
-  //   scales: {
-  //     y: {
-  //       beginAtZero: true,
-  //       ticks: {
-  //         stepSize: 1,
-  //       },
-  //     },
-  //   },
-  // };
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+        },
+      },
+    },
+  };
 
   return (
     <Card className="w-full bg-white">
@@ -77,7 +77,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
           </div>
         </div>
         <div className="h-[300px]">
-          {/* <Line data={chartData} options={chartOptions} /> */}
+          <Line data={chartData} options={chartOptions} />
         </div>
       </CardContent>
     </Card>
