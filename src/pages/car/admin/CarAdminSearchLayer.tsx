@@ -24,10 +24,11 @@ import * as XLSX from 'xlsx';
 import { PageSizeOptions, CarTypes } from "@/constants/datas/options";
 import { CarSearchLayer } from "@/constants/types/carTypes";
 
-function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLayer) {
+function CarAdminSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLayer) {
   const [status, setStatus] = useState<string | undefined>("all");
   const [carType, setCarType] = useState<string | undefined>("all");
   const [searchValue, setSearchValue] = useState<string>("");
+  const [searchBizValue, setSearchBizValue] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
@@ -36,21 +37,22 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
   function search() {
     // searchRef.current가 아닌 state 값 사용
     const searchText = searchValue;
-    const bizSearchText = "";
+    const searchBizText = searchBizValue;
+
     // "all" 옵션이 선택되면 해당 필터는 undefined로 처리
     const statusFilter = status === "all" ? undefined : status;
     const carTypeFilter = carType === "all" ? undefined : carType;
 
     console.log("검색 요청:", {
-      bizSearchText: bizSearchText,
+      bizSearchText: searchBizText,
       searchText: searchText,
       status: statusFilter,
       carType: carTypeFilter,
       pageSize: pageSize,
-    }); 
+    });
 
     // status와 carType 모두 검색 요청에 포함
-    onSearch(false, bizSearchText, searchText, statusFilter, carTypeFilter, pageSize);
+    onSearch(false, searchBizText, searchText, statusFilter, carTypeFilter, pageSize);
   }
 
   // 엑셀 다운로드 모달 열기
@@ -189,6 +191,10 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
     setSearchValue(e.target.value);
   };
 
+  const handleBizInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchBizValue(e.target.value);
+  };
+
   // 페이지 사이즈 변경 핸들러
   const handlePageSizeChange = (value: string) => {
     const newPageSize = Number(value);
@@ -201,8 +207,16 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
       <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <Input
+            placeholder="업체명 검색"
+            className="w-32"
+            value={searchBizValue}
+            onChange={handleBizInputChange}
+            onKeyDown={handleKeyDown}
+          />
+
+          <Input
             placeholder="번호판, 관리번호 검색"
-            className="w-64"
+            className="w-32"
             value={searchValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -377,4 +391,4 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
   );
 }
 
-export default CarSearchLayer;
+export default CarAdminSearchLayer;

@@ -10,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { dailyHourlyOperationData } from "@/constants/mocks/statisticMockData";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import StatisticDatePicker from "../StatisticDatePicker";

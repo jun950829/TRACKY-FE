@@ -2,14 +2,9 @@ import { Search, ChevronLeft, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import realtimeApi from '@/libs/apis/realtimeApi';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { formatDrivingTimeSmart } from '@/libs/utils/utils';
 
 interface RealTimeSearchPanelProps {
   onToggle: () => void;
@@ -17,17 +12,8 @@ interface RealTimeSearchPanelProps {
   goDetail: () => void;
 }
 
-type SortField = 'status' | 'carNumber' | 'driver' | 'distance' | 'time';
+type SortField = 'status' | 'carPlate' | 'drivingTime';
 type SortOrder = 'asc' | 'desc';
-
-interface Vehicle {
-  id: number;
-  status: '운행중' | '정차중';
-  carNumber: string;
-  driver: string;
-  distance: number;
-  time: number;
-}
 
 interface RunningCar  {
   id: number;
@@ -35,29 +21,36 @@ interface RunningCar  {
   carPlate: string;
   renterName: string;
   distance: number;
-  drivingTime: string;
+  drivingTime: number;
   status: string;
+  bizName: string;
 }
 
 function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTimeSearchPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState<SortField>('distance');
+  const [searchBizQuery, setSearchBizQuery] = useState('');
+  const [sortField, setSortField] = useState<SortField>('drivingTime');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
-  // 예시 데이터
-  // const [runningCarList] = useState<Vehicle[]>([
-  //   { id: 1, status: '운행중', carNumber: '15가 1234', driver: '박부장', distance: 48.36, time: 73 },
-  //   { id: 2, status: '운행중', carNumber: '59나 5959', driver: '데모', distance: 65.11, time: 73 },
-  // ]);
   const [runningCarList, setRunningCarList] = useState<RunningCar[]>([]);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   useEffect(() => {
-    fetchRealtimeData();
+    fetchRealtimeData("");
   }, []);
 
-  const fetchRealtimeData = async () => {
-    const response = await realtimeApi.getRealtimeData("");
-    setRunningCarList(response.data);
+  const fetchRealtimeData = async (search : string) => {
+    let response;
+    try {
+      if(isAdmin) { 
+        response = await realtimeApi.getRealtimeAdminData(searchBizQuery, search);
+      } else {
+        response = await realtimeApi.getRealtimeData(search);
+      }
+      setRunningCarList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSort = (field: SortField) => {
@@ -76,42 +69,58 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
       <ChevronDown className="h-3 w-3 text-blue-600" />;
   };
 
-  // const sortedRunningCarList = [...runningCarList].sort((a, b) => {
-  //   const modifier = sortOrder === 'asc' ? 1 : -1;
-  //   const aValue = a[sortField];
-  //   const bValue = b[sortField];
+  const sortedRunningCarList = [...runningCarList].sort((a, b) => {
+    const modifier = sortOrder === 'asc' ? 1 : -1;
+    const aValue = a[sortField];
+    const bValue = b[sortField];
     
-  //   if (typeof aValue === 'string' && typeof bValue === 'string') {
-  //     return aValue.localeCompare(bValue) * modifier;
-  //   }
-  //   return ((aValue as number) - (bValue as number)) * modifier;
-  // });
-  const sortedRunningCarList = runningCarList;
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return aValue.localeCompare(bValue) * modifier;
+    }
+    return ((aValue as unknown as number) - (bValue as unknown as number)) * modifier;
+  });
+
+  const handleSearch = () => {
+    if(searchBizQuery != "") {
+      fetchRealtimeData(searchQuery);
+    } else {
+      fetchRealtimeData(searchQuery);
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === 'Enter') {
+      handleSearch();
+    }
+  }
 
   return (
     <div className="flex items-start">
-      <div className="w-[320px] flex flex-col gap-2">
-        {/* 그룹 선택 */}
-        <Select>
-          <SelectTrigger className="w-full bg-white h-8 text-sm">
-            <SelectValue placeholder="그룹 선택 안함" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">그룹 선택 안함</SelectItem>
-            <SelectItem value="group1">그룹 1</SelectItem>
-            <SelectItem value="group2">그룹 2</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="w-[360px] flex flex-col gap-2">
+        {isAdmin && (
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
+            <Input
+            className="pl-8 pr-3 py-1 w-full h-8 text-sm"
+            placeholder="업체명으로 검색"
+            value={searchBizQuery}
+            onChange={(e) => setSearchBizQuery(e.target.value)}
+            onKeyDown={handleKeyPress}
+          />
+          </div>
+        )}
 
         {/* 검색 입력 */}
-        <div className="relative">
+        <div className="relative flex flex-row gap-2">
           <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-500" />
           <Input
-            className="pl-8 pr-3 py-1 w-full h-8 text-sm"
-            placeholder="차량번호, 차량명"
+            className="pl-8 pr-3 py-1 w-3/4 h-8 text-sm"
+            placeholder="차량번호, 관리번호로 검색"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyPress}
           />
+          <Button variant="outline" size="sm" className="w-1/4 h-8 bg-primary text-white text-sm" onClick={handleSearch}>검색</Button>
         </div>
 
         {/* 상태 요약 */}
@@ -141,9 +150,9 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                     variant="ghost"
                     size="sm"
                     className="h-6 px-1.5 font-medium text-xs"
-                    onClick={() => handleSort('carNumber')}
+                    onClick={() => handleSort('carPlate')}
                   >
-                    차량번호 {getSortIcon('carNumber')}
+                    차량번호 {getSortIcon('carPlate')}
                   </Button>
                 </th>
                 <th className="px-2 py-1.5 text-right font-medium text-gray-600">
@@ -151,9 +160,9 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                     variant="ghost"
                     size="sm"
                     className="h-6 px-1.5 font-medium text-xs"
-                    onClick={() => handleSort('distance')}
+                    onClick={() => handleSort('drivingTime')}
                   >
-                    거리 {getSortIcon('distance')}
+                    운행시간 {getSortIcon('drivingTime')}
                   </Button>
                 </th>
               </tr>
@@ -176,12 +185,12 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                   <td className="px-2 py-1.5">
                     <div>
                       <div className="font-medium text-sm">{runningCar.carPlate}</div>
-                      <div className="text-xs text-gray-600">{runningCar.renterName}</div>
+                      <div className="text-xs text-gray-600">{runningCar.renterName} | {isAdmin ? runningCar.bizName : runningCar.mdn}</div>
                     </div>
                   </td>
                   <td className="px-2 py-1.5 text-right">
-                    <div className="text-sm font-medium">{runningCar.distance}km</div>
-                    <div className="text-xs text-gray-500">{runningCar.drivingTime}분 운행</div>
+                    <div className="text-xs font-medium">{formatDrivingTimeSmart(runningCar.drivingTime)}</div>
+                    {/* <div className="text-xs text-gray-500">{runningCar.distance}km 운행</div> */}
                   </td>
                 </tr>
               ))}

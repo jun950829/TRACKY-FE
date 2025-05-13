@@ -34,9 +34,8 @@ function MonthlyCharts({ monthlyData }: MonthlyChartsProps) {
   }
 
   const getMonthlyOperationData = () => {
-    const sortedStat = [...monthlyStat].sort((a, b) => a.month - b.month);
-    const labels = sortedStat.map((item) => `${item.month}월`);
-    const data = sortedStat.map((item) => item.driveCount);
+    const labels = monthlyStat.map((item) => `${item.month}월`);
+    const data = monthlyStat.map((item) => item.driveCount);
 
     return {
       labels,

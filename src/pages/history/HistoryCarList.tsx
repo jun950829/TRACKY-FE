@@ -1,15 +1,19 @@
 import { useCarListStore } from "@/stores/useCarListStore";
 import { useDriveListStore } from "@/stores/useDriveListStore";
-import { Loader2, Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import { getStatusBadgeClass, getStatusLabel } from "@/libs/utils/getClassUtils";
 import { CarRecord } from "@/constants/types/historyTypes";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 
 export default function HistoryCarList() {
   const { 
     carResults, 
     isLoading,
   } = useCarListStore();
+
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const {setSelectedCar, setCurrentPage, selectedCar } = useDriveListStore();
 
@@ -74,7 +78,7 @@ export default function HistoryCarList() {
                     </div>
                   </div>
                   <div className="text-xs text-gray-500 mt-1">
-                    {car.mdn} | {car.carName}
+                    {isAdmin ? car.bizName : car.mdn} | {car.carName}
                   </div>
                 </div>
               </div>
