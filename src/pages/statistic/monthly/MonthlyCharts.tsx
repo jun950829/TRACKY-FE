@@ -28,14 +28,15 @@ interface MonthlyChartsProps {
 }
 
 function MonthlyCharts({ monthlyData }: MonthlyChartsProps) {
-  const monthlyStat = monthlyData?.monthlyStat;
-  if (!monthlyStat) {
+  const monthlyStats = monthlyData?.monthlyStats;
+  console.log(monthlyData);
+  if (!monthlyStats) {
     return <div className="p-4 text-center">데이터를 불러올 수 없습니다.</div>;
   }
 
   const getMonthlyOperationData = () => {
-    const labels = monthlyStat.map((item) => `${item.month}월`);
-    const data = monthlyStat.map((item) => item.driveCount);
+    const labels = monthlyStats.map((item) => `${item.month}월`);
+    const data = monthlyStats.map((item) => item.driveCount);
 
     return {
       labels,
@@ -52,9 +53,8 @@ function MonthlyCharts({ monthlyData }: MonthlyChartsProps) {
   };
 
   const getMonthlyDistanceData = () => {
-    const sortedStat = [...monthlyStat].sort((a, b) => a.month - b.month);
-    const labels = sortedStat.map((item) => `${item.month}월`);
-    const data = sortedStat.map((item) => item.driveDistance);
+    const labels = monthlyStats.map((item) => `${item.month}월`);
+    const data = monthlyStats.map((item) => item.driveDistance);
 
     return {
       labels,
