@@ -60,7 +60,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
           <div className="p-4 bg-blue-50 rounded-lg">
             <div className="text-sm text-blue-600 font-medium">당월 평균 운행률</div>
             <div className="text-2xl font-bold text-blue-700">
-              {/* {monthlyData?.avgOperationRate.toFixed(1)}% */}
+              {monthlyData?.avgOperationRate.toFixed(1)}%
             </div>
           </div>
           <div className="p-4 bg-green-50 rounded-lg">
