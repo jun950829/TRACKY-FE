@@ -33,7 +33,7 @@ function MonthlyCards({ monthlyData }: MonthlyCardsProps) {
 
       <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="p-5">
-          <h3 className="text-sm font-medium text-gray-500 mb-4">운행중 차량 수</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-4">미운행 차량 수</h3>
           <div className="flex items-baseline">
             <span className="text-3xl font-bold text-blue-600">
               {summary.totalCarCount - summary.nonOperatingCarCount}
