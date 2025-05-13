@@ -70,6 +70,7 @@ export type CarUpdateTypes = {
 export type CarDetailTypes = {
   mdn: string;
   bizInfo: BizInfo;
+  bizName: string;
   carType: string;
   carPlate: string;
   carName: string;
@@ -81,7 +82,28 @@ export type CarDetailTypes = {
   createdAt: string;
 };
 
-export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED";
+export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
+
+export const CarTypeLabel: Record<CarTypeEnum, string> = {
+  MINI: "경차",
+  SEDAN: "세단",
+  VAN: "벤",
+  SUV: "SUV",
+  TRUCK: "트럭",
+  BUS: "버스",
+  SPORTS: "스포츠카",
+  ETC: "기타",
+};
+
+export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED" | "DELETED";
+
+export const CarStatusLabels: Record<CarStatusEnum, string> = {
+  RUNNING: '운행중',
+  WAITING:  '대기중',
+  FIXING: '정비중',
+  CLOSED: '폐차',
+  DELETED:  '삭제됨',
+};
 
 export type CarStatusTypes = Record<CarStatusEnum, number>;
 
@@ -160,18 +182,19 @@ export type RentUpdateTypes = {
 };
 
 export type RentDetailTypes = {
-  rent_uuid: string; // 8자리 대여 UUID
-  mdn: string; // 차량 식별키
-  renterName: string; // 사용자 이름
-  renterPhone: string; // 사용자 전화번호
-  purpose: string; // 차량 사용 목적
-  rentStatus: string; // 대여 상태
-  rentStime: string; // 대여 시작 시간
-  rentLoc: string; // 대여 위치
-  rentEtime: string; // 대여 종료 시간
-  returnLoc: string; // 반납 위치
-  createdAt: string; // 생성 시간
-};
+    rent_uuid: string;        // 8자리 대여 UUID
+    mdn: string;             // 차량 식별키
+    bizName: string;         // 업체 이름
+    renterName: string;      // 사용자 이름
+    renterPhone: string;     // 사용자 전화번호
+    purpose: string;         // 차량 사용 목적
+    rentStatus: string;      // 대여 상태    
+    rentStime: string;       // 대여 시작 시간
+    rentLoc: string;         // 대여 위치
+    rentEtime: string;       // 대여 종료 시간
+    returnLoc: string;      // 반납 위치
+    createdAt: string;      // 생성 시간
+}
 
 export type Member = {
   bizName: string;

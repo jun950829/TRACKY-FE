@@ -6,14 +6,19 @@ import { CarDetailTypes } from "@/constants/types/types";
 import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import Pagination from "@/components/custom/Pagination";
+import CarAdminSearchLayer from "./admin/CarAdminSearchLayer";
+import { useAuthStore } from "@/stores/useAuthStore";
+import CarAdminTable from "./admin/CarAdminTable";
 
 function CarSection() {
   const [carList, setCarList] = useState<CarDetailTypes[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<ApiError | null>(null);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   // 검색 및 필터 상태
   const [searchParams, setSearchParams] = useState({
+    bizSearchText: "",
     search: "",
     status: undefined as string | undefined,
     carType: undefined as string | undefined,
@@ -32,16 +37,28 @@ function CarSection() {
   const loadCarData = async (params: typeof searchParams) => {
     setIsLoading(true);
     setError(null);
-
+    let response = null;
     try {
-      const response = await carApiService.searchByFilters(
-        params.search,
-        params.status,
-        params.carType,
-        params.size,
-        params.page
-      );
-
+      if (isAdmin) {
+        console.log("admin : ", params);
+        response = await carApiService.searchByFiltersAdmin(
+          params.bizSearchText,
+          params.search,
+          params.status,
+          params.carType,
+          params.size,
+          params.page
+        );
+      } else {
+        console.log("user");
+        response = await carApiService.searchByFilters(
+          params.search,
+          params.status,
+          params.carType,
+          params.size,
+          params.page
+        );
+      }
       const responseBody = response.data;
 
       if (responseBody.status === 200) {
@@ -82,6 +99,7 @@ function CarSection() {
   // 검색 필터 변경 함수
   const handleSearch = (
     isReload: boolean,
+    bizSearchText: string = "",
     search: string = "",
     status?: string,
     carType?: string,
@@ -90,6 +108,7 @@ function CarSection() {
     const newParams = isReload
       ? { ...searchParams }
       : {
+          bizSearchText,
           search,
           status,
           carType,
@@ -123,14 +142,27 @@ function CarSection() {
         </p>
 
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <CarSearchLayer carList={carList} onSearch={handleSearch} defaultPageSize={searchParams.size} />
+          {isAdmin ? (
+            <CarAdminSearchLayer carList={carList} onSearch={handleSearch} defaultPageSize={searchParams.size} />
+          ) : (
+            <CarSearchLayer carList={carList} onSearch={handleSearch} defaultPageSize={searchParams.size} />
+          )}
           <div className="p-4 sm:p-6">
-            <CarTable
-              carList={carList}
-              setCarList={setCarList}
-              isLoading={isLoading}
-              reload={() => handleSearch(true)}
-            />
+            {isAdmin ? (
+              <CarAdminTable
+                carList={carList}
+                setCarList={setCarList}
+                isLoading={isLoading}
+                reload={() => handleSearch(true)}
+              />
+            ) : (
+              <CarTable
+                carList={carList}
+                setCarList={setCarList}
+                isLoading={isLoading}
+                reload={() => handleSearch(true)}
+              />
+            )}
 
           {/* 페이지네이션 컴포넌트 */}
           {pagination.totalElements > 0 && (

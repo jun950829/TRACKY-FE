@@ -10,14 +10,16 @@ interface CarListState {
   totalElements: number;
   pageSize: number;
   searchText: string;
+  searchBizText: string;
   setCarResults: (results: CarRecord[]) => void;
   setCurrentPage: (page: number) => void;
   setTotalPages: (pages: number) => void;
   setTotalElements: (elements: number) => void;
   setPageSize: (size: number) => void;
   setSearchText: (text: string) => void;
+  setSearchBizText: (text: string) => void;
   setIsLoading: (loading: boolean) => void;
-  fetchCars: (text: string, page?: number) => Promise<void>;
+  fetchCars: (bizText: string, text: string, page?: number) => Promise<void>;
 }
 
 export const useCarListStore = create<CarListState>((set, get) => ({
@@ -28,20 +30,23 @@ export const useCarListStore = create<CarListState>((set, get) => ({
   totalElements: 0,
   pageSize: 10,
   searchText: '',
+  searchBizText: '',
   setCarResults: (results) => set({ carResults: results }),
   setCurrentPage: (page) => {
     set({ currentPage: page });
-    get().fetchCars(get().searchText, page);
+    get().fetchCars(get().searchBizText, get().searchText, page);
   },
   setTotalPages: (pages) => set({ totalPages: pages }),
   setTotalElements: (elements) => set({ totalElements: elements }),
   setPageSize: (size) => set({ pageSize: size }),
   setSearchText: (text) => set({ searchText: text }),
+  setSearchBizText: (text) => set({ searchBizText: text }),
   setIsLoading: (loading) => set({ isLoading: loading }),
-  fetchCars: async (text, page = 0) => {
+  fetchCars: async (bizText, text, page = 0) => {
+    
     try {
       set({ isLoading: true });
-      const response = await driveService.getCars(text, page, get().pageSize);
+      const response = await driveService.getCars(bizText, text, page, get().pageSize);
       set({
         carResults: response.data,
         currentPage: response.pageResponse.number,

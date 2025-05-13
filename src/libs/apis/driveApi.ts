@@ -2,10 +2,15 @@ import api from "./api";
 import { format } from "date-fns";
 
 const driveApiRoot = "/drives";
+const driveAdminApiRoot = "/admin/drives";
 
 export const driveService = {
-    getCars: async (search: string, page?: number, size?: number) => {
+    getCars: async (bizSearch: string, search: string, page?: number, size?: number) => {
         const params = new URLSearchParams();
+
+        if(bizSearch != "" ) {
+            params.append('bizSearch', bizSearch);
+        }
 
         if(search != "" ) {
             params.append('search', search);
@@ -15,8 +20,9 @@ export const driveService = {
             params.append('page', String(page)); // API는 0-based 페이지를 사용
             params.append('size', String(size));
         }
+
         
-        const response = await api.get(`${driveApiRoot}/cars?${params.toString()}`);
+        const response = await api.get(`${driveAdminApiRoot}/cars?${params.toString()}`);
         return response.data;
     },
 

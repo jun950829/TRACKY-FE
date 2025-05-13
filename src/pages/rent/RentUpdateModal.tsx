@@ -13,15 +13,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RentDetailTypes } from '@/constants/types/types';
+import { CarStatusLabels, RentDetailTypes } from '@/constants/types/types';
 import { useEffect, useState } from 'react';
 import Modal from '@/components/custom/Modal';
 import rentApiService from '@/libs/apis/rentsApi';
 import { RentStatus } from '@/constants/datas/status';
-import { MdnStatus } from "@/constants/types/rentTypes";
+import { MdnStatus, RentStatusLabels } from "@/constants/types/rentTypes";
 import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 import { validateFormValues } from "./rentValidator";
-
+import StatusBadge from "@/components/custom/StatusBadge";
 
 const schema = yup.object().shape({
   mdn: yup.string().required("차량 관리번호를 입력하세요"),
@@ -160,7 +160,12 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
                 </SelectTrigger>
                 <SelectContent>
                   {mdnList.map((mdnStatus: MdnStatus, idx: number) => (
-                    <SelectItem key={idx} value={mdnStatus.mdn}>{mdnStatus.mdn} {mdnStatus.status}</SelectItem>
+                    <SelectItem key={idx} value={mdnStatus.mdn}>
+                        <div className="flex items-center justify-between w-[350px]">
+                          <span className="truncate">{mdnStatus.mdn}</span>
+                          <StatusBadge status={CarStatusLabels[mdnStatus.status]} type="rent" />
+                        </div>
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

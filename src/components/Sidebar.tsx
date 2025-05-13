@@ -123,7 +123,9 @@ function Sidebar() {
           <div className="border-t border-foreground/10 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-foreground/10" />
+                <div className="text-xs">
+                  {isAdmin ? "관리자" : "일반"}
+                </div>
                 <div className="text-sm">
                   <div className="font-medium">{member?.bizName} 님</div>
                 </div>

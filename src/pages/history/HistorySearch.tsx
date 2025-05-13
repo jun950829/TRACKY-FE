@@ -11,34 +11,50 @@ function HistorySearch() {
     isLoading,
     setCurrentPage,
     fetchCars,
-    searchText,
-    setSearchText: setStoreSearchText
+    searchText,     
+    searchBizText,
+    setSearchText: setStoreSearchText,
+    setSearchBizText: setStoreSearchBizText
   } = useCarListStore();
 
+  const [searchBizValue, setSearchBizValue] = useState(searchBizText !== "" ? searchBizText : '');
   const [searchValue, setSearchValue] = useState(searchText !== "" ? searchText : '');
   const [searchType, setSearchType] = React.useState<'biz' | 'car'>('car');
   const isAdmin = useAuthStore((state) => state.isAdmin);
 
   // 초기 데이터 로딩
   useEffect(() => {
-    fetchCars(searchText !== "" ? searchText : '', 0);
+    fetchCars(searchText !== "" ? searchText : '', '', 0);
   }, []);
 
   const handleSearch = async () => {
-    setStoreSearchText(searchValue);
-    setCurrentPage(0); // 첫 페이지로 초기화
-    await fetchCars(searchValue, 0);
+    if (searchType === 'biz') {
+      setStoreSearchBizText(searchBizValue);
+      setStoreSearchText(searchValue);
+
+      setCurrentPage(0); // 첫 페이지로 초기화
+      await fetchCars(searchBizValue, searchValue, 0);
+    } else {
+      setStoreSearchText(searchValue);
+      setCurrentPage(0); // 첫 페이지로 초기화
+      await fetchCars(searchBizValue, searchValue, 0);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
+  const handleBizInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchBizValue(e.target.value);
+  };
+
   const handleTypeChange = (type: 'biz' | 'car') => {
     setSearchValue('');
+    setSearchBizValue('');
     setSearchType(type);
     setCurrentPage(0);
-    fetchCars('', 0);
+    fetchCars('', '', 0);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -51,6 +67,16 @@ function HistorySearch() {
     <>
       {/* Search Type Toggle */}
       <div className="flex space-x-2">
+        {isAdmin ?
+        (
+          <Input
+            placeholder={'업체 ID로 검색'}
+            value={searchBizValue}
+            onChange={handleBizInputChange}
+            onKeyDown={handleKeyDown}
+            className="pr-10"
+          />
+        ) : 
         <Button
           variant={searchType === 'car' ? 'default' : 'outline'}
           size="sm"
@@ -65,25 +91,13 @@ function HistorySearch() {
         >
           차량 별
         </Button>
-        {/* <Button
-          variant={searchType === 'biz' ? 'default' : 'outline'}
-          size="sm"
-          className={cn(
-            "flex-1 transition-all duration-200",
-            searchType === 'biz' 
-              ? 'bg-blue-600 text-white hover:bg-blue-700' 
-              : 'border-gray-200 hover:border-blue-500 hover:text-blue-600'
-          )}
-          onClick={() => handleTypeChange('biz')}
-        >
-          업체 별
-        </Button> */}
-      </div>
+        }
+      </div> 
       
       {/* Search Input */}
       <div className="relative mt-1">
         <Input
-          placeholder={`${searchType === 'biz' ? '업체 ID' : '차량 관리번호'}로 검색`}
+          placeholder={`차량 관리번호로 검색`}
           value={searchValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -107,8 +121,8 @@ function HistorySearch() {
       {/* Search Hint */}
       <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded-md mt-1">
         {searchType === 'biz' 
-          ? '업체 ID로 검색하여 해당 업체의 모든 운행 기록을 확인할 수 있습니다' 
-          : '차량 관리번호로 검색하여 해당 차량의 모든 운행 기록을 확인할 수 있습니다'
+          ? '업체 명으로 검색하여 해당 업체의 차량 목록을 확인할 수 있습니다' 
+          : '차량 관리번호로 검색하여 해당 차량 목록을 확인할 수 있습니다'
         }
       </div>
     </>
