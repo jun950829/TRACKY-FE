@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import statisticApiService from '@/libs/apis/statisticApi';
-import { CarTypeEnum } from '@/constants/types/types';
+import { CarTypeEnum, CarTypeLabel } from '@/constants/types/types';
 
 export interface CarStatisticRequest {
   searchTerm: string;
@@ -104,7 +104,7 @@ function StatisticCarTable() {
             {carStatisticData.map((car, index) => (
               <tr key={index} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 text-sm text-gray-600">{car.carPlate}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.carType}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{CarTypeLabel[car.carType]}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{(car.driveSec / 60 / 60).toFixed(1)} 시간</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{(car.driveDistance / 1000).toFixed(1)} km</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.avgSpeed}</td>

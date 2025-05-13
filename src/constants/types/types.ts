@@ -81,20 +81,6 @@ export type CarDetailTypes = {
   deviceInfo: Devices;
   createdAt: string;
 };
-export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
-
-
-export type CarStatusEnum = 'RUNNING' | 'WAITING' | 'FIXING' | 'CLOSED' | 'DELETED';
-
-export const CarStatusLabels: Record<CarStatusEnum, string> = {
-  RUNNING: '운행중',
-  WAITING:  '대기중',
-  FIXING: '정비중',
-  CLOSED: '폐차',
-  DELETED:  '삭제됨',
-};
-
-export type CarStatusTypes = Record<CarStatusEnum, number>;
 
 export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
 
@@ -108,6 +94,18 @@ export const CarTypeLabel: Record<CarTypeEnum, string> = {
   SPORTS: "스포츠카",
   ETC: "기타",
 };
+
+export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED" | "DELETED";
+
+export const CarStatusLabels: Record<CarStatusEnum, string> = {
+  RUNNING: '운행중',
+  WAITING:  '대기중',
+  FIXING: '정비중',
+  CLOSED: '폐차',
+  DELETED:  '삭제됨',
+};
+
+export type CarStatusTypes = Record<CarStatusEnum, number>;
 
 export type Devices = {
   id: number;
