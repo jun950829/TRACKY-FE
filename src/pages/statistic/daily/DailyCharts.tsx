@@ -13,7 +13,7 @@ import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import StatisticDatePicker from "../StatisticDatePicker";
-import { DailyStatisticResponse, HourlyStats, statisticApiService } from "@/libs/apis/statisticApi";
+import { DailyStatisticResponse, HourlyStat, statisticApiService } from "@/libs/apis/statisticApi";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -59,7 +59,7 @@ function DailyCharts({ selectedDate, dailyData }: DailyChartsProps) {
     // 현재 날짜 데이터 추가
     if (dailyData) {
       const hourlyData = Array(24).fill(0);
-      dailyData.hourlyStats.forEach((stat: HourlyStats) => {
+      dailyData.hourlyStats.forEach((stat: HourlyStat) => {
         hourlyData[stat.hour] = stat.driveCount;
       });
 
@@ -77,7 +77,7 @@ function DailyCharts({ selectedDate, dailyData }: DailyChartsProps) {
     // 비교 날짜 데이터 추가
     if (compareData && compareDate) {
       const hourlyData = Array(24).fill(0);
-      compareData.hourlyStats.forEach((stat: HourlyStats) => {
+      compareData.hourlyStats.forEach((stat: HourlyStat) => {
         hourlyData[stat.hour] = stat.driveCount;
       });
 

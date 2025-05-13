@@ -63,7 +63,7 @@ export const makeStatisticsItems = (statistics: Statistics) => {
       id: 'total-km',
       icon: <Activity className="h-4 w-4 text-purple-500" />,
       title: '총 운행거리',
-      value: `${statistics.totalDriveDistance.toFixed(2)} km`,
+      value: `${statistics.totalDriveDistance / 1000} km`,
       color: 'bg-purple-50 border-purple-200'
     },
     {

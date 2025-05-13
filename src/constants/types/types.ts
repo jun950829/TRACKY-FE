@@ -81,10 +81,21 @@ export type CarDetailTypes = {
   deviceInfo: Devices;
   createdAt: string;
 };
+
 export type CarTypeEnum = "MINI" | "SEDAN" | "VAN" | "SUV" | "TRUCK" | "BUS" | "SPORTS" | "ETC";
 
+export const CarTypeLabel: Record<CarTypeEnum, string> = {
+  MINI: "경차",
+  SEDAN: "세단",
+  VAN: "벤",
+  SUV: "SUV",
+  TRUCK: "트럭",
+  BUS: "버스",
+  SPORTS: "스포츠카",
+  ETC: "기타",
+};
 
-export type CarStatusEnum = 'RUNNING' | 'WAITING' | 'FIXING' | 'CLOSED' | 'DELETED';
+export type CarStatusEnum = "RUNNING" | "WAITING" | "FIXING" | "CLOSED" | "DELETED";
 
 export const CarStatusLabels: Record<CarStatusEnum, string> = {
   RUNNING: '운행중',
