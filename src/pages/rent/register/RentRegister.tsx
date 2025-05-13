@@ -9,6 +9,11 @@ import { useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
+export interface MdnStatus {
+  mdn: string;
+  status: string;
+}
+
 export default function RentRegister() {
   const { currentStep, resetForm } = useRentStore();
   const navigate = useNavigate();
