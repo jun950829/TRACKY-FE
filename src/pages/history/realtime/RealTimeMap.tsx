@@ -179,7 +179,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
         timeoutRef.current = null;
       }
 
-      // SSE 구독 해제
+      // SSE 구독 해제 및 큐 초기화
       useSseStore.getState().resetSse();
 
       // 모든 상태 초기화
@@ -229,20 +229,18 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       isInitialLoadRef.current = false;
 
       // 마지막 60개를 제외한 데이터로 고정 경로 생성
-      const fixedData = gpsList.slice(0, -59);
-
-      console.log("1분전 데이터 : ", fixedData[fixedData.length - 1]);
+      const fixedData = gpsList.slice(0, -60);
       const recentData = getLastSixtyPoints(gpsList);
       
-      console.log("60개 데이터의 마지막 : ", recentData[recentData.length - 1]);
-
+      console.log("초기 고정 경로 데이터 마지막:", fixedData[fixedData.length - 1]);
+      console.log("초기 애니메이션 데이터 시작:", recentData[0]);
+      console.log("초기 애니메이션 데이터 마지막:", recentData[recentData.length - 1]);
+      
       // 기존 경로 path segment 
       setPathSegments(createPathSegments(fixedData));
-      lastProcessedIndexRef.current = gpsList.length - 60;
       
       // 마지막 60개 데이터를 실시간처럼 애니메이션
       if (recentData.length > 0) {
-        // 기존 타이머와 애니메이션 정리
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
         }
@@ -259,7 +257,6 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             const currentPoint = recentData[currentIndex];
             const nextPoint = recentData[currentIndex + 1];
             
-            // 새로운 세그먼트 추가 (속도에 따른 색상 적용)
             const avgSpeed = (currentPoint.spd + nextPoint.spd) / 2;
             const newSegment: PathSegment = {
               positions: [
@@ -274,45 +271,36 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             startTimeRef.current = performance.now();
             updateAnimation(currentPoint, nextPoint, startTimeRef.current);
 
-            // 애니메이션이 끝나면 세그먼트를 replaySegments에 추가
             timeoutRef.current = setTimeout(() => {
               setReplaySegments(prev => [...prev, newSegment]);
               setCurrentSegment(null);
               currentIndex++;
-              lastProcessedIndexRef.current++;
               
-              // 다음 세그먼트 애니메이션 시작
               if (currentIndex < recentData.length - 1) {
                 animateNextSegment();
               } else {
-                // do Sse Cycle
+                console.log("초기 60개 데이터 애니메이션 완료");
+                // 초기 60개 데이터 애니메이션이 끝나면 SSE 큐 처리 시작
                 doSseCycle();
               }
             }, 1000);
           }
         };
 
-        console.log("초기 인터벌 시작");
+        console.log("초기 애니메이션 시작");
         animateNextSegment();
-        isInitialLoadRef.current = false;
       }
     }
   }, [gpsList]);
 
   const doSseCycle = () => {
-    console.log("lastProcessedIndexRef.current: ", lastProcessedIndexRef.current);
-  
-    const updatedGpsList = useSseStore.getState().gpsList;
-    console.log("새로운 리스트의 시작 위치 : ", updatedGpsList[lastProcessedIndexRef.current]);
+    const nextCycle = useSseStore.getState().getNextCycle();
+    
+    if (nextCycle && nextCycle.length > 0) {
+      console.log("다음 사이클 데이터 시작:", nextCycle[0]);
+      console.log("다음 사이클 데이터 마지막:", nextCycle[nextCycle.length - 1]);
+      console.log("다음 사이클 데이터 개수:", nextCycle.length);
 
-    console.log("새로운 리스트의 마지막 : ", updatedGpsList[updatedGpsList.length - 1]);
-
-    const newData = updatedGpsList.slice(lastProcessedIndexRef.current);
-    console.log("newData 개수  : ", newData.length);
-
-    console.log("newData 의 마지막 :  " ,newData[newData.length - 1]);
-      
-    if (newData.length > 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
@@ -325,12 +313,10 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
 
       let currentIndex = 0;
       const animateNextSegment = () => {
-
-        if (currentIndex < newData.length - 1) {
-          const currentPoint = newData[currentIndex];
-          const nextPoint = newData[currentIndex + 1];
+        if (currentIndex < nextCycle.length - 1) {
+          const currentPoint = nextCycle[currentIndex];
+          const nextPoint = nextCycle[currentIndex + 1];
           
-          // 새로운 세그먼트 추가 (속도에 따른 색상 적용)
           const avgSpeed = (currentPoint.spd + nextPoint.spd) / 2;
           const newSegment: PathSegment = {
             positions: [
@@ -349,20 +335,34 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
             setReplaySegments(prev => [...prev, newSegment]);
             setCurrentSegment(null);
             currentIndex++;
-            lastProcessedIndexRef.current++;
             
-            // 다음 세그먼트 애니메이션 시작
-            if (currentIndex < newData.length - 1) {
+            if (currentIndex < nextCycle.length - 1) {
               animateNextSegment();
             } else {
-              console.log("다음 sse cycle")
-              doSseCycle();
+              console.log("현재 사이클 애니메이션 완료");
+              // 현재 사이클이 끝나면 다음 사이클 처리
+              // 다음 사이클이 있는지 먼저 확인
+              const hasNextCycle = useSseStore.getState().gpsQueue.length > 0;
+              if (hasNextCycle) {
+                // 다음 사이클이 있으면 즉시 시작
+                doSseCycle();
+              } else {
+                // 다음 사이클이 없으면 마지막 세그먼트를 유지
+                const lastPoint = nextCycle[nextCycle.length - 1];
+                setCurrentPosition([
+                  lastPoint.lat / 1_000_000,
+                  lastPoint.lon / 1_000_000
+                ]);
+              }
             }
           }, 1000);
         }
       };
 
+      console.log("새로운 사이클 애니메이션 시작");
       animateNextSegment();
+    } else {
+      console.log("큐에 새로운 데이터가 없음");
     }
   };
 
