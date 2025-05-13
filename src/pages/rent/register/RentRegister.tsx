@@ -29,7 +29,7 @@ export default function RentRegister() {
     navigate("/car/rent");
   };
 
-	const renderStep = () => {
+const renderStep = () => {
     switch (currentStep) {
       case 1:
         return <Step1Form />;
