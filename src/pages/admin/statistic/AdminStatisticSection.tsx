@@ -60,24 +60,6 @@ function AdminStatisticSection() {
     fetchadminStatistic();
   }, [selectedBiz, selectedDate]);
 
-  
-
-  useEffect(() => {
-    const fetchAdminStatistic = async () => {
-      setIsLoading(true);
-      try {
-        const data = await adminStatisticApiService.getAdminStatistic();
-        setStatisticData(data);
-      } catch(error) {
-        console.error("관리자 통계 데이터 로드 실패:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAdminStatistic();
-  }, [selectedDate]);
-  
   return (
     <div className="space-y-6 p-6">
       <div className="flex justify-between items-center">
