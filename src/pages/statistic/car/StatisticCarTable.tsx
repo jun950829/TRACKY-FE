@@ -97,7 +97,6 @@ function StatisticCarTable() {
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">운행시간</th>
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">운행거리</th>
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">평균속도</th>
-              <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">최고속도</th>
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">상세보기</th>
             </tr>
           </thead>
@@ -106,10 +105,9 @@ function StatisticCarTable() {
               <tr key={index} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 text-sm text-gray-600">{car.carPlate}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.carType}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.driveSec}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.driveDistance}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{(car.driveSec / 60 / 60).toFixed(1)} 시간</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{(car.driveDistance / 1000).toFixed(1)} km</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.avgSpeed}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">0</td>
                 <td className="px-6 py-4">
                   <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                     상세보기
@@ -125,7 +123,7 @@ function StatisticCarTable() {
       <div className="px-6 py-4 border-t border-gray-100">
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
-            전체 {pagination?.totalElements} 개 중 1에서 5까지 표시
+            전체 {pagination?.totalElements} 개 중 {pagination.number * pagination.size + 1}에서 {pagination.number + 1 == pagination.totalPages ? pagination.totalElements : ((pagination.number + 1) * pagination.size)}까지 표시
           </div>
           <div className="flex items-center space-x-2">
             <button
