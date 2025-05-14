@@ -76,7 +76,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
             </div>
           </div>
         </div>
-        <div className="h-[300px]">
+        <div className="">
           <Line data={chartData} options={chartOptions} />
         </div>
       </CardContent>

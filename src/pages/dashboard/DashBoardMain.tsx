@@ -107,10 +107,10 @@ export default function Dashboard() {
           </div>
 
           <div className="w-full flex flex-col xl:flex-row justify-between items-stretch gap-4">
-            <div className="w-full min-w-0 xl:w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MonthlyStats monthlyData={statistics} />
             </div>
-            <div className="w-full min-w-0 xl:w-1/2 h-[500px] bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MapLayer isLoading={isLoading} />
             </div>
           </div>
