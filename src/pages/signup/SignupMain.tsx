@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SignupForm from './SignupForm';
-import SignupModal from './SignupModal';
 import signupApiService, { SignupRequestType } from '@/libs/apis/signupApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -54,7 +53,7 @@ function SignupMain() {
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-green-800">회원가입 성공</h3>
                   <div className="mt-2 text-sm text-green-700">
-                    <p>회원가입이 성공적으로 완료되었습니다. 5초 후 로그인 페이지로 이동합니다.</p>
+                    <p>회원가입이 성공적으로 완료되었습니다.</p>
                   </div>
                 </div>
               </div>
@@ -75,15 +74,6 @@ function SignupMain() {
       </Card>
     </div>
 
-      {modalType && (
-        <SignupModal
-          type={modalType}
-          onClose={() => {
-            if (modalType === 'success') navigate('/login'); 
-            else setModalType(null);                     
-          }}
-        />
-      )}
     </div>
   );
 }

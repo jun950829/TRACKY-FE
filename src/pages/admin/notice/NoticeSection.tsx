@@ -113,7 +113,7 @@ function NoticeSection() {
   }, []);
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="w-full max-w-[1920px] mx-auto md:px-16 xl:px-6 ">
       {error && <ErrorToast error={error} />}
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">공지사항 관리</h1>

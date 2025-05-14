@@ -48,6 +48,7 @@ export const driveService = {
 
     getDriveById: async (id: number) => {
         const response = await api.get(`${driveApiRoot}/${id}`);
+        console.log('운행 기록 조회 성공 : ',response.data);
         return response.data;
     },
 

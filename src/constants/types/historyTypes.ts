@@ -4,7 +4,7 @@ export interface GpsData {
   lon: number;
   spd: number;
   ang: number;
-  o_time: string;
+  oTime: string;
 }
 
 // 운행 기록 타입 정의

@@ -126,7 +126,7 @@ export default function MonthlyDriveCountChart({ monthlyData, hourlyData, select
       </div>
 
       <div className="p-5">
-        <div className="h-[300px]">
+        <div className="w-full h-[300px]">
           <Line data={chartData} options={chartOptions} />
         </div>
       </div>

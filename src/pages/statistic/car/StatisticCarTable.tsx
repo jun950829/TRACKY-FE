@@ -108,11 +108,6 @@ function StatisticCarTable() {
                 <td className="px-6 py-4 text-sm text-gray-600">{(car.driveSec / 60 / 60).toFixed(1)} 시간</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{(car.driveDistance / 1000).toFixed(1)} km</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.avgSpeed}</td>
-                <td className="px-6 py-4">
-                  <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                    상세보기
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

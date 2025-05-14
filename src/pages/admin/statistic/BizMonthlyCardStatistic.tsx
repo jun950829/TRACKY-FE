@@ -7,7 +7,7 @@ interface Props {
 
 const BizMonthlyCardStatistic = ({ summary, formatSeconds }: Props) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl border border-purple-100 shadow-sm hover:shadow-md transition-all duration-300">
         <div className="p-5">
           <h3 className="text-sm font-medium text-gray-500 mb-4">월 총 운행량</h3>
