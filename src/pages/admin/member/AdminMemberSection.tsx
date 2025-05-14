@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MemberSection from "./MemberSection";
 
 function AdminMemberSection() {
-  return <section className="w-full h-full p-6">
+  return <section className="w-full h-full md:px-[80px] md:py-4 xl:px-6 p-4">
     <PageHeader title="등록된 업체 관리" />
     <Tabs defaultValue="member" className="space-y-4">
         <TabsList>

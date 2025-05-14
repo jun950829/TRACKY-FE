@@ -62,6 +62,8 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
   const operationRateOptions = {
     responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
     plugins: {
       legend: {
         position: "top" as const,
@@ -75,6 +77,8 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
   const nonOperatedCarOptions = {
     responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
     plugins: {
       legend: {
         position: "top" as const,
@@ -146,10 +150,10 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
   };
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-1 xl:grid-cols-2">
       <Card>
         <CardContent className="pt-6 flex justify-center items-center">
-          <div className="w-[280px] h-[280px]">
+          <div className="w-full max-w-[280px] h-[280px]">
             <Doughnut options={carCountOptions} data={carCountChartData} />
           </div>
         </CardContent>
@@ -157,7 +161,7 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
       <Card>
         <CardContent className="pt-6 flex justify-center items-center">
-          <div className="w-[280px] h-[280px]">
+          <div className="w-full max-w-[280px] h-[280px]">
             <Doughnut options={carTypeOptions} data={carTypeChartData} />
           </div>
         </CardContent>
@@ -165,13 +169,17 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
       <Card>
         <CardContent className="pt-6">
-          <Bar options={operationRateOptions} data={operationRateChartData} />
+          <div className="w-full h-[280px]">
+            <Bar options={operationRateOptions} data={operationRateChartData} />
+          </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="pt-6">
-          <Bar options={nonOperatedCarOptions} data={nonOperatedCarChartData} />
+          <div className="w-full h-[280px]">
+            <Bar options={nonOperatedCarOptions} data={nonOperatedCarChartData} />
+          </div>
         </CardContent>
       </Card>
     </div>

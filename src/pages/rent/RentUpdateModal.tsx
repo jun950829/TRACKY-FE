@@ -147,7 +147,7 @@ function RentUpdateModal({ isOpen, closeModal, initialData }: RentUpdateModalPro
   return (
     <>
       <Dialog open={isOpen} onOpenChange={closeModal}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-md md:max-h-[90vh] max-h-[70vh] overflow-y-auto rounded-sm">
           <DialogHeader>
             <DialogTitle>렌트 정보 수정</DialogTitle>
           </DialogHeader>

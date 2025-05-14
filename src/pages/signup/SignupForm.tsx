@@ -83,7 +83,7 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <CardContent className="pt-4 flex flex-row gap-4 justify-between">
+      <CardContent className="pt-4 flex flex-col md:flex-row gap-4 justify-between">
         <div className='flex flex-col gap-8 min-w-[250px]'>
           <p className='text-md font-bold'>업체 정보</p>
           <div className="space-y-2 h-[72px]">
