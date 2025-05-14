@@ -6,9 +6,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="w-full p-10 bg-zinc-50">
+    <div className="w-full p-0 md:p-20 xl:p-10 bg-zinc-50">
       {/* Main Content */}
-      <main className="w-full container mx-auto">{children}</main>
+      <main className="w-full xl:container xl:mx-auto">{children}</main>
     </div>
   );
 } 

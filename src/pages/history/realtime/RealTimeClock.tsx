@@ -31,7 +31,7 @@ function RealTimeClock() {
   const dayOfWeek = getDayOfWeek(currentTime);
 
   return (
-    <div className="z-[1000] absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 font-mono">
+    <div className="z-[1000] absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-4 font-mono hidden md:block">
       <div className="flex items-end gap-1">
         <div className="text-4xl font-bold tracking-tight text-gray-800">
           {hours}

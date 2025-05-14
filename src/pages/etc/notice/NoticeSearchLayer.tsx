@@ -83,7 +83,7 @@ function NoticeSearchLayer({ onSearch, defaultPageSize = 10 }: NoticeSearchLayer
           <Button
             onClick={handleReset}
             variant="outline"
-            className="flex-1 sm:flex-none border-gray-200 hover:border-blue-500 hover:text-blue-600"
+            className="flex-1 sm:flex-none border-gray-200 hover:border-blue-500 hover:text-blue-600 hidden sm:block md:hidden lg:block"
           >
             초기화
           </Button>
