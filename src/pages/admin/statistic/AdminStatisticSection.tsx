@@ -14,7 +14,6 @@ import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
 function AdminStatisticSection() {
-  
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBiz, setSelectedBiz] = useState("");
@@ -61,10 +60,11 @@ function AdminStatisticSection() {
   }, [selectedBiz, selectedDate]);
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">업체별 통계</h1>
+    <div className="w-full space-y-4 md:space-y-6 p-4 md:px-[80px] xl:p-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">업체별 통계</h1>
       </div>
+      <div className="w-full">
         <BizStatisticTable
           data={bizList}
           searchTerm={searchTerm}
@@ -72,11 +72,12 @@ function AdminStatisticSection() {
           selectedBiz={selectedBiz}
           setSelectedBiz={setSelectedBiz}
         />
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold">{selectedBiz == '' ? '전체' : selectedBiz} 업체의 월별 통계</h3>
+      </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h3 className="text-lg md:text-xl font-bold">{selectedBiz == '' ? '전체' : selectedBiz} 업체의 월별 통계</h3>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+            <Button variant="outline" className="w-full md:w-[150px] justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
               {selectedDate ? format(selectedDate, "yyyy-MM-dd") : "날짜 선택"}
             </Button>
@@ -93,17 +94,20 @@ function AdminStatisticSection() {
           </PopoverContent>
         </Popover>
       </div>
-      <BizMonthlyCardStatistic summary={bizStatistic} formatSeconds={formatSeconds} />
-      <MonthlyDriveCountChart 
-        monthlyData={monthlyDriveCounts}
-        hourlyData={hourlyDriveCounts}
-        selectedBiz={selectedBiz}
-        selectedDate={selectedDate}
-      />
+        <BizMonthlyCardStatistic summary={bizStatistic} formatSeconds={formatSeconds} />
+      <div className="w-full">
+        <MonthlyDriveCountChart 
+          monthlyData={monthlyDriveCounts}
+          hourlyData={hourlyDriveCounts}
+          selectedBiz={selectedBiz}
+          selectedDate={selectedDate}
+        />
+      </div>
 
-      <h1 className="text-3xl font-bold">종합 통계</h1>
-      <StatisticCharts graphStats={graphStats}
-      />
+      <h1 className="text-2xl md:text-3xl font-bold">종합 통계</h1>
+      <div className="w-full">
+        <StatisticCharts graphStats={graphStats} />
+      </div>
     </div>
   );
 }

@@ -61,11 +61,11 @@ function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSe
         <table className="w-full">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="px-4 py-2 text-left font-medium">업체명</th>
-              <th className="px-4 py-2 text-left font-medium">전체 차량</th>
-              <th className="px-4 py-2 text-left font-medium">현재 운행 중</th>
-              <th className="px-4 py-2 text-left font-medium">오류</th>
-              <th className="px-4 py-2 text-left font-medium">상세</th>
+              <th className="px-4 py-2 text-left font-medium w-[30%]">업체명</th>
+              <th className="px-4 py-2 text-left font-medium w-[20%]">전체 차량</th>
+              <th className="px-4 py-2 text-left font-medium w-[20%]">현재 운행 중</th>
+              <th className="px-4 py-2 text-left font-medium w-[15%]">오류</th>
+              <th className="px-4 py-2 text-left font-medium w-[15%]">상세</th>
             </tr>
           </thead>
           <tbody>
@@ -89,7 +89,7 @@ function BizStatisticTable({ data, searchTerm, setSearchTerm, selectedBiz, setSe
                     }
                   }
                 >
-                  <td className="px-4 py-2">{item.bizName}</td>
+                  <td className="px-4 py-2 truncate">{item.bizName}</td>
                   <td className="px-4 py-2">{item.totalCarCount}</td>
                   <td className="px-4 py-2">{item.drivingCarCount}</td>
                   <td className="px-4 py-2">{item.skipCount}</td>
