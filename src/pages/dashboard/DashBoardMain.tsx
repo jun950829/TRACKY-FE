@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
 import {
   StatusTypes,
-  CarStatusTypes,
   MonthlyStatistic,
   ReturnStatus,
 } from "@/constants/types/types";
@@ -92,7 +91,7 @@ export default function Dashboard() {
           <p className="text-lg font-medium text-gray-600">대시보드 로딩 중...</p>
         </div>
       ) : (
-        <div className="w-full flex flex-col items-center p-2 xl:space-y-0 xl:h-[90vh] xl:overflow-x-hidden">
+        <div className="w-full h-full flex flex-col items-center p-2 space-y-4 xl:space-y-0 xl:h-[90vh] xl:overflow-x-hidden">
           <div className="w-full flex flex-col xl:flex-row justify-between items-stretch gap-4">
             <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
               <VehicleStatusCards statusObj={carStatus} />
