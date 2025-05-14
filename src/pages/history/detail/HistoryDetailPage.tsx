@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useDriveListStore } from "@/stores/useDriveListStore";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { reverseGeocodeOSM } from "@/libs/utils/reverseGeocode";
-import HistoryMap from "./HistoryMap";
 import driveService from "@/libs/apis/driveApi";
 import { calculateDriveDuration } from "@/libs/utils/historyUtils";
 import { getStatusLabel, getStatusBadgeClass } from "@/libs/utils/getClassUtils";
@@ -14,7 +13,8 @@ import { Clock, MapPin, Car, User, Target, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-// 날짜 포맷 헬퍼 함수
+const HistoryMap = lazy(() => import("./HistoryMap")); // Lazy Load
+
 const formatDateTime = (dateStr: string) => {
   try {
     const date = new Date(dateStr);
@@ -26,12 +26,31 @@ const formatDateTime = (dateStr: string) => {
 
 const HistoryDetailPage: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedDriveId, driveDetail, setDriveDetail, setLoading, setError } = useDriveListStore();
+  const { selectedDriveId, driveDetail, setDriveDetail, setLoading, setError, isLoading } = useDriveListStore();
   const [onAddress, setOnAddress] = useState("주소 불러오는 중...");
   const [offAddress, setOffAddress] = useState("주소 불러오는 중...");
 
   useEffect(() => {
-    getDriveById();
+    const searchDriveId = selectedDriveId ?? localStorage.getItem("searchDriveId");
+
+    if (!searchDriveId) return;
+
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await driveService.getDriveById(Number(searchDriveId));
+        setDriveDetail(response.data);
+        localStorage.setItem("searchDriveId", searchDriveId.toString());
+      } catch (error) {
+        console.error("운행 기록 상세 조회 실패:", error);
+        setError("운행 기록 상세 조회 중 오류가 발생했습니다");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -50,16 +69,11 @@ const HistoryDetailPage: React.FC = () => {
       return;
     }
 
-    const startLat = onLat / 1_000_000;
-    const startLon = onLon / 1_000_000;
-    const endLat = offLat / 1_000_000;
-    const endLon = offLon / 1_000_000;
-
     const fetchAddress = async () => {
       try {
         const [on, off] = await Promise.all([
-          reverseGeocodeOSM(startLat, startLon),
-          reverseGeocodeOSM(endLat, endLon),
+          reverseGeocodeOSM(onLat / 1_000_000, onLon / 1_000_000),
+          reverseGeocodeOSM(offLat / 1_000_000, offLon / 1_000_000),
         ]);
         setOnAddress(on);
         setOffAddress(off);
@@ -69,25 +83,17 @@ const HistoryDetailPage: React.FC = () => {
       }
     };
 
-    fetchAddress();
+    // 주소 로딩은 UI 렌더링 이후에 실행
+    setTimeout(fetchAddress, 100);
   }, [driveDetail]);
 
-  async function getDriveById() {
-    const searchDriveId = selectedDriveId ? selectedDriveId : localStorage.getItem("searchDriveId");
-    
-    if (!searchDriveId) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await driveService.getDriveById(Number(searchDriveId));
-      setDriveDetail(response.data);
-      localStorage.setItem("searchDriveId",searchDriveId?.toString() || "");
-    } catch (error) {
-      console.error('운행 기록 상세 조회 실패:', error);
-      setError('운행 기록 상세 조회 중 오류가 발생했습니다');
-    } finally {
-      setLoading(false);
-    }
+  if (isLoading || !driveDetail) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-10 text-gray-500">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4" />
+        <p>운행 상세 정보를 불러오는 중입니다...</p>
+      </div>
+    );
   }
 
   return (
@@ -113,169 +119,131 @@ const HistoryDetailPage: React.FC = () => {
             </div>
           </CardHeader>
           <CardContent className="p-2">
-            {driveDetail?.gpsDataList ? (
-              <HistoryMap 
-                gpsDataList={driveDetail.gpsDataList} 
+            <Suspense fallback={<div className="h-[200px] flex justify-center items-center text-gray-400">지도 로딩 중...</div>}>
+              <HistoryMap
+                gpsDataList={driveDetail.gpsDataList}
                 startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, o_time: driveDetail.driveOnTime }}
                 endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, o_time: driveDetail.driveOffTime }}
-                height="200px" 
+                height="200px"
               />
-            ) : (
-              <div className="h-[200px] flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-gray-500">경로 데이터를 불러오는 중...</p>
-              </div>
-            )}
+            </Suspense>
           </CardContent>
         </Card>
 
-        {/* 기본 정보 */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-2">
-            <CardTitle className="text-base flex items-center gap-1">
-              <Car className="h-4 w-4" />
-              차량 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 space-y-2">
-            {driveDetail ? (
+        {/* 기타 카드 렌더링 공통화 */}
+        {[
+          {
+            icon: <Car className="h-4 w-4" />,
+            title: "차량 정보",
+            content: (
               <>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">차량 번호</div>
                     <div className="text-sm font-medium">{driveDetail.carPlate}</div>
                   </div>
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">운행 상태</div>
-                    <Badge className={getStatusBadgeClass(driveDetail.status, 'car')}>
-                      {getStatusLabel('car', driveDetail.status)}
+                    <Badge className={getStatusBadgeClass(driveDetail.status, "car")}>
+                      {getStatusLabel("car", driveDetail.status)}
                     </Badge>
                   </div>
                 </div>
                 <Separator className="my-1" />
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">운행 거리</div>
                     <div className="text-sm font-medium">{driveDetail.driveDistance?.toFixed(1) || 0} km</div>
                   </div>
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">운행 시간</div>
                     <div className="text-sm font-medium">
-                      {driveDetail.driveOffTime === null 
+                      {driveDetail.driveOffTime === null
                         ? calculateDriveDuration(driveDetail.driveOnTime, new Date().toISOString())
                         : calculateDriveDuration(driveDetail.driveOnTime, driveDetail.driveOffTime)}
                     </div>
                   </div>
                 </div>
               </>
-            ) : (
-              <div className="h-[100px] flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-gray-500">차량 정보를 불러오는 중...</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 사용자 정보 */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-2">
-            <CardTitle className="text-base flex items-center gap-1">
-              <User className="h-4 w-4" />
-              사용자 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 space-y-2">
-            {driveDetail ? (
+            ),
+          },
+          {
+            icon: <User className="h-4 w-4" />,
+            title: "사용자 정보",
+            content: (
               <>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">이름</div>
                     <div className="text-sm font-medium">{driveDetail.renterName}</div>
                   </div>
-                  <div className="space-y-0.5">
+                  <div>
                     <div className="text-xs text-gray-500">연락처</div>
                     <div className="text-sm font-medium">{driveDetail.renterPhone}</div>
                   </div>
                 </div>
                 <Separator className="my-1" />
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">목적</div>
-                  <div className="text-sm font-medium">{driveDetail.purpose || '기타업무'}</div>
+                  <div className="text-sm font-medium">{driveDetail.purpose || "기타업무"}</div>
                 </div>
               </>
-            ) : (
-              <div className="h-[100px] flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-gray-500">사용자 정보를 불러오는 중...</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 시간 정보 */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-2">
-            <CardTitle className="text-base flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              시간 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 space-y-2">
-            {driveDetail ? (
+            ),
+          },
+          {
+            icon: <Clock className="h-4 w-4" />,
+            title: "시간 정보",
+            content: (
               <>
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">출발 시간</div>
                   <div className="text-sm font-medium">{formatDateTime(driveDetail.driveOnTime)}</div>
                 </div>
                 <Separator className="my-1" />
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">도착 시간</div>
                   <div className="text-sm font-medium">
                     {driveDetail.driveOffTime ? formatDateTime(driveDetail.driveOffTime) : "운행중"}
                   </div>
                 </div>
                 <Separator className="my-1" />
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">예약 기간</div>
                   <div className="text-sm font-medium">
                     {formatDateTime(driveDetail.rentStime)} ~ {formatDateTime(driveDetail.rentEtime)}
                   </div>
                 </div>
               </>
-            ) : (
-              <div className="h-[100px] flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-gray-500">시간 정보를 불러오는 중...</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 위치 정보 */}
-        <Card className="shadow-sm">
-          <CardHeader className="p-2">
-            <CardTitle className="text-base flex items-center gap-1">
-              <Target className="h-4 w-4" />
-              위치 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 space-y-2">
-            {driveDetail ? (
+            ),
+          },
+          {
+            icon: <Target className="h-4 w-4" />,
+            title: "위치 정보",
+            content: (
               <>
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">출발지</div>
                   <div className="text-sm font-medium">{onAddress}</div>
                 </div>
                 <Separator className="my-1" />
-                <div className="space-y-0.5">
+                <div>
                   <div className="text-xs text-gray-500">도착지</div>
                   <div className="text-sm font-medium">{offAddress}</div>
                 </div>
               </>
-            ) : (
-              <div className="h-[100px] flex items-center justify-center bg-gray-50 rounded">
-                <p className="text-gray-500">위치 정보를 불러오는 중...</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            ),
+          },
+        ].map(({ icon, title, content }, idx) => (
+          <Card key={idx} className="shadow-sm">
+            <CardHeader className="p-2">
+              <CardTitle className="text-base flex items-center gap-1">
+                {icon}
+                {title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 space-y-2">{content}</CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
