@@ -32,7 +32,7 @@ const HistoryDetailPage: React.FC = () => {
 
   useEffect(() => {
     getDriveById();
-  }, [selectedDriveId]);
+  }, []);
 
   useEffect(() => {
     if (!driveDetail) return;
@@ -73,12 +73,15 @@ const HistoryDetailPage: React.FC = () => {
   }, [driveDetail]);
 
   async function getDriveById() {
-    if (!selectedDriveId) return;
+    const searchDriveId = selectedDriveId ? selectedDriveId : localStorage.getItem("searchDriveId");
+    
+    if (!searchDriveId) return;
     setLoading(true);
     setError(null);
     try {
-      const response = await driveService.getDriveById(selectedDriveId);
+      const response = await driveService.getDriveById(Number(searchDriveId));
       setDriveDetail(response.data);
+      localStorage.setItem("searchDriveId",searchDriveId?.toString() || "");
     } catch (error) {
       console.error('운행 기록 상세 조회 실패:', error);
       setError('운행 기록 상세 조회 중 오류가 발생했습니다');
