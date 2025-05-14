@@ -1,5 +1,4 @@
 import { 
-  Home, 
   Car, 
   FileText, 
   BarChart2,
@@ -50,7 +49,14 @@ export const headerMenus = [
   {
     name: "통계",
     path: "/statistic",
-    icon: BarChart2
+    icon: BarChart2,
+    subMenus: [
+      {
+        name: "일/월 통계",
+        path: "/statistic",
+        icon: BarChart2
+      }
+    ]
   },
   {
     name: "기타",
