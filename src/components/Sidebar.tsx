@@ -31,6 +31,10 @@ function Sidebar() {
       return isAdmin;
     }
 
+    if (menu.path === "/admin/statistic") {
+      return isAdmin;
+    }
+
     if (menu.path === "/etc") {
       return !isAdmin;
     }
@@ -308,7 +312,9 @@ function Sidebar() {
                 {isExpanded ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-foreground/10" />
+                      <div className="text-xs">
+                        {isAdmin ? "관리자" : "일반"}
+                      </div>
                       <div className="text-sm">
                         <div className="font-medium">{member?.bizName} 님</div>
                       </div>
@@ -322,7 +328,9 @@ function Sidebar() {
                     </CustomButton>
                   </>
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-foreground/10" />
+                  <div className="text-[10px] text-center">
+                    {isAdmin ? "관리자" : "일반"}
+                  </div>
                 )}
               </div>
             )}
@@ -377,9 +385,6 @@ function Sidebar() {
       {/* Mobile Menu Sheet */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="top" className="w-full pt-16">
-          <SheetHeader>
-            <SheetTitle>메뉴</SheetTitle>
-          </SheetHeader>
           <nav className="mt-4 space-y-2">
             {filteredMenus.map((menu) => {
               const isActive = location.pathname === menu.path;
@@ -448,7 +453,9 @@ function Sidebar() {
             <div className="mt-4 pt-4 border-t border-foreground/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-foreground/10" />
+                  <div className="text-xs">
+                    {isAdmin ? "관리자" : "일반"}
+                  </div>
                   <div className="text-sm">
                     <div className="font-medium">{member?.bizName} 님</div>
                   </div>

@@ -22,7 +22,7 @@ const RentDetailModal: React.FC<RentDetailModalProps> = ({ isOpen, onClose, rent
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] md:max-h-[90vh] max-h-[70vh] overflow-y-auto rounded-sm">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             <CarFront className="h-5 w-5 text-primary" />
