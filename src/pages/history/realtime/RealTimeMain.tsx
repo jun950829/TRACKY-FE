@@ -1,20 +1,27 @@
 import RealTimeMap from "./RealTimeMap";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RealTimeSearchPanel from "./RealTimeSearchPanel";
 import RealTimeDetailPanel from "./RealTimeDetailPanel";
 import { Search, Monitor } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
+import { useDriveSse } from "@/hooks/useDriveSse";
+import { useSseStore } from "@/stores/useSseStore";
 
 function RealTimeMain() {
   const [isMainOpen, setIsMainOpen] = useState(true);
   const [currentPanel, setCurrentPanel] = useState<'search' | 'detail'>('search');
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
+  const [isRefresh, setIsRefresh] = useState(false);
 
-  // 목 데이터 (지도용 차량 정보)
-  const vehicles = [
-    { id: 1, name: '차량 1', lat: 37.5665, lng: 126.9780 },
-    { id: 2, name: '차량 2', lat: 37.5666, lng: 126.9781 },
-  ];
+  // SSE 연결 관리
+  useDriveSse({ driveId: selectedDriveId || 0 });
+
+  // 패널이 변경될 때 SSE 스토어 초기화
+  useEffect(() => {
+    if (currentPanel === 'search') {
+      useSseStore.getState().clearGpsList();
+    }
+  }, [currentPanel]);
 
   return (
     <div className="w-full h-full relative">
@@ -32,7 +39,7 @@ function RealTimeMain() {
       {/* Desktop Content */}
       <div className="hidden md:block w-full h-full">
         {/* 지도 */}
-        <RealTimeMap vehicles={vehicles} />
+        <RealTimeMap selectedDriveId={selectedDriveId} isRefresh={isRefresh} setIsRefresh={setIsRefresh} />
 
         {/* 돋보기 버튼 (검색창이 닫혀있을 때만 보임) */}
         {!isMainOpen && (
@@ -53,9 +60,10 @@ function RealTimeMain() {
           <div className="relative w-[400px] p-3">
             {currentPanel === 'detail' && selectedDriveId ? (
                 <RealTimeDetailPanel
-                  driveId={selectedDriveId}
-                  goSearch={() => setCurrentPanel('search')} // 뒤로가기 시 검색창으로
-                />
+                driveId={selectedDriveId}
+                goSearch={() => setCurrentPanel('search')} // 뒤로가기 시 검색창으로
+                setIsRefresh={setIsRefresh}   
+              />
             ) : (
               <RealTimeSearchPanel
                 onToggle={() => setIsMainOpen(false)}

@@ -104,7 +104,15 @@ function Sidebar() {
       <aside className="h-screen w-1/10 border-r border-foreground/10 bg-background z-[2000]">
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
+          <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={
+            () => {
+              if(isAdmin) {
+                navigate("/admin/statistic")
+              } else {
+                navigate("/dashboard")
+              }
+            }
+            }>
             <img 
               src="/icons/tracky-logo.svg" 
               alt="Tracky Logo" 
@@ -336,7 +344,13 @@ function Sidebar() {
           {/* Logo */}
           <div 
             className="flex items-center gap-2 cursor-pointer px-4" 
-            onClick={() => navigate("/dashboard")}
+            onClick={() => {
+              if(isAdmin) {
+                navigate("/admin/statistic")
+              } else {
+                navigate("/dashboard")
+              }
+            }}
           >
             <img 
               src="/icons/tracky-logo.svg" 

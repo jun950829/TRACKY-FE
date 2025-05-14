@@ -150,6 +150,9 @@ export default function Login() {
       } else {
         navigate("/dashboard");
       }
+    } else {
+      // 토큰이 없으면 로그인 페이지로
+      navigate("/login");
     }
     
     // 공지사항 로드
