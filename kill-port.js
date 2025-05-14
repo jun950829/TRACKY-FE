@@ -13,9 +13,9 @@ exec(`lsof -i :${port} -t`, (err, stdout, stderr) => {
   pids.forEach((pid) => {
     exec(`kill -9 ${pid}`, (killErr) => {
       if (killErr) {
-        console.error(`❌ 프로세스 ${pid} 종료 실패`);
+        console.error(`프로세스 ${pid} 종료 실패`);
       } else {
-        console.log(`🔪 포트 ${port} 점유 중인 프로세스 ${pid} 종료`);
+        console.log(`포트 ${port} 점유 중인 프로세스 ${pid} 종료`);
       }
     });
   });

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SignupForm from './SignupForm';
-import SignupModal from './SignupModal';
 import signupApiService, { SignupRequestType } from '@/libs/apis/signupApi';
 import { useNavigate } from 'react-router-dom';
 
