@@ -12,6 +12,7 @@ import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { DailyStatisticResponse } from "@/libs/apis/statisticApi";
+import { HourlyStats } from "@/libs/apis/adminStatisticApi";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 

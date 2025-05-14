@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "./DashboardLayout";
 import {
+  StatusTypes,
   CarStatusTypes,
   MonthlyStatistic,
   ReturnStatus,
@@ -15,12 +16,7 @@ import MonthlyStats from "./components/MonthlyStats";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [carStatus, setCarStatus] = useState<CarStatusTypes>({
-    RUNNING: 0,
-    WAITING: 0,
-    FIXING: 0,
-    CLOSED: 0,
-  });
+  const [carStatus, setCarStatus] = useState<StatusTypes[]>([]);
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<MonthlyStatistic>();
   const [error, setError] = useState<ApiError | null>(null);

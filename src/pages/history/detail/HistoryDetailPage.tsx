@@ -122,8 +122,8 @@ const HistoryDetailPage: React.FC = () => {
             <Suspense fallback={<div className="h-[200px] flex justify-center items-center text-gray-400">지도 로딩 중...</div>}>
               <HistoryMap
                 gpsDataList={driveDetail.gpsDataList}
-                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, oTime: driveDetail.driveOnTime }}
-                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, oTime: driveDetail.driveOffTime }}
+                startPoint={{ lat: driveDetail.onLat, lon: driveDetail.onLon, spd: 0, ang: 0, oTime: driveDetail.driveOnTime }}
+                endPoint={{ lat: driveDetail.offLat, lon: driveDetail.offLon, spd: 0, ang: 0, oTime: driveDetail.driveOffTime }}
                 height="200px"
               />
             </Suspense>
