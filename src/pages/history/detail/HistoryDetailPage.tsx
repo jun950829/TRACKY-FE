@@ -153,7 +153,7 @@ const HistoryDetailPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <div className="text-xs text-gray-500">운행 거리</div>
-                    <div className="text-sm font-medium">{driveDetail.driveDistance?.toFixed(1) || 0} km</div>
+                    <div className="text-sm font-medium">{(driveDetail.driveDistance?driveDetail.driveDistance / 1000 : 0).toFixed(2) || 0} km</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">운행 시간</div>
