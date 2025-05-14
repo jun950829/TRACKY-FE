@@ -399,7 +399,7 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full map-container">
       <MapContainer
         ref={mapRef}
         center={[37.5665, 126.9780]}
@@ -511,6 +511,14 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           </svg>
         )}
       </button>
+
+      <style>{`
+        @media (min-width: 720px) and (max-width: 1280px) {
+          .map-container > button {
+            left: 80px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
