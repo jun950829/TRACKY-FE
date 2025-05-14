@@ -9,7 +9,6 @@ import {
   createPathSegments,
   PathSegment,
 } from '@/libs/utils/historyUtils';
-import { GpsData } from '@/constants/types/historyTypes';
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
