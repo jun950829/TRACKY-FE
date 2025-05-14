@@ -106,6 +106,11 @@ export const CarStatusLabels: Record<CarStatusEnum, string> = {
 
 export type CarStatusTypes = Record<CarStatusEnum, number>;
 
+export type StatusTypes = {
+  carStatus: CarStatusEnum;
+  carCount: number;
+};
+
 export type Devices = {
   id: number;
   tid: string;
@@ -183,7 +188,7 @@ export type RentUpdateTypes = {
 export type RentDetailTypes = {
     rent_uuid: string;        // 8자리 대여 UUID
     mdn: string;             // 차량 식별키
-    bizName: string;         // 업체 이름
+    bizName?: string;         // 업체 이름
     renterName: string;      // 사용자 이름
     renterPhone: string;     // 사용자 전화번호
     purpose: string;         // 차량 사용 목적

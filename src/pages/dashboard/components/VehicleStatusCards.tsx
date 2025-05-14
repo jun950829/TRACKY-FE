@@ -1,5 +1,4 @@
-import { StatusTypes } from "@/constants/types/types";
-import { CarStatusTypes } from "@/constants/types/types";
+import { CarStatusTypes, StatusTypes } from "@/constants/types/types";
 import { CarStatusEnum } from "@/constants/types/types";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";

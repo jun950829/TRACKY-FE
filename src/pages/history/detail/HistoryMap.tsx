@@ -13,6 +13,7 @@ import { GpsData } from '@/constants/types/historyTypes';
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { GpsData } from '@/constants/types/historyTypes';
 
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -135,11 +136,11 @@ const HistoryMap: React.FC<HistoryMapProps> = ({
             />
 
             <Marker position={[firstPoint.lat / 1_000_000, firstPoint.lon / 1_000_000]}>
-              <Popup>출발: {new Date(firstPoint.o_time).toLocaleString()}</Popup>
+              <Popup>출발: {new Date(firstPoint.oTime).toLocaleString()}</Popup>
             </Marker>
 
             <Marker position={[lastPoint.lat / 1_000_000, lastPoint.lon / 1_000_000]}>
-              <Popup>도착: {new Date(lastPoint.o_time).toLocaleString()}</Popup>
+              <Popup>도착: {new Date(lastPoint.oTime).toLocaleString()}</Popup>
             </Marker>
 
             {pathSegments.map((segment: PathSegment, i: number) => (
@@ -156,7 +157,7 @@ const HistoryMap: React.FC<HistoryMapProps> = ({
                       className="custom-tooltip"
                     >
                       <div className="text-xs">
-                        <div>시간: {formatTime(point.o_time)}</div>
+                        <div>시간: {formatTime(point.oTime)}</div>
                         <div>속도: {formatSpeed(point.spd)}</div>
                       </div>
                     </Tooltip>
