@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import realtimeApi from '@/libs/apis/realtimeApi';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { formatDrivingTimeSmart } from '@/libs/utils/utils';
+import { CarStatusLabels } from '@/constants/types/types';
 
 interface RealTimeSearchPanelProps {
   onToggle: () => void;
@@ -125,24 +126,21 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
 
         {/* 상태 요약 */}
         <div className="flex gap-2 text-xs text-gray-600 px-0.5">
-          <span className="font-medium">총 {runningCarList.length}대</span>
-          <span className="text-gray-400">|</span>
-          {/* <span className="text-red-500">운행중 {runningCarList.filter(v => v.status === '운행중').length}대</span> */}
+          <span className="font-medium">총 {runningCarList.length}대 운행중</span>
         </div>
 
         {/* 테이블 */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden max-h-[50vh] overflow-y-auto">
           <table className="w-full">
             <thead className="bg-gray-50 text-xs">
               <tr>
-                <th className="px-2 py-1.5 text-left font-medium text-gray-600">
+                <th className="px-3 py-1.5 text-left font-medium text-gray-600">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="h-6 px-1.5 font-medium text-xs"
-                    onClick={() => handleSort('status')}
                   >
-                    상태 {getSortIcon('status')}
+                    상태
                   </Button>
                 </th>
                 <th className="px-2 py-1.5 text-left font-medium text-gray-600">
@@ -167,7 +165,7 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y text-sm">
+            <tbody className="max-h-[300px] overflow-y-auto divide-y text-sm">
               {sortedRunningCarList.map((runningCar, index) => (
                 <tr 
                   key={index}
@@ -177,9 +175,9 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
                   }}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
-                  <td className="px-2 py-1.5">
+                  <td className="px-3 py-1.5">
                     <span className="text-red-500 text-xs font-medium">
-                      {runningCar.status}
+                      {CarStatusLabels[runningCar.status as keyof typeof CarStatusLabels]}
                     </span>
                   </td>
                   <td className="px-2 py-1.5">

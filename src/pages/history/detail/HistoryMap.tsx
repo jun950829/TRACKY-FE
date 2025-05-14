@@ -35,13 +35,13 @@ interface HistoryMapProps {
     lat: number;
     lon: number;
     spd: number;
-    o_time: string;
+    oTime: string;
   };
   endPoint: {
     lat: number;
     lon: number;
     spd: number;
-    o_time: string;
+    oTime: string;
   };
 }
 
