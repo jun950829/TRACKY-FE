@@ -126,7 +126,7 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
 
         {/* 상태 요약 */}
         <div className="flex gap-2 text-xs text-gray-600 px-0.5">
-          <span className="font-medium">총 {runningCarList.length}대 운행중</span>
+          <span className="font-medium">총 {runningCarList.length}대 운행중 | 약 1~3분의 지연이 있는 준 실시간 서비스 </span>
         </div>
 
         {/* 테이블 */}

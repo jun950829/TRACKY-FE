@@ -97,7 +97,7 @@ const HistoryDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="p-10 h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto md:px-[80px] md:py-[20px] xl:p-6 ">
       <div className="grid grid-cols-2 gap-2">
         {/* 지도 영역 */}
         <Card className="shadow-sm col-span-2">
@@ -142,7 +142,7 @@ const HistoryDetailPage: React.FC = () => {
                     <div className="text-xs text-gray-500">차량 번호</div>
                     <div className="text-sm font-medium">{driveDetail.carPlate}</div>
                   </div>
-                  <div>
+                  <div className="h-[50px] md:h-[40px]">
                     <div className="text-xs text-gray-500">운행 상태</div>
                     <Badge className={getStatusBadgeClass(driveDetail.status, "car")}>
                       {getStatusLabel("car", driveDetail.status)}
@@ -172,7 +172,7 @@ const HistoryDetailPage: React.FC = () => {
             title: "사용자 정보",
             content: (
               <>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 h-[50px] md:h-[40px]">
                   <div>
                     <div className="text-xs text-gray-500">이름</div>
                     <div className="text-sm font-medium">{driveDetail.renterName}</div>

@@ -120,7 +120,7 @@ function HistoryTable() {
       
       // CSV 형식으로 데이터 변환
       const headers = [
-        'ID', '일자', '목적', '차량번호', '사용자', '운행거리(km)', '운행시간'
+        'ID', '일자', '목적', '사용자', '운행거리(km)', '운행시간'
       ];
 
       // 엑셀 데이터 준비
@@ -314,11 +314,10 @@ function HistoryTable() {
                     <TableHead className="text-center" style={{ width: '70px' }}>운행 ID</TableHead>
                     <TableHead className="text-center" style={{ width: '100px' }}>일자</TableHead>
                     <TableHead className="text-center" style={{ width: '120px' }}>목적</TableHead>
-                    <TableHead className="text-center" style={{ width: '160px' }}>차량번호</TableHead>
                     <TableHead className="text-center" style={{ width: '140px' }}>사용자</TableHead>
                     <TableHead className="text-center" style={{ width: '140px' }}>운행거리(km)</TableHead>
                     <TableHead className="text-center" style={{ width: '140px' }}>운행시간</TableHead>
-                    <TableHead className="text-center" style={{ width: '140px' }}>도착지</TableHead>
+                    {/* <TableHead className="text-center" style={{ width: '140px' }}>도착지</TableHead> */}
                   </TableRow>
                 </TableHeader>
               </Table>
@@ -344,18 +343,14 @@ function HistoryTable() {
                     {format(new Date(drive.driveOnTime), 'yy.MM.dd(E)', { locale: ko })}
                   </TableCell>
                   <TableCell style={{ width: '120px' }}>{drive.purpose || '기타업무'}</TableCell>
-                  <TableCell style={{ width: '160px' }}>
-                    <p>{drive.carPlate}</p>
-                    <p className="text-gray-500 text-sm">{drive.mdn}</p>
-                  </TableCell>
                   <TableCell style={{ width: '140px' }}>{drive.renterName}</TableCell>
-                  <TableCell style={{ width: '140px' }}>{(drive.driveDistance || 0).toFixed(1)}</TableCell>
+                  <TableCell style={{ width: '140px' }}>{((drive.driveDistance || 0) / 1000).toFixed(2)}</TableCell>
                   <TableCell style={{ width: '140px' }}>
                     {calculateDriveDuration(drive.driveOnTime, drive.driveOffTime)}
                   </TableCell>
-                  <TableCell style={{ width: '140px' }} className="truncate">
+                  {/* <TableCell style={{ width: '140px' }} className="truncate">
                     <span className="text-gray-400">-</span>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
               </TableBody>

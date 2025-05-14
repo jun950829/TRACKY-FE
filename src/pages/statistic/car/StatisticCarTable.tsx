@@ -97,7 +97,6 @@ function StatisticCarTable() {
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">운행시간</th>
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">운행거리</th>
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">평균속도</th>
-              <th className="text-left text-sm font-medium text-gray-500 px-6 py-4">상세보기</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -116,7 +115,7 @@ function StatisticCarTable() {
 
       {/* 페이지네이션 */}
       <div className="px-6 py-4 border-t border-gray-100">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-col md:flex-row">
           <div className="text-sm text-gray-500">
             전체 {pagination?.totalElements} 개 중 {pagination.number * pagination.size + 1}에서 {pagination.number + 1 == pagination.totalPages ? pagination.totalElements : ((pagination.number + 1) * pagination.size)}까지 표시
           </div>
