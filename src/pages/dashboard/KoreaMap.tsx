@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 
 interface RegionData {
-  [key: string]: number;
+  [key: string]: string[];
 }
 
 export default function KoreaMap() {
@@ -26,9 +26,9 @@ export default function KoreaMap() {
     .then((res) => {
       const regionMap: RegionData = {};
       const data = res.data || {};
-
-      Object.entries(data).forEach(([province, count]) => {
-        regionMap[province] = count as number;
+      console.log('dashboard/geo : ', data);
+      Object.entries(data).forEach(([province, carList]) => {
+        regionMap[province] = carList as string[];
       });
 
       setRegionData(regionMap);
@@ -41,7 +41,7 @@ export default function KoreaMap() {
   // 도 경계 스타일
   const getRegionStyle = (feature: any) => {
     const name = feature.properties.CTP_KOR_NM;
-    const count = regionData[name] || 0;
+    const count = regionData[name]?.length || 0;
     
     return {
       fillColor: "#f8f9fa",
@@ -72,7 +72,7 @@ export default function KoreaMap() {
 
   const onEachFeature = (feature: any, layer: any) => {
     const name = feature.properties.CTP_KOR_NM;
-    const count = regionData[name] || 0;
+    const count = regionData[name]?.length || 0;
 
     layer.on({
       mouseover: highlightFeature,
@@ -255,7 +255,8 @@ export default function KoreaMap() {
           {geoData.features.map((feature: any, idx: number) => {
             const center = getCenter(feature);
             const name = feature.properties.CTP_KOR_NM;
-            const count = regionData[name] || 0;
+            const count = regionData[name]?.length || 0;
+            
             const adjustedPosition = adjustPosition(center, name);
 
             return (
