@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 
 interface RegionData {
-  [key: string]: string[];
+  [key: string]: number[];
 }
 
 export default function KoreaMap() {
@@ -153,7 +153,7 @@ export default function KoreaMap() {
   };
 
   // 원형 마커 생성 함수
-  const createCircleMarker = (count: number, name: string) => {
+  const createCircleMarker = (count: number, name: string, data: number[]) => {
     // 차량 수에 따라 원의 크기 결정 (최소 20px, 최대 90px)
     const size = Math.min(50, Math.max(20, count * 3));
     
@@ -182,19 +182,41 @@ export default function KoreaMap() {
           box-shadow: 0 0 10px rgba(0,0,0,0.3);
           border: 3px solid white;
           position: relative;
+          cursor: pointer;
         ">
           ${count}
           <div style="
             position: absolute;
-            bottom: 5px;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 12px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            white-space: nowrap;
           ">
             ${name}
           </div>
+          <div class="tooltip" style="
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+            text-align: center;
+          ">
+            ${name} ${count}대
+          </div>
         </div>
       `,
-      iconSize: [size, size],
+      iconSize: [size, size + 20], // 높이를 늘려서 지역 이름을 위한 공간 확보
       iconAnchor: [size/2, size/2],
       popupAnchor: [0, -size/2]
     });
@@ -229,12 +251,13 @@ export default function KoreaMap() {
 
   return (
     <MapContainer
-      center={[36.5, 127.5]}
-      zoom={7}
-      minZoom={6}
+      center={[35.2, 127.7]}
+      zoom={6.3}   
+      minZoom={7}
+      maxZoom={10}
       maxBounds={[
-        [33, 124],
-        [39, 132],
+        [31.5, 123.5],
+        [38.5, 131.5],
       ]}
       maxBoundsViscosity={1.0}
       style={{ height: "600px", width: "100%" }}
@@ -256,14 +279,30 @@ export default function KoreaMap() {
             const center = getCenter(feature);
             const name = feature.properties.CTP_KOR_NM;
             const count = regionData[name]?.length || 0;
-            
+
+            const data = regionData[name] || [];
+
             const adjustedPosition = adjustPosition(center, name);
 
             return (
               <Marker
                 key={idx}
                 position={adjustedPosition as [number, number]}
-                icon={createCircleMarker(count, name)}
+                icon={createCircleMarker(count, name, data)}
+                eventHandlers={{
+                  mouseover: (e) => {
+                    const tooltip = e.target.getElement()?.querySelector('.tooltip');
+                    if (tooltip) {
+                      tooltip.style.display = 'block';
+                    }
+                  },
+                  mouseout: (e) => {
+                    const tooltip = e.target.getElement()?.querySelector('.tooltip');
+                    if (tooltip) {
+                      tooltip.style.display = 'none';
+                    }
+                  }
+                }}
               />
             );
           })}
