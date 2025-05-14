@@ -4,7 +4,6 @@ import {
   CarStatusTypes,
   MonthlyStatistic,
   ReturnStatus,
-  StatisticsItem,
 } from "@/constants/types/types";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 import VehicleStatusCards from "@/pages/dashboard/components/VehicleStatusCards";
@@ -13,8 +12,6 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 import MonthlyStats from "./components/MonthlyStats";
-import PageHeader from "@/components/custom/PageHeader";
-import { RentStatus } from "@/constants/datas/status";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +20,6 @@ export default function Dashboard() {
     WAITING: 0,
     FIXING: 0,
     CLOSED: 0,
-    DELETED: 0,
   });
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<MonthlyStatistic>();
@@ -56,17 +52,6 @@ export default function Dashboard() {
     } catch (error) {
       console.error("통계 조회 실패:", error);
       setError(createApiError(error));
-    }
-  };
-
-  const handleUpdateStatus = async (rentUuid: string) => {
-    try {
-      await dashboardApi.updateRentStatusToReturn(rentUuid);
-      await fetchReturnStatus();
-      alert("반납 처리 성공!");
-    } catch (err) {
-      console.error("반납 처리 실패:", err);
-      setError(createApiError(err));
     }
   };
 

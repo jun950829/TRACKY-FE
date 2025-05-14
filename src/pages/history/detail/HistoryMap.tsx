@@ -4,7 +4,6 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, Tooltip } from 'react
 import L from 'leaflet';
 import MapView from '../components/MapView';
 import {
-  GpsData,
   calculateBounds,
   createMapBounds,
   createPathSegments,
@@ -13,6 +12,7 @@ import {
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { GpsData } from '@/constants/types/historyTypes';
 
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -35,12 +35,14 @@ interface HistoryMapProps {
     lat: number;
     lon: number;
     spd: number;
+    ang: number;
     oTime: string;
   };
   endPoint: {
     lat: number;
     lon: number;
     spd: number;
+    ang: number;
     oTime: string;
   };
 }
