@@ -1,4 +1,4 @@
-import { DateFilter, CarModelInfo } from "@/constants/types/reservation";
+import { CarModelInfo } from "@/constants/types/reservation";
 
 export const getFilterDate = (offset: number): Date => {
   const date = new Date();
@@ -25,15 +25,15 @@ export const formatTime = (date: Date): string => {
   });
 };
 
-export const isDateInFilter = (frDate: Date, ToDate: Date, filter: DateFilter): boolean => {
-  const filterDate = getFilterDate(filter);
+// export const isDateInFilter = (frDate: Date, ToDate: Date ): boolean => {
+//  // const filterDate = getFilterDate();
 
-  console.log(frDate, ToDate);
-  console.log("Today", filterDate);
+//   console.log(frDate, ToDate);
+//   console.log("Today");
 
-  return frDate.getTime() < filterDate.getTime() && ToDate.getTime() > filterDate.getTime();
+//   return frDate.getTime() < filterDate.getTime() && ToDate.getTime() > filterDate.getTime();
 
-};
+// };
 
 export const getCarModelAndMdn = (index: number): CarModelInfo => {
   const carModels = ["아반떼", "소나타", "그랜저", "K5", "K8", "모닝", "레이"];

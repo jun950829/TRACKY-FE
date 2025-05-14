@@ -1,7 +1,8 @@
-import { CarCreateTypes, CarUpdateTypes } from "@/constants/types/types";
+import { CarCreateTypes, CarDetailTypes, CarUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const carApiRoot = "/cars";
+const carAdminApiRoot = "/admin/cars";
 
 // Car API 요청 함수들
 export const carApiService = {
@@ -9,35 +10,89 @@ export const carApiService = {
     const response = await api.get(`${carApiRoot}`);
     return response.data;
   },
-  
+
   checkMdnExists: async (mdn: string) => {
     const response = await api.get(`${carApiRoot}/check/mdn/${mdn}`);
     return response.data;
   },
 
-  searchByFilters: async (search: string, status?: string) => {
+  searchByFiltersAdmin: async (
+    bizSearch: string = "",
+    search: string = "",
+    status?: string,
+    carType?: string,
+    size: number = 10,
+    page: number = 0
+  ) => {
     // 검색 파라미터 구성
     const params = new URLSearchParams();
-    
-    // searchText가 빈 문자열이 아닐 때만 mdn 파라미터로 추가
-    if (search && search.trim() !== '') {
-      params.append('search', search.trim());
+
+    // 검색어가 있을 경우 추가
+    if (bizSearch && bizSearch.trim() !== "") {
+      params.append("bizSearch", bizSearch.trim());
     }
     
-    if (status) {
-      params.append('status', status);
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
     }
 
-    const searchParams = params.toString();
-    
-    // 파라미터가 없으면 전체 검색
-    if (searchParams === '') {
-      const response = await api.get(`${carApiRoot}`);
-      return response.data;
-    } else {
-      const response = await api.get(`${carApiRoot}?${searchParams}`);
-      return response.data;
+    // 상태 필터 추가
+    if (status && status !== "all") {
+      params.append("status", status);
     }
+
+    // 차량 타입 필터 추가
+    if (carType && carType !== "all") {
+      params.append("carType", carType);
+    }
+
+    // 페이지네이션 파라미터 추가 (백엔드 DTO에 맞춤)
+    params.append("size", String(size));
+    params.append("page", String(page));
+
+    // API 호출
+    const url = `${carAdminApiRoot}${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("API 요청 URL:", url);
+
+    const response = await api.get(url);
+    return response;
+  },
+
+  searchByFilters: async (
+    search: string = "",
+    status?: string,
+    carType?: string,
+    size: number = 10,
+    page: number = 0
+  ) => {
+    // 검색 파라미터 구성
+    const params = new URLSearchParams();
+
+    // 검색어가 있을 경우 추가
+    if (search && search.trim() !== "") {
+      params.append("search", search.trim());
+    }
+
+    // 상태 필터 추가
+    if (status && status !== "all") {
+      params.append("status", status);
+    }
+
+    // 차량 타입 필터 추가
+    if (carType && carType !== "all") {
+      params.append("carType", carType);
+    }
+
+    // 페이지네이션 파라미터 추가 (백엔드 DTO에 맞춤)
+    params.append("size", String(size));
+    params.append("page", String(page));
+
+    // API 호출
+    const url = `${carApiRoot}${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("API 요청 URL:", url);
+
+    const response = await api.get(url);
+    return response;
   },
 
   searchOneByMdnDetail: async (mdn: string) => {
@@ -50,15 +105,32 @@ export const carApiService = {
     return response.data;
   },
 
-  updateCar: async (mdn: string, data: CarUpdateTypes) => {
-    const response = await api.patch(`${carApiRoot}/${mdn}`, data);
+  updateCar: async (data: CarUpdateTypes) => {
+    const response = await api.patch(`${carApiRoot}`, data);
     return response.data;
   },
 
-  deleteCar: async (mdn: string) => {
-    const response = await api.delete(`${carApiRoot}/${mdn}`);
+  deleteCar: async (data: { mdn: string }) => {
+    const response = await api.delete(`${carApiRoot}`, { data });
     return response.data;
-  }
+  },
+
+  extractExcel: async () => {
+    const response = await api.get(`${carApiRoot}/excel`, {
+      responseType: 'blob', // 중요! 바이너리 데이터를 받기 위한 설정
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+
+    return response.data;
+  },
+
+  getEmulateCars: async () => {
+    const response = await api.get(`${carApiRoot}/emulator/mdns`);
+    return response.data;
+  },
 };
 
 export default carApiService;

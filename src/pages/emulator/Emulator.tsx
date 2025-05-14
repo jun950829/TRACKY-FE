@@ -33,6 +33,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Custom components
 import EmulatorSettings from "@/pages/emulator/EmulatorSettings";
 import GpsMap from "@/components/GpsMap";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import carApiService from "@/libs/apis/carApi";
 
 // Car SVG icon
 const CarIcon = () => (
@@ -75,6 +77,11 @@ interface IGpsTrackingProps {
   cycleId?: string;
 }
 
+interface IEmulateCar {
+  mdn: string;
+  bizId: number;
+}
+
 export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   const [trackingState, setTrackingState] = useState<IGpsTrackingState>({
     isTracking: false,
@@ -99,6 +106,9 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const totalDistanceRef = useRef<number>(0);
   const packetsCountRef = useRef<number>(0);
+
+  const [mdnList, setMdnList] = useState<IEmulateCar[]>([]);
+  const [selectedMdn, setSelectedMdn] = useState<string>("");
   
   // Mock data related state
   const [useMockData, setUseMockData] = useState(false);
@@ -142,6 +152,11 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       ...prev,
       error: message
     }));
+  };
+
+  const fetchMdnList = async () => {
+    const response = await carApiService.getEmulateCars();
+    setMdnList(response.data);
   };
 
   // 위치 초기화 함수
@@ -247,6 +262,8 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
 
   // 실제 위치 추적 시작
   const startRealTracking = () => {
+    console.log("startRealTracking");
+    gpsBuffer.setMdn(selectedMdn);
     if ("geolocation" in navigator) {
       try {
         // watchPosition 대신 1초마다 직접 위치 확인 로직 구현
@@ -257,17 +274,17 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
               (error) => {
                 // 에러가 발생해도 타이머는 계속 유지
                 handlePositionError(error);
-                console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 위치 정보 요청 실패. 다음 요청 계속 진행...`);
+                console.warn(`[${new Date().toLocaleTimeString()}] 위치 정보 요청 실패. 다음 요청 계속 진행...`);
               },
               GEOLOCATION_OPTIONS
             );
           } catch (error) {
-            console.error(`❌ [${new Date().toLocaleTimeString()}] getCurrentPosition 호출 실패:`, error);
+            console.error(`[${new Date().toLocaleTimeString()}] getCurrentPosition 호출 실패:`, error);
             // 에러가 발생해도 타이머는 계속 유지
           }
         }, POLLING_INTERVAL);
         
-        console.log(`🔄 [${new Date().toLocaleTimeString()}] 실시간 위치 추적 시작 (간격: ${POLLING_INTERVAL}ms)`);
+        console.log(` [${new Date().toLocaleTimeString()}] 실시간 위치 추적 시작 (간격: ${POLLING_INTERVAL}ms)`);
       } catch (error) {
         setTrackingState(prev => ({
           ...prev,
@@ -322,12 +339,12 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
-      console.log(`⏹️ [${new Date().toLocaleTimeString()}] 위치 추적 타이머 중지됨`);
+      console.log(`[${new Date().toLocaleTimeString()}] 위치 추적 타이머 중지됨`);
     }
     
     // 마지막으로 버퍼에 남아있는 데이터 전송
     if (gpsBuffer.getBufferSize() > 0) {
-      console.log(`📤 [${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 추적 중지 시 버퍼에 남은 ${gpsBuffer.getBufferSize()}개의 데이터 전송 시도...`);
       
       // 비동기 함수이지만 UI 업데이트를 위해 동기적으로 처리
       gpsBuffer.sendData()
@@ -350,7 +367,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
           }));
         })
         .catch(error => {
-          console.error(`❌ [${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 중 오류:`, error);
+          console.error(`[${new Date().toLocaleTimeString()}] 추적 중지 시 데이터 전송 중 오류:`, error);
           
           // 오류가 발생해도 UI는 업데이트
           setTrackingState(prev => ({
@@ -394,7 +411,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       const avgSpeed = calculateAverageSpeed();
       
       // 새 위치 정보 로깅 - 초당 수집 확인용
-      console.log(`🛣️ 위치 데이터 수집: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 버퍼=${gpsBuffer.getBufferSize()}`);
+      console.log(`위치 데이터 수집: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 버퍼=${gpsBuffer.getBufferSize()}`);
       
       return {
         ...prev,
@@ -429,6 +446,18 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
 
     return () => clearInterval(bufferTimer);
   }, [trackingState.isTracking]);
+
+  useEffect(() => {
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    // 꼭 호출해야 할 동작
+    handleEngineOff();
+
+    event.preventDefault();
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+}, []);
 
   // 위치 에러 핸들러
   const handlePositionError = (error: GeolocationPositionError) => {
@@ -467,13 +496,6 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     gpsBuffer.setInterval(value);
   };
 
-  // Clean up on component unmount
-  useEffect(() => {
-    return () => {
-      stopTracking();
-    };
-  }, []);
-
   // 데이터 소스 토글
   const toggleDataSource = () => {
     setUseMockData(prev => !prev);
@@ -488,7 +510,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     
     try {
       // emulatorUtils에서 제공하는 함수를 사용하여 요청 객체 생성
-      const engineRequest = createEngineOnRequest(trackingState.currentPosition);
+      const engineRequest = createEngineOnRequest(selectedMdn, trackingState.currentPosition);
       
       // 시동 ON 시간 상태 저장
       setOnTime(engineRequest.onTime);
@@ -522,7 +544,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
     }
     
     try {
-      console.log(`🔄 [${new Date().toLocaleTimeString()}] 시동 OFF 요청 시작 - 버퍼에 남은 GPS 데이터 전송 중...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 시작 - 버퍼에 남은 GPS 데이터 전송 중...`);
       
       // 버퍼에 남아있는 모든 GPS 데이터 즉시 전송
       if (gpsBuffer.getBufferSize() > 0) {
@@ -549,6 +571,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       
       // emulatorUtils에서 제공하는 함수를 사용하여 요청 객체 생성
       const engineRequest = createEngineOffRequest(
+        selectedMdn,
         trackingState.currentPosition,
         onTime,
         trackingState.stats.totalDistance
@@ -564,7 +587,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
       resetEmulatorState();
       
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
+      console.error(`[${new Date().toLocaleTimeString()}] 시동 OFF 요청 실패:`, error);
       setError(createApiError(error));
       showToast("시동 OFF 요청에 실패했습니다.");
       
@@ -637,328 +660,360 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   return (
     <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 max-w-screen-xl py-4 md:py-8">
       {error && <ErrorToast error={error} />}
-      <Card className="overflow-hidden bg-gradient-to-br from-background to-background/50 border-none shadow-xl">
-        <CardHeader className="border-b bg-card/20 backdrop-blur-sm">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-                <CarIcon /> 차량 GPS 에뮬레이터
-              </CardTitle>
-              <CardDescription className="text-sm">
-                {useMockData ? MOCK_LOCATION_TEXT : REAL_LOCATION_TEXT}
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant={trackingState.isTracking ? "default" : "secondary"} 
-                className="px-3 py-1.5 text-sm font-medium shadow-sm"
-              >
-                <div className="flex items-center gap-1.5">
-                  {trackingState.isTracking ? (
-                    <>
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                      </span>
-                      활성 상태
-                    </>
-                  ) : (
-                    <>
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gray-400"></span>
-                      </span>
-                      대기 상태
-                    </>
-                  )}
+      <div className="relative">
+        <Card className="overflow-hidden bg-gradient-to-br from-background to-background/50 border-none shadow-xl">
+          <CardHeader className="border-b bg-card/20 backdrop-blur-sm sticky top-0 z-10">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+                  <CarIcon /> 차량 GPS 에뮬레이터
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  {useMockData ? MOCK_LOCATION_TEXT : REAL_LOCATION_TEXT}
+                </CardDescription>
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <div className="space-y-2 w-full sm:w-auto">
+                  <div className="flex flex-row items-center gap-2">
+                    <Select onValueChange={(val) => setSelectedMdn(val)}>
+                      <SelectTrigger className="w-full sm:w-[200px]">
+                        <SelectValue placeholder="차량 조회 후 선택하세요" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mdnList.map((mdn: IEmulateCar, idx: number) => (
+                            <SelectItem key={idx} value={mdn.mdn}>{mdn.mdn}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button variant="outline" size="sm" onClick={fetchMdnList}>조회</Button>
+                  </div>
                 </div>
-              </Badge>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="flex items-center gap-1.5 h-9 px-3 border-border shadow-sm"
-                onClick={() => {
-                  // 시동이 켜져 있으면 먼저 끄고 초기화
-                  if (trackingState.engineOn) {
-                    if (trackingState.currentPosition) {
-                      // handleEngineOff를 호출하여 데이터 전송 후 초기화
-                      handleEngineOff().catch(error => {
-                        console.error("시동 OFF 중 오류 발생:", error);
-                        // 오류가 발생해도 초기화는 진행
+
+                <Badge 
+                  variant={trackingState.isTracking ? "default" : "secondary"} 
+                  className="px-3 py-1.5 text-sm font-medium shadow-sm"
+                >
+                  <div className="flex items-center gap-1.5">
+                    {trackingState.isTracking ? (
+                      <>
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                        </span>
+                        활성 상태
+                      </>
+                    ) : (
+                      <>
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gray-400"></span>
+                        </span>
+                        대기 상태
+                      </>
+                    )}
+                  </div>
+                </Badge>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-1.5 h-9 px-3 border-border shadow-sm"
+                  onClick={() => {
+                    // 시동이 켜져 있으면 먼저 끄고 초기화
+                    if (trackingState.engineOn) {
+                      if (trackingState.currentPosition) {
+                        // handleEngineOff를 호출하여 데이터 전송 후 초기화
+                        handleEngineOff().catch(error => {
+                          console.error("시동 OFF 중 오류 발생:", error);
+                          // 오류가 발생해도 초기화는 진행
+                          resetEmulatorState();
+                        });
+                      } else {
                         resetEmulatorState();
-                      });
+                      }
                     } else {
+                      // 시동이 꺼져 있으면 바로 초기화
                       resetEmulatorState();
                     }
-                  } else {
-                    // 시동이 꺼져 있으면 바로 초기화
-                    resetEmulatorState();
-                  }
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M1 4V10H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M23 20V14H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M20.49 9.00001C19.9828 7.56329 19.1209 6.28161 17.9845 5.27419C16.848 4.26678 15.4745 3.56506 13.9917 3.24053C12.5089 2.916 10.9652 2.98326 9.51894 3.43398C8.0727 3.8847 6.76895 4.70081 5.76001 5.80001L1 10M23 14L18.24 18.2C17.2311 19.2992 15.9273 20.1153 14.4811 20.566C13.0349 21.0168 11.4911 21.084 10.0083 20.7595C8.52547 20.435 7.15198 19.7333 6.01553 18.7258C4.87907 17.7184 4.01718 16.4367 3.51001 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                초기화
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        
-        <div className="md:grid md:grid-cols-12 md:gap-6">
-          {/* 왼쪽 패널: 컨트롤 및 데이터 */}
-          <div className="md:col-span-5 lg:col-span-4">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex flex-col gap-6">
-                {/* 상태 지표 */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-2 gap-3">
-                  <StatCard title="총 거리" value={trackingState.stats.totalDistance.toFixed(1)} unit="m" />
-                  <StatCard title="평균 속도" value={Math.round(trackingState.stats.avgSpeed)} unit="m/s" />
-                  <StatCard title="전송 패킷" value={trackingState.stats.packetsCount} />
-                  <StatCard 
-                    title="버퍼" 
-                    value={trackingState.stats.bufferSize}
-                  />
-                </div>
-                
-                {/* 전송 주기 설정 */}
-                <EmulatorSettings 
-                  interval={packetInterval}
-                  onIntervalChange={handleIntervalChange}
-                  isTracking={trackingState.isTracking}
-                />
-                
-                {/* 시동 ON/OFF */}
-                <div className="grid grid-cols-2 gap-3">
-                  <Button 
-                    className="flex-1"
-                    onClick={handleEngineOn} 
-                    variant="default"
-                    disabled={trackingState.engineOn}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                      <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    시동 ON
-                  </Button>
-                  <Button 
-                    className="flex-1"
-                    onClick={handleEngineOff} 
-                    variant="destructive"
-                    disabled={!trackingState.engineOn}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                      <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    시동 OFF
-                  </Button>
-                </div>
-                
-                {/* 주기정보 전송 시작/중지 버튼 */}
-                <div className="flex flex-col gap-3">
-                  <Button 
-                    className="w-full text-sm md:text-base py-5 sm:py-6"
-                    onClick={startTracking} 
-                    disabled={trackingState.isTracking || !trackingState.engineOn}
-                    variant="outline"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 flex-shrink-0">
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M10 8L16 12L10 16V8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    주기정보 전송 시작
-                  </Button>
-                  <Button 
-                    className="w-full text-sm md:text-base py-5 sm:py-6"
-                    onClick={stopTracking} 
-                    disabled={!trackingState.isTracking}
-                    variant="outline"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 flex-shrink-0">
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M9 9H15V15H9V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    주기정보 전송 중지
-                  </Button>
-                </div>
-                
-                {/* 데이터 소스 토글 */}
-                <Button 
-                  onClick={toggleDataSource} 
-                  variant="outline" 
-                  className="w-full"
-                  disabled={trackingState.isTracking || trackingState.engineOn}
+                  }}
                 >
-                  <svg width="16" height="16" className="mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 4V10H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M23 20V14H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20.49 9.00001C19.9828 7.56329 19.1209 6.28161 17.9845 5.27419C16.848 4.26678 15.4745 3.56506 13.9917 3.24053C12.5089 2.916 10.9652 2.98326 9.51894 3.43398C8.0727 3.8847 6.76895 4.70081 5.76001 5.80001L1 10M23 14L18.24 18.2C17.2311 19.2992 15.9273 20.1153 14.4811 20.566C13.0349 21.0168 11.4911 21.084 10.0083 20.7595C8.52547 20.435 7.15198 19.7333 6.01553 18.7258C4.87907 17.7184 4.01718 16.4367 3.51001 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  {useMockData ? "실제 위치 사용" : "모의 데이터 사용"}
+                  초기화
                 </Button>
-                
-                {/* 에러 메시지 */}
-                {trackingState.error && (
-                  <div className="bg-amber-50 border border-amber-200 text-amber-700 rounded-md p-3 text-sm">
-                    <p className="flex items-center gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                        <line x1="12" y1="9" x2="12" y2="13"/>
-                        <line x1="12" y1="17" x2="12.01" y2="17"/>
-                      </svg>
-                      {trackingState.error}
-                    </p>
-                    {trackingState.isTracking && (
-                      <p className="mt-2 text-xs flex items-center gap-1.5">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
-                        위치 정보 에러가 발생했지만, 데이터 수집 및 전송은 계속 진행됩니다. 다음 요청에서 위치 정보를 다시 가져옵니다.
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
-            </CardContent>
-            
-            {/* 위치 정보 */}
-            {trackingState.currentPosition && (
-              <CardContent className="border-t p-4 md:p-6 border-border/20">
-                <h3 className="text-lg font-medium mb-3">현재 위치 정보</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">위도</span>
-                    <span className="font-mono">{trackingState.currentPosition.coords.latitude.toFixed(6)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">경도</span>
-                    <span className="font-mono">{trackingState.currentPosition.coords.longitude.toFixed(6)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">고도</span>
-                    <span className="font-mono">
-                      {trackingState.currentPosition.coords.altitude 
-                        ? `${trackingState.currentPosition.coords.altitude.toFixed(2)} m` 
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">속도</span>
-                    <span className="font-mono">
-                      {trackingState.currentPosition.coords.speed !== null
-                        ? `${(trackingState.currentPosition.coords.speed * 3.6).toFixed(1)} km/h`
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">방향</span>
-                    <span className="font-mono">
-                      {trackingState.currentPosition.coords.heading !== null
-                        ? `${trackingState.currentPosition.coords.heading.toFixed(1)}°`
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">정확도</span>
-                    <span className="font-mono">{trackingState.currentPosition.coords.accuracy.toFixed(1)} m</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">시간</span>
-                    <span className="font-mono">{formatTimeToYYYYMMDDHHMM(trackingState.currentPosition.timestamp)}</span>
+            </div>
+          </CardHeader>
+          <div className="relative md:grid md:grid-cols-12 md:gap-6">
+          {!selectedMdn && (
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-background/50 backdrop-blur-sm rounded-lg flex items-center justify-center z-50">
+              <div className="text-center p-6 bg-card border border-border/30 rounded-lg shadow-lg">
+                <div className="flex flex-col items-center gap-4">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground">
+                    <path d="M12 16V12L10 10M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-medium">차량을 선택해주세요</h3>
+                    <p className="text-sm text-muted-foreground">에뮬레이터를 사용하기 위해서는 먼저 차량을 조회하고 선택해야 합니다.</p>
                   </div>
                 </div>
-              </CardContent>
-            )}
-          </div>
-            
-          {/* 오른쪽 패널: 시각화 */}
-          <div className="md:col-span-7 lg:col-span-8 border-t md:border-t-0 md:border-l border-border/20">
-            <CardContent className="h-full p-4 md:p-6">
-              <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="map">지도 보기</TabsTrigger>
-                  <TabsTrigger value="data">데이터 통계</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="map" className="mt-0">
-                  {/* 지도 컴포넌트 */}
-                  <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] relative rounded-lg overflow-hidden">
-                    <GpsMap 
-                      currentPosition={trackingState.currentPosition}
-                      positionHistory={trackingState.positionHistory}
-                      isTracking={trackingState.isTracking}
-                      autoCenter={true}
+              </div>
+            </div>
+          )}
+            {/* 왼쪽 패널: 컨트롤 및 데이터 */}
+            <div className="md:col-span-5 lg:col-span-4">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex flex-col gap-6">
+                  {/* 상태 지표 */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-2 gap-3">
+                    <StatCard title="총 거리" value={trackingState.stats.totalDistance.toFixed(1)} unit="m" />
+                    <StatCard title="평균 속도" value={Math.round(trackingState.stats.avgSpeed)} unit="m/s" />
+                    <StatCard title="전송 패킷" value={trackingState.stats.packetsCount} />
+                    <StatCard 
+                      title="버퍼" 
+                      value={trackingState.stats.bufferSize}
                     />
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="data" className="mt-0">
-                  <div className="bg-card/30 backdrop-blur-sm rounded-lg h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] p-4 overflow-auto">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-medium">수집된 위치 데이터 (최근 10개)</h3>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">전송 주기: {packetInterval}초</Badge>
-                        <Badge variant="outline">버퍼: {trackingState.stats.bufferSize}개</Badge>
-                      </div>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-border/40">
-                            <th className="text-left pb-2 font-medium">순번</th>
-                            <th className="text-left pb-2 font-medium">위도</th>
-                            <th className="text-left pb-2 font-medium">경도</th>
-                            <th className="text-left pb-2 font-medium">속도</th>
-                            <th className="text-left pb-2 font-medium">시간</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {trackingState.positionHistory.slice(-10).reverse().map((pos, idx) => (
-                            <tr key={pos.timestamp} className="border-b border-border/10">
-                              <td className="py-2">#{trackingState.positionHistory.length - idx}</td>
-                              <td className="py-2 font-mono">{pos.coords.latitude.toFixed(6)}</td>
-                              <td className="py-2 font-mono">{pos.coords.longitude.toFixed(6)}</td>
-                              <td className="py-2 font-mono">
-                                {pos.coords.speed !== null
-                                  ? `${(pos.coords.speed * 3.6).toFixed(1)} km/h`
-                                  : "N/A"}
-                              </td>
-                              <td className="py-2 font-mono">{formatTimeToYYYYMMDDHHMM(pos.timestamp)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    
-                    {trackingState.positionHistory.length === 0 && (
-                      <div className="text-center text-muted-foreground mt-8">
-                        <p>위치 추적을 시작하면 데이터가 이곳에 표시됩니다.</p>
-                      </div>
-                    )}
+                  
+                  {/* 전송 주기 설정 */}
+                  <EmulatorSettings 
+                    interval={packetInterval}
+                    onIntervalChange={handleIntervalChange}
+                    isTracking={trackingState.isTracking}
+                  />
+                  
+                  {/* 시동 ON/OFF */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      className="flex-1"
+                      onClick={handleEngineOn} 
+                      variant="default"
+                      disabled={trackingState.engineOn}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                        <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      시동 ON
+                    </Button>
+                    <Button 
+                      className="flex-1"
+                      onClick={handleEngineOff} 
+                      variant="destructive"
+                      disabled={!trackingState.engineOn}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                        <path d="M16 6H6L4 10M16 6H18L20 10M16 6V4M6 6V4M4 10H20M4 10V17C4 17.5523 4.44772 18 5 18H6C6.55228 18 7 17.5523 7 17V16H17V17C17 17.5523 17.4477 18 18 18H19C19.5523 18 20 17.5523 20 17V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      시동 OFF
+                    </Button>
                   </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
+                  
+                  {/* 주기정보 전송 시작/중지 버튼 */}
+                  <div className="flex flex-col gap-3">
+                    <Button 
+                      className="w-full text-sm md:text-base py-5 sm:py-6"
+                      onClick={startTracking} 
+                      disabled={trackingState.isTracking || !trackingState.engineOn}
+                      variant="outline"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 flex-shrink-0">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M10 8L16 12L10 16V8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      주기정보 전송 시작
+                    </Button>
+                    <Button 
+                      className="w-full text-sm md:text-base py-5 sm:py-6"
+                      onClick={stopTracking} 
+                      disabled={!trackingState.isTracking}
+                      variant="outline"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 flex-shrink-0">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M9 9H15V15H9V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      주기정보 전송 중지
+                    </Button>
+                  </div>
+                  
+                  {/* 데이터 소스 토글 */}
+                  <Button 
+                    onClick={toggleDataSource} 
+                    variant="outline" 
+                    className="w-full"
+                    disabled={trackingState.isTracking || trackingState.engineOn}
+                  >
+                    <svg width="16" height="16" className="mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {useMockData ? "실제 위치 사용" : "모의 데이터 사용"}
+                  </Button>
+                  
+                  {/* 에러 메시지 */}
+                  {trackingState.error && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-700 rounded-md p-3 text-sm">
+                      <p className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                          <line x1="12" y1="9" x2="12" y2="13"/>
+                          <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        {trackingState.error}
+                      </p>
+                      {trackingState.isTracking && (
+                        <p className="mt-2 text-xs flex items-center gap-1.5">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                          </span>
+                          위치 정보 에러가 발생했지만, 데이터 수집 및 전송은 계속 진행됩니다. 다음 요청에서 위치 정보를 다시 가져옵니다.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+              
+              {/* 위치 정보 */}
+              {trackingState.currentPosition && (
+                <CardContent className="border-t p-4 md:p-6 border-border/20">
+                  <h3 className="text-lg font-medium mb-3">현재 위치 정보</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">위도</span>
+                      <span className="font-mono">{trackingState.currentPosition.coords.latitude.toFixed(6)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">경도</span>
+                      <span className="font-mono">{trackingState.currentPosition.coords.longitude.toFixed(6)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">고도</span>
+                      <span className="font-mono">
+                        {trackingState.currentPosition.coords.altitude 
+                          ? `${trackingState.currentPosition.coords.altitude.toFixed(2)} m` 
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">속도</span>
+                      <span className="font-mono">
+                        {trackingState.currentPosition.coords.speed !== null
+                          ? `${(trackingState.currentPosition.coords.speed * 3.6).toFixed(1)} km/h`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">방향</span>
+                      <span className="font-mono">
+                        {trackingState.currentPosition.coords.heading !== null
+                          ? `${trackingState.currentPosition.coords.heading.toFixed(1)}°`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">정확도</span>
+                      <span className="font-mono">{trackingState.currentPosition.coords.accuracy.toFixed(1)} m</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">시간</span>
+                      <span className="font-mono">{formatTimeToYYYYMMDDHHMM(trackingState.currentPosition.timestamp)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              )}
+            </div>
+              
+            {/* 오른쪽 패널: 시각화 */}
+            <div className="md:col-span-7 lg:col-span-8 border-t md:border-t-0 md:border-l border-border/20">
+              <CardContent className="h-full p-4 md:p-6">
+                <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+                  <TabsList className="mb-4">
+                    <TabsTrigger value="map">지도 보기</TabsTrigger>
+                    <TabsTrigger value="data">데이터 통계</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="map" className="mt-0">
+                    {/* 지도 컴포넌트 */}
+                    <div className="w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] relative rounded-lg overflow-hidden">
+                      <GpsMap 
+                        currentPosition={trackingState.currentPosition}
+                        positionHistory={trackingState.positionHistory}
+                        isTracking={trackingState.isTracking}
+                        autoCenter={true}
+                      />
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="data" className="mt-0">
+                    <div className="bg-card/30 backdrop-blur-sm rounded-lg h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] p-4 overflow-auto">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-medium">수집된 위치 데이터 (최근 10개)</h3>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">전송 주기: {packetInterval}초</Badge>
+                          <Badge variant="outline">버퍼: {trackingState.stats.bufferSize}개</Badge>
+                        </div>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border/40">
+                              <th className="text-left pb-2 font-medium">순번</th>
+                              <th className="text-left pb-2 font-medium">위도</th>
+                              <th className="text-left pb-2 font-medium">경도</th>
+                              <th className="text-left pb-2 font-medium">속도</th>
+                              <th className="text-left pb-2 font-medium">시간</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {trackingState.positionHistory.slice(-10).reverse().map((pos, idx) => (
+                              <tr key={pos.timestamp} className="border-b border-border/10">
+                                <td className="py-2">#{trackingState.positionHistory.length - idx}</td>
+                                <td className="py-2 font-mono">{pos.coords.latitude.toFixed(6)}</td>
+                                <td className="py-2 font-mono">{pos.coords.longitude.toFixed(6)}</td>
+                                <td className="py-2 font-mono">
+                                  {pos.coords.speed !== null
+                                    ? `${(pos.coords.speed * 3.6).toFixed(1)} km/h`
+                                    : "N/A"}
+                                </td>
+                                <td className="py-2 font-mono">{formatTimeToYYYYMMDDHHMM(pos.timestamp)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      {trackingState.positionHistory.length === 0 && (
+                        <div className="text-center text-muted-foreground mt-8">
+                          <p>위치 추적을 시작하면 데이터가 이곳에 표시됩니다.</p>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </div>
           </div>
-        </div>
-        
-        <CardFooter className="border-t border-border/20 bg-card/20 backdrop-blur-sm p-4 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-          <div className="text-sm text-muted-foreground">
-            <p className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 16V12L10 10M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              최근 업데이트: {trackingState.currentPosition ? formatTimeToYYYYMMDDHHMM(trackingState.currentPosition.timestamp) : '--:--:--'}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-mono">주기: {packetInterval}초</Badge>
-            <Badge variant="outline" className="font-mono">위치 이력: {trackingState.positionHistory.length}개</Badge>
-            <Badge variant="outline" className="font-mono">{EMULATOR_VERSION}</Badge>
-          </div>
-        </CardFooter>
-      </Card>
+          
+          <CardFooter className="border-t border-border/20 bg-card/20 backdrop-blur-sm p-4 md:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div className="text-sm text-muted-foreground">
+              <p className="flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 16V12L10 10M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                최근 업데이트: {trackingState.currentPosition ? formatTimeToYYYYMMDDHHMM(trackingState.currentPosition.timestamp) : '--:--:--'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="font-mono">주기: {packetInterval}초</Badge>
+              <Badge variant="outline" className="font-mono">위치 이력: {trackingState.positionHistory.length}개</Badge>
+              <Badge variant="outline" className="font-mono">{EMULATOR_VERSION}</Badge>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -31,6 +31,7 @@ type RentTableProps = {
   rentList: RentDetailTypes[];
   setRentList: (rentList: RentDetailTypes[]) => void;
   isLoading?: boolean;
+  reload: () => void;
 };
 
 function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps) {
@@ -52,7 +53,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
   const handleCloseUpdateModal = () => {
     setSelectedRentData(null);
     setIsUpdate(false);
-    navigate("/rents");
+    navigate("/car/rent");
   };
 
   // 실제 api req,res
@@ -64,7 +65,6 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
 
   async function deleteRentData(rentUuid: string) {
     const res = await rentApiService.deleteRent(rentUuid);
-    console.log("deleterentData : ", res.data);
     if (res.status === 200) {
       rentList = rentList.filter((rent) => rent.rent_uuid != rentUuid);
       setRentList(rentList);
@@ -84,92 +84,102 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
   return (
     <div className="w-full">
       {/* PC 화면용 테이블 */}
-      <div className="hidden md:block overflow-auto rounded-xl shadow-sm bg-white">
-        <Table className="w-full table-fixed">
-          <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-            <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
-              <TableHead className="w-14 text-center text-gray-600 font-medium">예약 상태</TableHead>
-              <TableHead className="w-16 text-gray-600 font-medium">예약 번호</TableHead>
-              <TableHead className="w-20 text-gray-600 font-medium">차량 관리번호</TableHead>
-              <TableHead className="w-24 text-gray-600 font-medium">대여 시작 날짜</TableHead>
-              <TableHead className="w-24 text-gray-600 font-medium">대여 종료 날짜</TableHead>
-              <TableHead className="text-right w-28 text-gray-600 font-medium">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rentList.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                  예약 정보가 없습니다.
-                </TableCell>
-              </TableRow>
-            )}
-            {rentList.map((rent) => (
-              <TableRow 
-                key={rent.rent_uuid} 
-                onClick={() => {
-                  setIsDetail(true);
-                  handleCellClick(rent.rent_uuid);
-                }}
-                className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
-              >
-                <TableCell className="whitespace-nowrap">
-                  <div className="flex items-center justify-center">
-                    <span onClick={(e) => e.stopPropagation()}>
-                      <StatusBadge status={rent.rentStatus} type="rent" />
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{rent.rent_uuid}</span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>{rent.mdn}</span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>
-                    {formatDateTime(rent.rentStime)}
-                  </span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-gray-700">
-                  <span onClick={(e) => e.stopPropagation()}>
-                    {formatDateTime(rent.rentEtime)}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex gap-2 justify-end">
-                    <CustomButton
-                      variant="edit"
-                      size="sm"
-                      className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
-                      icon={<Edit className="h-4 w-4" />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsUpdate(true);
-                        setSelectedRentData(rent);
-                      }}
-                    >
-                      수정
-                    </CustomButton>
-                    <CustomButton
-                      variant="destructive"
-                      size="sm"
-                      className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
-                      icon={<Trash className="h-4 w-4" />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsDelete(true);
-                        setSelectedRentData(rent);
-                      }}
-                    >
-                      삭제
-                    </CustomButton>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="hidden md:block overflow-auto shadow-sm bg-white">
+        <div className="relative">
+          <div className="sticky top-0 z-10 bg-white">
+            <Table className="w-full" style={{ tableLayout: 'fixed' }}>
+              <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <TableRow className="[&>th]:px-4 [&>th]:py-3 border-b border-gray-200">
+                  <TableHead style={{ width: '80px' }} className="text-center text-gray-600 font-medium">예약 상태</TableHead>
+                  <TableHead style={{ width: '100px' }} className="text-gray-600 font-medium">예약 번호</TableHead>
+                  <TableHead style={{ width: '120px' }} className="text-gray-600 font-medium">차량 관리번호</TableHead>
+                  <TableHead style={{ width: '160px' }} className="text-gray-600 font-medium">대여 시작 날짜</TableHead>
+                  <TableHead style={{ width: '160px' }} className="text-gray-600 font-medium">대여 종료 날짜</TableHead>
+                  <TableHead style={{ width: '120px' }} className="text-right text-gray-600 font-medium">관리</TableHead>
+                </TableRow>
+              </TableHeader>
+            </Table>
+          </div>
+          <div className="max-h-[calc(100vh-24rem)] overflow-y-auto">
+            <Table style={{ tableLayout: 'fixed' }}>
+              <TableBody>
+                {rentList.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      예약 정보가 없습니다.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {rentList.map((rent) => (
+                  <TableRow 
+                    key={rent.rent_uuid} 
+                    onClick={() => {
+                      setIsDetail(true);
+                      handleCellClick(rent.rent_uuid);
+                    }}
+                    className="hover:bg-gray-50 transition-colors duration-200 [&>td]:px-4 [&>td]:py-3 border-b border-gray-100"
+                  >
+                    <TableCell style={{ width: '80px' }} className="text-center">
+                      <div className="flex items-center justify-center">
+                        <span onClick={(e) => e.stopPropagation()}>
+                          <StatusBadge status={rent.rentStatus} type="rent" />
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell style={{ width: '100px' }} className="text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{rent.rent_uuid}</span>
+                    </TableCell>
+                    <TableCell style={{ width: '120px' }} className="text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>{rent.mdn}</span>
+                    </TableCell>
+                    <TableCell style={{ width: '160px' }} className="text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>
+                        {formatDateTime(rent.rentStime)}
+                      </span>
+                    </TableCell>
+                    <TableCell style={{ width: '160px' }} className="text-gray-700">
+                      <span onClick={(e) => e.stopPropagation()}>
+                        {formatDateTime(rent.rentEtime)}
+                      </span>
+                    </TableCell>
+                    <TableCell style={{ width: '120px' }} className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        <CustomButton
+                          variant="edit"
+                          size="sm"
+                          className="h-8 px-3 bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors duration-200"
+                          icon={<Edit className="h-4 w-4" />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsUpdate(true);
+                            setSelectedRentData(rent);
+                          }}
+                        >
+                          수정
+                        </CustomButton>
+                        {rent.rentStatus.toLowerCase() !== "deleted" && (
+                          <CustomButton
+                            variant="destructive"
+                            size="sm"
+                            className="h-8 px-3 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
+                            icon={<Trash className="h-4 w-4" />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsDelete(true);
+                              setSelectedRentData(rent);
+                            }}
+                          >
+                            삭제
+                          </CustomButton>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
 
       {/* 모바일 화면용 카드 */}
@@ -224,9 +234,10 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                 >
                   수정
                 </CustomButton>
-                <CustomButton
-                  variant="destructive"
-                  size="sm"
+                {rent.rentStatus.toLowerCase() !== "deleted" && (
+                  <CustomButton
+                    variant="destructive"
+                    size="sm"
                   className="flex-1 h-9 bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200"
                   icon={<Trash className="h-4 w-4" />}
                   onClick={() => {
@@ -236,6 +247,7 @@ function RentTable({ rentList, setRentList, isLoading = false }: RentTableProps)
                 >
                   삭제
                 </CustomButton>
+                )}
               </div>
             </CardContent>
           </Card>

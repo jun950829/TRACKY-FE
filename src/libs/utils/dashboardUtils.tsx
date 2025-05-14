@@ -25,7 +25,23 @@ export const getCarStatusIcon = (status: string): React.ReactNode => {
   }
 }; 
 
-export const getReservationStatus = (status: string): { color: string, icon:  React.ReactNode } => {
+// export const getReservationStatus = (status: string): { color: string, icon:  React.ReactNode } => {
+
+//   switch(status) {
+//     case 'waiting':
+//       return { color: 'bg-blue-100 text-blue-600', icon: <Clock className="text-blue-800 w-5 h-5" /> };
+//     case 'renting':
+//       return { color: 'bg-green-100 text-green-600', icon: <Car className="text-green-800 w-5 h-5" /> };
+//     case 'returned':
+//       return { color: 'bg-purple-100 text-purple-600', icon: <Car className="text-yellow-800 w-5 h-5" /> };
+//     case 'canceled':
+//       return { color: 'bg-red-100 text-red-600', icon: <Ban className="text-red-800 w-5 h-5" />};
+//     default:
+//       return { color: 'bg-zinc-100 text-zinc-600', icon: <Car className="text-gray-800 w-5 h-5" />};
+//   }
+// }
+
+export const getReturnStatus = (status: string): { color: string, icon:  React.ReactNode } => {
 
   switch(status) {
     case 'waiting':
@@ -47,7 +63,7 @@ export const makeStatisticsItems = (statistics: Statistics) => {
       id: 'total-km',
       icon: <Activity className="h-4 w-4 text-purple-500" />,
       title: '총 운행거리',
-      value: `${statistics.totalDriveDistance.toFixed(2)} km`,
+      value: `${statistics.totalDriveDistance / 1000} km`,
       color: 'bg-purple-50 border-purple-200'
     },
     {

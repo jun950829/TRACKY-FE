@@ -2,82 +2,119 @@ import { RentCreateTypes, RentUpdateTypes } from "@/constants/types/types";
 import api from "./api";
 
 const rentApiRoot = "/rents";
+const rentAdminApiRoot = "/admin/rents";
+
+interface AvailabilityCheckRequest {
+  mdn: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface TimeSlot {
+  start: string;
+  end: string;
+  isAvailable: boolean;
+}
+
+interface AvailabilityResponse {
+  data: TimeSlot[];
+}
 
 export const rentApiService = {
-    getRents: async () => {
-        const response = await api.get(`${rentApiRoot}`);
-        return response.data;
-    },
+  getRents: async () => {
+    const response = await api.get(`${rentApiRoot}`);
+    return response.data;
+  },
 
-    getMdns: async () => {
-        const response = await api.get(`${rentApiRoot}/cars`);
-        return response.data;
-    },
+  getMdns: async () => {
+    const response = await api.get(`${rentApiRoot}/mdns`);
+    return response.data;
+  },
 
-    searchByRentUuid: async (searchText: string) => {
-        if(searchText != '') {
-            const response = await api.get(`${rentApiRoot}/?rentUuid=${searchText}`);
-            return response.data;
-        }else {
-            const response = await api.get(`${rentApiRoot}`);
-            return response.data;
-        }
-    },
-    
-    searchRents: async (searchText: string, status?: string, date?: string) => {
-        // 쿼리 매개변수 객체 구성
-        const params = new URLSearchParams();
-        
-        if (searchText && searchText.trim() !== '') {
-            params.append('rentUuid', searchText.trim());
-        }
-        
-        if (status) {
-            params.append('status', status);
-        }
-        
-        if (date) {
-            params.append('date', date);
-        }
-        
-        // 쿼리 매개변수가 있으면 검색 API 호출, 없으면 전체 목록 조회
-        const searchParams = params.toString();
-        console.log('검색 파라미터 문자열:', searchParams);
-        
-        if (searchParams === "") {
-            const response = await api.get(`${rentApiRoot}`);
-            return response.data;
-        } else {
-            const response = await api.get(`${rentApiRoot}?${searchParams}`);
-            return response.data;
-        }
-    },
+  searchRentsAdmin: async (
+    searchBizText: string = "",
+    search: string = "",
+    status?: string,
+    date?: string,
+    size: number = 10,
+    page: number = 0
+  ) => {
+    const params = new URLSearchParams();
 
-    searchOneByRentUuid: async (rentUuid: string) => {
-        const response = await api.get(`${rentApiRoot}/${rentUuid}`);
-        return response.data;
-    },
-
-    searchByRentUuidDetail: async (rentUuid: string) => {
-        console.log('searchByRentUuidDetail rentUuid :', rentUuid);
-        const response = await api.get(`${rentApiRoot}/${rentUuid}`);
-        return response.data;
-    },
-
-    createRent: async (data: RentCreateTypes) => {
-        const response = await api.post(`${rentApiRoot}`, data);
-        return response.data;
-    },
-
-    updateRent: async ( rentUuid: string, data: RentUpdateTypes) => {
-        const response = await api.patch(`${rentApiRoot}/${rentUuid}`, data);
-        return response.data;
-    },
-
-    deleteRent: async (rentUuid: string) => {
-        const response = await api.delete(`${rentApiRoot}/${rentUuid}`);
-        return response.data;
+    if (searchBizText.trim() !== "") {
+      params.append("bizSearch", searchBizText.trim());
     }
+    if (search.trim() !== "") {
+      params.append("rentUuid", search.trim());
+    }
+    if (status && status !== "all") {
+      params.append("status", status);
+    }
+    if (date) {
+      params.append("rentDate", date);
+    }
+    params.append("size", String(size));
+    params.append("page", String(page));
+
+    const url = `${rentAdminApiRoot}${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("렌트 검색 요청 URL:", url);
+
+    const response = await api.get(url);
+    return response;
+  },
+
+  searchRents: async (
+    search: string = "",
+    status?: string,
+    date?: string,
+    size: number = 10,
+    page: number = 0
+  ) => {
+    const params = new URLSearchParams();
+
+    if (search.trim() !== "") {
+      params.append("rentUuid", search.trim());
+    }
+    if (status && status !== "all") {
+      params.append("status", status);
+    }
+    if (date) {
+      params.append("rentDate", date);
+    }
+    params.append("size", String(size));
+    params.append("page", String(page));
+
+    const url = `${rentApiRoot}${params.toString() ? `?${params.toString()}` : ""}`;
+    console.log("렌트 검색 요청 URL:", url);
+
+    const response = await api.get(url);
+    return response;
+  },
+
+  searchByRentUuidDetail: async (rentUuid: string) => {
+    const response = await api.get(`${rentApiRoot}/${rentUuid}`);
+    return response.data;
+  },
+
+  createRent: async (data: RentCreateTypes) => {
+    const response = await api.post(`${rentApiRoot}`, data);
+    return response.data;
+  },
+
+  updateRent: async (rentUuid: string, data: RentUpdateTypes) => {
+    const response = await api.patch(`${rentApiRoot}/${rentUuid}`, data);
+    return response.data;
+  },
+
+  deleteRent: async (rentUuid: string) => {
+    const response = await api.delete(`${rentApiRoot}/${rentUuid}`);
+    return response.data;
+  },
+
+  checkAvailability: async (data: AvailabilityCheckRequest) => {
+    const response = await api.post(`${rentApiRoot}/availability`, data);
+    return response.data;
+  },
 };
 
 export default rentApiService;

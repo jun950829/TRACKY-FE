@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { CarDetailTypes } from '@/constants/types/types';
-import { CarStatus } from '@/constants/datas/status';
+import { CarStatus, CarType } from '@/constants/datas/status';
 import carApiService from '@/libs/apis/carApi';
 import { useState } from 'react';
 import Modal from '@/components/custom/Modal';
@@ -22,7 +22,8 @@ import Modal from '@/components/custom/Modal';
 
 const schema = yup.object().shape({
   mdn: yup.string().required('식별 키를 입력하세요'),
-  carType: yup.string().required('모델명을 입력하세요'),
+  carType: yup.string().required('차종을 선택하세요'),
+  carName: yup.string().required('모델명을 입력하세요'),
   carPlate: yup.string().required('번호판을 입력하세요'),
   carYear: yup.number().typeError('숫자로 입력해주세요.')
   .min(1900, '유효한 연식을 입력해주세요.')
@@ -54,6 +55,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
     defaultValues: {
       mdn: initialData.mdn,
       carType: initialData.carType,
+      carName: initialData.carName,
       carPlate: initialData.carPlate,
       carYear: Number(initialData.carYear),
       purpose: initialData.purpose,
@@ -71,8 +73,8 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
   const sendUpdate = async (mdn: string, data: FormValues) => {
     const updateCarObj = {
       mdn: initialData.mdn,
-      bizId: initialData.bizId,
       carType: data.carType,
+      carName: data.carName,
       carPlate: data.carPlate,
       carYear: data.carYear.toString(),
       purpose: data.purpose,
@@ -81,7 +83,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
       deviceInfo: initialData.deviceInfo,
     };
 
-    const updatedCarRes = await carApiService.updateCar(mdn, updateCarObj);
+    const updatedCarRes = await carApiService.updateCar(updateCarObj);
     if(updatedCarRes.status === 200) {
       setIsSuccess(true);
     } else {
@@ -115,9 +117,26 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
               {errors.mdn && <p className="text-sm text-red-500">{errors.mdn.message}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium">차량 모델</label>
-              <Input {...register('carType')} />
+              <label className="block text-sm font-medium">차종</label>
+              <Select
+                defaultValue={initialData.carType.toLowerCase()}
+                onValueChange={(val) => setValue('carType', val)}
+              >
+                <SelectTrigger>
+                  <SelectValue  />
+                </SelectTrigger>
+                <SelectContent>
+                  {CarType.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.carType && <p className="text-sm text-red-500">{errors.carType.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium">차량 모델</label>
+              <Input {...register('carName')} />
+              {errors.carName && <p className="text-sm text-red-500">{errors.carName.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">차량 번호판</label>
@@ -137,7 +156,7 @@ function CarUpdateModal({ isOpen, closeModal, initialData, reload }: CarUpdateMo
             <div>
               <label className="block text-sm font-medium">차량 상태</label>
               <Select
-                defaultValue={initialData.status}
+                defaultValue={initialData.status.toLowerCase()}
                 onValueChange={(val) => setValue('status', val)}
               >
                 <SelectTrigger>

@@ -9,26 +9,27 @@ import { ko } from "date-fns/locale";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RentStatus } from "@/constants/datas/status";
+import { PageSizeOptions } from "@/constants/datas/options";
 
 type RentSearchLayerProps = {
-  onSearch: (isReload:boolean, searchText?: string, status?: string, date?: string ) => void;
+  onSearch: (isReload:boolean, searchBizText?: string, searchText?: string, status?: string, date?: string, size?: number ) => void;
+  defaultPageSize?: number;
 }
 
-function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
+function RentSearchLayer({ onSearch, defaultPageSize = 10 }: RentSearchLayerProps) {
   const [date, setDate] = useState<Date | undefined>();
-  const [status, setStatus] = useState<string | undefined>();
+  const [status, setStatus] = useState<string | undefined>("all");
   const [searchValue, setSearchValue] = useState<string>('');
+  const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const navigate = useNavigate();
+  const searchBizText = "";
 
   function search() {
-    // 검색 파라미터 구성
     const searchText = searchValue;
-
-    // "all" 옵션이 선택되면 해당 필터는 undefined로 처리
     const statusFilter = status === 'all' ? undefined : status;
     const dateFilter = date ? format(date, "yyyy-MM-dd") : undefined;
 
-    onSearch(false, searchText, statusFilter, dateFilter);
+    onSearch(false, searchBizText, searchText, statusFilter, dateFilter, pageSize);
   }
 
   // 필터 초기화
@@ -37,7 +38,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
     setStatus(undefined);
     setDate(undefined);
     
-    onSearch(false, undefined, undefined, undefined);
+    onSearch(false, undefined, undefined, undefined, undefined, defaultPageSize);
   }
 
   // Enter 키 이벤트 핸들러
@@ -52,27 +53,46 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
     setSearchValue(e.target.value);
   };
 
+  // 페이지 사이즈 변경 핸들러
+  const handlePageSizeChange = (value: string) => {
+    const newPageSize = Number(value);
+    setPageSize(newPageSize);
+  };
+
   return (
     <div className="bg-white border-b">
       {/* PC 뷰 */}
-      <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
-        <div className="flex flex-wrap items-center gap-3 min-h-[40px]">
+      <div className="hidden md:flex items-center justify-between p-4">
+        <div className="flex flex-wrap items-center gap-2 min-h-[40px]">
           <Input
-            placeholder="렌트 정보 검색"
-            className="w-64"
+            placeholder="예약 ID 검색"
+            className="w-36"
             value={searchValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
           />
 
           <Select onValueChange={setStatus} value={status}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="렌트 상태" />
+            <SelectTrigger className="w-[80px]">
+              <SelectValue placeholder="예약 상태" />
             </SelectTrigger>
             <SelectContent>
               {RentStatus.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={handlePageSizeChange} defaultValue={String(defaultPageSize)}>
+            <SelectTrigger className="w-[90px]">
+              <SelectValue placeholder="표시 개수" />
+            </SelectTrigger>
+            <SelectContent>
+              {PageSizeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -94,6 +114,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
                 selected={date}
                 onSelect={setDate}
                 locale={ko}
+                defaultMonth={date || undefined}
                 initialFocus
               />
             </PopoverContent>
@@ -101,12 +122,12 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
 
           <div className="flex items-center gap-2">
             <Button className="bg-black text-white hover:bg-gray-800" onClick={() => search()}>
-              <SearchIcon className="h-4 w-4 mr-2" />
+              <SearchIcon className="h-4 w-4" />
               검색
             </Button>
             
             {(status || date || searchValue) && (
-              <Button variant="outline" onClick={resetFilters} size="icon" className="h-10 w-10">
+              <Button variant="outline" onClick={resetFilters} size="icon" className="h-9 w-9">
                 <X className="h-4 w-4" />
               </Button>
             )}
@@ -114,8 +135,8 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
         </div>
 
         <Button className="bg-black text-white hover:bg-gray-800" onClick={() => navigate('/car/rent/register')}>
-          <Plus className="w-4 h-4 mr-2" />
-          신규 렌트 등록
+          <Plus className="w-4 h-4" />
+          신규 예약 등록
         </Button>
       </div>
 
@@ -123,7 +144,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
       <div className="md:hidden p-4">
         <div className="flex mb-4">
           <Input
-            placeholder="렌트 정보 검색"
+            placeholder="예약 정보 검색"
             className="rounded-r-none"
             value={searchValue}
             onChange={handleInputChange}
@@ -140,12 +161,25 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
         <div className="flex items-center gap-2 mb-4">
           <Select onValueChange={setStatus} value={status}>
             <SelectTrigger className="flex-1">
-              <SelectValue placeholder="렌트 상태" />
+              <SelectValue placeholder="예약 상태" />
             </SelectTrigger>
             <SelectContent>
               {RentStatus.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={handlePageSizeChange} defaultValue={String(defaultPageSize)}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="표시 개수" />
+            </SelectTrigger>
+            <SelectContent>
+              {PageSizeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -194,7 +228,7 @@ function RentSearchLayer({ onSearch }: RentSearchLayerProps) {
           onClick={() => navigate('/car/rent/register')}
         >
           <Plus className="w-4 h-4 mr-2" />
-          신규 렌트 등록
+          신규 예약 등록
         </Button>
       </div>
     </div>

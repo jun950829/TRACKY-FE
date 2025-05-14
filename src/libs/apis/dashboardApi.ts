@@ -14,18 +14,23 @@ export const dashboardApi = {
     return response.data;
   },
 
-  getReservationStatus: async (datefilter : number = 0) => {
-    let response;
-    switch(datefilter) {
-      case -1:
-        response = await api.get(`${dashboardApiRoot}/rents/status?date=yesterday`);
-        break;
-      case 1:
-        response = await api.get(`${dashboardApiRoot}/rents/status?date=tomorrow`);
-        break;
-      default: 
-        response = await api.get(`${dashboardApiRoot}/rents/status`);
-    }
+  // getReservationStatus: async (datefilter : number = 0) => {
+  //   let response;
+  //   switch(datefilter) {
+  //     case -1:
+  //       response = await api.get(`${dashboardApiRoot}/rents/status?date=yesterday`);
+  //       break;
+  //     case 1:
+  //       response = await api.get(`${dashboardApiRoot}/rents/status?date=tomorrow`);
+  //       break;
+  //     default: 
+  //       response = await api.get(`${dashboardApiRoot}/rents/status`);
+  //   }
+  //   return response.data;
+  // },
+
+    getReturnStatus: async () => {
+    const response = await api.get(`${dashboardApiRoot}/return/status`);
     return response.data;
   },
 
@@ -38,4 +43,9 @@ export const dashboardApi = {
     const response = await api.post("/quests/create", data);
     return response.data;
   },
+
+  updateRentStatusToReturn: async (rentUuid: string) => {
+    const response = await api.patch(`${dashboardApiRoot}/return/status/${rentUuid}`, rentUuid);
+    return response.data;
+  }
 };

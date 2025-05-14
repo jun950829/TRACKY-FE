@@ -21,6 +21,24 @@ export function formatDateTime(dateString: string | null | undefined): string {
   return `${yyyy}-${MM}-${dd} ${HH}:${mm}`;
 }
 
+export function formatTime(dateString: string | null | undefined): string {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "-"; // 유효하지 않은 날짜일 경우
+
+  const yyyy = date.getFullYear();
+  const MM = String(date.getMonth() + 1).padStart(2, "0"); // 0-based
+  const dd = String(date.getDate()).padStart(2, "0");
+
+  const HH = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  const ss = String(date.getSeconds()).padStart(2, "0");
+
+  return `${yyyy}-${MM}-${dd}T${HH}:${mm}:${ss}`;
+}
+
+
 /**
  * 대여 기간을 'yy/MM/dd hh:mm ~ MM/dd hh:mm' 형식으로 포맷팅하는 함수
  * @param startTimeString 대여 시작 시간 (ISO 문자열)
@@ -46,4 +64,29 @@ export function formatRentPeriod(startTimeString: string, endTimeString: string)
   const endMinutes = String(endDate.getMinutes()).padStart(2, "0");
 
   return `${startYear}/${startMonth}/${startDay} ${startHours}:${startMinutes} ~ ${endYear}/${endMonth}/${endDay} ${endHours}:${endMinutes}`;
+}
+
+/**
+ * 좌표를 1,000,000을 곱한 정수값으로 변환
+ * @param coordinate 변환할 좌표 (위도 또는 경도)
+ */
+export const formatCoordinate = (coordinate: number): number => {
+  // 소수점 6자리까지 자르고 1,000,000을 곱함
+  return Math.round(parseFloat(coordinate.toFixed(6)) * 1000000);
+};
+
+export function formatDrivingTimeSmart(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const parts = [];
+  if (hours > 0) parts.push(`${hours}시간`);
+  if (minutes > 0) parts.push(`${minutes}분`);
+  if (secs > 0) parts.push(`${secs}초`);
+
+  // 모두 0이면 0초만 출력
+  if (parts.length === 0) return '0초';
+
+  return parts.join(' ');
 }

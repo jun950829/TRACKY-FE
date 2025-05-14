@@ -11,6 +11,12 @@ class GpsBuffer {
   private currentPosition: GeolocationPosition | null = null; // 현재 위치 저장
   private totalPacketsCount: number = 0; // 총 전송된 cList 항목 개수
   private totalSentPackets: number = 0; // 총 전송 패킷 수
+  
+  private mdn: string = '';
+
+  public setMdn(mdn: string): void {
+    this.mdn = mdn;
+  }
 
   /**
    * GPS 버퍼를 초기화합니다.
@@ -30,14 +36,14 @@ class GpsBuffer {
     try {
       // 위치 데이터 유효성 검사
       if (!position || !position.coords) {
-        console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 유효하지 않은 위치 데이터 수신됨. 스킵합니다.`);
+        console.warn(`[${new Date().toLocaleTimeString()}] 유효하지 않은 위치 데이터 수신됨. 스킵합니다.`);
         return;
       }
 
       // NaN 또는 null 좌표 확인
       if (isNaN(position.coords.latitude) || isNaN(position.coords.longitude) || 
           position.coords.latitude === null || position.coords.longitude === null) {
-        console.warn(`⚠️ [${new Date().toLocaleTimeString()}] 잘못된 좌표 데이터 (lat: ${position.coords.latitude}, lng: ${position.coords.longitude}). 스킵합니다.`);
+        console.warn(`[${new Date().toLocaleTimeString()}] 잘못된 좌표 데이터 (lat: ${position.coords.latitude}, lng: ${position.coords.longitude}). 스킵합니다.`);
         return;
       }
 
@@ -47,13 +53,13 @@ class GpsBuffer {
       // 새 데이터 추가
       this.buffer.push(position);
       
-      console.log(`🔵 [${new Date().toLocaleTimeString()}] GPS 데이터 추가: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 현재 버퍼=${this.buffer.length}개`);
+      console.log(`[${new Date().toLocaleTimeString()}] GPS 데이터 추가: 위도=${position.coords.latitude.toFixed(6)}, 경도=${position.coords.longitude.toFixed(6)}, 속도=${position.coords.speed || 0}m/s, 현재 버퍼=${this.buffer.length}개`);
       
       if (!this.isActive) {
         this.startTimer();
       }
     } catch (error) {
-      console.error(`❌ [${new Date().toLocaleTimeString()}] GPS 데이터 추가 중 오류 발생: ${error}. 이 데이터는 스킵됩니다.`);
+      console.error(`[${new Date().toLocaleTimeString()}] GPS 데이터 추가 중 오류 발생: ${error}. 이 데이터는 스킵됩니다.`);
     }
   }
 
@@ -89,7 +95,7 @@ class GpsBuffer {
   public async sendData(): Promise<boolean> {
     // 전송할 데이터가 없으면 중단
     if (this.buffer.length === 0) {
-      console.log(`⚠️ [${new Date().toLocaleTimeString()}] 버퍼가 비어 있어 전송을 건너뜁니다. 새 주기를 시작합니다.`);
+      console.log(`[${new Date().toLocaleTimeString()}] 버퍼가 비어 있어 전송을 건너뜁니다. 새 주기를 시작합니다.`);
       // 마지막 전송 시간을 현재로 업데이트하여 새로운 주기를 시작
       this.lastSentTimestamp = Date.now();
       return false;
@@ -105,7 +111,7 @@ class GpsBuffer {
       
       // API 요청 객체 생성
       const request = {
-        mdn: "9999999999",
+        mdn: this.mdn,
         tid: "A001",
         mid: "6",
         pv: "5",
@@ -115,7 +121,7 @@ class GpsBuffer {
         cList: gpsList,
       };
       
-      console.log(`📤 [${new Date().toLocaleTimeString()}] 데이터 전송 시작: ${bufferSize}개의 GPS 데이터 전송 중...`);
+      console.log(`[${new Date().toLocaleTimeString()}] 데이터 전송 시작: ${bufferSize}개의 GPS 데이터 전송 중...`);
       
       // API 전송
       await hubApiService.sendCycleInfo(request);
@@ -161,7 +167,7 @@ class GpsBuffer {
       
       // API 요청 객체 생성
       const request = {
-        mdn: "9999999999",
+        mdn: this.mdn,
         tid: "A001",
         mid: "6",
         pv: "5",
@@ -301,7 +307,7 @@ class GpsBuffer {
         
         // API 요청 객체 생성
         const request = {
-          mdn: "9999999999",
+          mdn: this.mdn,
           tid: "A001",
           mid: "6",
           pv: "5",

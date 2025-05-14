@@ -1,37 +1,61 @@
+import { StatusTypes } from "@/constants/types/types";
 import { CarStatusTypes } from "@/constants/types/types";
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Car, Clock, Settings, Shield } from 'lucide-react';
+import { CarStatusEnum } from "@/constants/types/types";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Car, Clock, Settings, Shield } from "lucide-react";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface VehicleStatusCardsProps {
-  statusObj: CarStatusTypes;
+  statusObj: StatusTypes[];
   accidentFreeDays?: number;
 }
 
-export default function VehicleStatusCards({ statusObj, accidentFreeDays = 365 }: VehicleStatusCardsProps) {
+export default function VehicleStatusCards({
+  statusObj,
+  accidentFreeDays = 365,
+}: VehicleStatusCardsProps) {
+  const convertStatusListToMap = (statusList: StatusTypes[]): CarStatusTypes => {
+    const initial: CarStatusTypes = {
+      RUNNING: 0,
+      WAITING: 0,
+      FIXING: 0,
+      CLOSED: 0,
+    };
+
+    return statusList.reduce((acc, { carStatus, carCount }) => {
+      if (carStatus in acc) {
+        acc[carStatus as CarStatusEnum] = carCount;
+      }
+      return acc;
+    }, initial);
+  };
+
+  const carStatusMap = convertStatusListToMap(statusObj);
+
   // 차량 상태별 개수 계산
-  const activeCount = statusObj?.running || 0;
-  const inactiveCount = statusObj?.waiting || 0;
-  const maintenanceCount = statusObj?.fixing || 0;
-  const totalCount = Object.values(statusObj).reduce((acc, curr) => acc + curr, 0);
+  const activeCount = carStatusMap?.RUNNING || 0;
+  const inactiveCount = carStatusMap?.WAITING || 0;
+  const maintenanceCount = carStatusMap?.FIXING || 0;
+  console.log(carStatusMap);
+  const totalCount = Object.values(carStatusMap).reduce((acc, curr) => acc + curr, 0);
 
   // 가동률 계산 (운행 중인 차량 비율)
   const operationRate = totalCount > 0 ? (activeCount / totalCount) * 100 : 0;
 
   // 도넛 차트 데이터
   const chartData = {
-    labels: ['가동률', '비가동률'],
+    labels: ["가동률", "비가동률"],
     datasets: [
       {
         data: [operationRate, 100 - operationRate],
         backgroundColor: [
-          'rgb(34, 197, 94)', // 가동 - 초록색
-          'rgb(229, 231, 235)', // 비가동 - 회색
+          "rgb(34, 197, 94)", // 가동 - 초록색
+          "rgb(229, 231, 235)", // 비가동 - 회색
         ],
         borderWidth: 0,
-        cutout: '75%',
+        cutout: "75%",
       },
     ],
   };
@@ -114,4 +138,4 @@ export default function VehicleStatusCards({ statusObj, accidentFreeDays = 365 }
       </div>
     </div>
   );
-} 
+}
