@@ -4,8 +4,9 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { ReservationCardProps } from "@/constants/types/reservation";
 import { formatTime, getCarModelAndMdn } from "@/libs/utils/reservationUtils";
 import StatusBadge from "@/components/custom/StatusBadge";
+import { Button } from "@/components/ui/button";
 
-function ReturnedStatus({ reservations, isLoading }: ReservationCardProps) {
+function ReturnedStatus({ reservations, isLoading, updateStatus }: ReservationCardProps) {
   //getReturnStatus
 
   return (
@@ -57,6 +58,12 @@ function ReturnedStatus({ reservations, isLoading }: ReservationCardProps) {
                   {/* 상단: 차량번호, 대여상태 */}
                   <div className="flex justify-between items-start">
                     <div className="font-medium text-md">{reservation.carPlate}</div>
+                    <Button
+                      variant="outline"
+                      onClick={() => updateStatus(reservation.rentUuid)}
+                    >
+                      반납 처리하기
+                    </Button>
                     <StatusBadge status={reservation.rentStatus} type="rent" />
                   </div>
                   
