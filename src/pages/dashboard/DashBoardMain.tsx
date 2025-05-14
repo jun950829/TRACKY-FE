@@ -13,8 +13,6 @@ import { ErrorToast } from "@/components/custom/ErrorToast";
 import { ApiError, createApiError } from "@/types/error";
 import ReturnedStatus from "@/pages/dashboard/components/ReturnedStatus";
 import MonthlyStats from "./components/MonthlyStats";
-import PageHeader from "@/components/custom/PageHeader";
-import { RentStatus } from "@/constants/datas/status";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,10 +21,10 @@ export default function Dashboard() {
     WAITING: 0,
     FIXING: 0,
     CLOSED: 0,
+    DELETED: 0,
   });
   const [ReturnStatus, setReturnStatus] = useState<ReturnStatus[]>([]);
   const [statistics, setStatistics] = useState<MonthlyStatistic>();
-  const [statisticsItems, setStatisticsItems] = useState<StatisticsItem[]>([]);
   const [error, setError] = useState<ApiError | null>(null);
 
   // useSseEvents();
