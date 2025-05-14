@@ -658,7 +658,7 @@ export default function Emulator({ cycleId = '1' }: IGpsTrackingProps) {
   };
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 max-w-screen-xl py-4 md:py-8">
+    <div className="container mx-auto p-6 md:px-[80px] max-w-screen-xl md:py-8">
       {error && <ErrorToast error={error} />}
       <div className="relative">
         <Card className="overflow-hidden bg-gradient-to-br from-background to-background/50 border-none shadow-xl">
