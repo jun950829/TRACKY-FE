@@ -28,7 +28,7 @@ export default function KoreaMap() {
       const data = res.data || {};
       console.log('dashboard/geo : ', data);
       Object.entries(data).forEach(([province, carList]) => {
-        regionMap[province] = carList as string[];
+        regionMap[province] = carList as number[];
       });
 
       setRegionData(regionMap);
