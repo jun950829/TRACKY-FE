@@ -101,7 +101,7 @@ function Sidebar() {
   // Desktop (1280px 이상)
   if (screenSize === 'desktop') {
     return (
-      <aside className="h-screen w-1/10 border-r border-foreground/10 bg-background">
+      <aside className="h-screen w-1/10 border-r border-foreground/10 bg-background z-[2000]">
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
@@ -204,7 +204,7 @@ function Sidebar() {
     return (
       <>
         <button
-          className="fixed top-4 left-4 z-50 p-2 rounded-md text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+          className="fixed top-4 left-4 z-[2000] p-2 rounded-md text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
           onClick={() => setIsExpanded(!isExpanded)}
           aria-label="Toggle sidebar"
         >
@@ -212,11 +212,11 @@ function Sidebar() {
         </button>
         
         {isExpanded && (
-          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40" onClick={() => setIsExpanded(false)} />
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[1999]" onClick={() => setIsExpanded(false)} />
         )}
         
         <aside 
-          className={`fixed top-0 left-0 h-screen border-r border-foreground/10 bg-background transition-all duration-300 z-50 ${
+          className={`fixed top-0 left-0 h-screen border-r border-foreground/10 bg-background transition-all duration-300 z-[2000] ${
             isExpanded ? 'w-64' : 'w-16'
           }`}
         >
@@ -327,7 +327,7 @@ function Sidebar() {
   // Mobile (719px 이하)
   return (
     <>
-      <header className={`fixed top-0 z-40 w-full border-b ${
+      <header className={`fixed top-0 z-[2000] w-full border-b ${
         scrolled 
           ? "bg-background/70 backdrop-blur-md shadow-sm transition-all duration-300" 
           : "bg-background transition-all duration-300"

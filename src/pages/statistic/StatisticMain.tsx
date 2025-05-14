@@ -19,7 +19,7 @@ function StatisticMain() {
   };
 
   return (
-    <div className="w-full h-screen overflow-auto bg-gray-50/50">
+    <div className="w-full md:px-[80px] xl:p-6 h-screen overflow-auto bg-gray-50/50">
       <div className="max-w-[1920px] mx-auto p-8">
         {/* 헤더 섹션 */}
         <div className="mb-6">
