@@ -254,6 +254,16 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
         </div>
 
         <div className="flex items-center gap-3">
+          
+
+          <Button
+            className="bg-black text-white hover:bg-gray-800"
+            onClick={() => navigate("/car/register")}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            신규 차량 등록
+          </Button>
+
           <Button 
             variant="outline" 
             size="sm" 
@@ -264,13 +274,6 @@ function CarSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSearchLa
             다운로드
           </Button>
 
-          <Button
-            className="bg-black text-white hover:bg-gray-800"
-            onClick={() => navigate("/car/register")}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            신규 차량 등록
-          </Button>
         </div>
       </div>
 

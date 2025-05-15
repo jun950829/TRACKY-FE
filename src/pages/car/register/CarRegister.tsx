@@ -213,7 +213,7 @@ export default function CarRegister() {
             {/* 차량 번호 */}
             <div className="space-y-2">
               <Label>차량 번호</Label>
-              <Input placeholder="예: 12가 3456" {...register("carPlate")} />
+              <Input placeholder="예: 서울 12가 3456" {...register("carPlate")} />
               {errors.carPlate && <p className="text-sm text-red-500">{errors.carPlate.message}</p>}
             </div>
 
