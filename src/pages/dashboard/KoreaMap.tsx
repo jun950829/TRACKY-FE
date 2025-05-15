@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import { dashboardApi } from "@/libs/apis/dashboardApi";
 
 interface RegionData {
-  [key: string]: string[];
+  [key: string]: number;
 }
 
 export default function KoreaMap() {
@@ -22,27 +22,27 @@ export default function KoreaMap() {
   }, []);
 
   useEffect(() => {
-    dashboardApi.getGeo()
-    .then((res) => {
-      const regionMap: RegionData = {};
-      const data = res.data || {};
-      console.log('dashboard/geo : ', data);
-      Object.entries(data).forEach(([province, carList]) => {
-        regionMap[province] = carList as string[];
-      });
+    dashboardApi
+      .getGeo()
+      .then((res) => {
+        const regionMap: RegionData = {};
+        const data = res.data || {};
+        console.log("dashboard/geo : ", data);
+        Object.entries(data).forEach(([province, carList]) => {
+          regionMap[province] = carList as number;
+        });
 
-      setRegionData(regionMap);
-    })
-    .catch((err) => {
-      console.log("지도 데이터 로드 실패: ", err);
-    });
+        setRegionData(regionMap);
+      })
+      .catch((err) => {
+        console.log("지도 데이터 로드 실패: ", err);
+      });
   }, []);
 
   // 도 경계 스타일
   const getRegionStyle = (feature: any) => {
     const name = feature.properties.CTP_KOR_NM;
-    const count = regionData[name]?.length || 0;
-    
+
     return {
       fillColor: "#f8f9fa",
       weight: 1,
@@ -71,9 +71,6 @@ export default function KoreaMap() {
   };
 
   const onEachFeature = (feature: any, layer: any) => {
-    const name = feature.properties.CTP_KOR_NM;
-    const count = regionData[name]?.length || 0;
-
     layer.on({
       mouseover: highlightFeature,
       mouseout: resetHighlight,
@@ -92,7 +89,7 @@ export default function KoreaMap() {
     for (let i = 0; i < polygon.length - 1; i++) {
       const [x1, y1] = polygon[i];
       const [x2, y2] = polygon[i + 1];
-      
+
       const cross = x1 * y2 - x2 * y1;
       area += cross;
       centroidX += (x1 + x2) * cross;
@@ -100,8 +97,8 @@ export default function KoreaMap() {
     }
 
     area /= 2;
-    centroidX /= (6 * area);
-    centroidY /= (6 * area);
+    centroidX /= 6 * area;
+    centroidY /= 6 * area;
 
     return [centroidY, centroidX]; // [lat, lng] 형식으로 반환
   };
@@ -130,24 +127,21 @@ export default function KoreaMap() {
       weightedCentroidY += centroidY * area;
     });
 
-    return [
-      weightedCentroidY / totalArea,
-      weightedCentroidX / totalArea
-    ];
+    return [weightedCentroidY / totalArea, weightedCentroidX / totalArea];
   };
 
   // 중심 좌표 계산 함수
   const getCenter = (feature: any): [number, number] => {
     const coordinates = feature.geometry.coordinates;
-    
-    if (feature.geometry.type === 'Polygon') {
+
+    if (feature.geometry.type === "Polygon") {
       return calculateCentroid(coordinates);
     }
-    
-    if (feature.geometry.type === 'MultiPolygon') {
+
+    if (feature.geometry.type === "MultiPolygon") {
       return calculateMultiPolygonCentroid(coordinates);
     }
-    
+
     // 기본값 반환
     return [36.5, 127.5];
   };
@@ -156,17 +150,19 @@ export default function KoreaMap() {
   const createCircleMarker = (count: number, name: string) => {
     // 차량 수에 따라 원의 크기 결정 (최소 20px, 최대 90px)
     const size = Math.min(50, Math.max(20, count * 3));
-    
+
     // 차량 수에 따라 색상 결정
-    let color = '#cccccc';
+    let color = "#cccccc";
     if (count > 0) {
-      if (count <= 2) color = '#ffd700'; // 노란색
-      else if (count <= 4) color = '#ffa500'; // 주황색
-      else color = '#ff4500'; // 빨간색
+      if (count <= 2)
+        color = "#ffd700"; // 노란색
+      else if (count <= 4)
+        color = "#ffa500"; // 주황색
+      else color = "#ff4500"; // 빨간색
     }
 
     return L.divIcon({
-      className: 'circle-marker',
+      className: "circle-marker",
       html: `
         <div style="
           width: ${size}px;
@@ -178,7 +174,7 @@ export default function KoreaMap() {
           justify-content: center;
           color: white;
           font-weight: bold;
-          font-size: ${Math.max(16, size/3)}px;
+          font-size: ${Math.max(16, size / 3)}px;
           box-shadow: 0 0 10px rgba(0,0,0,0.3);
           border: 3px solid white;
           position: relative;
@@ -195,8 +191,8 @@ export default function KoreaMap() {
         </div>
       `,
       iconSize: [size, size],
-      iconAnchor: [size/2, size/2],
-      popupAnchor: [0, -size/2]
+      iconAnchor: [size / 2, size / 2],
+      popupAnchor: [0, -size / 2],
     });
   };
 
@@ -204,23 +200,23 @@ export default function KoreaMap() {
   const adjustPosition = (center: [number, number], name: string): [number, number] => {
     // 지역별 위치 조정
     const positionAdjustments: { [key: string]: [number, number] } = {
-      "서울특별시": [0.0, 0.0],
-      "인천광역시": [-0.1, 0.1],
-      "경기도": [-0.1, 0.15],
-      "강원도": [0.2, 0.1],
-      "충청북도": [0.0, -0.2],
-      "충청남도": [0.0, 0],
-      "대전광역시": [0.03, 0.0],
-      "세종특별자치시": [-0.05, 0.0],
-      "전라북도": [0.0, 0.0],
-      "전라남도": [-0.1, 0.0],
-      "광주광역시": [0.0, 0.0],
-      "경상북도": [0.1, 0.0],
-      "경상남도": [0, -0.05],
-      "대구광역시": [-0.1, 0.0],
-      "울산광역시": [0.0, 0.0],
-      "부산광역시": [0.0, 0.05],
-      "제주특별자치도": [0.0, 0.0]
+      서울특별시: [0.0, 0.0],
+      인천광역시: [-0.1, 0.1],
+      경기도: [-0.1, 0.15],
+      강원도: [0.2, 0.1],
+      충청북도: [0.0, -0.2],
+      충청남도: [0.0, 0],
+      대전광역시: [0.03, 0.0],
+      세종특별자치시: [-0.05, 0.0],
+      전라북도: [0.0, 0.0],
+      전라남도: [-0.1, 0.0],
+      광주광역시: [0.0, 0.0],
+      경상북도: [0.1, 0.0],
+      경상남도: [0, -0.05],
+      대구광역시: [-0.1, 0.0],
+      울산광역시: [0.0, 0.0],
+      부산광역시: [0.0, 0.05],
+      제주특별자치도: [0.0, 0.0],
     };
 
     const adjustment = positionAdjustments[name] || [0, 0];
@@ -240,23 +236,19 @@ export default function KoreaMap() {
       style={{ height: "600px", width: "100%" }}
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
+        attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
       {regionData && geoData && (
         <>
-          <GeoJSON
-            data={geoData}
-            style={getRegionStyle}
-            onEachFeature={onEachFeature}
-          />
+          <GeoJSON data={geoData} style={getRegionStyle} onEachFeature={onEachFeature} />
 
           {geoData.features.map((feature: any, idx: number) => {
             const center = getCenter(feature);
             const name = feature.properties.CTP_KOR_NM;
-            const count = regionData[name]?.length || 0;
-            
+            const count = regionData[name] || 0;
+
             const adjustedPosition = adjustPosition(center, name);
 
             return (

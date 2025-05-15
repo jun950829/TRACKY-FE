@@ -70,27 +70,12 @@ export default function Dashboard() {
     }
   };
 
-  const handleUpdateStatus = async (rentUuid: string) => {
-    try {
-      await dashboardApi.updateRentStatusToReturn(rentUuid);
-      await fetchReturnStatus();
-      alert("반납 처리 성공!");
-    } catch(err) {
-        console.error("반납 처리 실패:", err);
-        setError(createApiError(err));
-    }
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        await Promise.all([
-          fetchCarStatus(),
-          fetchReturnStatus(),
-          fetchStatistics(),
-        ]);
+        await Promise.all([fetchCarStatus(), fetchReturnStatus(), fetchStatistics()]);
       } catch (err) {
         console.error("데이터 조회 실패:", err);
         setError(createApiError(err));
