@@ -129,6 +129,82 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
   const startTimeRef = useRef<number>(0);
   const isInitialLoadRef = useRef<boolean>(true);
 
+  // 모든 타이머와 애니메이션 정리 함수
+  const cleanupAllTimers = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      cleanupAllTimers();
+      
+      // 모든 상태 초기화
+      setPathSegments([]);
+      setReplaySegments([]);
+      setCurrentPosition(null);
+      setCurrentSegment(null);
+      setMarkerRotation(0);
+      setIsTracking(true);
+
+      // ref 값들 초기화
+      isInitialLoadRef.current = true;
+      lastProcessedIndexRef.current = -1;
+      startTimeRef.current = 0;
+
+      // 지도 뷰 초기화
+      if (mapRef.current) {
+        mapRef.current.setView([37.5665, 126.9780], 13, {
+          animate: true,
+          duration: 1
+        });
+      }
+    };
+  }, []);
+
+  // 뒤로가기 시 모든 상태 초기화
+  useEffect(() => {
+    if (isRefresh) {
+      cleanupAllTimers();
+
+      // SSE 구독 해제 및 큐 초기화
+      useSseStore.getState().resetSse();
+
+      // 모든 상태 초기화
+      setPathSegments([]);
+      setReplaySegments([]);
+      setCurrentPosition(null);
+      setCurrentSegment(null);
+      setMarkerRotation(0);
+
+      // ref 값들 초기화
+      isInitialLoadRef.current = true;
+      lastProcessedIndexRef.current = -1;
+      startTimeRef.current = 0;
+
+      // 지도 뷰 초기화
+      if (mapRef.current) {
+        mapRef.current.setView([37.5665, 126.9780], 13, {
+          animate: true,
+          duration: 1
+        });
+      }
+
+      setIsRefresh(false);
+    }
+  }, [isRefresh, setIsRefresh]);
+
   // 애니메이션 프레임 업데이트
   const updateAnimation = (startPoint: GpsData, endPoint: GpsData, startTime: number) => {
     const now = performance.now();
@@ -159,67 +235,6 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       animationRef.current = requestAnimationFrame(() => updateAnimation(startPoint, endPoint, startTime));
     }
   };
-
-  // 뒤로가기 시 모든 상태 초기화
-  useEffect(() => {
-    if (isRefresh) {
-      // 모든 타이머와 애니메이션 정리
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-
-      // SSE 구독 해제 및 큐 초기화
-      useSseStore.getState().resetSse();
-
-      // 모든 상태 초기화
-      setPathSegments([]);
-      setReplaySegments([]);
-      setCurrentPosition(null);
-      setCurrentSegment(null);
-      setMarkerRotation(0);
-
-      // ref 값들 초기화
-      isInitialLoadRef.current = true;
-      lastProcessedIndexRef.current = -1;
-      startTimeRef.current = 0;
-
-      // 지도 뷰 초기화
-      if (mapRef.current) {
-        mapRef.current.setView([37.5665, 126.9780], 13, {
-          animate: true,
-          duration: 1
-        });
-      }
-
-      setIsRefresh(false);
-    }
-  }, [isRefresh, setIsRefresh]);
-
-  // 컴포넌트 언마운트 시 정리
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   // GPS 데이터 변경 감지 및 처리
   useEffect(() => {

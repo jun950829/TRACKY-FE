@@ -86,7 +86,7 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
       <CardContent className="pt-4 flex flex-col md:flex-row gap-4 justify-between">
         <div className='flex flex-col gap-8 min-w-[250px]'>
           <p className='text-md font-bold'>업체 정보</p>
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
               <Label htmlFor="memberId">업체명</Label>
               <Input
                 id="bizName"
@@ -94,11 +94,11 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
                 {...register("bizName")}
               />
               {errors.memberId && (
-                <p className="text-sm text-destructive absolute">{errors.memberId.message}</p>
+                <p className="text-sm text-destructive absolute top-full mt-1">{errors.memberId.message}</p>
               )}
           </div>
 
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="bizRegNum">사업자 등록 번호</Label>
             <Input
               id="bizRegNum"
@@ -106,11 +106,11 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               {...register("bizRegNum")}
             />
             {errors.bizRegNum && (
-              <p className="text-sm text-destructive absolute">{errors.bizRegNum.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.bizRegNum.message}</p>
             )}
           </div>
 
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="bizAdmin">담당자</Label>
             <Input
               id="bizAdmin"
@@ -119,7 +119,7 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
             />
           </div>
 
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="bizPhoneNum">전화번호</Label>
             <Input
               id="bizPhoneNum"
@@ -131,14 +131,14 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               maxLength={13}
             />
             {errors.bizPhoneNum && (
-              <p className="text-sm text-destructive absolute">{errors.bizPhoneNum.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.bizPhoneNum.message}</p>
             )}
           </div>
         </div>
 
         <div className='flex flex-col gap-8 min-w-[250px]'>
           <p className='text-md font-bold'>계정 정보</p>
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="memberId">아이디</Label>
             <div className="flex gap-2">
               <Input
@@ -160,10 +160,10 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               </Button>
             </div>
             {errors.memberId && (
-              <p className="text-sm text-destructive absolute">{errors.memberId.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.memberId.message}</p>
             )}
             {isIdAvailable !== null && (
-              <div className="flex items-center gap-1 text-sm absolute">
+              <div className="flex items-center gap-1 text-sm absolute top-full mt-1">
                 {isIdAvailable ? (
                   <>
                     <Check className="h-4 w-4 text-green-500" />
@@ -179,7 +179,7 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
             )}
           </div>
 
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
@@ -187,11 +187,11 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-sm text-destructive absolute">{errors.email.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.email.message}</p>
             )}
           </div>
 
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="pwd">비밀번호</Label>
             <Input
               id="pwd"
@@ -201,11 +201,11 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               autoComplete="new-password"
             />
             {errors.pwd && (
-              <p className="text-sm text-destructive absolute">{errors.pwd.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.pwd.message}</p>
             )}
           </div>
           
-          <div className="space-y-2 h-[72px]">
+          <div className="space-y-2 h-[72px] relative">
             <Label htmlFor="pwdConfirm">비밀번호 확인</Label>
             <Input
               id="pwdConfirm"
@@ -215,7 +215,7 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
               autoComplete="new-password"
             />
             {errors.pwdConfirm && (
-              <p className="text-sm text-destructive absolute">{errors.pwdConfirm.message}</p>
+              <p className="text-sm text-destructive absolute top-full mt-1">{errors.pwdConfirm.message}</p>
             )}
           </div>
         </div>

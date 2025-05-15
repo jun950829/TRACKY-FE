@@ -88,8 +88,12 @@ export const useSseStore = create<SseStore>((set, get) => ({
 
   //sse
   connectSse: (driveId: number) => {
+    // 이전 SSE 연결이 있다면 해제
     const prev = get().eventSource;
-    if (prev) prev.close();
+    if (prev) {
+      prev.close();
+      set({ eventSource: null });
+    }
 
     console.log("SSE 연결 시작:", driveId);
     const es = new EventSource(`${import.meta.env.VITE_EVENTS_API_HOST}/subscribe?driveId=${driveId}`);
@@ -113,6 +117,7 @@ export const useSseStore = create<SseStore>((set, get) => ({
       console.error("SSE 오류 발생:", err);
       console.log("SSE 상태코드:", es.readyState);
       es.close();
+      set({ eventSource: null });
     };
 
     set({ eventSource: es });
@@ -121,7 +126,14 @@ export const useSseStore = create<SseStore>((set, get) => ({
   resetSse: () => {
     console.log("SSE 리셋");
     const es = get().eventSource;
-    if (es) es.close();
-    set({ gpsList: [], eventSource: null, gpsQueue: [] });
+    if (es) {
+      es.close();
+      set({ 
+        gpsList: [], 
+        cycleGpsList: [],
+        eventSource: null, 
+        gpsQueue: [] 
+      });
+    }
   },
 }));

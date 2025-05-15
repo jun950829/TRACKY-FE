@@ -333,9 +333,9 @@ function HistoryTable() {
                 </TableCell>
               </TableRow>
               : driveResults?.map((drive) => (
-                <TableRow 
+                <TableRow
                   key={drive.id} 
-                  className="hover:bg-gray-50 cursor-pointer text-center"
+                  className="hover:bg-gray-50 cursor-pointer text-center h-[45px]"
                   onClick={() => clickDrive(drive.id)}
                 >
                   <TableCell style={{ width: '70px' }} className="font-medium">{drive.id}</TableCell>

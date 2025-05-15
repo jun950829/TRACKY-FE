@@ -12,10 +12,12 @@ export const useDriveSse = ({ driveId }: UseDriveSseProps) => {
   useEffect(() => {
     if (!driveId) return;
 
-    connectSse(driveId); 
+    // SSE 연결 시작
+    connectSse(driveId);
 
+    // 컴포넌트 언마운트 시 SSE 연결 해제
     return () => {
-      resetSse(); 
+      resetSse();
     };
   }, [driveId]);
 };

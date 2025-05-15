@@ -6,12 +6,14 @@ import { Search, Monitor } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
 import { useDriveSse } from "@/hooks/useDriveSse";
 import { useSseStore } from "@/stores/useSseStore";
+import { useNavigate } from 'react-router-dom';
 
 function RealTimeMain() {
   const [isMainOpen, setIsMainOpen] = useState(true);
   const [currentPanel, setCurrentPanel] = useState<'search' | 'detail'>('search');
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
   const [isRefresh, setIsRefresh] = useState(false);
+  const navigate = useNavigate();
 
   // SSE 연결 관리
   useDriveSse({ driveId: selectedDriveId || 0 });
@@ -22,6 +24,34 @@ function RealTimeMain() {
       useSseStore.getState().clearGpsList();
     }
   }, [currentPanel]);
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      // SSE 연결 해제 및 스토어 초기화
+      useSseStore.getState().resetSse();
+      
+      // 선택된 드라이브 ID 초기화
+      setSelectedDriveId(null);
+      
+      // 패널 상태 초기화
+      setCurrentPanel('search');
+      setIsMainOpen(true);
+    };
+  }, []);
+
+  // 페이지 이동 감지 및 정리
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      useSseStore.getState().resetSse();
+      useSseStore.getState().clearGpsList();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="w-full h-full relative">
@@ -61,7 +91,10 @@ function RealTimeMain() {
             {currentPanel === 'detail' && selectedDriveId ? (
                 <RealTimeDetailPanel
                 driveId={selectedDriveId}
-                goSearch={() => setCurrentPanel('search')} // 뒤로가기 시 검색창으로
+                goSearch={() => {
+                  useSseStore.getState().resetSse();
+                  setCurrentPanel('search');
+                }}
                 setIsRefresh={setIsRefresh}   
               />
             ) : (
