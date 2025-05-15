@@ -100,7 +100,7 @@ function RealTimeDetailPanel({ driveId, goSearch, setIsRefresh }: RealTimeDetail
             </tr>
             <tr>
               <td className="px-4 py-2 font-medium text-gray-600">운행거리</td>
-              <td className="px-4 py-2 text-gray-900">{driveDetail.distance.toFixed(1)}km</td>
+              <td className="px-4 py-2 text-gray-900">{(driveDetail.distance / 1000).toFixed(2)}km</td>
             </tr>
           </tbody>
         </table>
