@@ -21,9 +21,18 @@ function SignupMain() {
       await signupApiService.signup(data);
       setModalType('success');
       setIsSuccess(true);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      setErrorMessage("회원가입에 실패했습니다. 다시 시도해주세요.");
+      // 임시.......
+      if (error && typeof error === 'object' && 'response' in error && 
+          error.response && typeof error.response === 'object' && 'data' in error.response &&
+          error.response.data && typeof error.response.data === 'object' && 
+          'code' in error.response.data && error.response.data.code === "SIGNUP_002" &&
+          'message' in error.response.data && typeof error.response.data.message === 'string') {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage("회원가입에 실패했습니다. 다시 시도해주세요.");
+      }
       setModalType('error');
     } finally {
       setIsLoading(false);

@@ -219,13 +219,12 @@ function SignupForm({ onSubmit, isLoading, errorMessage }: SignupFormProps) {
             )}
           </div>
         </div>
-        {errorMessage && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            {errorMessage}
-          </div>
-        )}
       </CardContent>
-    
+      {errorMessage && (
+      <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive my-4">
+        {errorMessage}
+      </div>
+    )}
     <CardFooter className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-4 w-full">
         <Button 
