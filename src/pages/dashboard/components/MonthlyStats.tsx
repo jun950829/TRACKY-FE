@@ -35,6 +35,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
@@ -51,7 +52,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
   };
 
   return (
-    <Card className="w-full bg-white">
+    <Card className="w-full h-full min-w-0 bg-white">
       <CardHeader className="p-4 bg-white border-b border-zinc-100 flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">월별 통계 리포트</CardTitle>
       </CardHeader>
@@ -76,7 +77,7 @@ function MonthlyStats({ monthlyData }: MonthlyStatsProps) {
             </div>
           </div>
         </div>
-        <div className="">
+        <div className="w-full">
           <Line data={chartData} options={chartOptions} />
         </div>
       </CardContent>

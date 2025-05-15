@@ -92,7 +92,7 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="w-full h-full flex flex-col items-center p-2 space-y-4 xl:space-y-0 xl:h-[90vh] xl:overflow-x-hidden">
-          <div className="w-full flex flex-col xl:flex-row justify-between items-stretch gap-4">
+          <div className="w-full min-w-0 flex flex-col xl:flex-row justify-between items-stretch gap-4">
             <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
               <VehicleStatusCards statusObj={carStatus} />
             </div>
@@ -106,11 +106,11 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col xl:flex-row justify-between items-stretch gap-4">
-            <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
+          <div className="w-full min-w-0 flex flex-col xl:flex-row justify-between items-stretch gap-4">
+            <div className="w-full min-w-0 xl:w-1/2 xl:h-[510px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MonthlyStats monthlyData={statistics} />
             </div>
-            <div className="w-full min-w-0 xl:w-1/2 bg-white rounded-lg border border-zinc-100 shadow-sm">
+            <div className="w-full min-w-0 xl:w-1/2 xl:h-[510px] bg-white rounded-lg border border-zinc-100 shadow-sm">
               <MapLayer isLoading={isLoading} />
             </div>
           </div>
