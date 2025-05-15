@@ -39,6 +39,10 @@ function Sidebar() {
       return !isAdmin;
     }
 
+    if (menu.path.includes("/admin")) {
+      return isAdmin;
+    }
+
     return true;
   }), [isAdmin]);
 
