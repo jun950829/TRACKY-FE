@@ -7,9 +7,14 @@ import { formatPhoneNumber } from "@/libs/utils/phoneFormat";
 import { useState, useEffect } from "react";
 import rentApiService from "@/libs/apis/rentsApi";
 
+type MdnListType = {
+  mdn: string;
+  status: string;
+}
+
 export function Step1Form() {
   const { setStep1Data, setCurrentStep, renterName, renterPhone, purpose, selectedVehicle } = useRentStore();
-  const [mdnList, setMdnList] = useState<string[]>([]);
+  const [mdnList, setMdnList] = useState<MdnListType[]>([]);
   const [phoneValue, setPhoneValue] = useState(renterPhone);
 
   useEffect(() => {
@@ -84,9 +89,9 @@ export function Step1Form() {
             <SelectValue placeholder="차량을 선택하세요" />
           </SelectTrigger>
           <SelectContent>
-            {mdnList.map((mdn: string, idx: number) => (
-              <SelectItem key={idx} value={mdn}>
-                {mdn}
+            {mdnList.map((mdn: MdnListType, idx: number) => (
+              <SelectItem key={idx} value={mdn.mdn}>
+                {mdn.mdn}
               </SelectItem>
             ))}
           </SelectContent>

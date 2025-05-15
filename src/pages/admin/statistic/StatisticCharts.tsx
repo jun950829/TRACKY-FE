@@ -62,8 +62,6 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
   const operationRateOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1,
     plugins: {
       legend: {
         position: "top" as const,
@@ -77,8 +75,6 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
   const nonOperatedCarOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1,
     plugins: {
       legend: {
         position: "top" as const,
@@ -169,17 +165,13 @@ function StatisticCharts({graphStats}: StatisticChartsProps) {
 
       <Card>
         <CardContent className="pt-6">
-          <div className="w-full h-[280px]">
-            <Bar options={operationRateOptions} data={operationRateChartData} />
-          </div>
+          <Bar options={operationRateOptions} data={operationRateChartData} />
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="pt-6">
-          <div className="w-full h-[280px]">
-            <Bar options={nonOperatedCarOptions} data={nonOperatedCarChartData} />
-          </div>
+          <Bar options={nonOperatedCarOptions} data={nonOperatedCarChartData} />
         </CardContent>
       </Card>
     </div>

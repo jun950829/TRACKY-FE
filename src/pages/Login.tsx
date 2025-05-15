@@ -165,7 +165,7 @@ export default function Login() {
       <div className="container mx-auto px-4 h-screen flex items-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-7xl mx-auto">
           {/* 로그인 폼 */}
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-lg shadow-lg p-8 h-fit h-[440px]">
             <Card className="border-0 shadow-none">
               <CardHeader className="space-y-1">
                 <CardTitle className="text-2xl font-bold">로그인</CardTitle>
@@ -235,8 +235,8 @@ export default function Login() {
           </div>
 
           {/* 공지사항 */}
-          <div className="bg-white rounded-lg shadow-lg p-8 hidden md:block">
-            <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow-lg p-8 hidden md:block h-[440px] overflow-y-auto">
+            <div className="space-y-6 h-full flex flex-col">
               <h2 className="text-2xl font-bold text-gray-800">공지사항</h2>
               
               {isNoticeLoading ? (
@@ -248,7 +248,7 @@ export default function Login() {
                   <p className="text-gray-500">등록된 공지사항이 없습니다.</p>
                 </div>
               ) : (
-                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                <div className="space-y-4 flex-1 overflow-y-auto pr-2">
                   {notices.map((notice) => (
                     <div 
                       key={notice.id} 

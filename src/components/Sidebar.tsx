@@ -306,9 +306,13 @@ function Sidebar() {
 
             {/* User Section */}
             {token && (
-              <div className={`flex items-center justify-between p-4 border-t border-foreground/10 ${
-                isExpanded ? '' : 'justify-center'
-              }`}>
+              <div 
+                className={`flex items-center justify-between p-4 border-t border-foreground/10 ${
+                  isExpanded ? '' : 'justify-center'
+                }`}
+                onMouseEnter={() => handleMenuHover('user', true)}
+                onMouseLeave={() => handleMenuHover(null, false)}
+              >
                 {isExpanded ? (
                   <>
                     <div className="flex items-center gap-2">
