@@ -67,12 +67,25 @@ export function Step2Form() {
       return;
     }
 
-    const selectedSlot = timeSlots.find(
-      (slot) => slot.rentStime === startDate.toISOString() && slot.rentEtime === endDate.toISOString()
-    );
+    // Check if end date is before start date
+    if (endDate < startDate) {
+      alert("종료 시간은 시작 시간보다 이후여야 합니다.");
+      return;
+    }
 
-    if (selectedSlot) {
-      alert("선택하신 시간대는 예약이 불가능합니다.");
+    // Check if the selected time slot overlaps with existing reservations
+    const hasOverlap = timeSlots.some(slot => {
+      const slotStart = new Date(slot.rentStime);
+      const slotEnd = new Date(slot.rentEtime);
+      return (
+        (startDate >= slotStart && startDate < slotEnd) ||
+        (endDate > slotStart && endDate <= slotEnd) ||
+        (startDate <= slotStart && endDate >= slotEnd)
+      );
+    });
+
+    if (hasOverlap) {
+      alert("선택하신 시간대는 이미 예약이 되어있습니다.");
       return;
     }
 

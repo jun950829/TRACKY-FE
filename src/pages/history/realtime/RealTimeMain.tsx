@@ -1,12 +1,12 @@
-import RealTimeMap from "./RealTimeMap";
-import { useState, useEffect } from 'react';
+import RealTimeMap, { RealTimeMapRef } from "./RealTimeMap";
+import { useState, useEffect, useRef } from 'react';
 import RealTimeSearchPanel from "./RealTimeSearchPanel";
 import RealTimeDetailPanel from "./RealTimeDetailPanel";
 import { Search, Monitor } from "lucide-react";
 import RealTimeClock from './RealTimeClock';
 import { useDriveSse } from "@/hooks/useDriveSse";
 import { useSseStore } from "@/stores/useSseStore";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function RealTimeMain() {
   const [isMainOpen, setIsMainOpen] = useState(true);
@@ -14,6 +14,8 @@ function RealTimeMain() {
   const [selectedDriveId, setSelectedDriveId] = useState<number | null>(null);
   const [isRefresh, setIsRefresh] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const mapRef = useRef<RealTimeMapRef>(null);
 
   // SSE 연결 관리
   useDriveSse({ driveId: selectedDriveId || 0 });
@@ -28,23 +30,14 @@ function RealTimeMain() {
   // 컴포넌트 언마운트 시 정리
   useEffect(() => {
     return () => {
-      // SSE 연결 해제 및 스토어 초기화
-      useSseStore.getState().resetSse();
-      
-      // 선택된 드라이브 ID 초기화
-      setSelectedDriveId(null);
-      
-      // 패널 상태 초기화
-      setCurrentPanel('search');
-      setIsMainOpen(true);
+      cleanup();
     };
   }, []);
 
   // 페이지 이동 감지 및 정리
   useEffect(() => {
     const handleBeforeUnload = () => {
-      useSseStore.getState().resetSse();
-      useSseStore.getState().clearGpsList();
+      cleanup();
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -52,6 +45,32 @@ function RealTimeMain() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  // location 변경 감지 및 정리
+  useEffect(() => {
+    if (location.pathname !== '/history/realtime') {
+      cleanup();
+    }
+  }, [location]);
+
+  // 정리 함수
+  const cleanup = () => {
+    // 지도 컴포넌트의 cleanup 호출
+    if (mapRef.current?.cleanup) {
+      mapRef.current.cleanup();
+    }
+
+    // SSE 연결 해제 및 스토어 초기화
+    useSseStore.getState().resetSse();
+    useSseStore.getState().clearGpsList();
+    
+    // 선택된 드라이브 ID 초기화
+    setSelectedDriveId(null);
+    
+    // 패널 상태 초기화
+    setCurrentPanel('search');
+    setIsMainOpen(true);
+  };
 
   return (
     <div className="w-full h-full relative">
@@ -69,7 +88,12 @@ function RealTimeMain() {
       {/* Desktop Content */}
       <div className="hidden md:block w-full h-full">
         {/* 지도 */}
-        <RealTimeMap selectedDriveId={selectedDriveId} isRefresh={isRefresh} setIsRefresh={setIsRefresh} />
+        <RealTimeMap 
+          ref={mapRef}
+          selectedDriveId={selectedDriveId} 
+          isRefresh={isRefresh} 
+          setIsRefresh={setIsRefresh}
+        />
 
         {/* 돋보기 버튼 (검색창이 닫혀있을 때만 보임) */}
         {!isMainOpen && (

@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup, ZoomControl, Polyline, useMap, 
 import 'leaflet/dist/leaflet.css';
 import { Icon, divIcon } from 'leaflet';
 import { useSseStore } from '@/stores/useSseStore';
+import { forwardRef, useImperativeHandle, useEffect, useRef, useState } from 'react';
 
 import {  
   calculateBounds, 
@@ -11,8 +12,6 @@ import {
   getPathColor,
 } from '@/libs/utils/historyUtils';
 import { getLastSixtyPoints } from './RealTimeTemp';
-
-import { useEffect, useRef, useState } from 'react';
 import { interpolatePosition } from './RealTimeTemp';
 import { GpsData } from '@/constants/types/historyTypes';
 
@@ -27,6 +26,11 @@ interface RealTimeMapProps {
   selectedDriveId: number | null;
   isRefresh: boolean;
   setIsRefresh: (isRefresh: boolean) => void;
+  onCleanup?: () => void;
+}
+
+export interface RealTimeMapRef {
+  cleanup: () => void;
 }
 
 // Add MapController component
@@ -112,7 +116,7 @@ const createCarIcon = () => {
   });
 };
 
-function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapProps) {
+const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriveId, isRefresh, setIsRefresh, onCleanup }, ref) => {
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
   const [replaySegments, setReplaySegments] = useState<PathSegment[]>([]);
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
@@ -145,6 +149,37 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
     }
   };
 
+  // ref를 통해 cleanup 함수 노출
+  useImperativeHandle(ref, () => ({
+    cleanup: () => {
+      cleanupAllTimers();
+      
+      // 모든 상태 초기화
+      setPathSegments([]);
+      setReplaySegments([]);
+      setCurrentPosition(null);
+      setCurrentSegment(null);
+      setMarkerRotation(0);
+      setIsTracking(true);
+
+      // ref 값들 초기화
+      isInitialLoadRef.current = true;
+      lastProcessedIndexRef.current = -1;
+      startTimeRef.current = 0;
+
+      // 지도 뷰 초기화
+      if (mapRef.current) {
+        mapRef.current.setView([37.5665, 126.9780], 13, {
+          animate: true,
+          duration: 1
+        });
+      }
+
+      // 부모 컴포넌트의 cleanup 함수 호출
+      onCleanup?.();
+    }
+  }));
+
   // 컴포넌트 언마운트 시 정리
   useEffect(() => {
     return () => {
@@ -170,8 +205,11 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
           duration: 1
         });
       }
+
+      // 부모 컴포넌트의 cleanup 함수 호출
+      onCleanup?.();
     };
-  }, []);
+  }, [onCleanup]);
 
   // 뒤로가기 시 모든 상태 초기화
   useEffect(() => {
@@ -542,6 +580,6 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       `}</style>
     </div>
   );
-}
+});
 
 export default RealTimeMap;
