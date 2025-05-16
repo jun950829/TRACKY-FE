@@ -95,6 +95,13 @@ export const headerMenus = [
   {
     name: "에뮬레이터",
     path: "/emulator",
-    icon: Gamepad
+    icon: Gamepad,
+    subMenus: [
+      {
+        name: "에뮬레이터",
+        path: "/emulator",
+        icon: Gamepad
+      }
+    ]
   }
 ];
