@@ -31,6 +31,10 @@ function Sidebar() {
       return isAdmin;
     }
 
+    if (menu.path === "/statistic") {
+      return !isAdmin;
+    }
+
     if (menu.path === "/admin/statistic") {
       return isAdmin;
     }

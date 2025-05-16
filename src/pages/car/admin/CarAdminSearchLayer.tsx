@@ -204,7 +204,7 @@ function CarAdminSearchLayer({ carList, onSearch, defaultPageSize = 10 }: CarSea
   return (
     <div className="bg-white border-b">
       {/* PC 뷰 */}
-      <div className="hidden md:flex items-center justify-between p-4 lg:p-6">
+      <div className="hidden md:flex items-center justify-between p-4">
         <div className="flex flex-wrap items-center gap-3">
           <Input
             placeholder="업체명 검색"
