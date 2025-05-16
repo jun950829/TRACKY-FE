@@ -269,7 +269,7 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
     ) * (180 / Math.PI);
     setMarkerRotation(angle);
 
-    if (progress < 1) {
+    if (progress < 1 && animationRef.current) {
       animationRef.current = requestAnimationFrame(() => updateAnimation(startPoint, endPoint, startTime));
     }
   };
@@ -293,8 +293,6 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
       const lastFixedPoint = fixedData[fixedData.length - 1];
       const firstRecentPoint = recentData[0];
 
-      
-      if(fixedData.length > 0) {
         const timeDiff = new Date(firstRecentPoint.oTime).getTime() - new Date(lastFixedPoint.oTime).getTime();
         // 시간 차이가 2초 이하면 연결 세그먼트 생성
         if (timeDiff <= 2000) {
@@ -308,15 +306,12 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
           };
           
           // 고정 경로에 연결 세그먼트 추가
+          console.log("연결 세그먼트 생성", fixedData)
           setPathSegments(createPathSegments(fixedData).concat([connectionSegment]));
         } else {
           // 시간 차이가 크면 일반적인 고정 경로만 생성
           setPathSegments(createPathSegments(fixedData));
         }
-      } else {
-        // 시간 차이가 크면 일반적인 고정 경로만 생성
-        setPathSegments(createPathSegments(fixedData));
-      }
       
       // 마지막 60개 데이터를 실시간처럼 애니메이션
       if (recentData.length > 0) {
@@ -380,15 +375,8 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
       console.log("다음 사이클 데이터 마지막:", nextCycle[nextCycle.length - 1]);
       console.log("다음 사이클 데이터 개수:", nextCycle.length);
 
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      // 이전 타이머와 애니메이션 정리
+      cleanupAllTimers();
 
       let currentIndex = 0;
       const animateNextSegment = () => {
@@ -411,6 +399,8 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
           updateAnimation(currentPoint, nextPoint, startTimeRef.current);
 
           timeoutRef.current = setTimeout(() => {
+            if (!timeoutRef.current) return; // 컴포넌트가 언마운트된 경우 실행 중단
+            
             setReplaySegments(prev => [...prev, newSegment]);
             setCurrentSegment(null);
             currentIndex++;
@@ -420,13 +410,10 @@ const RealTimeMap = forwardRef<RealTimeMapRef, RealTimeMapProps>(({ selectedDriv
             } else {
               console.log("현재 사이클 애니메이션 완료");
               // 현재 사이클이 끝나면 다음 사이클 처리
-              // 다음 사이클이 있는지 먼저 확인
               const hasNextCycle = useSseStore.getState().gpsQueue.length > 0;
               if (hasNextCycle) {
-                // 다음 사이클이 있으면 즉시 시작
                 doSseCycle();
               } else {
-                // 다음 사이클이 없으면 마지막 세그먼트를 유지
                 const lastPoint = nextCycle[nextCycle.length - 1];
                 setCurrentPosition([
                   lastPoint.lat / 1_000_000,
