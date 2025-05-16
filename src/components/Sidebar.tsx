@@ -269,17 +269,21 @@ function Sidebar() {
                     onMouseEnter={() => handleMenuHover(menu.path, true)}
                     onMouseLeave={() => handleMenuHover(null, false)}
                   >
-                    <Link
-                      to={menu.path}
-                      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold transition-colors ${
+                    <div
+                      className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold transition-colors cursor-pointer ${
                         isActive || isSubmenuActive
                           ? "bg-foreground/5 text-foreground"
                           : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
                       }`}
+                      onClick={() => {
+                        if (!isExpanded) {
+                          setIsExpanded(true);
+                        }
+                      }}
                     >
                       <menu.icon className="h-4 w-4" />
                       {isExpanded && <span>{menu.name}</span>}
-                    </Link>
+                    </div>
 
                     {/* Submenu */}
                     {isExpanded && menu.subMenus && (
@@ -300,6 +304,9 @@ function Sidebar() {
                                     ? "bg-foreground/5 text-foreground"
                                     : "text-foreground/70 hover:bg-foreground/5 hover:text-foreground"
                                 }`}
+                                onClick={() => {
+                                  setIsExpanded(false);
+                                }}
                               >
                                 <submenu.icon className="h-3 w-3" />
                                 <span>{submenu.name}</span>
