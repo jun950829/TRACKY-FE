@@ -3,6 +3,7 @@ import api from "./api";
 
 const carApiRoot = "/cars";
 const carAdminApiRoot = "/admin/cars";
+const carEmulatorApiRoot = "/cars/emulator";
 
 // Car API 요청 함수들
 export const carApiService = {
@@ -128,7 +129,7 @@ export const carApiService = {
   },
 
   getEmulateCars: async () => {
-    const response = await api.get(`${carApiRoot}/emulator/mdns`);
+    const response = await api.get(`${carEmulatorApiRoot}/mdns`);
     return response.data;
   },
 };
