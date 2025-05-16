@@ -54,7 +54,7 @@ export default function MonthPicker({ selectedDate, onDateSelect }: MonthPickerP
               onClick={() => !disabled && handleMonthSelect(month)}
               disabled={disabled}
               className={`
-                p-2 rounded-md text-sm text-center
+                p-2 rounded-md text-sm text-center ${disabled ? "opacity-50 cursor-not-allowed" : ""}
                 ${isSelected ? "bg-blue-500 text-white hover:bg-blue-600" : "hover:bg-gray-100"}
               `}
             >

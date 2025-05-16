@@ -238,7 +238,13 @@ function Sidebar() {
         >
           <div className="flex h-full flex-col">
             {/* Logo */}
-            <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
+            <div className="flex h-16 items-center border-b border-foreground/10 px-4 cursor-pointer" onClick={            () => {
+              if(isAdmin) {
+                navigate("/admin/statistic")
+              } else {
+                navigate("/dashboard")
+              }
+            }}>
               <img 
                 src="/icons/tracky-logo.svg" 
                 alt="Tracky Logo" 
