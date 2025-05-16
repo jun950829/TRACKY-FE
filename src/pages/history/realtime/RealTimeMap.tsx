@@ -254,21 +254,27 @@ function RealTimeMap({ selectedDriveId, isRefresh, setIsRefresh  }: RealTimeMapP
       // 마지막 고정 경로 포인트와 첫 번째 애니메이션 포인트의 시간 차이 확인
       const lastFixedPoint = fixedData[fixedData.length - 1];
       const firstRecentPoint = recentData[0];
-      const timeDiff = new Date(firstRecentPoint.oTime).getTime() - new Date(lastFixedPoint.oTime).getTime();
+
       
-      // 시간 차이가 2초 이하면 연결 세그먼트 생성
-      if (timeDiff <= 2000) {
-        const connectionSegment: PathSegment = {
-          positions: [
-            [lastFixedPoint.lat / 1_000_000, lastFixedPoint.lon / 1_000_000] as [number, number],
-            [firstRecentPoint.lat / 1_000_000, firstRecentPoint.lon / 1_000_000] as [number, number]
-          ],
-          color: getPathColor((lastFixedPoint.spd + firstRecentPoint.spd) / 2),
-          points: [lastFixedPoint, firstRecentPoint]
-        };
-        
-        // 고정 경로에 연결 세그먼트 추가
-        setPathSegments(createPathSegments(fixedData).concat([connectionSegment]));
+      if(fixedData.length > 0) {
+        const timeDiff = new Date(firstRecentPoint.oTime).getTime() - new Date(lastFixedPoint.oTime).getTime();
+        // 시간 차이가 2초 이하면 연결 세그먼트 생성
+        if (timeDiff <= 2000) {
+          const connectionSegment: PathSegment = {
+            positions: [
+              [lastFixedPoint.lat / 1_000_000, lastFixedPoint.lon / 1_000_000] as [number, number],
+              [firstRecentPoint.lat / 1_000_000, firstRecentPoint.lon / 1_000_000] as [number, number]
+            ],
+            color: getPathColor((lastFixedPoint.spd + firstRecentPoint.spd) / 2),
+            points: [lastFixedPoint, firstRecentPoint]
+          };
+          
+          // 고정 경로에 연결 세그먼트 추가
+          setPathSegments(createPathSegments(fixedData).concat([connectionSegment]));
+        } else {
+          // 시간 차이가 크면 일반적인 고정 경로만 생성
+          setPathSegments(createPathSegments(fixedData));
+        }
       } else {
         // 시간 차이가 크면 일반적인 고정 경로만 생성
         setPathSegments(createPathSegments(fixedData));

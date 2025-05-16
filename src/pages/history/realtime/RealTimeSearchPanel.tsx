@@ -48,7 +48,8 @@ function RealTimeSearchPanel({ onToggle, setSelectedDriveId, goDetail }: RealTim
       } else {
         response = await realtimeApi.getRealtimeData(search);
       }
-      setRunningCarList(response.data);
+      //setRunningCarList(response.data);
+      setRunningCarList(response.data.filter((car: RunningCar) => car.drivingTime >= 60));
     } catch (error) {
       console.error(error);
     }
