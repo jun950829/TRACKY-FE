@@ -13,6 +13,18 @@ export const headerMenus = [
   //   icon: Home
   // },
   {
+    name: "에뮬레이터",
+    path: "/emulator",
+    icon: Gamepad,
+    subMenus: [
+      {
+        name: "에뮬레이터",
+        path: "/emulator",
+        icon: Gamepad
+      }
+    ]
+  },
+  {
     name: "차량",
     path: "/car",
     icon: Car,
@@ -89,18 +101,6 @@ export const headerMenus = [
         name: "관리자 통계",
         path: "/admin/statistic",
         icon: UserCog
-      }
-    ]
-  },
-  {
-    name: "에뮬레이터",
-    path: "/emulator",
-    icon: Gamepad,
-    subMenus: [
-      {
-        name: "에뮬레이터",
-        path: "/emulator",
-        icon: Gamepad
       }
     ]
   }
