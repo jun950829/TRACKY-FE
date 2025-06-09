@@ -40,4 +40,19 @@ export const createApiError = (error: unknown): ApiError => {
   return {
     message: '알 수 없는 오류가 발생했습니다.'
   }
+}
+
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status?: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export interface ErrorToastProps {
+  message: string;
+  description?: string;
 } 

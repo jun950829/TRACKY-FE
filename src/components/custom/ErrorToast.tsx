@@ -1,23 +1,22 @@
 import React from "react"
 import { useToast } from "@/hooks/use-toast"
-import { ApiError } from "@/types/error"
 
 interface ErrorToastProps {
-  error: ApiError
+  message: string;
+  description?: string;
 }
 
-export const ErrorToast = ({ error }: ErrorToastProps) => {
+export const ErrorToast = ({ message, description }: ErrorToastProps) => {
   const { toast } = useToast()
 
   React.useEffect(() => {
-    console.log("ErrorToast triggered with error:", error)
     toast({
       variant: "destructive",
-      title: error.code ? `Error ${error.code}` : "Error",
-      description: error.message,
+      title: "Error",
+      description: description || message,
       duration: 5000,
     })
-  }, [error, toast])
+  }, [message, description, toast])
 
   return null
 } 
